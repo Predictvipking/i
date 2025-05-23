@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict VIP King Pro | Admin Console</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neumorph-bg-dark: #2a2f3a;
+            --neumorph-bg-darker-dark: #252933;
+            --neumorph-text-dark: #c1c8d4;
+            --neumorph-accent-dark: #ff8c00;
+            --neumorph-shadow-light-dark: rgba(209,217,230,0.08);
+            --neumorph-shadow-dark-dark: rgba(0,0,0,0.3);
+
+            --neumorph-bg-light: #e0e5ec;
+            --neumorph-bg-darker-light: #cad1d9;
+            --neumorph-text-light: #3a3f4b;
+            --neumorph-accent-light: #ff7000;
+            --neumorph-shadow-light-light: rgba(255,255,255,0.9);
+            --neumorph-shadow-dark-light: rgba(163,177,198,0.7);
+
+            --success: #00c853; --danger: #f50057; --warning: #f0ad4e;
+            --info: #2979ff;  --violet-accent: #d500f9;
+
+            --current-bg: var(--neumorph-bg-dark);
+            --current-bg-darker: var(--neumorph-bg-darker-dark);
+            --current-text: var(--neumorph-text-dark);
+            --current-accent: var(--neumorph-accent-dark);
+            --current-shadow-light: var(--neumorph-shadow-light-dark);
+            --current-shadow-dark: var(--neumorph-shadow-dark-dark);
+            --current-border-color: rgba(0,0,0,0.2);
+
+            --primary: var(--current-accent); --secondary: var(--warning);
+            --bg-main: var(--current-bg); --bg-card: var(--current-bg);
+            --bg-header-footer: var(--current-bg-darker);
+            --bg-interactive: var(--current-bg-darker);
+            --bg-hover: color-mix(in srgb, var(--current-bg-darker) 80%, var(--current-text) 20%);
+            --text-primary: var(--current-text);
+            --text-secondary: color-mix(in srgb, var(--current-text) 70%, transparent);
+            --text-disabled: color-mix(in srgb, var(--current-text) 50%, transparent);
+            --text-win: var(--success); --text-loss: var(--danger); --text-partial: var(--secondary);
+            --text-error: var(--warning); --text-num-red: var(--danger); --text-num-green: var(--success);
+            --partial-bg: color-mix(in srgb, var(--secondary) 8%, transparent);
+            --win-bg: color-mix(in srgb, var(--success) 8%, transparent);
+            --loss-bg: color-mix(in srgb, var(--danger) 8%, transparent);
+            --error-bg: color-mix(in srgb, var(--warning) 8%, transparent);
+            --shadow: 6px 6px 12px var(--current-shadow-dark), -6px -6px 12px var(--current-shadow-light);
+            --inset-shadow: inset 4px 4px 8px var(--current-shadow-dark), inset -4px -4px 8px var(--current-shadow-light);
+            --button-neumorph-shadow: 5px 5px 10px var(--current-shadow-dark), -5px -5px 10px var(--current-shadow-light);
+            --card-border-radius: 12px; --button-border-radius: 8px;
+        }
+        body.light-theme {
+            --current-bg: var(--neumorph-bg-light);
+            --current-bg-darker: var(--neumorph-bg-darker-light);
+            --current-text: var(--neumorph-text-light);
+            --current-accent: var(--neumorph-accent-light);
+            --current-shadow-light: var(--neumorph-shadow-light-light);
+            --current-shadow-dark: var(--neumorph-shadow-dark-light);
+            --current-border-color: rgba(0,0,0,0.1);
+        }
+        
+        .admin-panel-neumorphic-theme .admin-section { margin-bottom: 12px; padding: 10px; background-color: var(--bg-card); border-radius: var(--card-border-radius); box-shadow: var(--shadow); border: 1px solid var(--current-border-color); }
+        .admin-panel-neumorphic-theme .admin-section h5 { color: var(--primary); margin-top: 0; margin-bottom: 10px; border-bottom: 1px solid var(--current-border-color); padding-bottom: 6px; font-size: 0.95rem; font-weight: 600; }
+        .admin-panel-neumorphic-theme #adminUserManagementTopControls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; align-items: flex-start; }
+        
+        .admin-panel-neumorphic-theme #createUserFormContainer { flex: 1 1 100%; display: flex; flex-direction: column; gap: 6px; padding: 10px; background-color: var(--bg-card); border-radius: var(--card-border-radius); box-shadow: var(--shadow); }
+        .admin-panel-neumorphic-theme #createUserFormContainer h6 { font-size: 0.8rem; margin-bottom: 6px; text-align: left; color: var(--primary); font-weight: 500; }
+        .admin-panel-neumorphic-theme #createUserFormControls { display: flex; align-items: center; gap: 7px; flex-wrap: nowrap; }
+        .admin-panel-neumorphic-theme #createUserFormControls label { font-size: 0.75rem; margin-right: 3.5px; color: var(--text-secondary); flex-shrink: 0; }
+        .admin-panel-neumorphic-theme #createUserFormControls select { flex-grow: 1; padding: 5.5px 7.5px; font-size: 0.75rem; min-width: 95px; background-color: var(--bg-interactive); color: var(--text-primary); border: none; box-shadow: var(--inset-shadow); border-radius: var(--button-border-radius); appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='${encodeURIComponent("var(--text-secondary)")}'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 6.5px center; background-size: 10.5px; padding-right: 22px; }
+        .admin-panel-neumorphic-theme #createUserFormControls select:focus { outline: none; box-shadow: var(--inset-shadow), 0 0 0 2px var(--primary); }
+        .admin-panel-neumorphic-theme #createUserFormControls button { padding: 5.5px 8.5px; font-size: 0.75rem; flex-shrink: 0; background-color: var(--bg-main); color: var(--success); border: none; border-radius: var(--button-border-radius); font-weight: 500; box-shadow: var(--button-neumorph-shadow); transition: all 0.2s ease; }
+        .admin-panel-neumorphic-theme #createUserFormControls button:hover { color: var(--text-primary); box-shadow: 3px 3px 6px var(--current-shadow-dark), -3px -3px 6px var(--current-shadow-light); }
+        .admin-panel-neumorphic-theme #createUserFormControls button:active { box-shadow: var(--inset-shadow); }
+        
+        .admin-panel-neumorphic-theme #adminUserStats, .admin-panel-neumorphic-theme #adminUserQuotas {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-around;  
+            gap: 10px; /* Reduced gap */
+            font-size: 0.7rem; /* Smaller font */
+            color: var(--text-secondary);
+            padding: 6px 8px; /* Smaller padding */
+            width: 100%;  
+            background-color: var(--bg-interactive);  
+            box-shadow: var(--inset-shadow);      
+            border-radius: var(--button-border-radius);  
+            flex-wrap: wrap; /* Allow wrapping */
+        }
+         .admin-panel-neumorphic-theme #adminUserQuotas {
+            margin-top: 8px;
+            font-size: 0.65rem; /* Even smaller for quota details */
+            justify-content: flex-start; /* Align items to start for quota list */
+        }
+        .admin-panel-neumorphic-theme #adminUserStats span strong,
+        .admin-panel-neumorphic-theme #adminUserQuotas span strong {
+            color: var(--text-primary);
+        }
+        .admin-panel-neumorphic-theme #adminUserQuotas .quota-item {
+            padding: 2px 4px;
+            border-radius: 4px;
+            background-color: var(--bg-main);
+            box-shadow: var(--button-neumorph-shadow);
+            margin: 2px;
+        }
+
+
+        .admin-panel-neumorphic-theme #generatedUserKey {  
+            color: var(--primary); font-weight: bold; word-break: break-all;  
+            font-size: 0.8rem; min-height: 1.1em; text-align: center;  
+            padding: 6px; background: var(--bg-interactive);  
+            border-radius: var(--button-border-radius); box-shadow: var(--inset-shadow);
+        }
+        .admin-panel-neumorphic-theme #managedUsersListContainer { max-height: 450px; overflow-y: auto; background-color: var(--bg-interactive); border-radius: var(--button-border-radius); padding: 5px; box-shadow: var(--inset-shadow); }
+        .admin-panel-neumorphic-theme #managedUsersListContainer .admin-list-header { display: grid; grid-template-columns: 1fr 1.8fr 0.8fr 1fr 1.2fr; gap: 2px; padding: 6px 4px; font-size: 0.65rem; background: var(--bg-header-footer); color: var(--primary); font-weight: 600; text-transform: uppercase; margin-bottom: 3px; border-radius: calc(var(--button-border-radius) - 2px); }
+        .admin-panel-neumorphic-theme #managedUsersListContainer .admin-list-header > .history-header-item { padding: 0 3px; }
+        .admin-panel-neumorphic-theme #managedUsersListContainer .history-item.managed-user-item { display: grid; grid-template-columns: 1fr 1.8fr 0.8fr 1fr 1.2fr; gap: 3.5px; padding: 5.5px; font-size: 0.7rem; background: var(--bg-main); border: 1px solid transparent; border-radius: var(--button-border-radius); margin-bottom: 4.5px; color: var(--text-primary); align-items: center; box-shadow: var(--shadow); transition: border-color 0.2s ease; }
+        .admin-panel-neumorphic-theme #managedUsersListContainer .history-item.managed-user-item:hover { border-color: var(--primary); }
+        .admin-panel-neumorphic-theme #managedUsersListContainer .history-item.managed-user-item .history-value { display: flex; align-items: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-primary); font-size: 0.7rem; padding: 0 2px; }
+        .admin-panel-neumorphic-theme #managedUsersListContainer .history-item.managed-user-item .history-value:nth-child(1) { justify-content: flex-start; text-align: left; }
+        .admin-panel-neumorphic-theme #managedUsersListContainer .history-item.managed-user-item .history-value:nth-child(2) { justify-content: flex-start; text-align: left; }
+        .admin-panel-neumorphic-theme #managedUsersListContainer .history-item.managed-user-item .history-value:nth-child(3) { justify-content: center; text-align: center; }
+        .admin-panel-neumorphic-theme #managedUsersListContainer .history-item.managed-user-item .history-value:nth-child(4) { justify-content: center; text-align: center; }
+        .admin-panel-neumorphic-theme #managedUsersListContainer .history-item.managed-user-item .history-value:last-child { justify-content: center; text-align: center; }
+        .admin-panel-neumorphic-theme #managedUsersListContainer .history-item.managed-user-item .history-value button.admin-action-btn { font-size: 0.9em; padding: 2.5px 4.5px; margin: 0 1.5px; background: var(--bg-main); color: var(--text-primary); border: none; border-radius: calc(var(--button-border-radius) - 2px); cursor:pointer; box-shadow: var(--button-neumorph-shadow); transition: all 0.2s ease; }
+        .admin-panel-neumorphic-theme #managedUsersListContainer .history-item.managed-user-item .history-value button.admin-action-btn:hover { box-shadow: 2px 2px 4px var(--current-shadow-dark), -2px -2px 4px var(--current-shadow-light); }
+        .admin-panel-neumorphic-theme #managedUsersListContainer .history-item.managed-user-item .history-value button.admin-action-btn:active { box-shadow: var(--inset-shadow); }
+        .admin-panel-neumorphic-theme #managedUsersListContainer .history-item.managed-user-item .history-value button.ban-btn { color: var(--danger); }
+        .admin-panel-neumorphic-theme #managedUsersListContainer .history-item.managed-user-item .history-value button.ban-btn:hover { color: var(--danger); }
+        .admin-panel-neumorphic-theme #managedUsersListContainer .history-item.managed-user-item .history-value button.unban-btn { color: var(--success); }
+        .admin-panel-neumorphic-theme #managedUsersListContainer .history-item.managed-user-item .history-value button.unban-btn:hover { color: var(--success); }
+        .admin-panel-neumorphic-theme #managedUsersListContainer .history-item.managed-user-item .history-value button.delete-btn { color: var(--warning); }
+        .admin-panel-neumorphic-theme #managedUsersListContainer .history-item.managed-user-item .history-value button.delete-btn:hover { color: var(--warning); }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg-main); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; font-size: 14.5px; line-height: 1.55; transition: background-color 0.3s, color 0.3s; }
+        .container { max-width: 1080px; margin: 0 auto; padding: 8px; }
+        .login-modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.75); align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .login-modal-content { background: var(--bg-main); margin: auto; padding: 20px; width: 90%; max-width: 360px; border-radius: var(--card-border-radius); position: relative; color: var(--text-primary); box-shadow: var(--shadow); text-align: center; }
+        .login-modal-content h3 { margin-bottom: 15px; color: var(--primary); font-size: 1.25rem; font-weight: 600; padding-bottom: 8px; border-bottom: 1px solid var(--current-border-color); }
+        .login-modal-content input[type="password"] { width: 100%; padding: 10px 12px; font-size: 0.9rem; border-radius: var(--button-border-radius); border: none; color: var(--text-primary); background: var(--bg-interactive); box-shadow: var(--inset-shadow); margin-bottom: 15px; }
+        .login-modal-content input[type="password"]:focus { outline: none; box-shadow: var(--inset-shadow), 0 0 0 2px var(--primary); }
+        .login-modal-content button { width: 100%; padding: 10px 12px; font-size: 0.95rem; border-radius: var(--button-border-radius); border: none; color: var(--primary); font-weight: 600; cursor: pointer; background: var(--bg-main); box-shadow: var(--button-neumorph-shadow); transition: all 0.2s ease; }
+        .login-modal-content button:hover { color: var(--text-primary); box-shadow: 3px 3px 6px var(--current-shadow-dark), -3px -3px 6px var(--current-shadow-light); }
+        .login-modal-content button:active { box-shadow: var(--inset-shadow); }
+        .login-modal-content #loginError { color: var(--danger); font-size: 0.85rem; margin-top: 10px; display: none; }
+        
+        header { text-align: center; margin-bottom: 10px; animation: fadeIn 0.5s ease-in-out; padding: 8px; background: var(--bg-header-footer); border-radius: var(--card-border-radius); box-shadow: var(--shadow); }
+        .logo { font-size: 1.55rem; font-weight: 700; margin-bottom: 0px; color: var(--primary); text-shadow: 1px 1px 2px var(--current-shadow-dark); }
+        .header-subtitle-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; font-size: 0.7rem; color: var(--text-secondary); margin-top: 2px; }
+        .header-subtitle-container span { padding: 0 5px; margin-bottom: 4px; }
+        .header-action-icons-wrapper { display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; }
+        .header-action-icon { color: var(--text-secondary); text-decoration: none; font-size: 0.85em; cursor: pointer; transition: color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease; padding: 3px 4px; border-radius: calc(var(--button-border-radius) - 2px); background: var(--bg-header-footer); box-shadow: var(--button-neumorph-shadow); display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; }
+        .header-action-icon:hover { color: var(--primary); transform: translateY(-1px); box-shadow: 2px 2px 4px var(--current-shadow-dark), -2px -2px 4px var(--current-shadow-light); }
+        .header-action-icon:active { box-shadow: var(--inset-shadow); transform: translateY(0px); }
+        #logoutButton { display: none; }
+        
+        @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+
+        @media (max-width: 768px) { 
+            body { font-size: 14px; } 
+            .admin-panel-neumorphic-theme #managedUsersListContainer .admin-list-header { grid-template-columns: 0.9fr 1.6fr 0.7fr 0.9fr 1.1fr; font-size: 0.58rem; padding: 3px; }
+            .admin-panel-neumorphic-theme #managedUsersListContainer .history-item.managed-user-item { grid-template-columns: 0.9fr 1.6fr 0.7fr 0.9fr 1.1fr; font-size: 0.62rem; padding: 4px 2px; }
+            .admin-panel-neumorphic-theme #managedUsersListContainer .history-item.managed-user-item .history-value { font-size: 0.62rem; padding: 0 2px; }
+        }
+        @media (max-width: 480px) { 
+            body { font-size: 13.5px; } 
+            .admin-panel-neumorphic-theme #adminUserManagementTopControls { flex-direction: column; align-items: stretch; gap: 8px;}
+            .admin-panel-neumorphic-theme #createUserFormContainer { width: 100%; flex-basis: auto; }
+            .admin-panel-neumorphic-theme #managedUsersListContainer .admin-list-header { grid-template-columns: 1.5fr 2.5fr 1fr 1.5fr 2fr; font-size: 0.5rem; padding: 2px 1px; gap: 1px; }
+            .admin-panel-neumorphic-theme #managedUsersListContainer .admin-list-header > .history-header-item { padding: 1px; }
+            .admin-panel-neumorphic-theme #managedUsersListContainer .history-item.managed-user-item { grid-template-columns: 1.5fr 2.5fr 1fr 1.5fr 2fr; padding: 3px 1px; font-size: 0.52rem; gap: 1px; }
+            .admin-panel-neumorphic-theme #managedUsersListContainer .history-item.managed-user-item .history-value { padding: 1px; font-size: 0.52rem; }
+            .admin-panel-neumorphic-theme #managedUsersListContainer .history-item.managed-user-item .history-value button.admin-action-btn { padding: 1px 2px; font-size: 0.7em; margin: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div id="loginModal" class="login-modal">
+        <div class="login-modal-content">
+            <h3><i class="fas fa-key"></i> Admin Console Access</h3>
+            <input type="password" id="accessKeyInput" placeholder="Admin Access Key">
+            <button id="loginButton"><i class="fas fa-sign-in-alt"></i> Login</button>
+            <p id="loginError" style="display:none;">Invalid Access Key</p>
+        </div>
+    </div>
+
+    <div class="container" id="appContainer" style="display: none;">
+        <header>
+            <h1 class="logo">Predict VIP King Pro - Admin Console</h1>
+            <div class="header-subtitle-container">
+                <span id="currentUserKeyDisplay" style="display: none; font-size: 0.75em; color: var(--text-secondary); margin-top: 4px; margin-bottom: 4px; text-align: center;"></span>
+                <div class="header-action-icons-wrapper">
+                    <a href="#" id="themeToggleBtn" class="header-action-icon" title="Toggle Theme"><i class="fas fa-sun"></i></a>
+                    <a href="#" id="logoutButton" class="header-action-icon" title="Logout" style="display: none;"><i class="fas fa-sign-out-alt"></i></a>
+                </div>
+            </div>
+        </header>
+        
+        <div id="adminPanelContentArea" style="padding-top: 10px;">
+            </div>
+    </div>
+
+<script>
+    const ADMIN_ACCESS_KEY = "Kingvip@1991$"; // Your hardcoded admin key
+    let currentUserRole = null;
+    const STORAGE_KEY_USER_ROLE = 'predictVIPKingPro_userRole_AdminConsole';
+    const STORAGE_KEY_CURRENT_USER_KEY = 'predictVIPKingPro_currentUserKey_AdminConsole';
+    const STORAGE_KEY_MANAGED_USERS = 'predictVIPKingPro_managedUsers_AdminConsole'; // Separate storage for admin console users
+    const STORAGE_KEY_THEME_PREFERENCE = 'predictVIPKingPro_themePref_AdminConsole';
+    let currentActiveTheme = 'dark';
+
+    const VALIDITY_QUOTAS = {
+        "30m": 20, "1h": 20, "1d": 20, "3d": 20, "7d": 20,
+        "30d": 20, // For "1 month"
+        "60d": 20, "180d": 20, "365d": 20, "lifetime": 30
+    };
+    const VALIDITY_PERIOD_NAMES = {
+        "30m": "30 Min", "1h": "1 Hour", "1d": "1 Day", "3d": "3 Days", "7d": "7 Days",
+        "30d": "1 Month", "60d": "60 Days", "180d": "180 Days", "365d": "1 Year", "lifetime": "Lifetime"
+    };
+
+
+    function robustJsonParse(key, defaultValue) {
+        try {
+            const value = localStorage.getItem(key);
+            return value === null ? defaultValue : JSON.parse(value) || defaultValue;
+        } catch (e) {
+            console.warn("JSON Parse Error for key:", key, e);
+            return defaultValue;
+        }
+    }
+    function robustLocalStorageSetItem(key, value) {
+        try {
+            localStorage.setItem(key, value);
+        } catch (e) {
+            console.warn("LocalStorage Set Error for key:", key, e);
+        }
+    }
+     function robustLocalStorageGetItem(k, dV) {
+        try { const v = localStorage.getItem(k); return v === null ? dV : v; }
+        catch (e) { console.warn("LocalStorage Get Err for key:",k,e); return dV; }
+    }
+
+
+    function applyTheme(themeName) {
+        const body = document.body;
+        const themeToggleIconEl = document.querySelector('#themeToggleBtn i');
+        body.classList.remove('light-theme', 'dark-theme');
+        if (themeName === 'light') {
+            body.classList.add('light-theme');
+            if(themeToggleIconEl){ themeToggleIconEl.classList.remove('fa-sun'); themeToggleIconEl.classList.add('fa-moon'); if(themeToggleIconEl.parentElement)themeToggleIconEl.parentElement.title = "Switch to Dark Theme";}
+        } else {
+            body.classList.add('dark-theme');
+            if(themeToggleIconEl){ themeToggleIconEl.classList.remove('fa-moon'); themeToggleIconEl.classList.add('fa-sun'); if(themeToggleIconEl.parentElement)themeToggleIconEl.parentElement.title = "Switch to Light Theme";}
+        }
+        currentActiveTheme = themeName;
+        robustLocalStorageSetItem(STORAGE_KEY_THEME_PREFERENCE, themeName);
+        try {
+            const selectElements = document.querySelectorAll('.admin-panel-neumorphic-theme #createUserFormControls select');
+            const arrowColor = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary').trim();
+            selectElements.forEach(sel => {
+                sel.style.backgroundImage = `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='${encodeURIComponent(arrowColor)}'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e")`;
+            });
+        } catch (e) { console.warn("Failed to update select arrow color on theme change:", e); }
+    }
+
+    function toggleTheme() {
+        applyTheme(currentActiveTheme === 'dark' ? 'light' : 'dark');
+    }
+
+    function showLoginModal(show = true) {
+        const loginModal = document.getElementById('loginModal');
+        const appContainer = document.getElementById('appContainer');
+        const loginError = document.getElementById('loginError');
+        if (loginModal) {
+            if(loginError) loginError.style.display = 'none';
+            loginModal.style.display = show ? "flex" : "none";
+        }
+        if (appContainer) appContainer.style.display = show ? "none" : "block";
+    }
+
+    function showLoginError(message) {
+        const loginErrorEl = document.getElementById('loginError');
+        if (loginErrorEl) {
+            loginErrorEl.textContent = message;
+            loginErrorEl.style.display = 'block';
+        }
+    }
+    
+    function initializeAdminPage() {
+        const storedUserKey = robustLocalStorageGetItem(STORAGE_KEY_CURRENT_USER_KEY, null);
+        const storedRole = robustLocalStorageGetItem(STORAGE_KEY_USER_ROLE, null);
+
+        if (storedRole === 'admin' && storedUserKey === ADMIN_ACCESS_KEY) {
+            currentUserRole = 'admin';
+            showLoginModal(false);
+            
+            let preferredTheme = robustLocalStorageGetItem(STORAGE_KEY_THEME_PREFERENCE, 'dark');
+            applyTheme(preferredTheme);
+
+            renderAdminDashboard();
+
+            const userKeyDisplay = document.getElementById('currentUserKeyDisplay');
+            if (userKeyDisplay) {
+                 userKeyDisplay.innerHTML = `<i class="fas fa-crown" style="margin-right: 4px; color: var(--warning);"></i>Logged in: <strong style="color: var(--text-primary);">Admin</strong>`;
+                 userKeyDisplay.style.display = 'block';
+            }
+            const logoutButtonEl = document.getElementById('logoutButton');
+            if(logoutButtonEl) logoutButtonEl.style.display = 'inline-block';
+
+        } else {
+            currentUserRole = null; // Explicitly nullify if conditions aren't met
+            robustLocalStorageSetItem(STORAGE_KEY_USER_ROLE, ''); // Clear invalid role
+            localStorage.removeItem(STORAGE_KEY_CURRENT_USER_KEY); // Clear invalid key
+            showLoginModal(true);
+        }
+    }
+
+    function handleLoginAttempt() {
+        const accessKeyInput = document.getElementById('accessKeyInput');
+        const enteredKey = accessKeyInput.value.trim();
+
+        if (!enteredKey) {
+            showLoginError("Access Key cannot be empty.");
+            return;
+        }
+
+        if (enteredKey === ADMIN_ACCESS_KEY) {
+            currentUserRole = 'admin';
+            robustLocalStorageSetItem(STORAGE_KEY_USER_ROLE, 'admin');
+            robustLocalStorageSetItem(STORAGE_KEY_CURRENT_USER_KEY, ADMIN_ACCESS_KEY);
+            if(accessKeyInput) accessKeyInput.value = '';
+            initializeAdminPage();
+            showUINotification('Admin login successful.', 'success');
+        } else {
+            currentUserRole = null;
+            robustLocalStorageSetItem(STORAGE_KEY_USER_ROLE, ''); 
+            localStorage.removeItem(STORAGE_KEY_CURRENT_USER_KEY);
+            showLoginError("Invalid Admin Access Key.");
+        }
+    }
+
+    function handleLogout(){
+        if(confirm("Are you sure you want to logout?")){
+            currentUserRole = null;
+            localStorage.removeItem(STORAGE_KEY_USER_ROLE);
+            localStorage.removeItem(STORAGE_KEY_CURRENT_USER_KEY);
+
+            const userKeyDisplay = document.getElementById('currentUserKeyDisplay');
+            if (userKeyDisplay) {
+                userKeyDisplay.textContent = '';
+                userKeyDisplay.style.display = 'none';
+            }
+            const logoutButtonEl = document.getElementById('logoutButton');
+            if(logoutButtonEl) logoutButtonEl.style.display = 'none';
+            
+            const adminContentArea = document.getElementById('adminPanelContentArea');
+            if(adminContentArea) adminContentArea.innerHTML = 'Logged out.';
+            
+            showLoginModal(true);
+            showUINotification('Logged out successfully.','info');
+        }
+    }
+
+    function getManagedUsers() { return robustJsonParse(STORAGE_KEY_MANAGED_USERS, []); }
+    function saveManagedUsers(usersArray) { robustLocalStorageSetItem(STORAGE_KEY_MANAGED_USERS, JSON.stringify(usersArray)); }
+    function generateAccessKey(length = 12) { const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'; let key = 'U_'; for (let i = 0; i < length; i++) key += chars.charAt(Math.floor(Math.random() * chars.length)); return key; }
+    function calculateExpiryTimestamp(validityPeriodValue) { const now = Date.now(); if (validityPeriodValue === "lifetime") return null; let milliseconds; const unit = validityPeriodValue.slice(-1).toLowerCase(); const value = parseInt(validityPeriodValue.slice(0, -1)); if (isNaN(value)) return null; if (unit === 'm') milliseconds = value * 60 * 1000; else if (unit === 'h') milliseconds = value * 3600 * 1000; else if (unit === 'd') milliseconds = value * 86400 * 1000; else return null; return now + milliseconds; }
+    function formatDateForAdminList(timestamp) { if (!timestamp) return "Lifetime"; const d = new Date(timestamp); return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getFullYear()).slice(-2)} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
+
+    function renderAdminDashboard() {
+        const contentArea = document.getElementById('adminPanelContentArea');
+        if (!contentArea) { console.error("Admin panel content area not found!"); return; }
+        
+        contentArea.innerHTML = `<div id="adminPanelContainer" class="admin-panel-neumorphic-theme" style="padding:10px;">
+            <div class="admin-section">
+                <h5>User Management</h5>
+                <div id="createUserFormContainer" style="margin-bottom: 12px;"> 
+                    <h6>Create Key</h6>
+                    <div id="createUserFormControls">
+                        <label for="userValidityPeriod">Validity:</label>
+                        <select id="userValidityPeriod">
+                            <option value="30m">30 Min</option>
+                            <option value="1h">1 Hour</option>
+                            <option value="1d">1 Day</option>
+                            <option value="3d">3 Days</option>
+                            <option value="7d">7 Days</option>
+                            <option value="30d">1 Month (30 Days)</option>
+                            <option value="60d">60 Days</option>
+                            <option value="180d">180 Days</option>
+                            <option value="365d">1 Year</option>
+                            <option value="lifetime">Lifetime</option>
+                        </select>
+                        <button id="createUserKeyButton"><i class="fas fa-plus-circle"></i> Create</button>
+                    </div>
+                </div>
+
+                <div id="adminUserStats" style="margin-bottom: 8px;">
+                    <span>Total: <strong id="totalManagedUsers">0</strong></span>
+                    <span>Banned: <strong id="bannedManagedUsers" style="color:var(--danger)">0</strong></span>
+                </div>
+                <div id="adminUserQuotas" style="margin-bottom: 12px;">
+                    </div>
+                
+                <div id="generatedUserKey" style="margin-bottom: 15px;"></div>
+
+                <h6 style="color: var(--primary); margin-top: 15px; margin-bottom: 8px; font-size:0.9rem; font-weight:600; border-bottom: 1px solid var(--current-border-color); padding-bottom: 5px;">Managed Users</h6>
+                <div id="managedUsersListContainer">
+                </div>
+            </div>
+        </div>`;
+        
+        const managedUsers = getManagedUsers();
+        const totalManagedUsersEl = document.getElementById('totalManagedUsers');
+        const bannedManagedUsersEl = document.getElementById('bannedManagedUsers');
+        const managedUsersListContainerEl = document.getElementById('managedUsersListContainer');
+        const createUserKeyButtonEl = document.getElementById('createUserKeyButton');
+        const generatedUserKeyEl = document.getElementById('generatedUserKey');
+        const userQuotasEl = document.getElementById('adminUserQuotas');
+
+        if(totalManagedUsersEl) totalManagedUsersEl.textContent = managedUsers.length;
+        if(bannedManagedUsersEl) bannedManagedUsersEl.textContent = managedUsers.filter(u => u.isBanned).length;
+
+        // Display quotas
+        if(userQuotasEl) {
+            userQuotasEl.innerHTML = '<strong>Quotas (Used/Max):</strong> ';
+            for (const period in VALIDITY_QUOTAS) {
+                const currentCount = managedUsers.filter(u => u.validityPeriod === period && !u.isBanned && (!u.expiresAt || u.expiresAt > Date.now())).length;
+                const quotaItem = document.createElement('span');
+                quotaItem.className = 'quota-item';
+                quotaItem.innerHTML = `${VALIDITY_PERIOD_NAMES[period] || period}: <strong>${currentCount}/${VALIDITY_QUOTAS[period]}</strong>`;
+                userQuotasEl.appendChild(quotaItem);
+            }
+        }
+
+
+        if(managedUsersListContainerEl) managedUsersListContainerEl.innerHTML = '';
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'admin-list-header';
+        headerDiv.innerHTML = `<div class="history-header-item">Created</div>
+                               <div class="history-header-item">Key</div>
+                               <div class="history-header-item">Status</div>
+                               <div class="history-header-item">Expires</div>
+                               <div class="history-header-item">Actions</div>`;
+        if(managedUsersListContainerEl) managedUsersListContainerEl.appendChild(headerDiv);
+
+        if(managedUsers.length === 0){
+            if(managedUsersListContainerEl) managedUsersListContainerEl.innerHTML += '<p style="text-align:center;padding:10px;color:var(--text-secondary);">No users.</p>';
+        } else {
+            const sortedUsers = [...managedUsers].sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0) );
+            sortedUsers.forEach(user => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'history-item managed-user-item';
+                let statusText = "Active"; let statusColor = 'var(--success)';
+                if(user.isBanned) { statusText = "Banned"; statusColor = 'var(--danger)'; }
+                else if(user.expiresAt && Date.now() > user.expiresAt) { statusText = "Expired"; statusColor = 'var(--warning)'; }
+                
+                const banButtonText = user.isBanned ? "Unban" : "Ban";
+                const banButtonClass = user.isBanned ? "unban-btn" : "ban-btn";
+                
+                itemDiv.innerHTML = `<div class="history-value">${formatDateForAdminList(user.createdAt)}</div>
+                                     <div class="history-value" title="${user.accessKey}">${user.accessKey}</div>
+                                     <div class="history-value" style="color:${statusColor};font-weight:bold;">${statusText}</div>
+                                     <div class="history-value">${formatDateForAdminList(user.expiresAt)}</div>
+                                     <div class="history-value">
+                                         <button class="admin-action-btn ${banButtonClass}" data-key="${user.accessKey}">${banButtonText}</button>
+                                         <button class="admin-action-btn delete-btn" data-key="${user.accessKey}">Del</button>
+                                     </div>`;
+                if(managedUsersListContainerEl) managedUsersListContainerEl.appendChild(itemDiv);
+            });
+        }
+        
+        if(managedUsersListContainerEl){
+            managedUsersListContainerEl.querySelectorAll('.ban-btn, .unban-btn').forEach(button => {
+                button.onclick = (event) => {
+                    const key = event.target.closest('button').dataset.key; 
+                    const users = getManagedUsers();
+                    const targetUser = users.find(u => u.accessKey === key);
+                    if(targetUser){ targetUser.isBanned = !targetUser.isBanned; saveManagedUsers(users); renderAdminDashboard(); showUINotification(`User ${key} ${targetUser.isBanned?'banned':'unbanned'}.`,'info');}
+                }
+            });
+            managedUsersListContainerEl.querySelectorAll('.delete-btn').forEach(button => {
+                button.onclick = (event) => {
+                    const keyToDelete = event.target.closest('button').dataset.key; 
+                    if(confirm(`Delete user ${keyToDelete}? This action cannot be undone.`)){
+                        let users = getManagedUsers();
+                        users = users.filter(u => u.accessKey !== keyToDelete);
+                        saveManagedUsers(users); renderAdminDashboard(); showUINotification(`User ${keyToDelete} deleted.`,'info');
+                    }
+                }
+            });
+        }
+
+        if(createUserKeyButtonEl) createUserKeyButtonEl.onclick = () => {
+            const validityPeriodSelect = document.getElementById('userValidityPeriod');
+            if(!validityPeriodSelect || !generatedUserKeyEl) return;
+
+            const validityPeriod = validityPeriodSelect.value;
+            const currentUsers = getManagedUsers();
+            const activeUsersForPeriod = currentUsers.filter(u => u.validityPeriod === validityPeriod && !u.isBanned && (!u.expiresAt || u.expiresAt > Date.now())).length;
+            
+            if (VALIDITY_QUOTAS[validityPeriod] !== undefined && activeUsersForPeriod >= VALIDITY_QUOTAS[validityPeriod]) {
+                showUINotification(`Quota for ${VALIDITY_PERIOD_NAMES[validityPeriod] || validityPeriod} (${VALIDITY_QUOTAS[validityPeriod]}) reached. Creation allowed but please note.`, 'warning', 4000);
+            }
+
+            const newKey = generateAccessKey();
+            const createdAt = Date.now();
+            const expiresAt = calculateExpiryTimestamp(validityPeriod);
+            const defaultUsername = `User_${String(createdAt).slice(-6)}`;
+            const newUser = { accessKey: newKey, username: defaultUsername, createdAt, validityPeriod, expiresAt, isBanned:false, role:'user' };
+            
+            let currentManagedUsers = getManagedUsers(); 
+            currentManagedUsers.push(newUser);
+            saveManagedUsers(currentManagedUsers);
+            
+            if(generatedUserKeyEl) generatedUserKeyEl.innerHTML = `Key: <strong style="color:var(--text-primary);">${newKey}</strong> (User: ${defaultUsername})`;
+            renderAdminDashboard(); 
+            showUINotification(`Key ${newKey} for ${defaultUsername} created.`,'success');
+        };
+        applyTheme(currentActiveTheme); // Re-apply theme for dynamic select arrows
+    }
+    
+    function showUINotification(message, type='info', duration=2500){
+        const notificationId = 'uiSimpleNotification_Admin';
+        let notificationElement = document.getElementById(notificationId);
+        if(!notificationElement){
+            notificationElement = document.createElement('div');
+            notificationElement.id = notificationId;
+            document.body.appendChild(notificationElement);
+        }
+        notificationElement.textContent = message;
+        let backgroundColor = 'var(--info)';
+        if(type === 'success') backgroundColor = 'var(--success)';
+        else if(type === 'error') backgroundColor = 'var(--danger)';
+        else if(type === 'warning') backgroundColor = 'var(--warning)';
+        
+        notificationElement.style.cssText = `
+            position:fixed; bottom:20px; left:50%; 
+            transform:translateX(-50%) translateY(100%); 
+            padding:8px 15px; font-size:0.8rem; 
+            border-radius:var(--button-border-radius); 
+            box-shadow:var(--shadow); 
+            z-index:2500; opacity:0; 
+            transition:opacity 0.3s ease, transform 0.3s ease; 
+            background-color:${backgroundColor}; color:#fff; text-align:center;
+        `;
+        requestAnimationFrame(() => {
+            notificationElement.style.opacity = '1';
+            notificationElement.style.transform = 'translateX(-50%) translateY(0)';
+        });
+        setTimeout(() => {
+            notificationElement.style.opacity = '0';
+            notificationElement.style.transform = 'translateX(-50%) translateY(100%)';
+        }, duration);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        try {
+            const loginButtonEl = document.getElementById('loginButton');
+            if (loginButtonEl) loginButtonEl.onclick = handleLoginAttempt;
+            
+            const accessKeyInputEl = document.getElementById('accessKeyInput');
+            if (accessKeyInputEl) {
+                accessKeyInputEl.addEventListener('keypress', function(event) {
+                    if (event.key === "Enter") { event.preventDefault(); handleLoginAttempt(); }
+                });
+            }
+            
+            const logoutButtonEl = document.getElementById('logoutButton');
+            if (logoutButtonEl) logoutButtonEl.onclick = handleLogout;
+            
+            const themeToggleBtnEl = document.getElementById('themeToggleBtn');
+            if(themeToggleBtnEl) themeToggleBtnEl.onclick = (e) => { e.preventDefault(); toggleTheme(); };
+            
+            initializeAdminPage();
+
+        } catch(e) {
+            console.error("CRITICAL ERROR during admin console setup:", e);
+            document.body.innerHTML = `<div style="padding:20px;text-align:center;color:red;font-size:1.2em;"><h1>App Error</h1><p>Error: ${e.message}. Check console (F12).</p></div>`;
+        }
+    });
+</script>
+</body>
+</html>
