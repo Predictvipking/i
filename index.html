@@ -386,7 +386,7 @@
             <div id="jarvisOutput">Loading Jarvis Analysis...</div>
         </div>
 
-        <div id="howToUseModal" class="modal"> <div class="modal-content"> <span class="close-button" id="modalCloseButton">&times;</span> <h3><i class="fas fa-question-circle"></i> How To Use</h3> <ol> <li><strong>Prediction Logic:</strong> Uses an algorithm analyzing the last 10 game results. Strategy level (Lv) may indicate Martingale/Anti-Martingale phases.</li> <li><strong>Prediction Output:</strong> Shows Big/Small, Color, Number, Confidence (Per), Reversal Chance (Rev), and Strategy Level (Lv).</li> <li><strong>Jarvis AI:</strong> Provides success rate analysis based on the last 10, 20, and 30 predictions & warns about loss streaks.</li> <li><strong>History Tabs:</strong> Game History, My Predictions, Charts, Admin Panel.</li> </ol> <p><i class="fas fa-exclamation-triangle"></i> <strong>Disclaimer:</strong> Predictions are for informational purposes. Not guaranteed. Martingale strategies are highly risky and not advised. Play responsibly.</p> </div> </div>
+        <div id="howToUseModal" class="modal"> <div class="modal-content"> <span class="close-button" id="modalCloseButton">&times;</span> <h3><i class="fas fa-question-circle"></i> How To Use</h3> <ol> <li><strong>Prediction Logic:</strong> Uses an algorithm analyzing game results. Strategy level (Lv) and "L2 Reverse Engine" indicate different phases or risk adjustments.</li> <li><strong>Prediction Output:</strong> Shows Big/Small, Color, Number, Confidence (Per), Reversal Chance (Rev), and Strategy Level (Lv).</li> <li><strong>Jarvis AI:</strong> Provides success rate analysis based on the last 10, 20, 30, and 50 predictions & warns about loss streaks.</li> <li><strong>History Tabs:</strong> Game History, Deep History (50), My Predictions (with Number Win/Loss), Charts, Admin Panel.</li> </ol> <p><i class="fas fa-exclamation-triangle"></i> <strong>Disclaimer:</strong> Predictions are for informational purposes. Not guaranteed. Martingale strategies are highly risky and not advised. Play responsibly.</p> </div> </div>
         <div id="contactModal" class="modal"> <div class="modal-content"> <span class="close-button" id="contactModalCloseButton">&times;</span> <h3><i class="fas fa-envelope"></i> Contact Information</h3> <p><strong>Email:</strong> vippredictking@zohomail.in</p> <p><strong>Developer:</strong> Kumghato</p> <p><strong>Whatsapp:</strong>+91-6290530153 (Only Chat)</p></div> </div>
         <div class="top-info-line">
             <div class="top-info-item"><i class="fas fa-clock"></i><span class="value" id="timerOld">00s</span></div>
@@ -441,9 +441,9 @@
     const STORAGE_KEY_JARVIS_VISIBLE = 'predictVIPKingPro_jarvisVisible_v1';
     let isJarvisVisible = true;
 
-
     window.currentDataTab = null;
     window.currentPageForTab = 1;
+    let activeFetchId = 0;
 
     function robustJsonParse(k, dV) { try { const v = localStorage.getItem(k); return v === null ? dV : JSON.parse(v) || dV; } catch (e) { console.warn("JSON Parse Error for key:",k,e); return dV; } }
     function robustLocalStorageGetItem(k, dV, iN = false) { try { const v = localStorage.getItem(k); if (v === null) return dV; if (iN) { const n = parseInt(v); return isNaN(n) ? dV : n; } return v; } catch (e) { console.warn("LocalStorage Get Err for key:",k,e); return dV; } }
@@ -504,7 +504,7 @@
                         else if (unit === 'd') multiplier = 86400 * 1000;
                         expiresAtTimestamp = now + (value * multiplier); // Expires from 'now'
                     }
-                    
+
                     newManagedUsers.push({
                         accessKey: `U_${vp.label}_KEY${i}`,
                         username: `User_${vp.label}_${i}`,
@@ -520,7 +520,6 @@
             console.log(`Initialized with ${newManagedUsers.length} sample managed users as the list was empty.`);
         }
     }
-
 
     function initializeUIBasedOnRole() {
         const ad = document.getElementById('admin_dashboardTabBtn'),
@@ -655,22 +654,97 @@
     function analyzeForTypeInternal(type,gameHistory,gamesToConsider){const recentGames=gameHistory.slice(0,gamesToConsider).filter(item=>typeof item.number!=='undefined'&&item.number!==null);if(recentGames.length===0)return{trend:null,probability:0,count:0,total:0,streak:0};let outcomes=[];if(type==='bigsmall'){outcomes=recentGames.map(item=>getNumberDetailsOld(item.number).bigSmall);}else{outcomes=recentGames.map(item=>getNumberDetailsOld(item.number).rawColor);}outcomes=outcomes.filter(o=>o!=='?'&&o!=='Unknown');if(outcomes.length<Math.min(3,gamesToConsider))return{trend:null,probability:0,count:0,total:outcomes.length,streak:0};const counts=outcomes.reduce((acc,value)=>{acc[value]=(acc[value]||0)+1;return acc;},{});let trend=null;let maxCount=0;for(const outcome in counts){if(counts[outcome]>maxCount){maxCount=counts[outcome];trend=outcome;}else if(counts[outcome]===maxCount){if(outcomes[0]===outcome)trend=outcome;}}const probability=outcomes.length>0?(maxCount/outcomes.length)*100:0;let currentStreak=0;if(trend&&outcomes.length>0){for(let i=0;i<outcomes.length;i++){if(outcomes[i]===trend)currentStreak++;else break;}}return{trend,probability:parseFloat(probability.toFixed(1)),count:maxCount,total:outcomes.length,streak:currentStreak};}
     function predictNumberForTrend(trend,type,gameHistory,gamesToConsider=50){
         const recentValidGames=gameHistory.filter(item=>typeof item.number!=='undefined'&&item.number!==null).slice(0,gamesToConsider);let candidateNumbers=[];for(let item of recentValidGames){const details=getNumberDetailsOld(item.number);if(type==='bigsmall'&&details.bigSmall===trend){candidateNumbers.push(details.numberVal);}else if(type==='redgreen'&&details.rawColor===trend){candidateNumbers.push(details.numberVal);}}if(candidateNumbers.length===0){const allN=[0,1,2,3,4,5,6,7,8,9];const fC=allN.filter(n=>{const d=getNumberDetailsOld(n);return(type==='bigsmall'&&d.bigSmall===trend)||(type==='redgreen'&&d.rawColor===trend);});if(fC.length>0)return fC[Math.floor(Math.random()*fC.length)];return Math.floor(Math.random()*10);}const nC=candidateNumbers.reduce((a,v)=>{a[v]=(a[v]||0)+1;return a;},{});let pN=candidateNumbers[0];let mNC=0;for(let i=candidateNumbers.length-1;i>=0;i--){const num=candidateNumbers[i];if(nC[num]>=mNC){mNC=nC[num];pN=num;}}return pN;}
+
+    // <<<--- START: UPDATED intelligentPredictionEngine ---<<<
     async function intelligentPredictionEngine(gameHistoryCache) {
         const gamesToAnalyze = CLONE_HISTORY_SIZE;
-        let predictedBS = '?'; let predictedRawColor = 'Unknown'; let predictedNumber = Math.floor(Math.random() * 10); let reversalChance = 15 + Math.random() * 10; let probability = 30 + Math.random() * 10; let determinedPredictionType = 'bigsmall'; currentStrategyLevel = "Auto (Stable)";
+        let predictedBS = '?'; let predictedRawColor = 'Unknown'; let predictedNumber = Math.floor(Math.random() * 10);
+        let reversalChance = 15 + Math.random() * 10; let probability = 30 + Math.random() * 10;
+        let determinedPredictionType = 'bigsmall'; currentStrategyLevel = "Auto (Stable)";
+
         if (!gameHistoryCache || gameHistoryCache.length < 5) {
-            const rD = getNumberDetailsOld(predictedNumber); currentStrategyLevel = "LowData"; return { predictedBS: rD.bigSmall, predictedRawColor: rD.rawColor, predictedNumber: predictedNumber, reversalChance: reversalChance, probability: probability, message: currentStrategyLevel, determinedPredictionType: determinedPredictionType };
+            const rD = getNumberDetailsOld(predictedNumber); currentStrategyLevel = "LowData";
+            return { predictedBS: rD.bigSmall, predictedRawColor: rD.rawColor, predictedNumber: predictedNumber, reversalChance: reversalChance, probability: probability, message: currentStrategyLevel, determinedPredictionType: determinedPredictionType };
         }
+
+        // --- NEW L2 Reverse Engine Logic ---
+        if (consecutiveLosses === 2 && gameHistoryCache.length >= 10) {
+            currentStrategyLevel = "L2 Reverse Engine";
+            const last10Games = gameHistoryCache.slice(0, 10);
+            const bsA10 = analyzeForTypeInternal('bigsmall', last10Games, 10);
+            const rgA10 = analyzeForTypeInternal('redgreen', last10Games, 10);
+
+            let strongTrend = null; let trendType = null;
+            const isBsStrong = bsA10.trend && (bsA10.streak >= 3 || bsA10.probability >= 70);
+            const isRgStrong = rgA10.trend && (rgA10.streak >= 3 || rgA10.probability >= 70);
+
+            if (isBsStrong && (!isRgStrong || bsA10.probability > rgA10.probability)) {
+                strongTrend = bsA10.trend; trendType = 'bigsmall'; probability = bsA10.probability;
+            } else if (isRgStrong) {
+                strongTrend = rgA10.trend; trendType = 'redgreen'; probability = rgA10.probability;
+            }
+
+            if (strongTrend) {
+                determinedPredictionType = trendType;
+                predictedNumber = predictNumberForTrend(strongTrend, trendType, last10Games, 10);
+                reversalChance = 20 + Math.random() * 15;
+            } else {
+                const last10Numbers = last10Games.map(item => parseInt(item.number, 10)).filter(n => !isNaN(n));
+                if (last10Numbers.length > 0) {
+                    const numCounts = last10Numbers.reduce((a, v) => { a[v] = (a[v] || 0) + 1; return a; }, {});
+                    predictedNumber = parseInt(Object.keys(numCounts).reduce((a, b) => numCounts[a] > numCounts[b] ? a : b));
+                } else { predictedNumber = Math.floor(Math.random() * 10); }
+                probability = 40 + Math.random() * 10;
+                reversalChance = 40 + Math.random() * 15;
+                determinedPredictionType = Math.random() < 0.5 ? 'bigsmall' : 'redgreen';
+            }
+            const numberDetails = getNumberDetailsOld(predictedNumber);
+            predictedBS = numberDetails.bigSmall;
+            predictedRawColor = numberDetails.rawColor;
+            return { predictedBS, predictedRawColor, predictedNumber, reversalChance: parseFloat(reversalChance.toFixed(1)), probability: parseFloat(probability.toFixed(1)), message: currentStrategyLevel, determinedPredictionType };
+        }
+
+        // --- Standard Logic ---
         let bsA = analyzeForTypeInternal('bigsmall', gameHistoryCache, gamesToAnalyze);
         let rgA = analyzeForTypeInternal('redgreen', gameHistoryCache, gamesToAnalyze);
-        let chosenA, primaryTrend; if (bsA.trend && rgA.trend) { if (Math.abs(bsA.probability - rgA.probability) > 10) { chosenA = bsA.probability > rgA.probability ? bsA : rgA; determinedPredictionType = bsA.probability > rgA.probability ? 'bigsmall' : 'redgreen'; } else if (bsA.streak >= 2 && bsA.streak >= rgA.streak) { chosenA = bsA; determinedPredictionType = 'bigsmall'; } else if (rgA.streak >= 2 && rgA.streak > bsA.streak) { chosenA = rgA; determinedPredictionType = 'redgreen'; } else { chosenA = bsA.probability >= rgA.probability ? bsA : rgA; determinedPredictionType = bsA.probability >= rgA.probability ? 'bigsmall' : 'redgreen'; } primaryTrend = chosenA.trend; probability = chosenA.probability; } else if (bsA.trend) { chosenA = bsA; determinedPredictionType = 'bigsmall'; primaryTrend = bsA.trend; probability = bsA.probability; } else if (rgA.trend) { chosenA = rgA; determinedPredictionType = 'redgreen'; primaryTrend = rgA.trend; probability = rgA.probability; } else { determinedPredictionType = Math.random() < 0.5 ? 'bigsmall' : 'redgreen'; primaryTrend = determinedPredictionType === 'bigsmall' ? (Math.random() < 0.5 ? 'Big' : 'Small') : (Math.random() < 0.5 ? 'Red' : 'Green'); probability = 30 + Math.random() * 10; currentStrategyLevel = "WeakSignal"; }
+        let chosenA, primaryTrend;
+        if (bsA.trend && rgA.trend) { if (Math.abs(bsA.probability - rgA.probability) > 10) { chosenA = bsA.probability > rgA.probability ? bsA : rgA; determinedPredictionType = bsA.probability > rgA.probability ? 'bigsmall' : 'redgreen'; } else if (bsA.streak >= 2 && bsA.streak >= rgA.streak) { chosenA = bsA; determinedPredictionType = 'bigsmall'; } else if (rgA.streak >= 2 && rgA.streak > bsA.streak) { chosenA = rgA; determinedPredictionType = 'redgreen'; } else { chosenA = bsA.probability >= rgA.probability ? bsA : rgA; determinedPredictionType = bsA.probability >= rgA.probability ? 'bigsmall' : 'redgreen'; } primaryTrend = chosenA.trend; probability = chosenA.probability; } else if (bsA.trend) { chosenA = bsA; determinedPredictionType = 'bigsmall'; primaryTrend = bsA.trend; probability = bsA.probability; } else if (rgA.trend) { chosenA = rgA; determinedPredictionType = 'redgreen'; primaryTrend = rgA.trend; probability = rgA.probability; } else { determinedPredictionType = Math.random() < 0.5 ? 'bigsmall' : 'redgreen'; primaryTrend = determinedPredictionType === 'bigsmall' ? (Math.random() < 0.5 ? 'Big' : 'Small') : (Math.random() < 0.5 ? 'Red' : 'Green'); probability = 30 + Math.random() * 10; currentStrategyLevel = "WeakSignal"; }
+
         predictedNumber = predictNumberForTrend(primaryTrend, determinedPredictionType, gameHistoryCache, gamesToAnalyze);
-        const numberDetails = getNumberDetailsOld(predictedNumber);
+        let numberDetails = getNumberDetailsOld(predictedNumber);
         predictedBS = numberDetails.bigSmall; predictedRawColor = numberDetails.rawColor;
-        if (determinedPredictionType === 'bigsmall' && numberDetails.bigSmall !== primaryTrend) { predictedBS = primaryTrend; const fittingNumber = [0,1,2,3,4,5,6,7,8,9].find(n => getNumberDetailsOld(n).bigSmall === predictedBS) ?? predictedNumber; predictedNumber = fittingNumber; predictedRawColor = getNumberDetailsOld(fittingNumber).rawColor; } else if (determinedPredictionType === 'redgreen' && numberDetails.rawColor !== primaryTrend && !(numberDetails.isViolet && (primaryTrend === 'Red' || primaryTrend === 'Green'))) { predictedRawColor = primaryTrend; const fittingNumber = [0,1,2,3,4,5,6,7,8,9].find(n => getNumberDetailsOld(n).rawColor === predictedRawColor && !getNumberDetailsOld(n).isViolet) ?? [0,1,2,3,4,5,6,7,8,9].find(n => getNumberDetailsOld(n).rawColor === predictedRawColor) ?? predictedNumber; predictedNumber = fittingNumber; predictedBS = getNumberDetailsOld(fittingNumber).bigSmall; }
-        if (consecutiveLosses > 0) { currentStrategyLevel = `Martingale L${consecutiveLosses}`; if (determinedPredictionType === 'bigsmall') { predictedBS = primaryTrend === 'Big' ? 'Small' : 'Big'; } else { predictedRawColor = primaryTrend === 'Red' ? 'Green' : 'Red'; } let reversedTrendValue = determinedPredictionType === 'bigsmall' ? predictedBS : predictedRawColor; predictedNumber = predictNumberForTrend(reversedTrendValue, determinedPredictionType, gameHistoryCache, gamesToAnalyze); const reversedNumberDetails = getNumberDetailsOld(predictedNumber); if(determinedPredictionType === 'bigsmall') predictedRawColor = reversedNumberDetails.rawColor; else predictedBS = reversedNumberDetails.bigSmall; probability = Math.min(90, (chosenA?.probability || probability) * 0.55 + (20 + consecutiveLosses * 6)); reversalChance = Math.min(95, 65 + consecutiveLosses * 8); } else if (consecutiveWins > 0) { currentStrategyLevel = `Anti-Martingale L${consecutiveWins}`; const currentTrendDetails = analyzeForTypeInternal(determinedPredictionType, gameHistoryCache, gamesToAnalyze); if (currentTrendDetails.trend === primaryTrend) { if (currentTrendDetails.streak >= 3) { reversalChance = Math.min(85, 55 + (currentTrendDetails.streak - 2) * 7); } else if (currentTrendDetails.streak === 2) { reversalChance = Math.min(85, 35 + Math.random() * 10); } else { reversalChance = 15 + Math.random() * 10; } } else { reversalChance = 10 + Math.random() * 10; } } else { const currentTrendDetails = analyzeForTypeInternal(determinedPredictionType, gameHistoryCache, gamesToAnalyze); if (currentTrendDetails.trend === primaryTrend && currentTrendDetails.streak >= 1) { currentStrategyLevel = `Streak ${currentTrendDetails.streak} (${primaryTrend})`; if (currentTrendDetails.streak >= 3) { reversalChance = Math.min(85, 50 + (currentTrendDetails.streak - 2) * 7); } else if (currentTrendDetails.streak === 2) { reversalChance = Math.min(85, 30 + Math.random() * 10); } else { reversalChance = 15 + Math.random()*10; } } else { currentStrategyLevel = "Auto (Stable)"; reversalChance = 10 + Math.random() * 15; } }
+
+        if (determinedPredictionType === 'bigsmall' && numberDetails.bigSmall !== primaryTrend) { predictedBS = primaryTrend; const fittingNumber = [0,1,2,3,4,5,6,7,8,9].find(n => getNumberDetailsOld(n).bigSmall === predictedBS) ?? predictedNumber; predictedNumber = fittingNumber; predictedRawColor = getNumberDetailsOld(fittingNumber).rawColor; }
+        else if (determinedPredictionType === 'redgreen' && numberDetails.rawColor !== primaryTrend && !(numberDetails.isViolet && (primaryTrend === 'Red' || primaryTrend === 'Green'))) { predictedRawColor = primaryTrend; const fittingNumber = [0,1,2,3,4,5,6,7,8,9].find(n => getNumberDetailsOld(n).rawColor === predictedRawColor && !getNumberDetailsOld(n).isViolet) ?? [0,1,2,3,4,5,6,7,8,9].find(n => getNumberDetailsOld(n).rawColor === predictedRawColor) ?? predictedNumber; predictedNumber = fittingNumber; predictedBS = getNumberDetailsOld(fittingNumber).bigSmall; }
+
+        numberDetails = getNumberDetailsOld(predictedNumber); // Recalculate after potential changes
+
+        // --- Martingale/Anti-Martingale (Skip L2) ---
+        if (consecutiveLosses > 0 && consecutiveLosses !== 2) {
+            currentStrategyLevel = `Martingale L${consecutiveLosses}`;
+            if (determinedPredictionType === 'bigsmall') { predictedBS = primaryTrend === 'Big' ? 'Small' : 'Big'; }
+            else { predictedRawColor = primaryTrend === 'Red' ? 'Green' : 'Red'; }
+            let reversedTrendValue = determinedPredictionType === 'bigsmall' ? predictedBS : predictedRawColor;
+            predictedNumber = predictNumberForTrend(reversedTrendValue, determinedPredictionType, gameHistoryCache, gamesToAnalyze);
+            const reversedNumberDetails = getNumberDetailsOld(predictedNumber);
+            if(determinedPredictionType === 'bigsmall') predictedRawColor = reversedNumberDetails.rawColor;
+            else predictedBS = reversedNumberDetails.bigSmall;
+            probability = Math.min(90, (chosenA?.probability || probability) * 0.55 + (20 + consecutiveLosses * 6));
+            reversalChance = Math.min(95, 65 + consecutiveLosses * 8);
+        } else if (consecutiveWins > 0) {
+            currentStrategyLevel = `Anti-Martingale L${consecutiveWins}`;
+            const currentTrendDetails = analyzeForTypeInternal(determinedPredictionType, gameHistoryCache, gamesToAnalyze);
+            if (currentTrendDetails.trend === primaryTrend) { if (currentTrendDetails.streak >= 3) { reversalChance = Math.min(85, 55 + (currentTrendDetails.streak - 2) * 7); } else if (currentTrendDetails.streak === 2) { reversalChance = Math.min(85, 35 + Math.random() * 10); } else { reversalChance = 15 + Math.random() * 10; } }
+            else { reversalChance = 10 + Math.random() * 10; }
+        } else if (consecutiveLosses !== 2) { // Only run if not L2
+            const currentTrendDetails = analyzeForTypeInternal(determinedPredictionType, gameHistoryCache, gamesToAnalyze);
+            if (currentTrendDetails.trend === primaryTrend && currentTrendDetails.streak >= 1) { currentStrategyLevel = `Streak ${currentTrendDetails.streak} (${primaryTrend})`; if (currentTrendDetails.streak >= 3) { reversalChance = Math.min(85, 50 + (currentTrendDetails.streak - 2) * 7); } else if (currentTrendDetails.streak === 2) { reversalChance = Math.min(85, 30 + Math.random() * 10); } else { reversalChance = 15 + Math.random() * 10; } }
+            else { currentStrategyLevel = "Auto (Stable)"; reversalChance = 10 + Math.random() * 15; }
+        }
         return { predictedBS, predictedRawColor, predictedNumber, reversalChance: parseFloat(reversalChance.toFixed(1)), probability: parseFloat(probability.toFixed(1)), message: currentStrategyLevel, determinedPredictionType };
     }
+    // <<<--- END: UPDATED intelligentPredictionEngine ---<<<
+
 
     function updateSessionStatsBar(){
         const e=id=>document.getElementById(id);
@@ -688,12 +762,11 @@
             let displayLevel = currentStrategyLevel;
             const martingaleMatch = currentStrategyLevel.match(/Martingale L(\d+)/i);
             const antiMartingaleMatch = currentStrategyLevel.match(/Anti-Martingale L(\d+)/i);
+            const l2Match = currentStrategyLevel.match(/L2 Reverse Engine/i);
 
-            if (martingaleMatch) {
-                displayLevel = `Lv${martingaleMatch[1]}`;
-            } else if (antiMartingaleMatch) {
-                displayLevel = `Lv${antiMartingaleMatch[1]}`;
-            }
+            if (martingaleMatch) { displayLevel = `Lv${martingaleMatch[1]}`; }
+            else if (antiMartingaleMatch) { displayLevel = `Lv${antiMartingaleMatch[1]}`; }
+            else if (l2Match) { displayLevel = 'L2 Rev'; }
             statsLevelEl.textContent = displayLevel;
         }
     }
@@ -727,6 +800,7 @@
         }catch(e){ console.error("Generate Prediction Err:",e); if(cr)cr.innerHTML='<i class="fas fa-exclamation-triangle"></i> AI Err'; showUINotification('AI Prediction Err!','error'); currentPredictionData[period]={period,error:true,message:"AI Gen Fail"}; lastAiReversalChance=0; updateSessionStatsBar(); }
     }
 
+    // <<<--- START: UPDATED finalizeAndRecordResult ---<<<
     async function finalizeAndRecordResult(periodToFinalize){
         const pD = currentPredictionData[periodToFinalize];
         if(!pD || pD.error){ return; }
@@ -743,6 +817,7 @@
         if(gO){
             const aBS = gO.bigSmall;
             const aC = gO.rawColor;
+            const aN = gO.numberVal; // Get Actual Number
             const bsW = pD.predictedBS === aBS;
             let cW = pD.predictedRawColor === aC;
             if((pD.predictedRawColor === 'Red' && aC === 'Red' && gO.isViolet) || (pD.predictedRawColor === 'Green' && aC === 'Green' && gO.isViolet)){
@@ -750,6 +825,8 @@
             } else if((pD.predictedRawColor === 'Red' || pD.predictedRawColor === 'Green') && gO.isViolet){
                 cW = false;
             }
+            const nW = pD.predictedNumber === aN; // Check Number Win
+
             let s;
             if(bsW && cW){ s = "Win"; sessionStats.wins++; consecutiveLosses = 0; consecutiveWins++; }
             else if(!bsW && !cW){ s = "Loss"; sessionStats.losses++; consecutiveWins = 0; consecutiveLosses++; }
@@ -764,9 +841,11 @@
                 predictedColorHTML: pD.predictedColorHTML,
                 predictedNumber: pD.predictedNumber,
                 actualResultDisplay: `<span class="${gO.bsResultClass}">${aBS}</span>, ${gO.colorForHistory}`,
+                actualNumber: aN, // Store Actual Number
                 status: s,
                 bsWin: bsW,
                 colorWin: cW,
+                numberWin: nW, // Store Number Win
                 resultType: pD.resultType,
                 server: pD.server,
                 probability: pD.probability
@@ -782,6 +861,8 @@
                 status: 'Error',
                 bsWin: false,
                 colorWin: false,
+                numberWin: false, // Add false
+                actualNumber: null, // Add null
                 resultType: pD.resultType,
                 server: pD.server,
                 probability: pD.probability
@@ -799,6 +880,7 @@
         if(window.currentDataTab === 'my_predictions_old') fetchData(myPredCurrentPage, 'my_predictions_old', true);
         updateJarvisDisplay();
     }
+    // <<<--- END: UPDATED finalizeAndRecordResult ---<<<
 
     function updatePeriodAndTimerOld(){
         if(!currentUserRole)return;
@@ -863,23 +945,42 @@
 
     function updateJarvisDisplay() { const jarvisOutputEl = document.getElementById('jarvisOutput'); if (jarvisOutputEl) { jarvisOutputEl.innerHTML = analyzeJarvisStats(oldScriptMyHistory); } }
 
+    // <<<--- START: UPDATED fetchData FUNCTION (with Number Win Display) ---<<<
     async function fetchData(page, tab = 'game', forceRender = false) {
+        activeFetchId++; // Increment for each new call
+        const currentFetchId = activeFetchId; // Capture the ID for this call
+
         const cnt = document.getElementById('historyContent');
         const targetButtonId = tab + 'TabBtn';
 
-        const isSameTabAndPage = window.currentDataTab === tab && ((tab !== 'my_predictions_old' && window.currentPageForTab === page) || (tab === 'my_predictions_old' && myPredCurrentPage === page) );
+        const isSameTabAndPage = window.currentDataTab === tab &&
+                                 ((tab !== 'my_predictions_old' && window.currentPageForTab === page) ||
+                                  (tab === 'my_predictions_old' && myPredCurrentPage === page));
+
         if (!forceRender && isSameTabAndPage && cnt && cnt.innerHTML !== '' && !cnt.innerHTML.includes('Loading ')) {
-             document.querySelectorAll('.tabs button').forEach(button => {
-                 button.classList.toggle('active', button.id === targetButtonId);
-             });
-             return;
+            document.querySelectorAll('.tabs button').forEach(button => {
+                button.classList.remove('active');
+                if (button.id === targetButtonId) {
+                    button.classList.add('active');
+                }
+            });
+            const mpc = document.getElementById('myPredictionsControls');
+            const pgn = document.getElementById('historyPagination');
+            if(mpc) mpc.style.display = (tab === 'my_predictions_old') ? 'flex' : 'none';
+            if(pgn) {
+                if (tab === 'my_predictions_old' && oldScriptMyHistory.length > 0 && Math.ceil(oldScriptMyHistory.length / myHistoryItemsPerPageOld) > 1) {
+                    pgn.style.display = 'flex';
+                    updateMyHistoryPagination();
+                } else {
+                    pgn.style.display = 'none';
+                }
+            }
+            return;
         }
 
-        if (tab !== 'my_predictions_old') { window.currentPageForTab = page; } else { myPredCurrentPage = page; }
+        if (tab !== 'my_predictions_old') { window.currentPageForTab = page; }
+        else { myPredCurrentPage = page; }
         window.currentDataTab = tab;
-
-        if(!currentUserRole){ if(cnt) cnt.innerHTML='<p style="text-align:center;padding:1rem;color:var(--warning);">Login to view.</p>'; return; }
-        if(cnt) cnt.innerHTML=`<div style="text-align:center;padding:15px;font-size:0.9rem;">Loading ${tab.replace('_old','').replace('_', ' ').replace('deep history', 'Deep History')}...</div>`;
 
         document.querySelectorAll('.tabs button').forEach(button => {
             button.classList.remove('active');
@@ -888,94 +989,110 @@
             }
         });
 
-        const gh=document.getElementById('gameHistoryHeader'); const moh=document.getElementById('myPredictionsHeaderOld'); const mpc=document.getElementById('myPredictionsControls'); const pgn=document.getElementById('historyPagination');
-        if(gh)gh.style.display='none'; if(moh)moh.style.display='none'; if(mpc)mpc.style.display=(tab==='my_predictions_old')?'flex':'none'; if(pgn)pgn.style.display='none';
+        if (cnt) cnt.innerHTML = `<div style="text-align:center;padding:15px;font-size:0.9rem;">Loading ${tab.replace('_old','').replace('_', ' ').replace('deep history', 'Deep History')}...</div>`;
 
-        const cas=document.getElementById('apiStatusOld')?.textContent||''; if(!cas.includes('Err')&&!cas.includes('Offline')&&cas!=='Connecting...'){ fetchPageOld(1).catch(e=>console.warn("Tab API check fail during fetchData")); }
+        const gh = document.getElementById('gameHistoryHeader');
+        const moh = document.getElementById('myPredictionsHeaderOld');
+        const mpc = document.getElementById('myPredictionsControls');
+        const pgn = document.getElementById('historyPagination');
 
-        if(tab==='game'){ if(gh)gh.style.display='grid'; try{const l=await fetchOptimizedDataOld(1);cnt.innerHTML='';if(l&&l.length>0){l.slice(0, 50).forEach(i=>{const dt=getNumberDetailsOld(i.number);const dv=document.createElement('div');dv.className='history-item game-result-item';dv.innerHTML=`<div class="history-value">${i.issueNumber||'?'}</div><div class="history-value ${dt.numberClass}">${dt.numberVal}</div><div class="history-value ${dt.bsClass}">${dt.bigSmall}</div><div class="history-value gh-color">${dt.colorForHistory}</div>`;cnt.appendChild(dv);});}else cnt.innerHTML='<div style="text-align:center;padding:15px;">No game history or API error.</div>';}catch(e){console.error("Game Hist Err:",e);cnt.innerHTML='<div style="text-align:center;padding:15px;">Error loading game history.</div>';} }
-        else if(tab==='deep_history'){
-            if(gh)gh.style.display='grid';
-            try{
-                if (cloneGameHistory.length < CLONE_HISTORY_SIZE && cloneGameHistory.length < 20) {
-                     await fetchOptimizedDataOld(5);
-                } else if (cloneGameHistory.length === 0) {
-                     await fetchOptimizedDataOld(5);
-                }
-                const l = cloneGameHistory;
-                cnt.innerHTML = '';
+        if (gh) gh.style.display = 'none';
+        if (moh) moh.style.display = 'none';
+        if (mpc) mpc.style.display = (tab === 'my_predictions_old') ? 'flex' : 'none';
+        if (pgn) pgn.style.display = 'none';
+
+        const cas = document.getElementById('apiStatusOld')?.textContent || '';
+        if (!cas.includes('Err') && !cas.includes('Offline') && cas !== 'Connecting...') {
+            fetchPageOld(1).catch(e => console.warn("Tab API check fail during fetchData", e));
+        }
+
+        try {
+            if (tab === 'game') {
+                if (gh) gh.style.display = 'grid';
+                const l = await fetchOptimizedDataOld(1);
+                if (currentFetchId !== activeFetchId) return;
+                if (cnt) cnt.innerHTML = '';
+                if (l && l.length > 0) {
+                    l.slice(0, 50).forEach(i => {
+                        const dt = getNumberDetailsOld(i.number); const dv = document.createElement('div'); dv.className = 'history-item game-result-item'; dv.innerHTML = `<div class="history-value">${i.issueNumber || '?'}</div><div class="history-value ${dt.numberClass}">${dt.numberVal}</div><div class="history-value ${dt.bsClass}">${dt.bigSmall}</div><div class="history-value gh-color">${dt.colorForHistory}</div>`; if (cnt) cnt.appendChild(dv);
+                    });
+                } else { if (cnt) cnt.innerHTML = '<div style="text-align:center;padding:15px;">No game history or API error.</div>'; }
+            } else if (tab === 'deep_history') {
+                if (gh) gh.style.display = 'grid';
+                let l = cloneGameHistory;
+                if (l.length < CLONE_HISTORY_SIZE && l.length < 20) { await fetchOptimizedDataOld(5); l = cloneGameHistory; }
+                else if (l.length === 0) { await fetchOptimizedDataOld(5); l = cloneGameHistory; }
+                if (currentFetchId !== activeFetchId) return;
+                if (cnt) cnt.innerHTML = '';
                 if (l && l.length > 0) {
                     l.forEach(i => {
-                        const dt = getNumberDetailsOld(i.number);
-                        const dv = document.createElement('div');
-                        dv.className = 'history-item game-result-item';
-                        dv.innerHTML = `<div class="history-value">${i.issueNumber || '?'}</div><div class="history-value ${dt.numberClass}">${dt.numberVal}</div><div class="history-value ${dt.bsClass}">${dt.bigSmall}</div><div class="history-value gh-color">${dt.colorForHistory}</div>`;
-                        cnt.appendChild(dv);
+                        const dt = getNumberDetailsOld(i.number); const dv = document.createElement('div'); dv.className = 'history-item game-result-item'; dv.innerHTML = `<div class="history-value">${i.issueNumber || '?'}</div><div class="history-value ${dt.numberClass}">${dt.numberVal}</div><div class="history-value ${dt.bsClass}">${dt.bigSmall}</div><div class="history-value gh-color">${dt.colorForHistory}</div>`; if (cnt) cnt.appendChild(dv);
                     });
-                } else {
-                    cnt.innerHTML = '<div style="text-align:center;padding:15px;">Deep history is empty or API error.</div>';
-                }
-            } catch(e) {
-                console.error("Deep History Err:", e);
-                cnt.innerHTML = '<div style="text-align:center;padding:15px;">Error loading deep history.</div>';
-            }
-        }
-        else if(tab==='my_predictions_old'){
-            if(moh) {
-                moh.style.display='grid';
-                moh.style.gridTemplateColumns = '1.6fr 0.7fr 0.9fr 1.1fr 0.7fr';
-            }
-            try{
-                let cp=oldScriptMyHistory.filter(p=>p.status==="Pending").map(p=>finalizeAndRecordResult(p.period));
+                } else { if (cnt) cnt.innerHTML = '<div style="text-align:center;padding:15px;">Deep history is empty or API error.</div>'; }
+            } else if (tab === 'my_predictions_old') {
+                if (moh) { moh.style.display = 'grid'; moh.style.gridTemplateColumns = '1.6fr 0.7fr 0.9fr 1.1fr 0.7fr'; }
+                let cp = oldScriptMyHistory.filter(p => p.status === "Pending").map(p => finalizeAndRecordResult(p.period));
                 await Promise.all(cp);
-                cnt.innerHTML='';
-                if(oldScriptMyHistory.length===0){
-                    cnt.innerHTML='<div style="text-align:center;padding:15px;">No predictions recorded.</div>';
-                    updateMyHistoryPagination();
-                    return;
+                if (currentFetchId !== activeFetchId) return;
+
+                if (cnt) cnt.innerHTML = '';
+                if (oldScriptMyHistory.length === 0) {
+                    if (cnt) cnt.innerHTML = '<div style="text-align:center;padding:15px;">No predictions recorded.</div>';
+                    updateMyHistoryPagination(); return;
                 }
-                const si=(myPredCurrentPage-1)*myHistoryItemsPerPageOld;
-                const ei=si+myHistoryItemsPerPageOld;
-                const ph=oldScriptMyHistory.slice(si,ei);
-                ph.forEach(i=>{
-                    const dv=document.createElement('div');
-                    let rC='history-item my-prediction-item-old';
-                    if(i.status==='Win')rC+=' row-win';
-                    else if(i.status==='Loss')rC+=' row-loss';
-                    else if(i.status==='Partial')rC+=' row-partial';
-                    else if(i.status==='Error')rC+=' row-error';
-                    dv.className=rC;
-
-                    const bst=i.status!=='Error'&&i.status!=='Pending'&&typeof i.bsWin!=='undefined'?(i.bsWin?'<span class="tick-mark">✅</span>':'<span class="cross-mark">❌</span>'):'';
-                    const cot=i.status!=='Error'&&i.status!=='Pending'&&typeof i.colorWin!=='undefined'?(i.colorWin?'<span class="tick-mark">✅</span>':'<span class="cross-mark">❌</span>'):'';
-
-                    const predNumDisplay = i.predictedNumber !== undefined ? i.predictedNumber : '?';
-                    const pbsd = `${i.predictedBS||'?'}${bst}`;
-                    const pcod = `${i.predictedColorHTML||'?'}${cot}`;
-                    const sd = i.status||'?';
-
-                    dv.innerHTML=`<div class="history-value period-value" title="${i.period}">${i.period}</div>
-                                  <div class="history-value predicted-num-value" style="color: var(--violet-accent); font-weight: bold;">${predNumDisplay}</div>
-                                  <div class="history-value predicted-bs-value">${pbsd}</div>
-                                  <div class="history-value predicted-color-value">${pcod}</div>
-                                  <div class="history-value status-${i.status?.toLowerCase()}">${sd}</div>`;
-                    cnt.appendChild(dv);
+                const si = (myPredCurrentPage - 1) * myHistoryItemsPerPageOld;
+                const ei = si + myHistoryItemsPerPageOld;
+                const ph = oldScriptMyHistory.slice(si, ei);
+                ph.forEach(i => {
+                    const dv = document.createElement('div');
+                    let rC = 'history-item my-prediction-item-old';
+                    if (i.status === 'Win') rC += ' row-win'; else if (i.status === 'Loss') rC += ' row-loss'; else if (i.status === 'Partial') rC += ' row-partial'; else if (i.status === 'Error') rC += ' row-error';
+                    dv.className = rC;
+                    const bst = i.status !== 'Error' && i.status !== 'Pending' && typeof i.bsWin !== 'undefined' ? (i.bsWin ? '<span class="tick-mark">✅</span>' : '<span class="cross-mark">❌</span>') : '';
+                    const cot = i.status !== 'Error' && i.status !== 'Pending' && typeof i.colorWin !== 'undefined' ? (i.colorWin ? '<span class="tick-mark">✅</span>' : '<span class="cross-mark">❌</span>') : '';
+                    const nmt = i.status !== 'Error' && i.status !== 'Pending' && typeof i.numberWin !== 'undefined' ? (i.numberWin ? '<span class="tick-mark">✅</span>' : '<span class="cross-mark">❌</span>') : ''; // Number Tick
+                    const predNumDisplay = `${i.predictedNumber !== undefined ? i.predictedNumber : '?'}${nmt}`; // Updated Number Display
+                    const pbsd = `${i.predictedBS || '?'}${bst}`;
+                    const pcod = `${i.predictedColorHTML || '?'}${cot}`;
+                    const sd = i.status || '?';
+                    dv.innerHTML = `<div class="history-value period-value" title="${i.period}">${i.period}</div>
+                                    <div class="history-value predicted-num-value" style="color: var(--violet-accent); font-weight: bold;">${predNumDisplay}</div>
+                                    <div class="history-value predicted-bs-value">${pbsd}</div>
+                                    <div class="history-value predicted-color-value">${pcod}</div>
+                                    <div class="history-value status-${i.status?.toLowerCase()}">${sd}</div>`;
+                    if (cnt) cnt.appendChild(dv);
                 });
                 updateMyHistoryPagination();
-            } catch(er){
-                console.error("My Pred Err:",er);
-                cnt.innerHTML='<div style="text-align:center;padding:15px;">Error loading predictions.</div>';
-                updateMyHistoryPagination();
+            } else if (tab === 'chart') {
+                if (cloneGameHistory.length < 20 && cloneGameHistory.length < CLONE_HISTORY_SIZE) { await fetchOptimizedDataOld(5); }
+                else if (cloneGameHistory.length === 0) { await fetchOptimizedDataOld(5); }
+                const ad = cloneGameHistory;
+                if (currentFetchId !== activeFetchId) return;
+                if (cnt) {
+                    if (ad && ad.length > 0) {
+                        let rC = 0, gC = 0, vC = 0, bC = 0, sC = 0;
+                        const nms = ad.map(i => parseInt(i.number, 10)).filter(n => !isNaN(n));
+                        nms.forEach(num => { const d = getNumberDetailsOld(num); if (d.isViolet) vC++; if (d.rawColor === 'Red') rC++; if (d.rawColor === 'Green') gC++; if (d.bigSmall === 'Big') bC++; else if (d.bigSmall === 'Small') sC++; });
+                        const tC = nms.length; const fP = c => tC ? ((c / tC) * 100).toFixed(1) : 0; const sae = document.getElementById('statsAccuracy');
+                        cnt.innerHTML = `<h4 class="analytics-title">Trends (Last ${tC} Games)</h4><div class="analytics-grid"><div>Outcome</div><div>Count</div><div>Percent</div><div><span class="color-dot color-red"></span> Red</div><div>${rC}</div><div>${fP(rC)}%</div><div><span class="color-dot color-green"></span> Green</div><div>${gC}</div><div>${fP(gC)}%</div><div><span class="color-dot color-violet"></span> Violet</div><div>${vC}</div><div>${fP(vC)}%</div><div style="grid-column:1/-1;height:10px;"></div><div><span class="size-b">B</span> Big</div><div>${bC}</div><div>${fP(bC)}%</div><div><span class="size-s">S</span> Small</div><div>${sC}</div><div>${fP(sC)}%</div></div><hr style="border-color:var(--current-border-color);margin:15px 0;"><div class="analytics-footer">Session Acc: <span id="sessionAccuracyDisplayAnalytics">${sae ? sae.textContent : 'N/A'}</span></div>`;
+                    } else { cnt.innerHTML = '<div style="text-align:center;padding:15px;">Not enough data for analytics.</div>'; }
+                }
+            } else if (tab === 'admin_dashboard') {
+                if (currentFetchId !== activeFetchId) return;
+                if (currentUserRole === 'admin') { renderAdminDashboard(); }
+                else { if (cnt) cnt.innerHTML = '<div class="no-data" style="color:var(--danger);text-align:center;padding:15px;">Access Denied.</div>'; }
+            } else {
+                if (currentFetchId !== activeFetchId) return;
+                if (cnt) cnt.innerHTML = `<div style="text-align:center;padding:15px;color:var(--danger);">Error: Unknown tab '${tab}'.</div>`;
+            }
+        } catch (error) {
+            console.error(`Error fetching data for tab ${tab}:`, error);
+            if (currentFetchId === activeFetchId && cnt) {
+                cnt.innerHTML = `<div style="text-align:center;padding:15px;color:var(--danger);">Error loading content for ${tab}.</div>`;
             }
         }
-        else if(tab==='chart'){ try{
-            if(cloneGameHistory.length < 20 && cloneGameHistory.length < CLONE_HISTORY_SIZE) { await fetchOptimizedDataOld(5); }
-             else if (cloneGameHistory.length === 0) { await fetchOptimizedDataOld(5);}
-            const ad = cloneGameHistory;
-            if(ad&&ad.length>0){let rC=0,gC=0,vC=0,bC=0,sC=0;const nms=ad.map(i=>parseInt(i.number,10)).filter(n=>!isNaN(n));nms.forEach(num=>{const d=getNumberDetailsOld(num);if(d.isViolet)vC++;if(d.rawColor==='Red')rC++;if(d.rawColor==='Green')gC++;if(d.bigSmall==='Big')bC++;else if(d.bigSmall==='Small')sC++;});const tC=nms.length;const fP=c=>tC?((c/tC)*100).toFixed(1):0;const sae=document.getElementById('statsAccuracy');cnt.innerHTML=`<h4 class="analytics-title">Trends (Last ${tC} Games)</h4><div class="analytics-grid"><div>Outcome</div><div>Count</div><div>Percent</div><div><span class="color-dot color-red"></span> Red</div><div>${rC}</div><div>${fP(rC)}%</div><div><span class="color-dot color-green"></span> Green</div><div>${gC}</div><div>${fP(gC)}%</div><div><span class="color-dot color-violet"></span> Violet</div><div>${vC}</div><div>${fP(vC)}%</div><div style="grid-column:1/-1;height:10px;"></div><div><span class="size-b">B</span> Big</div><div>${bC}</div><div>${fP(bC)}%</div><div><span class="size-s">S</span> Small</div><div>${sC}</div><div>${fP(sC)}%</div></div><hr style="border-color:var(--current-border-color);margin:15px 0;"><div class="analytics-footer">Session Acc: <span id="sessionAccuracyDisplayAnalytics">${sae?sae.textContent:'N/A'}</span></div>`;}else{cnt.innerHTML='<div style="text-align:center;padding:15px;">Not enough data for analytics.</div>';}}catch(e){console.error("Analytics Err:",e);cnt.innerHTML='<div style="text-align:center;padding:15px;">Error loading analytics.</div>';} }
-        else if(tab==='admin_dashboard'){ if(currentUserRole==='admin'){renderAdminDashboard();}else{cnt.innerHTML='<div class="no-data" style="color:var(--danger);text-align:center;padding:15px;">Access Denied.</div>';} }
-        else { if(cnt) cnt.innerHTML = `<div style="text-align:center;padding:15px;color:var(--danger);">Error: Unknown tab '${tab}'.</div>`; }
     }
+    // <<<--- END: UPDATED fetchData FUNCTION ---<<<
 
     function showUINotification(message, type='info', duration=2500){const nid='uiSimpleNotification';let ne=document.getElementById(nid);if(!ne){ne=document.createElement('div');ne.id=nid;document.body.appendChild(ne);}ne.textContent=message;let bgc='var(--info)';if(type==='success')bgc='var(--success)';else if(type==='error')bgc='var(--danger)';else if(type==='warning')bgc='var(--warning)';ne.style.cssText=`position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100%);padding:8px 15px;font-size:0.8rem;border-radius:var(--button-border-radius);box-shadow:var(--shadow);z-index:2500;opacity:0;transition:opacity 0.3s ease,transform 0.3s ease;background-color:${bgc};color:#fff;text-align:center;`;requestAnimationFrame(()=>{ne.style.opacity='1';ne.style.transform='translateX(-50%) translateY(0)';});setTimeout(()=>{ne.style.opacity='0';ne.style.transform='translateX(-50%) translateY(100%)';},duration);}
 
