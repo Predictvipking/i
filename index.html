@@ -49,20 +49,20 @@
             --shadow: '0 5px 18px rgba(0, 0, 0, 0.8)';
             --tick-color: var(--success);
             --cross-color: var(--danger);
-            --body-bg-gradient-start: '#1A1A1A';
+            --body-bg-gradient-start': '#1A1A1A';
             --body-bg-gradient-end': '#101010';
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', Arial, sans-serif; } /* Added Arial for better fallback */
         body {
             color: var(--text-primary);
-            min-height: 100vh; overflow-x: hidden; font-size: 14px; line-height: 1.4;
+            min-height: 100vh; overflow-x: hidden; font-size: 15px; line-height: 1.5; /* Adjusted base font size and line height */
             transition: background-color 0.3s, color 0.3s;
             background: linear-gradient(180deg, var(--body-bg-gradient-start) 0%, var(--body-bg-gradient-end) 100%);
         }
         .container { max-width: 1080px; width: 100%; margin: 0 auto; padding: 4px; }
         header { text-align: center; margin-bottom: 0.4rem; position: relative; padding: 0.4rem; background-color: var(--bg-card); border-radius: 5px; box-shadow: var(--shadow); border: 1px solid var(--border-color); }
-        h1 { font-size: 1.75rem; margin-bottom: 0.1rem; color: var(--primary); font-weight: 700; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
-        .app-logo { max-width: 50px; max-height: 50px; vertical-align: middle; margin-right: 10px; /* Adjust as needed */ }
+        h1 { font-size: 1.8rem; /* Slightly increased from 1.75rem */ margin-bottom: 0.1rem; color: var(--primary); font-weight: 700; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
+        .app-logo { max-width: 50px; max-height: 50px; vertical-align: middle; margin-right: 10px; }
         .header-title-container { display: flex; align-items: center; justify-content: center; }
         .header-subtitle-container { display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.05rem; font-weight: 400; flex-wrap: wrap; }
         .header-action-icon { color: var(--text-secondary); text-decoration: none; font-size: 1em; cursor: pointer; transition: color 0.3s ease, transform 0.2s ease; padding: 0 3px; }
@@ -86,15 +86,15 @@
         .info-modal-content h3, .gemini-modal-content h3 {
             color: var(--primary); margin-top: 0; margin-bottom: 10px;
             border-bottom: 1px solid var(--border-color); padding-bottom: 6px;
-            font-size: 1rem; font-weight: 600;
+            font-size: 1.1rem; /* Increased from 1rem */ font-weight: 600;
             display: flex; align-items: center; gap: 8px;
         }
-        .info-modal-content p { margin-bottom: 4px; line-height: 1.25; font-size: 0.72rem;}
+        .info-modal-content p { margin-bottom: 4px; line-height: 1.4; /* Increased from 1.25 */ font-size: 0.9rem; /* Increased from 0.72rem */}
         .info-modal-content ul { list-style-position: inside; padding-left: 0; margin-bottom: 4px;}
-        .info-modal-content li { margin-bottom: 2.5px; font-size: 0.72rem;}
+        .info-modal-content li { margin-bottom: 2.5px; font-size: 0.9rem; /* Increased from 0.72rem */ line-height: 1.4;}
         .info-modal-content .disclaimer-icon { color: var(--warning); }
         .info-modal-content .disclaimer-text { font-weight: bold; }
-        .info-modal-content .contact-item { margin-bottom: 5px; font-size: 0.75rem; }
+        .info-modal-content .contact-item { margin-bottom: 5px; font-size: 0.9rem; /* Increased from 0.75rem */ }
         .info-modal-content .contact-item strong { color: var(--secondary); }
 
         .info-modal-close-button, .gemini-modal-close-button {
@@ -105,7 +105,7 @@
         .info-modal-close-button:hover, .gemini-modal-close-button:hover { color: var(--primary); }
 
         #geminiAnalysisText {
-            font-size: 0.85rem; line-height: 1.5;
+            font-size: 0.9rem; /* Increased from 0.85rem */ line-height: 1.5;
             max-height: 60vh; overflow-y: auto;
             padding: 10px; margin-bottom: 10px;
             background-color: var(--bg-main);
@@ -124,8 +124,8 @@
         .top-info-line::-webkit-scrollbar { height: 2.5px; }
         .top-info-line::-webkit-scrollbar-track { background: var(--bg-header-footer); }
         .top-info-line::-webkit-scrollbar-thumb { background-color: var(--primary); border-radius: 1.5px;}
-        .top-info-item { display: flex; align-items: center; justify-content: center; gap: 0.2rem; font-size: 0.8rem; color: var(--text-primary); white-space: nowrap; flex-grow: 1; flex-basis: 0; text-align: center; }
-        .top-info-item .value { font-weight: 600; color: var(--text-primary); padding-left: 0.1em; font-size:0.85rem; }
+        .top-info-item { display: flex; align-items: center; justify-content: center; gap: 0.2rem; font-size: 0.85rem; /* Increased from 0.8rem */ color: var(--text-primary); white-space: nowrap; flex-grow: 1; flex-basis: 0; text-align: center; }
+        .top-info-item .value { font-weight: 600; color: var(--text-primary); padding-left: 0.1em; font-size:0.9rem; /* Increased from 0.85rem */ }
         .top-info-item i { color: var(--primary); font-size: 0.9rem; margin-right: 0.1em; }
         .top-info-item#periodInfoItem { min-width: 130px; flex-shrink: 0;}
         .top-info-item:not(#periodInfoItem) { min-width: 60px; }
@@ -133,18 +133,18 @@
         #apiStatus.status-offline { color: var(--danger); font-weight: 600; }
         .card { margin-bottom: 3px; padding: 6px; background-color: var(--bg-card); border-radius: 6px; box-shadow: var(--shadow); border: 1px solid var(--border-color); }
         .prediction-card { margin-bottom: 3px; }
-        .card-title { font-size: 0.95rem; margin: -6px -6px 4px -6px; padding: 6px 8px; color: var(--primary); display: flex; align-items: center; justify-content: space-between; gap: 4px; font-weight: 600; border-bottom: 1px solid var(--border-color); border-radius: 6px 6px 0 0; background-color: var(--bg-header-footer); }
+        .card-title { font-size: 1rem; /* Increased from 0.95rem */ margin: -6px -6px 4px -6px; padding: 6px 8px; color: var(--primary); display: flex; align-items: center; justify-content: space-between; gap: 4px; font-weight: 600; border-bottom: 1px solid var(--border-color); border-radius: 6px 6px 0 0; background-color: var(--bg-header-footer); }
         .card-title > div { display: flex; align-items: center; gap: 4px; }
         .card-title i { font-size: 1rem; margin-right: 2.5px; }
         .card-title .header-action-icon { font-size: 0.9em; }
-        .clear-btn { background: var(--danger); color: var(--text-on-accent); border: none; padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 500; transition: background-color 0.2s; }
+        .clear-btn { background: var(--danger); color: var(--text-on-accent); border: none; padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; /* Increased from 0.75rem */ font-weight: 500; transition: background-color 0.2s; }
         .clear-btn i { margin-right: 3px; }
         .clear-btn:hover { background-color: #a00020; }
         body.light-theme .clear-btn:hover { background-color: #C62828; }
 
         .main-interactive-area { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; padding: 0.15rem 0; }
         .output-area { flex-grow: 1; width: 100%; max-width: 100%; min-width: 250px; padding: 0; border: none; }
-        #currentResult { font-size: 0.95rem; line-height: 1.4; text-align: center; white-space: nowrap; overflow-x: auto; overflow-y: hidden; padding: 0.4rem 0.3rem; background-color: var(--bg-card); border-radius: 4px; color: var(--text-primary); border: 1px solid var(--border-color); }
+        #currentResult { font-size: 1rem; /* Increased from 0.95rem */ line-height: 1.4; text-align: center; white-space: nowrap; overflow-x: auto; overflow-y: hidden; padding: 0.4rem 0.3rem; background-color: var(--bg-card); border-radius: 4px; color: var(--text-primary); border: 1px solid var(--border-color); }
         #currentResult::-webkit-scrollbar { height: 2.5px; }
         #currentResult::-webkit-scrollbar-track { background: var(--bg-interactive); }
         #currentResult::-webkit-scrollbar-thumb { background-color: var(--secondary); border-radius: 1.5px; }
@@ -162,7 +162,7 @@
         .gemini-button {
             background-color: var(--info); color: var(--text-on-accent); border: none;
             padding: 3px 8px; border-radius: 4px; cursor: pointer;
-            font-size: 0.7rem; font-weight: 500; transition: background-color 0.2s;
+            font-size: 0.8rem; /* Increased from 0.7rem */ font-weight: 500; transition: background-color 0.2s;
             margin-left: 8px; vertical-align: middle;
         }
         .gemini-button:hover { background-color: #2980B9; }
@@ -170,19 +170,20 @@
         .gemini-button i { margin-right: 4px;}
 
         .tabs { display: flex; margin-bottom: 0rem; border-bottom: 1px solid var(--border-color); gap: 1.5px; background-color: var(--bg-header-footer); border-radius: 4px 4px 0 0; }
-        .tabs button { flex: 1; padding: 0.35rem; background: none; border: none; color: var(--text-secondary); font-weight: 500; cursor: pointer; position: relative; transition: background-color 0.2s, color 0.2s, border-bottom-color 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.2rem; border-bottom: 2px solid transparent; font-size: 0.85rem; }
+        .tabs button { flex: 1; padding: 0.35rem; background: none; border: none; color: var(--text-secondary); font-weight: 500; cursor: pointer; position: relative; transition: background-color 0.2s, color 0.2s, border-bottom-color 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.2rem; border-bottom: 2px solid transparent; font-size: 0.9rem; /* Increased from 0.85rem */ }
+        .tabs button .tab-text-short { display: none; }
         .tabs button.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; background-color: var(--bg-interactive); }
         .tabs button:hover:not(.active) { color: var(--primary); background-color: var(--bg-hover); }
-        .my-history-controls { padding: 4px 8px; background-color: var(--bg-header-footer); display: flex; gap: 8px; align-items: center; font-size: 0.8rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1px; }
+        .my-history-controls { padding: 4px 8px; background-color: var(--bg-header-footer); display: flex; gap: 8px; align-items: center; font-size: 0.85rem; /* Increased from 0.8rem */ border-bottom: 1px solid var(--border-color); margin-bottom: 1px; }
         .my-history-controls label { color: var(--text-secondary); }
-        .my-history-controls select { background-color: var(--bg-interactive); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 3px; padding: 2px 4px; font-size: 0.8rem; }
-        .history-header { display: none; gap: 1px 2px; padding: 3px 4px; font-weight: 500; border-bottom: 1px solid var(--border-color); font-size: 0.65rem; color: var(--text-secondary); background: var(--bg-header-footer); text-transform: uppercase; margin-bottom: 1px; }
+        .my-history-controls select { background-color: var(--bg-interactive); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 3px; padding: 2px 4px; font-size: 0.85rem; /* Increased from 0.8rem */ }
+        .history-header { display: none; gap: 1px 2px; padding: 3px 4px; font-weight: 500; border-bottom: 1px solid var(--border-color); font-size: 0.8rem; /* Increased from 0.65rem */ color: var(--text-secondary); background: var(--bg-header-footer); text-transform: uppercase; margin-bottom: 1px; }
         #gameHistoryHeader, #myHistoryHeader, #adminDashboardHeader { border-top-left-radius: 0; border-top-right-radius: 0; }
 
         #gameHistoryHeader { grid-template-columns: 2.2fr 0.8fr 1.2fr 2.8fr; }
         .history-item.game-result-item { grid-template-columns: 2.2fr 0.8fr 1.2fr 2.8fr; }
         #myHistoryHeader { grid-template-columns: 2fr 0.8fr 1.3fr 1.7fr 1fr; }
-        .history-item.my-prediction-item { grid-template-columns: 2fr 0.8fr 1.3fr 1.7fr 1fr; line-height: 1.15; padding: 1.5px 2.5px; font-size: 0.78rem; }
+        .history-item.my-prediction-item { grid-template-columns: 2fr 0.8fr 1.3fr 1.7fr 1fr; line-height: 1.3; /* Increased */ padding: 1.5px 2.5px; font-size: 0.85rem; /* Increased from 0.78rem */ }
 
         #gameHistoryHeader .history-header-item, .history-item.game-result-item .history-value { text-align: center; justify-content: center; }
         #gameHistoryHeader .history-header-item:first-child, .history-item.game-result-item .history-value:first-child { text-align: left; justify-content: flex-start; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -196,7 +197,7 @@
         .history-item.game-result-item .gh-color .color-dot { margin-right: 0px; margin-left: 2px; }
         #myHistoryHeader .history-header-item { text-align: center; white-space: nowrap; }
         #myHistoryHeader .history-header-item:first-child { text-align: left; }
-        .history-item.my-prediction-item .history-value { font-size: 0.72rem; padding: 0px 1px; line-height: 1.1; }
+        .history-item.my-prediction-item .history-value { font-size: 0.8rem; /* Increased from 0.72rem */ padding: 0px 1px; line-height: 1.25; /* Increased */ }
         .history-item.my-prediction-item .history-value:first-child { text-align: left; justify-content: flex-start; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 85px; }
         .history-item.my-prediction-item .history-value.predicted-bs-value,
         .history-item.my-prediction-item .history-value.predicted-color-value .color-dot { margin-right: 2px; }
@@ -218,16 +219,16 @@
         .history-content::-webkit-scrollbar-thumb { background-color: var(--primary); border-radius: 3px; }
 
         .history-item { background: var(--bg-interactive); border: 1px solid var(--border-color); border-radius: 3px; margin: 0 0.1rem 1.5px 0.1rem; display: grid; gap: 1px 2px; align-items: center; transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease; box-shadow: 0 0.5px 0.5px rgba(0,0,0,0.05); }
-        .history-item:not(.my-prediction-item) { padding: 2.5px 3.5px; font-size: 0.8rem; }
+        .history-item:not(.my-prediction-item) { padding: 2.5px 3.5px; font-size: 0.85rem; /* Increased from 0.8rem */ }
         .history-item:hover { border-color: var(--primary); background-color: var(--bg-hover); }
         .history-item.my-prediction-item.row-win { background-color: var(--win-bg); border-color: rgba(76, 175, 80, 0.2); }
         .history-item.my-prediction-item.row-loss { background-color: var(--loss-bg); border-color: rgba(220, 20, 60, 0.2); }
         .history-item.my-prediction-item.row-partial { background-color: var(--partial-bg); border-color: rgba(184, 134, 11, 0.2); }
         .history-item.my-prediction-item.row-error { background-color: var(--error-bg); border-color: rgba(255, 193, 7, 0.2); }
-        .history-item .history-value {
-            font-weight: 400; display: flex; align-items: center; word-break: break-word;
+        .history-item .history-value { 
+            font-weight: 400; display: flex; align-items: center;
             color: var(--text-primary); text-align: center; justify-content: center;
-            padding: 0.5px 1.5px; line-height: 1.15; font-size: 0.75rem;
+            padding: 0.5px 1.5px; line-height: 1.3; /* Increased */ font-size: 0.8rem; /* Increased from 0.75rem */
             overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
         }
         .history-item .history-value.action-cell { justify-content: center; }
@@ -246,13 +247,13 @@
         .stats-bar-item { display: flex; align-items: center; gap: 3.5px; color: var(--text-secondary); flex-shrink: 0; }
         .stats-bar-item strong { color: var(--text-primary); font-weight: 500; }
         .stats-bar-item .value { font-weight: 500; } .stats-bar-item .win { color: var(--success); } .stats-bar-item .loss { color: var(--danger); } .stats-bar-item .acc { color: var(--primary); } .stats-bar-item .rev { color: var(--warning); } .stats-bar-item .level { color: var(--info); font-weight: bold;} .stats-bar-item .partial { color: var(--text-partial); }
-        .analytics-grid { display: grid; grid-template-columns: auto auto 1fr; gap: 3px 6px; align-items: center; font-size: 0.75rem; margin-top: 3.5px; padding: 8px; background: var(--bg-interactive); border-radius: 4px; }
+        .analytics-grid { display: grid; grid-template-columns: auto auto 1fr; gap: 3px 6px; align-items: center; font-size: 0.8rem; /* Increased from 0.75rem */ margin-top: 3.5px; padding: 8px; background: var(--bg-interactive); border-radius: 4px; }
         .analytics-grid > div { padding: 2px 0; }
         .analytics-grid > div:nth-child(3n+1) { font-weight: 500; display: flex; align-items: center; color:var(--text-secondary); }
         .analytics-grid > div:nth-child(3n+1) strong {color: var(--text-primary);}
         .analytics-grid > div:nth-child(3n+2) { font-weight: 600; text-align: right; color:var(--text-primary); }
         .analytics-grid > div:nth-child(3n) { text-align: right; color: var(--secondary); }
-        .analytics-grid h4 { grid-column: 1 / -1; margin-bottom: 6px; color: var(--primary); border-bottom: 1px solid var(--border-color); padding-bottom: 3px; font-size: 0.85rem; }
+        .analytics-grid h4 { grid-column: 1 / -1; margin-bottom: 6px; color: var(--primary); border-bottom: 1px solid var(--border-color); padding-bottom: 3px; font-size: 0.9rem; /* Increased from 0.85rem */ }
         .analytics-grid .outcome-icon { display: inline-block; width: 10.5px; height: 10.5px; line-height: 10.5px; text-align: center; border-radius: 2px; margin-right: 3.5px; font-weight: bold; color: var(--bg-card); font-size: 0.55rem;}
         .analytics-grid .outcome-icon.big { background-color: var(--warning); }
         .analytics-grid .outcome-icon.small { background-color: var(--info); }
@@ -264,12 +265,12 @@
         .jarvis-stats-bar::-webkit-scrollbar { height: 3px; }
         .jarvis-stats-bar::-webkit-scrollbar-track { background: var(--bg-interactive); }
         .jarvis-stats-bar::-webkit-scrollbar-thumb { background-color: var(--primary); border-radius: 1.5px;}
-        .jarvis-stat-item { display: flex; align-items: baseline; padding: 2px 8px; font-size: 0.72rem; color: var(--text-primary); white-space: nowrap; flex-shrink: 0; border-right: 1px solid var(--border-color); }
+        .jarvis-stat-item { display: flex; align-items: baseline; padding: 2px 8px; font-size: 0.8rem; /* Increased from 0.72rem */ color: var(--text-primary); white-space: nowrap; flex-shrink: 0; border-right: 1px solid var(--border-color); }
         .jarvis-stat-item:last-child { border-right: none; }
         .jarvis-label { font-weight: 500; color: var(--text-secondary); margin-right: 3px; }
-        .jarvis-value { font-weight: 600; color: var(--primary); font-size: 0.8rem; }
-        .jarvis-details { font-size: 0.68rem; color: var(--text-secondary); margin-left: 3px; }
-        #jarvisAlertsContainer .jarvis-alert { padding: 7px 10px; margin-top: 6px; border-radius: 4px; font-size: 0.78rem; display: flex; align-items: center; gap: 6px; border: 1px solid transparent; }
+        .jarvis-value { font-weight: 600; color: var(--primary); font-size: 0.85rem; /* Increased from 0.8rem */ }
+        .jarvis-details { font-size: 0.75rem; /* Increased from 0.68rem */ color: var(--text-secondary); margin-left: 3px; }
+        #jarvisAlertsContainer .jarvis-alert { padding: 7px 10px; margin-top: 6px; border-radius: 4px; font-size: 0.85rem; /* Increased from 0.78rem */ display: flex; align-items: center; gap: 6px; border: 1px solid transparent; }
         #jarvisAlertsContainer .jarvis-alert.danger { background-color: rgba(220, 53, 69, 0.2); color: #F5C6CB; border-color: rgba(220,53,69,0.5); }
         body.light-theme #jarvisAlertsContainer .jarvis-alert.danger { background-color: rgba(211, 47, 47, 0.1); color: #C62828; border-color: rgba(211,47,47,0.4); }
         #jarvisAlertsContainer .jarvis-alert.warning { background-color: rgba(255, 193, 7, 0.2); color: #FFDA6B; border-color: rgba(255,193,7,0.5); }
@@ -282,7 +283,7 @@
         .pagination button:hover:not(:disabled) { background-color: var(--bg-hover); border-color: var(--secondary); }
         .pagination button.active { background-color: var(--primary); color: var(--text-on-accent); border-color: var(--primary); }
         .pagination button:disabled { opacity: 0.4; cursor: not-allowed; background-color: var(--bg-interactive); color: var(--text-disabled); }
-        .floating-notification { position: fixed; bottom: 8px; right: 8px; color: var(--text-on-accent); padding: 0.4rem 0.6rem; border-radius: 4px; box-shadow: var(--shadow); transform: translateY(70px); opacity: 0; transition: all 0.4s ease-out; z-index: 1050; display: flex; align-items: center; gap: 0.2rem; font-size: 0.75rem; background-color: var(--bg-header-footer); }
+        .floating-notification { position: fixed; bottom: 8px; right: 8px; color: var(--text-on-accent); padding: 0.4rem 0.6rem; border-radius: 4px; box-shadow: var(--shadow); transform: translateY(70px); opacity: 0; transition: all 0.4s ease-out; z-index: 1050; display: flex; align-items: center; gap: 0.2rem; font-size: 0.85rem; /* Increased from 0.75rem */ background-color: var(--bg-header-footer); }
         .floating-notification.show { transform: translateY(0); opacity: 1; }
         .floating-notification i { margin-right: 0.2rem; }
         .floating-notification.success-bg { background-color: var(--success); }
@@ -300,65 +301,61 @@
         }
         #adminUserManagementTopControls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; align-items: flex-end; }
         #adminUserStats { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; background-color: var(--bg-header-footer); padding: 6px 10px; border-radius: 4px; flex-shrink: 0; margin-bottom: 6px;}
-        #adminUserStats span { font-size: 0.75rem; }
+        #adminUserStats span { font-size: 0.8rem; /* Increased */ }
         #createUserFormContainer { flex-grow: 1; display: flex; flex-direction: column; gap: 6px; background-color: var(--bg-header-footer); padding: 8px 10px; border-radius: 4px; min-width: auto; }
-        #createUserFormContainer h6 { font-size: 0.75rem; margin:0 0 5px 0; color: var(--text-secondary); }
+        #createUserFormContainer h6 { font-size: 0.8rem; /* Increased */ margin:0 0 5px 0; color: var(--text-secondary); }
 
         #createUserFormControls { display: flex; flex-direction: row; align-items: center; gap: 6px; flex-wrap: nowrap; }
-        #createUserFormControls label { color: var(--text-secondary); font-size: 0.7rem; margin-right: 3px; flex-shrink: 0; }
+        #createUserFormControls label { color: var(--text-secondary); font-size: 0.8rem; /* Increased */ margin-right: 3px; flex-shrink: 0; }
         #createUserFormControls select {
             padding: 4px 6px; background-color: var(--bg-card); color: var(--text-primary);
-            border: 1px solid var(--border-color); border-radius: 3px; font-size: 0.7rem;
+            border: 1px solid var(--border-color); border-radius: 3px; font-size: 0.8rem; /* Increased */
             flex-grow: 1; min-width: 80px; height: 28px;
         }
         #createUserFormControls button {
-            padding: 4px 8px; font-size: 0.7rem; flex-shrink: 0;
+            padding: 4px 8px; font-size: 0.8rem; /* Increased */ flex-shrink: 0;
             background-color: var(--success) !important; height: 28px;
             border: none; color: var(--text-on-accent); cursor: pointer;
         }
-        #generatedUserKey { margin-top: 6px; font-size: 0.75rem; min-height: 1em; color: var(--success); word-break: break-all;}
+        #generatedUserKey { margin-top: 6px; font-size: 0.8rem; /* Increased */ min-height: 1em; color: var(--success); word-break: break-all;}
 
         #managedUsersListContainer {
-             max-height: 350px;
-             overflow-y: auto;
-             border: 1px solid var(--border-color);
-             border-radius: 4px;
+            max-height: 350px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
         }
 
         #managedUsersListContainer .admin-list-header,
         #managedUsersListContainer .history-item.managed-user-item {
             display: grid;
-            /* D&T | User | Key | St | Exp | Act */
-            grid-template-columns: minmax(55px, 0.7fr) minmax(50px, 0.9fr) minmax(70px, 1.2fr) minmax(30px, 0.4fr) minmax(55px, 0.7fr) minmax(38px, 0.4fr);
-            gap: 0.25px; /* Very tight gap */
-            padding: 0.5px 1px; /* Extremely tight padding */
+            /* D&T | User | Key | St | Exp | Actions */
+            grid-template-columns: minmax(65px, 0.7fr) minmax(60px, 0.8fr) minmax(90px, 1.3fr) minmax(30px, 0.4fr) minmax(65px, 0.7fr) minmax(60px, 0.55fr); /* Adjusted for new edit expiry button */
+            gap: 0.5px;
+            padding: 0px;
             border-bottom: 1px solid var(--border-color);
             align-items: center;
-            font-size: 0.52rem; /* Aggressively small font for items */
-            line-height: 1.1; /* Tight line height */
         }
-        #managedUsersListContainer .admin-list-header {
-            font-weight: bold;
-            color: var(--primary);
-            font-size: 0.50rem; /* Header slightly smaller or same */
-            background-color: var(--bg-header-footer) !important;
-            text-transform: uppercase;
-            padding: 2px 1px; /* Header padding */
-            white-space: nowrap;
-        }
-
         #managedUsersListContainer .admin-list-header .history-header-item,
         #managedUsersListContainer .history-item.managed-user-item .history-value {
+            font-size: 0.8rem; 
+            line-height: 1.4; 
+            padding: 2px 4px;
             text-align: left;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            padding: 1px 2px; /* Minimal cell padding */
             vertical-align: middle;
         }
-         #managedUsersListContainer .history-item.managed-user-item .history-value.key-cell {
+        #managedUsersListContainer .admin-list-header .history-header-item {
+            font-weight: bold;
+            color: var(--primary);
+            background-color: var(--bg-header-footer) !important;
+            text-transform: uppercase;
+        }
+        #managedUsersListContainer .history-item.managed-user-item .history-value.key-cell {
             font-family: 'Courier New', Courier, monospace;
-            font-size: 0.48rem; /* Even smaller for keys if needed */
+            font-size: 0.75rem; 
         }
 
         #managedUsersListContainer .admin-list-header .history-header-item { color: var(--primary); }
@@ -372,23 +369,23 @@
         }
         #managedUsersListContainer .history-item.managed-user-item:hover { background-color: var(--bg-hover); }
 
-        #managedUsersListContainer .admin-list-header .history-header-item:nth-child(4),
+        #managedUsersListContainer .admin-list-header .history-header-item:nth-child(4), /* Status */
         #managedUsersListContainer .history-item.managed-user-item .history-value:nth-child(4),
-        #managedUsersListContainer .admin-list-header .history-header-item:last-child,
+        #managedUsersListContainer .admin-list-header .history-header-item:last-child, /* Actions */
         #managedUsersListContainer .history-item.managed-user-item .history-value:last-child {
             text-align: center;
             justify-content: center;
         }
         #managedUsersListContainer .history-item.managed-user-item .history-value button.admin-action-btn {
-            font-size: 0.75em; /* Small icons for buttons */
-            padding: 0 1.5px; /* Tight padding for buttons */
-            margin: 0 0.25px; /* Minimal margin */
+            font-size: 0.9em; 
+            padding: 1.5px 3px; 
+            margin: 0 1px; /* Adjusted margin for more buttons */
             background-color: var(--bg-card);
             color:var(--text-primary);
             border: 1px solid var(--border-color);
-            border-radius:1px; /* Minimal radius */
+            border-radius:2px;
             cursor:pointer;
-            min-width: 12px; /* Smallest clickable size */
+            min-width: 14px; 
             line-height: 1;
             display: inline-flex;
             align-items: center;
@@ -398,43 +395,50 @@
         #managedUsersListContainer .history-item.managed-user-item .history-value button.unban-btn { border-color: var(--success); color: var(--success); }
         #managedUsersListContainer .history-item.managed-user-item .history-value button.delete-btn { border-color: var(--warning); color: var(--warning); }
         #managedUsersListContainer .history-item.managed-user-item .history-value button.rename-btn { border-color: var(--info); color: var(--info); }
+        #managedUsersListContainer .history-item.managed-user-item .history-value button.edit-expiry-btn { border-color: var(--secondary); color: var(--secondary); }
 
 
         @media (max-width: 768px) {
-            /* Styles from previous responses for other elements */
+            body { font-size: 14px; } 
             .main-interactive-area { flex-direction: column; align-items: stretch; }
             .output-area { max-width: 100%; margin-top: 0.5rem; }
-            #currentResult { white-space: normal; overflow-x: hidden; font-size: 0.9rem; }
+            #currentResult { white-space: normal; overflow-x: hidden; font-size: 0.95rem; }
             .admin-section { background-color: var(--bg-admin-section-mobile); padding: 8px; margin-bottom: 10px;}
             #adminUserManagementTopControls { flex-direction: column; align-items: stretch; gap: 8px; }
+            .tabs button { font-size: 0.8rem; }
+            .tabs button .tab-text-long { display: none; }
+            .tabs button .tab-text-short { display: inline; }
 
             #managedUsersListContainer { max-height: 280px; }
             #managedUsersListContainer .admin-list-header,
             #managedUsersListContainer .history-item.managed-user-item {
-                grid-template-columns: minmax(50px, 0.7fr) minmax(45px, 0.8fr) minmax(65px, 1.1fr) minmax(25px, 0.4fr) minmax(50px, 0.7fr) minmax(40px, 0.4fr);
-                font-size: 0.48rem;
+                /* D&T | User | Key | St | Exp | Act */
+                grid-template-columns: minmax(55px, 0.65fr) minmax(45px, 0.75fr) minmax(65px, 1.1fr) minmax(25px, 0.35fr) minmax(55px, 0.65fr) minmax(55px, 0.5fr);
             }
-             #managedUsersListContainer .admin-list-header { font-size: 0.46rem; }
-             #managedUsersListContainer .history-item.managed-user-item .history-value.key-cell { font-size: 0.46rem; }
-             #managedUsersListContainer .history-item.managed-user-item .history-value button.admin-action-btn { font-size: 0.7em; min-width: 12px; padding: 0.5px 1px;}
+            #managedUsersListContainer .admin-list-header .history-header-item,
+            #managedUsersListContainer .history-item.managed-user-item .history-value { font-size: 0.75rem; }
+            #managedUsersListContainer .history-item.managed-user-item .history-value.key-cell { font-size: 0.7rem; }
+            #managedUsersListContainer .history-item.managed-user-item .history-value button.admin-action-btn { font-size: 0.9em; min-width: 11px; padding: 0.5px 1px; margin: 0 0.5px;}
         }
 
         @media (max-width: 576px) {
-             /* Styles from previous responses for other elements */
-            body { font-size: 13px; }
-            h1 { font-size: 1.3rem; }
+            body { font-size: 13.5px; } 
+            h1 { font-size: 1.4rem; }
             .admin-section { padding: 5px; margin-bottom: 8px; }
+            .tabs button { font-size: 0.75rem; gap: 0.1rem;}
+            .tabs button i { font-size: 0.7em; }
 
             #managedUsersListContainer { max-height: 250px; }
             #managedUsersListContainer .admin-list-header,
             #managedUsersListContainer .history-item.managed-user-item {
-                grid-template-columns: minmax(40px, 0.65fr) minmax(35px, 0.7fr) minmax(50px, 1.1fr) minmax(20px, 0.3fr) minmax(40px, 0.65fr) minmax(35px, 0.35fr);
-                font-size: 0.42rem; /* Extremely small for smallest screens */
-                line-height: 1;
+                 /* D&T | User | Key | St | Exp | Act */
+                grid-template-columns: minmax(40px, 0.6fr) minmax(35px, 0.7fr) minmax(50px, 1fr) minmax(20px, 0.3fr) minmax(40px, 0.6fr) minmax(50px, 0.45fr);
+                line-height: 1.2;
             }
-             #managedUsersListContainer .admin-list-header { font-size: 0.40rem; padding: 1px;}
-             #managedUsersListContainer .history-item.managed-user-item .history-value.key-cell { font-size: 0.40rem; }
-             #managedUsersListContainer .history-item.managed-user-item .history-value button.admin-action-btn { font-size: 0.65em; min-width: 10px; padding: 0;}
+            #managedUsersListContainer .admin-list-header .history-header-item { font-size: 0.7rem; padding: 1px;}
+            #managedUsersListContainer .history-item.managed-user-item .history-value { font-size: 0.7rem; padding: 1px;}
+            #managedUsersListContainer .history-item.managed-user-item .history-value.key-cell { font-size: 0.65rem; }
+            #managedUsersListContainer .history-item.managed-user-item .history-value button.admin-action-btn { font-size: 0.85em; min-width: 9px; padding: 0; margin: 0 0.5px;}
         }
     </style>
 </head>
@@ -462,12 +466,41 @@
         <div class="info-modal-content" style="max-width: 380px;">
             <span class="info-modal-close-button" id="renameUserModalCloseButton">&times;</span>
             <h3><i class="fas fa-edit"></i> Rename User</h3>
-            <p style="font-size: 0.8rem; margin-bottom: 8px;">Current User: <strong id="currentUsernameRename">N/A</strong></p>
+            <p style="font-size: 0.8rem; margin-bottom: 8px;">User Key: <strong id="userKeyRenameDisplay">N/A</strong></p>
+            <p style="font-size: 0.8rem; margin-bottom: 8px;">Current Name: <strong id="currentUsernameRename">N/A</strong></p>
             <input type="text" id="newUsernameInput" placeholder="Enter new username" style="width: 100%; padding: 8px; margin-bottom: 12px; background-color: var(--bg-interactive); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 4px; font-size: 0.85rem;">
             <input type="hidden" id="userAccessKeyToRename">
             <div style="display: flex; justify-content: flex-end; gap: 8px;">
-                <button id="cancelRenameBtn" class="clear-btn" style="background-color: var(--secondary);">Cancel</button>
+                <button id="cancelRenameBtn" class="clear-btn" style="background-color: var(--text-secondary);">Cancel</button>
                 <button id="saveRenameBtn" class="gemini-button" style="background-color: var(--success);">Save Name</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="editExpiryModal" class="info-modal" style="display: none;">
+        <div class="info-modal-content" style="max-width: 400px;">
+            <span class="info-modal-close-button" id="editExpiryModalCloseButton">&times;</span>
+            <h3><i class="fas fa-calendar-alt"></i> Edit User Expiry</h3>
+            <p style="font-size: 0.8rem; margin-bottom: 8px;">User Key: <strong id="userKeyExpiryDisplay">N/A</strong></p>
+            <p style="font-size: 0.8rem; margin-bottom: 8px;">Current Expiry: <strong id="currentExpiryDisplay">N/A</strong></p>
+            <div style="margin-bottom: 12px;">
+                <label for="editUserValidityPeriod" style="font-size: 0.8rem; color: var(--text-secondary); margin-right: 5px;">New Validity:</label>
+                <select id="editUserValidityPeriod" style="padding: 6px; background-color: var(--bg-interactive); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 3px; font-size: 0.8rem;">
+                    <option value="30m">30 Min</option>
+                    <option value="1h">1 Hour</option>
+                    <option value="1d">1 Day</option>
+                    <option value="7d">7 Day</option>
+                    <option value="60d">60 Day</option>
+                    <option value="180d">180 Day</option>
+                    <option value="365d">365 Day</option>
+                    <option value="720d">720 Day</option>
+                    <option value="lifetime">Lifetime</option>
+                </select>
+            </div>
+            <input type="hidden" id="userAccessKeyToEditExpiry">
+            <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                <button id="cancelEditExpiryBtn" class="clear-btn" style="background-color: var(--text-secondary);">Cancel</button>
+                <button id="saveEditExpiryBtn" class="gemini-button" style="background-color: var(--success);">Save Expiry</button>
             </div>
         </div>
     </div>
@@ -513,7 +546,7 @@
                 <h3><i class="fas fa-envelope"></i> Contact Information</h3>
                 <div class="contact-item"> <strong>Email:</strong> vippredictking@zohomail.in </div>
                 <div class="contact-item"> <strong>Developer:</strong> Kumghato </div>
-                <p style="font-size: 0.7rem; margin-top: 10px; color: var(--text-secondary);">For support or inquiries, please use the email above.</p>
+                <p style="font-size: 0.8rem; margin-top: 10px; color: var(--text-secondary);">For support or inquiries, please use the email above.</p>
             </div>
         </div>
 
@@ -551,8 +584,7 @@
                 </div>
                 <div id="jarvisAlertsContainer" style="margin-top: 8px;">
                     </div>
-                <div style="text-align: right; margin-top: 5px; font-size: 0.75rem;">
-                    Overall: <strong id="jarvisOverall" style="font-weight: bold;">N/A</strong>
+                <div style="text-align: right; margin-top: 5px; font-size: 0.8rem;"> Overall: <strong id="jarvisOverall" style="font-weight: bold;">N/A</strong>
                 </div>
             </div>
         </div>
@@ -597,11 +629,11 @@
                 <div class="stats-bar-item">Lv: <strong id="statsLevel" class="level">Normal</strong></div>
             </div>
             <div class="tabs">
-                <button class="active" onclick="fetchData(1, 'game')"> <i class="fas fa-gamepad"></i> Game </button>
-                <button onclick="fetchData(1, 'deep')"> <i class="fas fa-layer-group"></i> Deep (100) </button>
-                <button onclick="fetchData(1, 'chart')"> <i class="fas fa-chart-line"></i> Chart </button>
-                <button onclick="fetchData(1, 'my')"> <i class="fas fa-user-clock"></i> History </button>
-                <button id="adminDashboardTab" onclick="fetchData(1, 'admin_dashboard')" style="display: none;"> <i class="fas fa-user-shield"></i> Admin </button>
+                <button class="active" onclick="fetchData(1, 'game')"> <i class="fas fa-gamepad"></i><span class="tab-text-long">Game History</span><span class="tab-text-short">Game His.</span></button>
+                <button onclick="fetchData(1, 'deep')"> <i class="fas fa-layer-group"></i><span class="tab-text-long">Deep (100)</span><span class="tab-text-short">Deep</span></button>
+                <button onclick="fetchData(1, 'chart')"> <i class="fas fa-chart-line"></i><span class="tab-text-long">Chart</span><span class="tab-text-short">Chart</span></button>
+                <button onclick="fetchData(1, 'my')"> <i class="fas fa-user-clock"></i><span class="tab-text-long">My History</span><span class="tab-text-short">My His.</span></button>
+                <button id="adminDashboardTab" onclick="fetchData(1, 'admin_dashboard')" style="display: none;"> <i class="fas fa-user-shield"></i><span class="tab-text-long">Admin Panel</span><span class="tab-text-short">Admin</span></button>
             </div>
             <div class="my-history-controls" id="myHistoryControls" style="display: none;">
                 <label for="entriesPerPage">Show:</label>
@@ -655,7 +687,7 @@
     let myHistoryItemsPerPage = 10;
     const GAME_HISTORY_ITEMS_PER_PAGE = 10;
     const DEEP_HISTORY_ITEMS_PER_PAGE = 100;
-    let isSoundOn = true;
+    let isSoundOn = true; // Voice output is ON by default
 
 
     // --- Admin & Storage Keys ---
@@ -672,6 +704,14 @@
     const STORAGE_KEY_MY_HISTORY_ITEMS_PER_PAGE = 'predictVIPKingPro_myHistoryItemsPerPage_v2';
     const STORAGE_KEY_JARVIS_VISIBLE = 'predictVIPKingPro_jarvisCardVisible_v1';
     const STORAGE_KEY_SOUND_ON = 'predictVIPKingPro_soundOn_v1';
+
+    // --- Predefined Universal Sample Keys (for cross-browser testing) ---
+    const UNIVERSAL_SAMPLE_KEYS = {
+        "SAMPLE_KEY_30M": { username: "Universal Sample (30 Min)", validityPeriod: "30m" },
+        "SAMPLE_KEY_1D":  { username: "Universal Sample (1 Day)",  validityPeriod: "1d"  },
+        "SAMPLE_KEY_LIFE":{ username: "Universal Sample (Life)", validityPeriod: "lifetime" }
+    };
+
 
     // --- API Status Function (Simplified as per request) ---
     function setApiStatus() {
@@ -707,12 +747,12 @@
     let currentTheme = 'dark'; // Default theme key
     const themes = {
         dark: { // New "Crimson Night"
-            '--primary': '#C62828',       // Crimson Red
-            '--secondary': '#FF8F00',      // Amber/Dark Orange
-            '--success': '#2E7D32',       // Dark Green
-            '--danger': '#D32F2F',        // Standard Red
-            '--warning': '#F9A825',       // Standard Yellow/Amber
-            '--info': '#0277BD',         // Standard Blue
+            '--primary': '#C62828',         // Crimson Red
+            '--secondary': '#FF8F00',       // Amber/Dark Orange
+            '--success': '#2E7D32',         // Dark Green
+            '--danger': '#D32F2F',          // Standard Red
+            '--warning': '#F9A825',         // Standard Yellow/Amber
+            '--info': '#0277BD',            // Standard Blue
             '--violet-accent': '#D84315', /* Deep Orange as violet replacement */
 
             '--bg-main': '#121212',         /* Very Dark Grey/Almost Black */
@@ -725,8 +765,8 @@
             '--bg-gemini-modal': '#1A1A1A',
 
             '--text-primary': '#E0E0E0',     /* Light Grey */
-            '--text-secondary': '#B0B0B0',     /* Medium Grey */
-            '--text-disabled': '#505050',      /* Darker Grey */
+            '--text-secondary': '#B0B0B0',    /* Medium Grey */
+            '--text-disabled': '#505050',     /* Darker Grey */
             '--text-on-accent': '#FFFFFF',
 
             '--text-win': 'var(--success)',
@@ -741,7 +781,7 @@
             '--loss-bg': 'rgba(211, 47, 47, 0.15)',
             '--error-bg': 'rgba(249, 168, 37, 0.15)',
 
-            '--border-color': '#333333',      /* Darker border */
+            '--border-color': '#333333',     /* Darker border */
             '--shadow': '0 5px 20px rgba(0, 0, 0, 0.85)',
             '--tick-color': 'var(--success)',
             '--cross-color': 'var(--danger)',
@@ -749,12 +789,12 @@
             '--body-bg-gradient-end': '#000000'    /* Black */
         },
         light: { // New "Ocean Breeze"
-            '--primary': '#00838F',       // Cyan/Teal
-            '--secondary': '#FFC107',      // Amber/Gold
-            '--success': '#4CAF50',       // Standard Light Green
-            '--danger': '#F44336',        // Standard Light Red
-            '--warning': '#FFEB3B',       // Standard Light Yellow
-            '--info': '#2196F3',         // Standard Light Blue
+            '--primary': '#00838F',         // Cyan/Teal
+            '--secondary': '#FFC107',       // Amber/Gold
+            '--success': '#4CAF50',         // Standard Light Green
+            '--danger': '#F44336',          // Standard Light Red
+            '--warning': '#FFEB3B',         // Standard Light Yellow
+            '--info': '#2196F3',            // Standard Light Blue
             '--violet-accent': '#673AB7', /* Deep Purple accent */
 
             '--bg-main': '#E0F7FA',         /* Very Light Cyan */
@@ -767,8 +807,8 @@
             '--bg-gemini-modal': '#FAFAFA',
 
             '--text-primary': '#263238',     /* Dark Blue Grey */
-            '--text-secondary': '#546E7A',     /* Blue Grey */
-            '--text-disabled': '#9E9E9E',      /* Grey */
+            '--text-secondary': '#546E7A',    /* Blue Grey */
+            '--text-disabled': '#9E9E9E',     /* Grey */
             '--text-on-accent': '#FFFFFF',    /* White on accent colors */
 
             '--text-win': 'var(--success)',
@@ -783,7 +823,7 @@
             '--loss-bg': 'rgba(244, 67, 54, 0.08)',
             '--error-bg': 'rgba(255, 235, 59, 0.1)',
 
-            '--border-color': '#90A4AE',      /* Blue Grey border */
+            '--border-color': '#90A4AE',     /* Blue Grey border */
             '--shadow': '0 3px 10px rgba(0, 0, 0, 0.1)',
             '--tick-color': 'var(--success)',
             '--cross-color': 'var(--danger)',
@@ -844,7 +884,7 @@
             return [];
         }
         if (isFetchingPage && !isPriority && pageNoToFetch > 1) { // Allow priority fetch for page 1 even if another is ongoing
-            console.log(`Workspace for page ${pageNoToFetch} skipped, another fetch in progress.`);
+            // console.log(`Workspace for page ${pageNoToFetch} skipped, another fetch in progress.`);
             return [];
         }
 
@@ -879,21 +919,20 @@
                 const cachedMap = new Map(cachedData.map(item => [item.issueNumber, item]));
                 const combinedMap = new Map([...cachedMap, ...fetchedMap]);
                 cachedData = Array.from(combinedMap.values())
-                                .sort((a,b) => parseInt(b.issueNumber||0) - parseInt(a.issueNumber||0))
-                                .slice(0, DEEP_HISTORY_ITEMS_PER_PAGE + 20); // Keep slightly more than 100 for buffer
+                                .sort((a,b) => parseInt(b.issueNumber||0) - parseInt(a.issueNumber||0)) // Keep newest first for prediction engine
+                                .slice(0, DEEP_HISTORY_ITEMS_PER_PAGE + 20); 
 
                 if (isPriority && currentUserRole && (getActiveTab() === 'game' || getActiveTab() === 'deep')) {
-                    // Data has been updated, re-render the current view for game/deep if it was a priority fetch (e.g. new period)
                     fetchData(currentPage, getActiveTab(), true);
                 }
                 return data.data.list;
             } else {
                 console.error(`API data error (Code: ${data.code}) on page ${pageNoToFetch}:`, data);
-                return []; // Do not change API status display from 'Online'
+                return []; 
             }
         } catch (e) {
             console.error("fetchPage critical error:", e);
-            setApiStatus(); // Reflect navigator.onLine
+            setApiStatus(); 
             return [];
         } finally {
             isFetchingPage = false;
@@ -901,12 +940,11 @@
     }
     async function fetchOptimizedData(itemsNeeded = DEEP_HISTORY_ITEMS_PER_PAGE) {
         if (cachedData.length < itemsNeeded) {
-            // Fetch enough pages to likely cover the deficit
             const pagesToFetch = Math.max(1, Math.ceil((itemsNeeded - cachedData.length) / 10));
             console.log(`Optimized fetch: Need ${itemsNeeded}, have ${cachedData.length}. Fetching ${pagesToFetch} more pages.`);
             for (let i = 1; i <= pagesToFetch; i++) {
-                if (cachedData.length >= itemsNeeded + 10) break; // Break if we have enough plus a small buffer
-                await fetchPage(i); // This fetches page i from API and updates global cachedData
+                if (cachedData.length >= itemsNeeded + 10) break; 
+                await fetchPage(i); 
             }
         }
         return cachedData.slice(0, itemsNeeded);
@@ -1025,7 +1063,7 @@
         if (applyReverseLogic) {
             let trendToReverse, typeToReverse, originalAnalysis;
             if (bsAnalysis.probability > rgAnalysis.probability + 5 || (bsAnalysis.probability > rgAnalysis.probability && bsAnalysis.streak >= rgAnalysis.streak)) { originalAnalysis = bsAnalysis; typeToReverse = 'bigsmall'; }
-            else if (rgAnalysis.probability > bsAnalysis.probability + 5 || (rgAnalysis.probability > bsAnalysis.probability && rgAnalysis.streak >= bsAnalysis.streak)) { originalAnalysis = rgAnalysis; typeToReverse = 'redgreen'; }
+            else if (rgAnalysis.probability > bsAnalysis.probability + 5 || (rgAnalysis.probability > bsAnalysis.probability && rgAnalysis.streak >= rgAnalysis.streak)) { originalAnalysis = rgAnalysis; typeToReverse = 'redgreen'; }
             else { originalAnalysis = (bsAnalysis.total >= rgAnalysis.total) ? bsAnalysis : rgAnalysis; typeToReverse = (bsAnalysis.total >= rgAnalysis.total) ? 'bigsmall' : 'redgreen'; }
             trendToReverse = originalAnalysis.trend;
 
@@ -1127,8 +1165,8 @@
                 predictedBS: enginePrediction.predictedBS,
                 predictedRawColor: enginePrediction.predictedRawColor,
                 predictedColorHTML: enginePrediction.predictedColorHTML,
-                predictedNumber: enginePrediction.predictedNumber,
-                predictedNumbersArray: enginePrediction.predictedNumbersArray,
+                predictedNumber: enginePrediction.predictedNumber, // This is the primary predicted number
+                predictedNumbersArray: enginePrediction.predictedNumbersArray, // Array of 3 numbers
                 reversalChance: enginePrediction.reversalChance,
                 probability: enginePrediction.probability,
                 message: enginePrediction.message,
@@ -1171,7 +1209,7 @@
     function speakPrediction(predictionData) { if (!predictionData) return; let confidenceMsg = "Normal"; if (predictionData.message && predictionData.message.includes("Rev")) { confidenceMsg = "Reversal Active"; } else if (predictionData.probability > 75) { confidenceMsg = "High Confidence"; } else if (predictionData.probability > 60) { confidenceMsg = "Medium Confidence"; } else { confidenceMsg = "Low Confidence"; } const nums = predictionData.predictedNumbersArray || []; const speakText = `Prediction: ${predictionData.predictedBS}. ${predictionData.predictedRawColor}. Numbers: ${nums.join(', ')}. Status: ${confidenceMsg}.`; speak(speakText); }
 
     // --- Jarvis AI Analytics & Session Stats ---
-    function calculateJarvisStats() { const getStatsForLimit = (limit) => { const relevantHistory = history.filter(h => ['Win', 'Loss', 'Partial'].includes(h.status)).slice(0, limit); if (relevantHistory.length === 0) return { rate: '0.0', wins: 0, losses: 0, partials: 0, actualCount: 0 }; const wins = relevantHistory.filter(h => h.status === 'Win').length; const losses = relevantHistory.filter(h => h.status === 'Loss').length; const partials = relevantHistory.filter(h => h.status === 'Partial').length; const totalConsidered = wins + losses + partials; const rate = totalConsidered > 0 ? ((wins / totalConsidered) * 100).toFixed(1) : '0.0'; return { rate, wins, losses, partials, actualCount: relevantHistory.length }; }; const l10 = getStatsForLimit(10); const l20 = getStatsForLimit(20); const l30 = getStatsForLimit(30); const l50 = getStatsForLimit(50); let overallAssessment = "Low"; const overallRateNum = parseFloat(l50.rate) || parseFloat(l30.rate) || parseFloat(l20.rate) || parseFloat(l10.rate) || 0; if (overallRateNum >= 75) overallAssessment = "Excellent"; else if (overallRateNum >= 60) overallAssessment = "Good"; else if (overallRateNum >= 45) overallAssessment = "Average"; let l10LossStreak = 0; const last10Actual = history.filter(h => ['Win', 'Loss', 'Partial'].includes(h.status)).slice(0, 10); for (let i = 0; i < last10Actual.length; i++) { if (last10Actual[i].status === 'Loss') { l10LossStreak++; } else { break; } } let l10StreakAlert = null; if (l10LossStreak >= 3) { l10StreakAlert = `L10 Streak: ${l10LossStreak} Losses! Play Cautiously!`; } let l50PerformanceAlert = null; if (l50.actualCount >= 20 && parseFloat(l50.rate) < 40) { l50PerformanceAlert = `L50 Performance: Low (${l50.rate}%) - High Risk!`; } else if (l50.actualCount >= 20 && parseFloat(l50.rate) < 50 && parseFloat(l50.rate) >= 40 ) { l50PerformanceAlert = `L50 Performance: Average (${l50.rate}%) - Consider Strategy.`; } return { l10, l20, l30, l50, overallAssessment, l10StreakAlert, l50PerformanceAlert }; }
+    function calculateJarvisStats() { const getStatsForLimit = (limit) => { const relevantHistory = history.filter(h => ['Win', 'Loss', 'Partial', 'Win (Num Hit)', 'Partial (Num Only)'].includes(h.status)).slice(0, limit); if (relevantHistory.length === 0) return { rate: '0.0', wins: 0, losses: 0, partials: 0, actualCount: 0 }; const wins = relevantHistory.filter(h => h.status === 'Win' || h.status === 'Win (Num Hit)').length; const losses = relevantHistory.filter(h => h.status === 'Loss').length; const partials = relevantHistory.filter(h => h.status === 'Partial' || h.status === 'Partial (Num Only)').length; const totalConsidered = wins + losses + partials; const rate = totalConsidered > 0 ? ((wins / totalConsidered) * 100).toFixed(1) : '0.0'; return { rate, wins, losses, partials, actualCount: relevantHistory.length }; }; const l10 = getStatsForLimit(10); const l20 = getStatsForLimit(20); const l30 = getStatsForLimit(30); const l50 = getStatsForLimit(50); let overallAssessment = "Low"; const overallRateNum = parseFloat(l50.rate) || parseFloat(l30.rate) || parseFloat(l20.rate) || parseFloat(l10.rate) || 0; if (overallRateNum >= 75) overallAssessment = "Excellent"; else if (overallRateNum >= 60) overallAssessment = "Good"; else if (overallRateNum >= 45) overallAssessment = "Average"; let l10LossStreak = 0; const last10Actual = history.filter(h => ['Win', 'Loss', 'Partial', 'Win (Num Hit)', 'Partial (Num Only)'].includes(h.status)).slice(0, 10); for (let i = 0; i < last10Actual.length; i++) { if (last10Actual[i].status === 'Loss') { l10LossStreak++; } else { break; } } let l10StreakAlert = null; if (l10LossStreak >= 3) { l10StreakAlert = `L10 Streak: ${l10LossStreak} Losses! Play Cautiously!`; } let l50PerformanceAlert = null; if (l50.actualCount >= 20 && parseFloat(l50.rate) < 40) { l50PerformanceAlert = `L50 Performance: Low (${l50.rate}%) - High Risk!`; } else if (l50.actualCount >= 20 && parseFloat(l50.rate) < 50 && parseFloat(l50.rate) >= 40 ) { l50PerformanceAlert = `L50 Performance: Average (${l50.rate}%) - Consider Strategy.`; } return { l10, l20, l30, l50, overallAssessment, l10StreakAlert, l50PerformanceAlert }; }
     function updateJarvisCard() { if(!document.getElementById('jarvisL10Rate')) return; const stats = calculateJarvisStats(); document.getElementById('jarvisL10Rate').textContent = `${stats.l10.rate}%`; document.getElementById('jarvisL10Details').textContent = `(${stats.l10.wins}W/${stats.l10.losses}L/${stats.l10.partials}P)`; document.getElementById('jarvisL20Rate').textContent = `${stats.l20.rate}%`; document.getElementById('jarvisL20Details').textContent = `(${stats.l20.wins}W/${stats.l20.losses}L/${stats.l20.partials}P)`; document.getElementById('jarvisL30Rate').textContent = `${stats.l30.rate}%`; document.getElementById('jarvisL30Details').textContent = `(${stats.l30.wins}W/${stats.l30.losses}L/${stats.l30.partials}P)`; document.getElementById('jarvisL50Rate').textContent = `${stats.l50.rate}%`; document.getElementById('jarvisL50Details').textContent = `(${stats.l50.wins}W/${stats.l50.losses}L/${stats.l50.partials}P)`; const jarvisOverallEl = document.getElementById('jarvisOverall'); if(jarvisOverallEl) { jarvisOverallEl.textContent = stats.overallAssessment; if (stats.overallAssessment === "Excellent") jarvisOverallEl.style.color = 'var(--success)'; else if (stats.overallAssessment === "Good") jarvisOverallEl.style.color = 'var(--primary)'; else if (stats.overallAssessment === "Average") jarvisOverallEl.style.color = 'var(--warning)'; else jarvisOverallEl.style.color = 'var(--danger)'; } const alertsContainer = document.getElementById('jarvisAlertsContainer'); alertsContainer.innerHTML = ''; if (stats.l10StreakAlert) { const alertDiv = document.createElement('div'); alertDiv.className = 'jarvis-alert danger'; alertDiv.innerHTML = `<i class="fas fa-triangle-exclamation"></i> ${stats.l10StreakAlert}`; alertsContainer.appendChild(alertDiv); } if (stats.l50PerformanceAlert) { const alertDiv = document.createElement('div'); alertDiv.className = `jarvis-alert ${parseFloat(stats.l50.rate) < 40 ? 'danger' : 'warning'}`; alertDiv.innerHTML = `<i class="fas fa-triangle-exclamation"></i> ${stats.l50PerformanceAlert}`; alertsContainer.appendChild(alertDiv); } }
     function toggleJarvisCardVisibility(show, save = true) { const content = document.getElementById('jarvisAnalyticsContent'); const icon = document.querySelector('#toggleJarvisCard i'); if (!content || !icon) return; if (show) { content.style.display = 'block'; icon.classList.remove('fa-eye-slash'); icon.classList.add('fa-eye'); if(save) robustLocalStorageSetItem(STORAGE_KEY_JARVIS_VISIBLE, 'true'); } else { content.style.display = 'none'; icon.classList.remove('fa-eye'); icon.classList.add('fa-eye-slash'); if(save) robustLocalStorageSetItem(STORAGE_KEY_JARVIS_VISIBLE, 'false'); } }
     function updateAccuracyDisplay() { if (currentUserRole) { updateSessionStatsBar(); updateJarvisCard(); } }
@@ -1191,8 +1229,8 @@
         const predictionData = currentPredictionData[periodToFinalize];
         if (!predictionData || predictionData.error) {
             if (predictionData?.error) {
-                const errorEntry = { period: periodToFinalize, predictedNumber: '?', predictedBS: '?', predictedRawColor: '?', predictedColorHTML: '?', actualResultDisplay: 'Prediction Error', status: 'Error', bsWin: false, colorWin: false, numWin: false, resultType: '?', server: fixedSelectedServerName, probability: 0 };
-                history.unshift(errorEntry); saveMyHistoryToStorage();
+                const errorEntry = { period: periodToFinalize, predictedNumber: '?', predictedNumbersArray: ['?'], predictedBS: '?', predictedRawColor: '?', predictedColorHTML: '?', actualResultDisplay: 'Prediction Error', status: 'Error', bsWin: false, colorWin: false, numWin: false, resultType: '?', server: fixedSelectedServerName, probability: 0 };
+                history.unshift(historyEntry); saveMyHistoryToStorage();
                 if (getActiveTab() === 'my' && currentUserRole) fetchData(1, 'my', true);
                 updateAccuracyDisplay(); delete currentPredictionData[periodToFinalize];
             }
@@ -1205,33 +1243,54 @@
             const actualBS = gameOutcome.bigSmall;
             const actualColorForHistory = gameOutcome.colorForHistory;
             const actualNum = gameOutcome.numberVal;
+
             const bsWin = predictionData.predictedBS === actualBS;
-            let colorWin = predictionData.predictedRawColor === gameOutcome.rawColor;
-            const numWin = predictionData.predictedNumber === actualNum;
-            let status;
-            if (bsWin && colorWin) { status = "Win"; sessionStats.wins++; consecutiveLosses = 0; consecutiveWins++; }
-            else if (!bsWin && !colorWin) { status = "Loss"; sessionStats.losses++; consecutiveWins = 0; consecutiveLosses++; }
-            else { status = "Partial"; if(!sessionStats.partials) sessionStats.partials = 0; sessionStats.partials++; consecutiveWins = 0; consecutiveLosses = 0; }
+            const colorWin = predictionData.predictedRawColor === gameOutcome.rawColor;
+            const numWin = predictionData.predictedNumbersArray && predictionData.predictedNumbersArray.includes(actualNum);
+
+            let status = "Loss"; // Default to Loss
+
+            // Reset streaks before evaluating current outcome
+            let currentConsecutiveWins = consecutiveWins;
+            let currentConsecutiveLosses = consecutiveLosses;
+
+            if (bsWin && colorWin) {
+                status = "Win";
+                sessionStats.wins++; currentConsecutiveLosses = 0; currentConsecutiveWins++;
+            } else if (numWin) { // If any predicted number matches (and B/S+Color not both correct)
+                status = "Win (Number)";
+                sessionStats.wins++; currentConsecutiveLosses = 0; currentConsecutiveWins++;
+            } else if (bsWin || colorWin) { // Only B/S or Color correct, and NO number match
+                status = "Partial";
+                if(!sessionStats.partials) sessionStats.partials = 0; sessionStats.partials++;
+                currentConsecutiveWins = 0; currentConsecutiveLosses = 0; // Partial resets both win/loss streaks
+            } else { // All predictions (B/S, Color, Numbers) failed
+                sessionStats.losses++; currentConsecutiveWins = 0; currentConsecutiveLosses++;
+            }
+            consecutiveWins = currentConsecutiveWins;
+            consecutiveLosses = currentConsecutiveLosses;
+
             saveSessionStateToStorage();
             historyEntry = {
                 period: periodToFinalize,
                 predictedNumber: predictionData.predictedNumber,
+                predictedNumbersArray: predictionData.predictedNumbersArray,
                 predictedBS: predictionData.predictedBS,
                 predictedRawColor: predictionData.predictedRawColor,
                 predictedColorHTML: predictionData.predictedColorHTML,
-                actualResultDisplay: `<span class="${gameOutcome.bsResultClass}">${actualBS}</span>, ${actualColorForHistory}`,
+                actualResultDisplay: `<span class="${gameOutcome.bsResultClass}">${actualBS}</span>, ${actualColorForHistory} (Num: ${actualNum})`,
                 status, bsWin, colorWin, numWin,
                 resultType: predictionData.resultType,
                 server: predictionData.server,
                 probability: predictionData.probability
             };
-            if (numWin && (status === "Win" || status === "Partial" )) {
+            if (numWin && status.startsWith("Win")) { // If it's "Win (Number)" or full "Win" where number also coincidentally matched
                 const cheerMessages = ["Excellent! Number prediction hit!", "Fantastic! You got the number!", "Great call on the number! Jackpot!"];
                 speak(cheerMessages[Math.floor(Math.random() * cheerMessages.length)]);
             }
         } else {
             console.warn(`Result for period ${periodToFinalize} timed out.`);
-            historyEntry = { period: periodToFinalize, predictedNumber: predictionData.predictedNumber, predictedBS: predictionData.predictedBS, predictedRawColor: predictionData.predictedRawColor, predictedColorHTML: predictionData.predictedColorHTML, actualResultDisplay: 'Result N/A', status: 'Error', bsWin: false, colorWin: false, numWin: false, resultType: predictionData.resultType, server: predictionData.server, probability: predictionData.probability };
+            historyEntry = { period: periodToFinalize, predictedNumber: predictionData.predictedNumber, predictedNumbersArray: predictionData.predictedNumbersArray, predictedBS: predictionData.predictedBS, predictedRawColor: predictionData.predictedRawColor, predictedColorHTML: predictionData.predictedColorHTML, actualResultDisplay: 'Result N/A', status: 'Error', bsWin: false, colorWin: false, numWin: false, resultType: predictionData.resultType, server: predictionData.server, probability: predictionData.probability };
             consecutiveLosses = 0; consecutiveWins = 0; saveSessionStateToStorage(); showNotification(`Result for ${periodToFinalize} unavailable.`, 'error');
         }
         history.unshift(historyEntry); if(history.length > 200) history.splice(200); saveMyHistoryToStorage();
@@ -1241,14 +1300,14 @@
     }
 
     // --- Main Loop & Tab/UI Management ---
-    function updatePeriodAndTimer() { try { if (!currentUserRole) return; if (currentUserRole === 'user') { const storedUserKey = robustLocalStorageGetItem(STORAGE_KEY_CURRENT_USER_KEY, null); if (storedUserKey) { const managedUsers = getManagedUsers(); const currentUserObject = managedUsers.find(u => u.accessKey === storedUserKey); if (currentUserObject) { if (currentUserObject.isBanned) { showNotification("Your access has been revoked (banned). Logging out.", "error"); handleLogout(); return; } if (currentUserObject.expiresAt && Date.now() > currentUserObject.expiresAt) { showNotification("Your session has expired. Please login again.", "error"); handleLogout(); return; } } else { showNotification("Your access key is no longer valid. Logging out.", "error"); handleLogout(); return; } } else { console.warn("User role active but no key stored. Forcing logout."); handleLogout(); return; } } const now = new Date(), ct = now.getTime(); if (ct - lastTimerUpdate < 980) return; lastTimerUpdate = ct; const y = now.getUTCFullYear(), m = String(now.getUTCMonth() + 1).padStart(2, '0'), d = String(now.getUTCDate()).padStart(2, '0'); const hrs = now.getUTCHours(), mins = now.getUTCMinutes(), secsValue = now.getUTCSeconds(); const totMins = hrs * 60 + mins; const periodSuffix = 10001 + totMins; const currentPeriod = `${y}${m}${d}1000${periodSuffix}`; const secsRemaining = 60 - secsValue; const periodJustCompleted = lastCompletedPeriodNumber; if (currentPeriod !== lastCompletedPeriodNumber) { if (periodJustCompleted && currentPredictionData[periodJustCompleted]) { finalizeAndRecordResult(periodJustCompleted).catch(e => { console.error("Error in finalizeAndRecordResult:", e); isWaitingForResult = false; }); } lastCompletedPeriodNumber = currentPeriod; const periodEl = document.getElementById('period'); if (periodEl) periodEl.textContent = `${currentPeriod || 'N/A'}`; generateAndStorePrediction(currentPeriod).catch(e => { console.error("Error in generateAndStorePrediction:", e); }); fetchPage(1, true).then(() => { if (getActiveTab() === 'game' || getActiveTab() === 'deep') {
-                    fetchData(1, getActiveTab(), true); // Fetch with page 1 for game/deep if active
-                } }).catch(e => console.error("Error fetching page 1 on new period:", e)); } const timerEl = document.getElementById('timer'); if (timerEl) timerEl.textContent = `${String(secsRemaining).padStart(2, '0')}s`; const statusEl = document.getElementById('status'); if (statusEl) statusEl.textContent = secsRemaining < 10 ? 'Closing' : 'Active'; } catch (e) { console.error("Critical error in updatePeriodAndTimer, attempting to prevent stop:", e); } }
+    function updatePeriodAndTimer() { try { if (!currentUserRole) return; if (currentUserRole === 'user') { const storedUserKey = robustLocalStorageGetItem(STORAGE_KEY_CURRENT_USER_KEY, null); if (storedUserKey) { const universalKeyDetails = UNIVERSAL_SAMPLE_KEYS[storedUserKey]; if(universalKeyDetails) { /* This is a universal key, allow access */ } else { const managedUsers = getManagedUsers(); const currentUserObject = managedUsers.find(u => u.accessKey === storedUserKey); if (currentUserObject) { if (currentUserObject.isBanned) { showNotification("Apnar access key-ti revoke kora hoyeche (banned). Logout kora hochche.", "error"); handleLogout(); return; } if (currentUserObject.expiresAt && Date.now() > currentUserObject.expiresAt) { showNotification("Apnar session er meyad shesh hoye geche. Doya kore abar login korun.", "error"); handleLogout(); return; } } else { showNotification("Apnar access key-ti ar bohdho noy. Logout kora hochche.", "error"); handleLogout(); return; } } } else { console.warn("User role active kintu kono key store kora nei. Logout kora hochche."); handleLogout(); return; } } const now = new Date(), ct = now.getTime(); if (ct - lastTimerUpdate < 980) return; lastTimerUpdate = ct; const y = now.getUTCFullYear(), m = String(now.getUTCMonth() + 1).padStart(2, '0'), d = String(now.getUTCDate()).padStart(2, '0'); const hrs = now.getUTCHours(), mins = now.getUTCMinutes(), secsValue = now.getUTCSeconds(); const totMins = hrs * 60 + mins; const periodSuffix = 10001 + totMins; const currentPeriod = `${y}${m}${d}1000${periodSuffix}`; const secsRemaining = 60 - secsValue; const periodJustCompleted = lastCompletedPeriodNumber; if (currentPeriod !== lastCompletedPeriodNumber) { if (periodJustCompleted && currentPredictionData[periodJustCompleted]) { finalizeAndRecordResult(periodJustCompleted).catch(e => { console.error("Error in finalizeAndRecordResult:", e); isWaitingForResult = false; }); } lastCompletedPeriodNumber = currentPeriod; const periodEl = document.getElementById('period'); if (periodEl) periodEl.textContent = `${currentPeriod || 'N/A'}`; generateAndStorePrediction(currentPeriod).catch(e => { console.error("Error in generateAndStorePrediction:", e); }); fetchPage(1, true).then(() => { if (getActiveTab() === 'game' || getActiveTab() === 'deep') {
+                        fetchData(1, getActiveTab(), true); // Fetch with page 1 for game/deep if active
+                    } }).catch(e => console.error("Error fetching page 1 on new period:", e)); } const timerEl = document.getElementById('timer'); if (timerEl) timerEl.textContent = `${String(secsRemaining).padStart(2, '0')}s`; const statusEl = document.getElementById('status'); if (statusEl) statusEl.textContent = secsRemaining < 10 ? 'Closing' : 'Active'; } catch (e) { console.error("Critical error in updatePeriodAndTimer, attempting to prevent stop:", e); } }
     function getActiveTab() { const activeButton = document.querySelector('.tabs button.active'); if (activeButton) { const onclickAttr = activeButton.getAttribute('onclick'); if (onclickAttr?.includes("'game'")) return 'game'; if (onclickAttr?.includes("'deep'")) return 'deep'; if (onclickAttr?.includes("'my'")) return 'my'; if (onclickAttr?.includes("'chart'")) return 'chart'; if (onclickAttr?.includes("'admin_dashboard'")) return 'admin_dashboard'; } return currentTab; }
 
     async function fetchData(page, tab = currentTab, forceRender = false) {
         if (!currentUserRole) {
-            document.getElementById('historyContent').innerHTML = '<p style="text-align:center; padding:1rem; color:var(--warning);">Please login to view data.</p>';
+            document.getElementById('historyContent').innerHTML = '<p style="text-align:center; padding:1rem; color:var(--warning);">Data dekhar jonno login korun.</p>';
             return;
         }
         const contentEl = document.getElementById('historyContent');
@@ -1321,10 +1380,11 @@
                     gameHead.innerHTML = `<div class="history-header-item">Period</div><div class="history-header-item">Num</div><div class="history-header-item">Big/Small</div><div class="history-header-item">Color</div>`;
                 }
                 const list = cachedData.slice(0, GAME_HISTORY_ITEMS_PER_PAGE);
+                // list.reverse(); // Removed: Show newest to oldest as per user request
 
                 if (list.length === 0) {
-                    contentEl.innerHTML = `<p style="text-align:center; padding:1rem;">No game history available. System is fetching...</p>`;
-                    if(navigator.onLine) await fetchPage(1, true); // Attempt to fetch if empty and online
+                    contentEl.innerHTML = `<p style="text-align:center; padding:1rem;">Kono game history paowa jacche na. System data fetch korche...</p>`;
+                    if(navigator.onLine) await fetchPage(1, true); 
                 } else {
                     list.forEach(item => {
                         const details = getNumberDetails(item.number);
@@ -1341,10 +1401,11 @@
                     gameHead.innerHTML = `<div class="history-header-item">Period</div><div class="history-header-item">Num</div><div class="history-header-item">Big/Small</div><div class="history-header-item">Color</div>`;
                 }
                 const list = cachedData.slice(0, DEEP_HISTORY_ITEMS_PER_PAGE);
+                // list.reverse(); // Removed: Show newest to oldest as per user request
 
                 if (list.length === 0) {
-                     contentEl.innerHTML = `<p style="text-align:center; padding:1rem;">No deep history available. System is fetching...</p>`;
-                     if(navigator.onLine) await fetchOptimizedData(DEEP_HISTORY_ITEMS_PER_PAGE); // Attempt to fetch if empty and online
+                     contentEl.innerHTML = `<p style="text-align:center; padding:1rem;">Kono deep history paowa jacche na. System data fetch korche...</p>`;
+                     if(navigator.onLine) await fetchOptimizedData(DEEP_HISTORY_ITEMS_PER_PAGE); 
                 } else {
                     list.forEach(item => {
                         const details = getNumberDetails(item.number);
@@ -1356,30 +1417,33 @@
                 }
             } else if (localCallTab === 'my') {
                 if (currentTab !== localCallTab) return;
-                if (myHead) myHead.innerHTML = `<div class="history-header-item">Period</div><div class="history-header-item">Num</div><div class="history-header-item">Pred B/S</div><div class="history-header-item">Pred Color</div><div class="history-header-item">Status</div>`;
+                if (myHead) myHead.innerHTML = `<div class="history-header-item">Period</div><div class="history-header-item">P. Nums</div><div class="history-header-item">P. B/S</div><div class="history-header-item">P. Color</div><div class="history-header-item">Status</div>`;
                 contentEl.innerHTML = '';
                 const startIndex = (currentPage - 1) * myHistoryItemsPerPage;
                 const endIndex = startIndex + myHistoryItemsPerPage;
-                const paginatedHistory = history.slice(startIndex, endIndex);
+                const paginatedHistory = history.slice(startIndex, endIndex); // My history is already newest first due to unshift
                 document.getElementById('nextPageBtn').disabled = (endIndex >= history.length);
-                if (paginatedHistory.length === 0) contentEl.innerHTML = `<p style="text-align:center; padding:1rem;">${currentPage === 1 ? 'No predictions recorded.' : 'No more predictions.'}</p>`;
+                if (paginatedHistory.length === 0) contentEl.innerHTML = `<p style="text-align:center; padding:1rem;">${currentPage === 1 ? 'Kono prediction record kora hoyni.' : 'Ar kono prediction nei.'}</p>`;
                 else {
                     paginatedHistory.forEach(item => {
                         const div = document.createElement('div');
                         let rowClass = 'history-item my-prediction-item';
-                        if (item.status === 'Win') rowClass += ' row-win';
+                        if (item.status === 'Win' || item.status === 'Win (Num Hit)') rowClass += ' row-win';
                         else if (item.status === 'Loss') rowClass += ' row-loss';
-                        else if (item.status === 'Partial') rowClass += ' row-partial';
+                        else if (item.status === 'Partial' || item.status === 'Partial (Num Only)') rowClass += ' row-partial';
                         else if (item.status === 'Error') rowClass += ' row-error';
                         div.className = rowClass;
-                        const bsTickCross = item.status !== 'Error' && item.status !== '?' && typeof item.bsWin !== 'undefined' ? (item.bsWin ? '<span class="tick-mark">✅</span>' : '<span class="cross-mark">❌</span>') : '';
-                        const colorTickCross = item.status !== 'Error' && item.status !== '?' && typeof item.colorWin !== 'undefined' ? (item.colorWin ? '<span class="tick-mark">✅</span>' : '<span class="cross-mark">❌</span>') : '';
-                        const numTickCross = item.status !== 'Error' && item.status !== '?' && typeof item.numWin !== 'undefined' ? (item.numWin ? '<span class="tick-mark">✅</span>' : '<span class="cross-mark">❌</span>') : '';
-                        const predictedNumDisplay = `${item.predictedNumber ?? '?'}${numTickCross}`;
+                        const bsTickCross = (item.status !== 'Error' && item.status !== '?') ? (item.bsWin ? '<span class="tick-mark">✅</span>' : '<span class="cross-mark">❌</span>') : '';
+                        const colorTickCross = (item.status !== 'Error' && item.status !== '?') ? (item.colorWin ? '<span class="tick-mark">✅</span>' : '<span class="cross-mark">❌</span>') : '';
+                        const numTickCross = (item.status !== 'Error' && item.status !== '?') ? (item.numWin ? '<span class="tick-mark">✅</span>' : '<span class="cross-mark">❌</span>') : '';
+
+                        const predictedNumDisplay = `${item.predictedNumbersArray ? item.predictedNumbersArray.join(',') : (item.predictedNumber || '?')}${numTickCross}`;
                         const predictedBSDisplay = `${item.predictedBS || '?'}${bsTickCross}`;
                         const predictedColorDisplay = `${item.predictedColorHTML || '?'}${colorTickCross}`;
                         const statusDisplay = item.status || '?';
-                        div.innerHTML = `<div class="history-value" title="${item.period}">${item.period}</div><div class="history-value predicted-num-value">${predictedNumDisplay}</div><div class="history-value predicted-bs-value">${predictedBSDisplay}</div><div class="history-value predicted-color-value">${predictedColorDisplay}</div><div class="history-value status-value status-${item.status?.toLowerCase()}">${statusDisplay}</div>`;
+                        const statusClass = item.status?.toLowerCase().replace(/[\s()]/g, '') || 'unknown';
+
+                        div.innerHTML = `<div class="history-value" title="${item.period}">${item.period}</div><div class="history-value predicted-num-value" title="Predicted: ${item.predictedNumbersArray ? item.predictedNumbersArray.join(',') : (item.predictedNumber || '?')}">${predictedNumDisplay}</div><div class="history-value predicted-bs-value">${predictedBSDisplay}</div><div class="history-value predicted-color-value">${predictedColorDisplay}</div><div class="history-value status-value status-${statusClass}">${statusDisplay}</div>`;
                         contentEl.appendChild(div);
                     });
                 }
@@ -1403,7 +1467,7 @@
                     const sessionAccuracyValue = totalSessionGames > 0 ? Math.round((sessionStats.wins / totalSessionGames) * 100) : 0;
                     const sessionAccuracyDisplay = totalSessionGames > 0 ? `${sessionAccuracyValue}% (W:${sessionStats.wins} L:${sessionStats.losses} P:${sessionStats.partials || 0})` : 'N/A';
                     contentEl.innerHTML = `<h4 style="font-size: 0.9rem; color: var(--primary); margin:0.4rem; padding-bottom:4px; border-bottom: 1px solid var(--border-color);">Recent Trends (Last ${totalValidGames} Games)</h4><div class="analytics-grid" style="padding: 0.6rem;"><div><strong>Outcome</strong></div><div><strong>Count</strong></div><div><strong>Percent</strong></div><div><span class="color-dot color-red"></span> Red</div><div>${rC}</div><div>${pct(rC)}%</div><div><span class="color-dot color-green"></span> Green</div><div>${gC}</div><div>${pct(gC)}%</div><div><span class="color-dot color-violet"></span> Violet</div><div>${vC}</div><div>${pct(vC)}%</div><div style="grid-column: 1 / -1; height: 8px;"></div><div><span class="outcome-icon big">B</span> Big (5-9)</div><div>${bC}</div><div>${pct(bC)}%</div><div><span class="outcome-icon small">S</span> Small (0-4)</div><div>${sC}</div><div>${pct(sC)}%</div></div><div class="session-accuracy-footer"><strong>Session Accuracy:</strong> ${sessionAccuracyDisplay}</div>`;
-                } else contentEl.innerHTML = '<p style="text-align:center; padding:1rem;">Not enough data for analytics.</p>';
+                } else contentEl.innerHTML = '<p style="text-align:center; padding:1rem;">Analytics er jonno porjapto data nei.</p>';
             } else if (localCallTab === 'admin_dashboard') {
                 if (currentUserRole !== 'admin') {
                     contentEl.innerHTML = '<p style="text-align:center; padding:1rem; color:var(--danger);">Access Denied.</p>';
@@ -1423,20 +1487,33 @@
     function changeMyHistoryEntriesPerPage(value) { myHistoryItemsPerPage = parseInt(value); saveMyHistoryItemsPerPageToStorage(); if (currentUserRole) fetchData(1, 'my', true); }
     function changePage(delta) { const newPage = currentPage + delta; if (newPage <= 0) return; const activeTabForPaging = getActiveTab(); if (!currentUserRole || activeTabForPaging !== 'my') { return; } if (activeTabForPaging === 'my') { const totalHistoryPages = Math.ceil(history.length / myHistoryItemsPerPage); if (newPage > totalHistoryPages && totalHistoryPages > 0 && delta > 0) return; } fetchData(newPage, activeTabForPaging); }
     function showNotification(message, type = 'success', duration = 3500) { const n=document.getElementById('notification'), nt=document.getElementById('notificationText'); if(!n || !nt) return; nt.textContent = message; n.className = 'floating-notification'; const iconEl = n.querySelector('i'); if (type === 'success') { n.classList.add('success-bg'); if (iconEl) iconEl.className = 'fas fa-check-circle'; } else if (type === 'error') { n.classList.add('error-bg'); if (iconEl) iconEl.className = 'fas fa-exclamation-circle'; } else { n.classList.add('info-bg'); if (iconEl) iconEl.className = 'fas fa-info-circle'; } n.style.color = 'var(--text-on-accent)'; n.classList.add('show'); setTimeout(() => n.classList.remove('show'), duration); }
-    function clearMyPredictions() { if (!currentUserRole) { showNotification("Please login to manage predictions.", "error"); return; } if (confirm("Are you sure you want to clear all your prediction history? This cannot be undone.")) { history = []; saveMyHistoryToStorage(); resetSessionStatistics(); fetchData(1, 'my', true); showNotification('My Predictions history cleared!', 'info'); } }
+    function clearMyPredictions() { if (!currentUserRole) { showNotification("Prediction manage korar jonno login korun.", "error"); return; } if (confirm("Apni ki apnar shob prediction history clear korte nishchit? Eti আর phire paowa jabe na.")) { history = []; saveMyHistoryToStorage(); resetSessionStatistics(); fetchData(1, 'my', true); showNotification('Apnar Prediction history clear kora hoyeche!', 'info'); } }
 
     // --- Admin Panel & User Management ---
     const renameUserModal = document.getElementById('renameUserModal');
     const renameUserModalCloseButton = document.getElementById('renameUserModalCloseButton');
+    const userKeyRenameDisplayEl = document.getElementById('userKeyRenameDisplay');
     const currentUsernameRenameEl = document.getElementById('currentUsernameRename');
     const newUsernameInputEl = document.getElementById('newUsernameInput');
     const userAccessKeyToRenameEl = document.getElementById('userAccessKeyToRename');
     const saveRenameBtn = document.getElementById('saveRenameBtn');
     const cancelRenameBtn = document.getElementById('cancelRenameBtn');
+
+    const editExpiryModal = document.getElementById('editExpiryModal');
+    const editExpiryModalCloseButton = document.getElementById('editExpiryModalCloseButton');
+    const userKeyExpiryDisplayEl = document.getElementById('userKeyExpiryDisplay');
+    const currentExpiryDisplayEl = document.getElementById('currentExpiryDisplay');
+    const editUserValidityPeriodEl = document.getElementById('editUserValidityPeriod');
+    const userAccessKeyToEditExpiryEl = document.getElementById('userAccessKeyToEditExpiry');
+    const saveEditExpiryBtn = document.getElementById('saveEditExpiryBtn');
+    const cancelEditExpiryBtn = document.getElementById('cancelEditExpiryBtn');
+
+
     function openRenameModal(accessKey, currentName) {
-        if (!renameUserModal || !currentUsernameRenameEl || !newUsernameInputEl || !userAccessKeyToRenameEl) return;
+        if (!renameUserModal || !currentUsernameRenameEl || !newUsernameInputEl || !userAccessKeyToRenameEl || !userKeyRenameDisplayEl) return;
+        userKeyRenameDisplayEl.textContent = accessKey;
         currentUsernameRenameEl.textContent = currentName;
-        newUsernameInputEl.value = currentName;
+        newUsernameInputEl.value = currentName; // Pre-fill with current name
         userAccessKeyToRenameEl.value = accessKey;
         renameUserModal.style.display = "flex";
         newUsernameInputEl.focus();
@@ -1448,7 +1525,7 @@
             const accessKey = userAccessKeyToRenameEl.value;
             const newUsername = newUsernameInputEl.value.trim();
             if (!accessKey || !newUsername) {
-                showNotification("New username cannot be empty.", "error");
+                showNotification("Notun username khali rakha jabe na.", "error");
                 return;
             }
             let managedUsers = getManagedUsers();
@@ -1458,29 +1535,204 @@
                 saveManagedUsers(managedUsers);
                 renderAdminDashboard();
                 if(renameUserModal) renameUserModal.style.display = "none";
-                showNotification(`User ${accessKey} renamed to ${newUsername}.`, "success");
+                showNotification(`User ${accessKey} er nam ${newUsername} kora hoyeche.`, "success");
             } else {
-                showNotification("User not found for renaming.", "error");
+                showNotification("Nam poriborton er jonno user khuje paowa jayni.", "error");
             }
         };
     }
+
+    function openEditExpiryModal(accessKey, currentExpiryTimestamp, currentValidity) {
+        if (!editExpiryModal || !userKeyExpiryDisplayEl || !currentExpiryDisplayEl || !editUserValidityPeriodEl || !userAccessKeyToEditExpiryEl) return;
+        userKeyExpiryDisplayEl.textContent = accessKey;
+        currentExpiryDisplayEl.textContent = formatDateForDisplay(parseInt(currentExpiryTimestamp), false) || "Lifetime";
+        editUserValidityPeriodEl.value = currentValidity || "lifetime";
+        userAccessKeyToEditExpiryEl.value = accessKey;
+        editExpiryModal.style.display = "flex";
+    }
+
+    if(editExpiryModalCloseButton) editExpiryModalCloseButton.onclick = () => { if(editExpiryModal) editExpiryModal.style.display = "none"; };
+    if(cancelEditExpiryBtn) cancelEditExpiryBtn.onclick = () => { if(editExpiryModal) editExpiryModal.style.display = "none"; };
+    if(saveEditExpiryBtn) {
+        saveEditExpiryBtn.onclick = () => {
+            const accessKey = userAccessKeyToEditExpiryEl.value;
+            const newValidityPeriod = editUserValidityPeriodEl.value;
+            if (!accessKey || !newValidityPeriod) {
+                showNotification("Notun validity'r jonno ovoidh selection.", "error");
+                return;
+            }
+            let managedUsers = getManagedUsers();
+            const userIndex = managedUsers.findIndex(u => u.accessKey === accessKey);
+            if (userIndex > -1) {
+                managedUsers[userIndex].validityPeriod = newValidityPeriod;
+                managedUsers[userIndex].expiresAt = calculateExpiryTimestamp(newValidityPeriod);
+                saveManagedUsers(managedUsers);
+                renderAdminDashboard();
+                if(editExpiryModal) editExpiryModal.style.display = "none";
+                showNotification(`User ${accessKey} er expiry update kora hoyeche.`, "success");
+            } else {
+                showNotification("Expiry update korar jonno user khuje paowa jayni.", "error");
+            }
+        };
+    }
+
+
     function getManagedUsers() { return robustJsonParse(STORAGE_KEY_MANAGED_USERS, []); }
     function saveManagedUsers(usersArray) { robustLocalStorageSetItem(STORAGE_KEY_MANAGED_USERS, JSON.stringify(usersArray));}
-    function generateAccessKey(length = 12) { const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'; let key = 'U_'; for (let i = 0; i < length; i++) key += chars.charAt(Math.floor(Math.random() * chars.length)); return key; }
+
+    function getValidityLabel(validityPeriod) {
+        const map = { "30m": "30Min", "1h": "1Hr", "1d": "1Day", "7d": "7Day", "60d": "60Day", "180d": "180Day", "365d": "1Yr", "720d": "2Yr", "lifetime": "Life" };
+        return map[validityPeriod] || "Gen";
+    }
+
+    function generateAccessKey(validityPeriodValue, randomLength = 6) { 
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_!';
+        let randomPart = '';
+        for (let i = 0; i < randomLength; i++) {
+            randomPart += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        const validityLabel = getValidityLabel(validityPeriodValue);
+        let expiryIdentifier = 'LIFE'; 
+
+        if (validityPeriodValue !== "lifetime") {
+            const expiryTimestamp = calculateExpiryTimestamp(validityPeriodValue);
+            if (expiryTimestamp) {
+                const expiryDate = new Date(expiryTimestamp);
+                const month = String(expiryDate.getMonth() + 1).padStart(2, '0');
+                const day = String(expiryDate.getDate()).padStart(2, '0');
+                const hour = String(expiryDate.getHours()).padStart(2,'0');
+                const minute = String(expiryDate.getMinutes()).padStart(2,'0');
+                expiryIdentifier = `${month}${day}${hour}${minute}`; 
+            } else {
+                expiryIdentifier = 'UNKN'; 
+            }
+        }
+        return `VKP_${validityLabel}${expiryIdentifier}_${randomPart}`;
+    }
+
+
     function calculateExpiryTimestamp(validityPeriod) { const now = Date.now(); if (validityPeriod === "lifetime") return null; let milliseconds; const unit = validityPeriod.slice(-1).toLowerCase(); const value = parseInt(validityPeriod.slice(0, -1)); if (isNaN(value)) return null; if (unit === 'm') milliseconds = value * 60 * 1000; else if (unit === 'h') milliseconds = value * 60 * 60 * 1000; else if (unit === 'd') milliseconds = value * 24 * 60 * 60 * 1000; else return null; return now + milliseconds; }
     function formatDateForDisplay(timestamp, isShort = false) { if (!timestamp) return "Lifetime"; const date = new Date(timestamp); if (isShort) { return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getFullYear()).slice(-2)} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`; } return date.toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }); }
-    function initializeSampleManagedUsers() { let users = getManagedUsers(); if (users.length === 0) { console.log("Initializing sample keys as managed users list is empty."); const samplePeriods = { "30m": "30Min", "1h": "1Hr", "1d": "1Day", "7d": "7Days", "60d": "60Days", "180d": "180Days", "365d": "365Days", "720d": "720Days" }; const newUsers = []; for (const periodCode in samplePeriods) { const periodLabel = samplePeriods[periodCode]; for (let i = 1; i <= 4; i++) { const newUser = { accessKey: `U_${periodLabel.toUpperCase()}_KEY${i}`, username: `User_${periodLabel}_${i}`, createdAt: Date.now(), validityPeriod: periodCode, expiresAt: calculateExpiryTimestamp(periodCode), isBanned: false, role: 'user' }; newUsers.push(newUser); } } saveManagedUsers(newUsers); console.log(`${newUsers.length} sample keys created.`); showNotification(`${newUsers.length} sample keys generated. Admins can manage them.`, 'info', 5000); } else { console.log("Managed users list not empty. Skipping sample key generation.");}}
+
+    function initializeSampleManagedUsers() {
+        let users = getManagedUsers();
+        if (users.length === 0) {
+            console.log("Initializing sample keys as managed users list is empty.");
+            const sampleUserConfigs = [
+                { usernameBase: "SampleUser", validityPeriod: "30m" },
+                { usernameBase: "SampleUser", validityPeriod: "1d"},
+                { usernameBase: "SampleUser", validityPeriod: "7d"}
+            ];
+            const newUsers = [];
+            let userCounter = 1;
+            sampleUserConfigs.forEach(config => {
+                for (let i = 1; i <= 30; i++) { // Create 30 of each type
+                    const validityLabel = getValidityLabel(config.validityPeriod);
+                    const createdAt = Date.now() - (userCounter * 1000 * 60 * (Math.random() * 10 + 5) ); // Stagger creation times more
+                    const expiresAt = calculateExpiryTimestamp(config.validityPeriod);
+                    const newUser = {
+                        accessKey: generateAccessKey(config.validityPeriod), 
+                        username: `${config.usernameBase}_${validityLabel}_${i}`,
+                        createdAt: createdAt,
+                        validityPeriod: config.validityPeriod,
+                        expiresAt: expiresAt,
+                        isBanned: false,
+                        role: 'user'
+                    };
+                    newUsers.push(newUser);
+                    userCounter++;
+                }
+            });
+            saveManagedUsers(newUsers);
+            console.log(`${newUsers.length} sample keys created with new format.`);
+            showNotification(`${newUsers.length} sample keys generated. Admins can manage them.`, 'info', 5000);
+        } else {
+            console.log("Managed users list not empty. Skipping sample key generation.");
+        }
+    }
     function renderAdminDashboard() { const totalManagedUsersEl = document.getElementById('totalManagedUsers'); const bannedManagedUsersEl = document.getElementById('bannedManagedUsers'); const listContainer = document.getElementById('managedUsersListContainer'); const createUserButton = document.getElementById('createUserKeyButton'); if (!listContainer || !totalManagedUsersEl || !bannedManagedUsersEl || !createUserButton ) { console.error("Admin panel elements not found."); return; } const managedUsers = getManagedUsers(); totalManagedUsersEl.textContent = managedUsers.length; bannedManagedUsersEl.textContent = managedUsers.filter(u => u.isBanned).length; listContainer.innerHTML = ''; const headerDiv = document.createElement('div'); headerDiv.className = 'admin-list-header';
     headerDiv.innerHTML = `<div class="history-header-item">Date & Time</div><div class="history-header-item">Username</div><div class="history-header-item">Access Key</div><div class="history-header-item">Status</div><div class="history-header-item">Expires</div><div class="history-header-item">Actions</div>`;
-    listContainer.appendChild(headerDiv); if (managedUsers.length === 0) { listContainer.innerHTML += '<p style="text-align:center;padding:10px;color:var(--text-secondary);">No users created yet.</p>'; } else { managedUsers.sort((a, b) => b.createdAt - a.createdAt); managedUsers.forEach(user => { const itemDiv = document.createElement('div'); itemDiv.className = 'history-item managed-user-item'; let statusText = "Active"; let statusColor = 'var(--success)'; if (user.isBanned) { statusText = "Banned"; statusColor = 'var(--danger)'; } else if (user.expiresAt && Date.now() > user.expiresAt) { statusText = "Expired"; statusColor = 'var(--warning)';} const banButtonText = user.isBanned ? "Unban" : "Ban"; const banButtonClass = user.isBanned ? "unban-btn" : "ban-btn"; itemDiv.innerHTML = `<div class="history-value" title="${new Date(user.createdAt).toLocaleString()}">${formatDateForDisplay(user.createdAt, true)}</div><div class="history-value user-cell" title="${user.username}">${user.username}</div><div class="history-value key-cell" title="${user.accessKey}">${user.accessKey}</div><div class="history-value" style="color:${statusColor}; font-weight:bold;">${statusText}</div><div class="history-value" title="${user.expiresAt ? new Date(user.expiresAt).toLocaleString() : 'Lifetime'}">${formatDateForDisplay(user.expiresAt, true)}</div><div class="history-value"><button class="admin-action-btn rename-btn" data-key="${user.accessKey}" data-name="${user.username}" title="Rename User"><i class="fas fa-edit"></i></button><button class="${banButtonClass} admin-action-btn" data-key="${user.accessKey}" title="${banButtonText} User">${user.isBanned ? '<i class="fas fa-user-check"></i>' :'<i class="fas fa-user-slash"></i>'}</button><button class="delete-btn admin-action-btn" data-key="${user.accessKey}" title="Delete User"><i class="fas fa-trash-alt"></i></button></div>`; listContainer.appendChild(itemDiv); }); } listContainer.querySelectorAll('.rename-btn').forEach(button => { button.onclick = (e) => { const key = e.currentTarget.dataset.key; const name = e.currentTarget.dataset.name; openRenameModal(key, name); };}); listContainer.querySelectorAll('.ban-btn, .unban-btn').forEach(button => { button.onclick = (e) => { const key = e.currentTarget.dataset.key; const users = getManagedUsers(); const user = users.find(u => u.accessKey === key); if (user) { user.isBanned = !user.isBanned; saveManagedUsers(users); renderAdminDashboard(); showNotification(`User ${key} ${user.isBanned ? 'banned' : 'unbanned'}.`, 'info'); } }; }); listContainer.querySelectorAll('.delete-btn').forEach(button => { button.onclick = (e) => { if (confirm(`Delete user ${e.currentTarget.dataset.key}?`)) { let users = getManagedUsers(); users = users.filter(u => u.accessKey !== e.currentTarget.dataset.key); saveManagedUsers(users); renderAdminDashboard(); showNotification(`User ${e.currentTarget.dataset.key} deleted.`, 'info'); } }; }); createUserButton.onclick = () => { const validityPeriodSelect = document.getElementById('userValidityPeriod'); const generatedUserKeyEl = document.getElementById('generatedUserKey'); if (!validityPeriodSelect || !generatedUserKeyEl) { console.error("Create user form elements missing!"); return; } const validityPeriod = validityPeriodSelect.value; const newKey = generateAccessKey(); const createdAt = Date.now(); const expiresAt = calculateExpiryTimestamp(validityPeriod); const autoUsername = `User_${String(createdAt).slice(-5)}`; const newUser = { accessKey: newKey, username: autoUsername, createdAt, validityPeriod, expiresAt, isBanned: false, role: 'user' }; const currentManagedUsers = getManagedUsers(); currentManagedUsers.push(newUser); saveManagedUsers(currentManagedUsers); generatedUserKeyEl.textContent = `New Key: ${newKey} (User: ${autoUsername})`; renderAdminDashboard(); showNotification(`User key ${newKey} for ${autoUsername} created.`, 'success'); }; }
+    listContainer.appendChild(headerDiv); if (managedUsers.length === 0) { listContainer.innerHTML += '<p style="text-align:center;padding:10px;color:var(--text-secondary);">Kono user toiri kora hoyni.</p>'; } else { managedUsers.sort((a, b) => b.createdAt - a.createdAt); managedUsers.forEach(user => { const itemDiv = document.createElement('div'); itemDiv.className = 'history-item managed-user-item'; let statusText = "Active"; let statusColor = 'var(--success)'; if (user.isBanned) { statusText = "Banned"; statusColor = 'var(--danger)'; } else if (user.expiresAt && Date.now() > user.expiresAt) { statusText = "Expired"; statusColor = 'var(--warning)';} const banButtonText = user.isBanned ? "Unban" : "Ban"; const banButtonClass = user.isBanned ? "unban-btn" : "ban-btn"; itemDiv.innerHTML = `<div class="history-value" title="${new Date(user.createdAt).toLocaleString()}">${formatDateForDisplay(user.createdAt, true)}</div><div class="history-value user-cell" title="${user.username}">${user.username}</div><div class="history-value key-cell" title="${user.accessKey}">${user.accessKey}</div><div class="history-value" style="color:${statusColor}; font-weight:bold;">${statusText}</div><div class="history-value" title="${user.expiresAt ? new Date(user.expiresAt).toLocaleString() : 'Lifetime'}">${formatDateForDisplay(user.expiresAt, true)}</div><div class="history-value action-cell"><button class="admin-action-btn rename-btn" data-key="${user.accessKey}" data-name="${user.username}" title="Rename User"><i class="fas fa-edit"></i></button><button class="admin-action-btn edit-expiry-btn" data-key="${user.accessKey}" data-expiry="${user.expiresAt}" data-validity="${user.validityPeriod}" title="Edit Expiry"><i class="fas fa-calendar-alt"></i></button><button class="${banButtonClass} admin-action-btn" data-key="${user.accessKey}" title="${banButtonText} User">${user.isBanned ? '<i class="fas fa-user-check"></i>' :'<i class="fas fa-user-slash"></i>'}</button><button class="delete-btn admin-action-btn" data-key="${user.accessKey}" title="Delete User"><i class="fas fa-trash-alt"></i></button></div>`; listContainer.appendChild(itemDiv); }); } listContainer.querySelectorAll('.rename-btn').forEach(button => { button.onclick = (e) => { const key = e.currentTarget.dataset.key; const name = e.currentTarget.dataset.name; openRenameModal(key, name); };}); listContainer.querySelectorAll('.edit-expiry-btn').forEach(button => { button.onclick = (e) => { const key = e.currentTarget.dataset.key; const expiry = e.currentTarget.dataset.expiry; const validity = e.currentTarget.dataset.validity; openEditExpiryModal(key, expiry, validity); };}); listContainer.querySelectorAll('.ban-btn, .unban-btn').forEach(button => { button.onclick = (e) => { const key = e.currentTarget.dataset.key; const users = getManagedUsers(); const user = users.find(u => u.accessKey === key); if (user) { user.isBanned = !user.isBanned; saveManagedUsers(users); renderAdminDashboard(); showNotification(`User ${key} ${user.isBanned ? 'banned' : 'unbanned'}.`, 'info'); } }; }); listContainer.querySelectorAll('.delete-btn').forEach(button => { button.onclick = (e) => { if (confirm(`User ${e.currentTarget.dataset.key} delete korben?`)) { let users = getManagedUsers(); users = users.filter(u => u.accessKey !== e.currentTarget.dataset.key); saveManagedUsers(users); renderAdminDashboard(); showNotification(`User ${e.currentTarget.dataset.key} delete kora hoyeche.`, 'info'); } }; }); createUserButton.onclick = () => { const validityPeriodSelect = document.getElementById('userValidityPeriod'); const generatedUserKeyEl = document.getElementById('generatedUserKey'); if (!validityPeriodSelect || !generatedUserKeyEl) { console.error("Create user form elements missing!"); return; } const validityPeriod = validityPeriodSelect.value; const validityLabel = getValidityLabel(validityPeriod); const timestampSuffix = String(Date.now()).slice(-5); const newKey = generateAccessKey(validityPeriod); const createdAt = Date.now(); const expiresAt = calculateExpiryTimestamp(validityPeriod); const autoUsername = `User_${validityLabel}_${timestampSuffix}`; const newUser = { accessKey: newKey, username: autoUsername, createdAt, validityPeriod, expiresAt, isBanned: false, role: 'user' }; const currentManagedUsers = getManagedUsers(); currentManagedUsers.push(newUser); saveManagedUsers(currentManagedUsers); generatedUserKeyEl.textContent = `Notun Key: ${newKey} (User: ${autoUsername})`; renderAdminDashboard(); showNotification(`User key ${newKey} (User: ${autoUsername}) toiri kora hoyeche.`, 'success'); }; }
 
     // --- Authentication & Initialization ---
     function showLoginModal(show = true) { const loginModalEl = document.getElementById('loginModal'); const appContainerEl = document.getElementById('appContainer'); const loginErrorEl = document.getElementById('loginError'); if(!loginModalEl || !appContainerEl) { console.error("Login or App container not found in showLoginModal"); return; } if (loginErrorEl) loginErrorEl.style.display = 'none'; if (show) { loginModalEl.style.display = "flex"; appContainerEl.style.display = "none"; } else { loginModalEl.style.display = "none"; appContainerEl.style.display = "block"; } }
     function showLoginError(message) { const loginErrorEl = document.getElementById('loginError'); const keyInput = document.getElementById('accessKeyInput'); if (loginErrorEl) { loginErrorEl.textContent = message; loginErrorEl.style.display = 'block'; } if (keyInput) keyInput.value = ''; }
     function initializeUIBasedOnRole() { console.log("[DEBUG] initializeUIBasedOnRole: Called. CurrentUserRole:", currentUserRole); const adminTab = document.getElementById('adminDashboardTab'); const logoutBtn = document.getElementById('logoutButton'); const appContainer = document.getElementById('appContainer'); const loginModal = document.getElementById('loginModal'); if (!appContainer || !loginModal) { console.error("[DEBUG] Critical UI elements (appContainer or loginModal) not found. UI will not function correctly."); return; } if (adminTab) adminTab.style.display = (currentUserRole === 'admin') ? 'flex' : 'none'; if (logoutBtn) logoutBtn.style.display = currentUserRole ? 'inline-block' : 'none'; if (currentUserRole) { console.log("[DEBUG] initializeUIBasedOnRole: User is logged in. Showing app."); showLoginModal(false); loadMyHistoryFromStorage(); loadSessionStateFromStorage(); loadMyHistoryItemsPerPageFromStorage(); setApiStatus();
         const initialOutputArea = document.getElementById('currentResult'); if(initialOutputArea) initialOutputArea.innerHTML = '<i class="fas fa-hourglass-half fa-spin" style="color:var(--primary);"></i> Initializing AI...'; fetchOptimizedData(DEEP_HISTORY_ITEMS_PER_PAGE).then(() => { if(periodTimerInterval) clearInterval(periodTimerInterval); periodTimerInterval = setInterval(updatePeriodAndTimer, 1000); currentTab = 'game'; fetchData(1, 'game', true); updateSessionStatsBar(); updateJarvisCard(); console.log(`[DEBUG] Initialization complete. Cached: ${cachedData.length} items.`); }).catch(err => { console.error("Error during init fetch:", err); if(initialOutputArea) initialOutputArea.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error initializing app data.'; setApiStatus(); }); } else { console.log("[DEBUG] initializeUIBasedOnRole: No user session. Showing login modal."); showLoginModal(true); if(periodTimerInterval) clearInterval(periodTimerInterval); periodTimerInterval = null; setApiStatus(); } }
-    function handleLoginAttempt() { console.log("[DEBUG] handleLoginAttempt: Initiated."); const keyInput = document.getElementById('accessKeyInput'); const enteredKey = keyInput.value.trim(); let role = null; let currentKeyToStore = null; if (!enteredKey) { showLoginError("Access Key cannot be empty."); return; } console.log("[DEBUG] Attempting login with key:", enteredKey); if (enteredKey === ADMIN_ACCESS_KEY) { role = 'admin'; currentKeyToStore = ADMIN_ACCESS_KEY; console.log("[DEBUG] Admin login successful."); } else { const managedUsers = getManagedUsers(); const foundUser = managedUsers.find(u => u.accessKey === enteredKey); if (foundUser) { console.log("[DEBUG] User found:", foundUser.username); if (foundUser.isBanned) { showLoginError("This Access Key is banned."); console.log("[DEBUG] Login failed: User banned."); return; } if (foundUser.expiresAt && Date.now() > foundUser.expiresAt) { showLoginError("This Access Key has expired."); console.log("[DEBUG] Login failed: User key expired."); return; } role = 'user'; currentKeyToStore = foundUser.accessKey; resetSessionStatistics(); console.log("[DEBUG] User login successful."); } else { console.log("[DEBUG] User not found or admin key incorrect."); } } if (role) { currentUserRole = role; robustLocalStorageSetItem(STORAGE_KEY_USER_ROLE, role); robustLocalStorageSetItem(STORAGE_KEY_CURRENT_USER_KEY, currentKeyToStore); if (keyInput) keyInput.value = ''; initializeUIBasedOnRole(); showNotification(`Logged in as ${role}.`, 'success'); } else { currentUserRole = null; robustLocalStorageSetItem(STORAGE_KEY_USER_ROLE, ''); localStorage.removeItem(STORAGE_KEY_CURRENT_USER_KEY); showLoginError("Invalid Access Key."); } }
-    function handleLogout() { if (confirm("Are you sure you want to logout?")) { console.log("[DEBUG] handleLogout: Logging out."); currentUserRole = null; localStorage.removeItem(STORAGE_KEY_USER_ROLE); localStorage.removeItem(STORAGE_KEY_CURRENT_USER_KEY); const adminTab = document.getElementById('adminDashboardTab'); if (adminTab) adminTab.style.display = 'none'; const logoutBtn = document.getElementById('logoutButton'); if (logoutBtn) logoutBtn.style.display = 'none'; const historyContentEl = document.getElementById('historyContent'); if (historyContentEl) historyContentEl.innerHTML = ''; const appContainerEl = document.getElementById('appContainer'); if(appContainerEl) appContainerEl.style.display = "none"; if(periodTimerInterval) clearInterval(periodTimerInterval); periodTimerInterval = null; showLoginModal(true); showNotification('Logged out successfully.', 'info'); } }
+    
+    function handleLoginAttempt() {
+        console.log("[DEBUG] handleLoginAttempt: Initiated.");
+        const keyInput = document.getElementById('accessKeyInput');
+        const enteredKey = keyInput.value.trim();
+        let role = null;
+        let currentKeyToStore = null;
+        let universalUserDetails = null;
+
+        if (!enteredKey) {
+            showLoginError("Access Key khali rakha jabe na.");
+            return;
+        }
+        console.log("[DEBUG] Attempting login with key:", enteredKey);
+
+        if (enteredKey === ADMIN_ACCESS_KEY) {
+            role = 'admin';
+            currentKeyToStore = ADMIN_ACCESS_KEY;
+            console.log("[DEBUG] Admin login successful.");
+        } else if (UNIVERSAL_SAMPLE_KEYS[enteredKey]) {
+            universalUserDetails = UNIVERSAL_SAMPLE_KEYS[enteredKey];
+            role = 'user';
+            currentKeyToStore = enteredKey; // Store the universal key itself for session tracking
+            // For universal keys, we don't check expiry/ban here as they are for demo.
+            // Their "expiry" is tied to their definition (e.g., 30m from login).
+            // We'll use a temporary user object for the session.
+            console.log("[DEBUG] Universal sample key login successful:", universalUserDetails.username);
+            resetSessionStatistics(); 
+        } else {
+            const managedUsers = getManagedUsers();
+            const foundUser = managedUsers.find(u => u.accessKey === enteredKey);
+            if (foundUser) {
+                console.log("[DEBUG] User found in localStorage:", foundUser.username);
+                if (foundUser.isBanned) {
+                    showLoginError("Ei Access Key-ti banned kora hoyeche.");
+                    console.log("[DEBUG] Login failed: User banned.");
+                    return;
+                }
+                if (foundUser.expiresAt && Date.now() > foundUser.expiresAt) {
+                    showLoginError("Ei Access Key-er meyad shesh hoye geche.");
+                    console.log("[DEBUG] Login failed: User key expired.");
+                    return;
+                }
+                role = 'user';
+                currentKeyToStore = foundUser.accessKey;
+                resetSessionStatistics();
+                console.log("[DEBUG] localStorage user login successful.");
+            } else {
+                console.log("[DEBUG] User not found in localStorage or admin key incorrect.");
+            }
+        }
+
+        if (role) {
+            currentUserRole = role;
+            robustLocalStorageSetItem(STORAGE_KEY_USER_ROLE, role);
+            robustLocalStorageSetItem(STORAGE_KEY_CURRENT_USER_KEY, currentKeyToStore); // Store the key used for login
+            
+            if (keyInput) keyInput.value = '';
+            initializeUIBasedOnRole();
+            
+            let loginMessage = `Logged in as ${role}.`;
+            if (universalUserDetails) {
+                loginMessage = `Logged in as ${universalUserDetails.username}.`;
+            }
+            showNotification(loginMessage, 'success');
+        } else {
+            currentUserRole = null;
+            robustLocalStorageSetItem(STORAGE_KEY_USER_ROLE, '');
+            localStorage.removeItem(STORAGE_KEY_CURRENT_USER_KEY);
+            showLoginError("Ovoidh Access Key.");
+        }
+    }
+
+    function handleLogout() { if (confirm("Apni ki nishchit logout korte chan?")) { console.log("[DEBUG] handleLogout: Logging out."); currentUserRole = null; localStorage.removeItem(STORAGE_KEY_USER_ROLE); localStorage.removeItem(STORAGE_KEY_CURRENT_USER_KEY); const adminTab = document.getElementById('adminDashboardTab'); if (adminTab) adminTab.style.display = 'none'; const logoutBtn = document.getElementById('logoutButton'); if (logoutBtn) logoutBtn.style.display = 'none'; const historyContentEl = document.getElementById('historyContent'); if (historyContentEl) historyContentEl.innerHTML = ''; const appContainerEl = document.getElementById('appContainer'); if(appContainerEl) appContainerEl.style.display = "none"; if(periodTimerInterval) clearInterval(periodTimerInterval); periodTimerInterval = null; showLoginModal(true); showNotification('Safal bhabe logout kora hoyeche.', 'info'); } }
 
     // --- Gemini API Integration ---
     const geminiModal = document.getElementById('geminiAnalysisModal');
@@ -1493,7 +1745,7 @@
     }
      window.onclick = (event) => {
         if (event.target == geminiModal) {
-            geminiModal.style.display = "none";
+            if(geminiModal) geminiModal.style.display = "none";
         }
         const aboutModalEl = document.getElementById('aboutModal');
         if (event.target == aboutModalEl && aboutModalEl) aboutModalEl.style.display="none";
@@ -1501,6 +1753,8 @@
         if (event.target == contactModalEl && contactModalEl) contactModalEl.style.display="none";
         const renameModalEl = document.getElementById('renameUserModal');
         if (event.target == renameModalEl && renameModalEl) renameModalEl.style.display="none";
+        const editExpiryModalEl = document.getElementById('editExpiryModal');
+        if (event.target == editExpiryModalEl && editExpiryModalEl) editExpiryModalEl.style.display="none";
     };
     async function getGeminiAnalysis(prompt) {
         if (!geminiModal || !geminiAnalysisTextEl) return;
@@ -1511,7 +1765,7 @@
         const payload = { contents: chatHistory };
 
         // ================================================================= //
-        // == IMPORTANT: ADD YOUR GOOGLE AI GEMINI API KEY HERE           == //
+        // == IMPORTANT: ADD YOUR GOOGLE AI GEMINI API KEY HERE          == //
         // == You can get one from https://aistudio.google.com/app/apikey == //
         const apiKey = ""; // <--- PASTE YOUR SECURE API KEY BETWEEN THESE QUOTES
         // ================================================================= //
@@ -1560,12 +1814,12 @@
     }
     function handleDeeperAnalysis() {
         if (!lastCompletedPeriodNumber || !currentPredictionData[lastCompletedPeriodNumber]) {
-            showNotification("No prediction has been generated yet.", "error");
+            showNotification("Ekhono kono prediction toiri hoyni.", "error");
             return;
         }
         const predData = currentPredictionData[lastCompletedPeriodNumber];
         if (!predData || predData.error) {
-             showNotification("Current prediction data is invalid or contains an error.", "error");
+             showNotification("Bortoman prediction data ovoidh ba trutipurno.", "error");
              return;
         }
         let recentHistoryText = "Recent game history (Period: Number, B/S, Color):\n";
@@ -1603,25 +1857,35 @@
     let periodTimerInterval = null;
     window.onload = async () => {
         console.log('Predict VIP King Pro (v17.8 Reviewed) Initializing...');
-        initializeSampleManagedUsers();
-        let loadedTheme = robustLocalStorageGetItem(STORAGE_KEY_THEME, 'dark'); // Default to 'dark' if nothing is stored
-        applyTheme(loadedTheme); // Apply the loaded or default theme
+        initializeSampleManagedUsers(); // Now generates 90 sample users
+        let loadedTheme = robustLocalStorageGetItem(STORAGE_KEY_THEME, 'dark'); 
+        applyTheme(loadedTheme); 
         currentUserRole = robustLocalStorageGetItem(STORAGE_KEY_USER_ROLE, null);
         const storedUserKey = robustLocalStorageGetItem(STORAGE_KEY_CURRENT_USER_KEY, null);
         console.log("[DEBUG] window.onload: Retrieved role:", currentUserRole, "Key:", storedUserKey);
         let sessionStillValid = false;
         if (currentUserRole === 'admin' && storedUserKey === ADMIN_ACCESS_KEY) { sessionStillValid = true; console.log("[DEBUG] Admin session valid."); }
         else if (currentUserRole === 'user' && storedUserKey) {
-            const managedUsers = getManagedUsers(); const foundUser = managedUsers.find(u => u.accessKey === storedUserKey);
-            if (foundUser && !foundUser.isBanned && (!foundUser.expiresAt || Date.now() <= foundUser.expiresAt)) { sessionStillValid = true; console.log("[DEBUG] User session valid for:", foundUser.username); }
-            else { console.log("[DEBUG] User session invalid. Found user:", foundUser); }
+            if (UNIVERSAL_SAMPLE_KEYS[storedUserKey]) { // Check if it's a universal sample key
+                sessionStillValid = true;
+                console.log("[DEBUG] Universal sample key session valid for:", UNIVERSAL_SAMPLE_KEYS[storedUserKey].username);
+            } else { // Check localStorage managed users
+                const managedUsers = getManagedUsers(); 
+                const foundUser = managedUsers.find(u => u.accessKey === storedUserKey);
+                if (foundUser && !foundUser.isBanned && (!foundUser.expiresAt || Date.now() <= foundUser.expiresAt)) { 
+                    sessionStillValid = true; console.log("[DEBUG] User session valid for:", foundUser.username); 
+                } else { 
+                    console.log("[DEBUG] User session invalid. Found user:", foundUser); 
+                }
+            }
         } else { console.log("[DEBUG] No valid session found."); }
+
         if (!sessionStillValid) {
             console.log("[DEBUG] window.onload: Session not valid, clearing role and key.");
             currentUserRole = null; localStorage.removeItem(STORAGE_KEY_USER_ROLE); localStorage.removeItem(STORAGE_KEY_CURRENT_USER_KEY);
         }
-        initializeUIBasedOnRole(); // This will call setApiStatus()
-        isSoundOn = robustLocalStorageGetItem(STORAGE_KEY_SOUND_ON, 'true') === 'true';
+        initializeUIBasedOnRole(); 
+        isSoundOn = robustLocalStorageGetItem(STORAGE_KEY_SOUND_ON, 'true') === 'true'; 
         const soundToggleBtn = document.getElementById('soundToggleBtn');
         const soundToggleIcon = soundToggleBtn ? soundToggleBtn.querySelector('i') : null;
         function updateSoundIcon() {
@@ -1630,20 +1894,27 @@
                 else { soundToggleIcon.classList.remove('fa-volume-up'); soundToggleIcon.classList.add('fa-volume-mute'); if(soundToggleBtn) soundToggleBtn.title = "Unmute Sound"; }
             }
         }
-        updateSoundIcon();
+        updateSoundIcon(); 
         if (soundToggleBtn) {
             soundToggleBtn.onclick = (e) => {
                 e.preventDefault(); isSoundOn = !isSoundOn; robustLocalStorageSetItem(STORAGE_KEY_SOUND_ON, isSoundOn.toString()); updateSoundIcon();
                 const soundStatusMessage = isSoundOn ? "Sound On" : "Sound Muted";
                 showNotification(soundStatusMessage, "info");
-                speak(soundStatusMessage.replace("Muted", "off"));
+                if(isSoundOn) speak(soundStatusMessage); 
             };
         }
         const aboutModal=document.getElementById('aboutModal'), aboutModalLink=document.getElementById('aboutModalLink'), aboutModalCloseButton=document.getElementById('aboutModalCloseButton'); if(aboutModalLink && aboutModal && aboutModalCloseButton) { aboutModalLink.onclick = (e) => { e.preventDefault(); aboutModal.style.display="flex"; }; aboutModalCloseButton.onclick = () => { aboutModal.style.display="none"; }; }
         const contactModal = document.getElementById('contactModal'), contactModalLink = document.getElementById('contactModalLink'), contactModalCloseButton = document.getElementById('contactModalCloseButton'); if(contactModalLink && contactModal && contactModalCloseButton) { contactModalLink.onclick = (e) => { e.preventDefault(); contactModal.style.display="flex"; }; contactModalCloseButton.onclick = () => { contactModal.style.display="none"; }; }
-        const renameModalEl = document.getElementById('renameUserModal');
-        if (renameUserModalCloseButton && renameModalEl) { renameUserModalCloseButton.onclick = () => { renameModalEl.style.display = "none"; }; }
-        if (cancelRenameBtn && renameModalEl) { cancelRenameBtn.onclick = () => { renameModalEl.style.display = "none"; }; }
+        
+        // Rename Modal event listeners (already present, ensure they are correctly assigned)
+        if (renameUserModalCloseButton && renameUserModal) { renameUserModalCloseButton.onclick = () => { renameUserModal.style.display = "none"; }; }
+        if (cancelRenameBtn && renameUserModal) { cancelRenameBtn.onclick = () => { renameUserModal.style.display = "none"; }; }
+
+        // Edit Expiry Modal event listeners
+        if (editExpiryModalCloseButton && editExpiryModal) { editExpiryModalCloseButton.onclick = () => { editExpiryModal.style.display = "none"; }; }
+        if (cancelEditExpiryBtn && editExpiryModal) { cancelEditExpiryBtn.onclick = () => { editExpiryModal.style.display = "none"; }; }
+
+
         const clearMyPredictionsBtn = document.getElementById('clearMyPredictionsBtn'); if (clearMyPredictionsBtn) { clearMyPredictionsBtn.onclick = clearMyPredictions; }
         const loginButtonEl = document.getElementById('loginButton'); if (loginButtonEl) loginButtonEl.onclick = handleLoginAttempt;
         const accessKeyInputEl = document.getElementById('accessKeyInput'); if (accessKeyInputEl) { accessKeyInputEl.addEventListener('keypress', function(event) { if (event.key === "Enter") { event.preventDefault(); handleLoginAttempt(); } }); }
@@ -1664,7 +1935,7 @@
              console.log("Internet connection detected: Offline.");
              setApiStatus();
         });
-        if ('speechSynthesis' in window && window.speechSynthesis.getVoices) { window.speechSynthesis.getVoices(); } // Pre-load voices
+        if ('speechSynthesis' in window && window.speechSynthesis.getVoices) { window.speechSynthesis.getVoices(); } 
         console.log("Predict VIP King Pro Script: window.onload fully executed.");
     };
 </script>
