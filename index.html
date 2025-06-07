@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predict VIP King Pro - v17.9.9 (Algo Update)</title>
+    <title>Predict VIP King Pro - v18.1 (Aggressive Reversal)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -192,44 +192,32 @@
 
         /* New Algorithm Card Styles */
         #newAlgoCard { margin-top: 4px; }
-        .new-algo-grid {
+        #newAlgoContent { padding: 8px 10px; }
+        .algo-line {
             display: flex;
-            justify-content: space-between;
-            gap: 8px;
-            padding: 8px 10px;
-        }
-        .algo-section {
-            flex: 1 1 0; /* Allow sections to grow and shrink equally */
+            align-items: baseline;
+            gap: 6px;
+            flex-wrap: wrap; 
+            margin-bottom: 5px;
             font-size: 0.75rem;
-            padding: 6px 8px;
-            background-color: var(--bg-main);
-            border-radius: 4px;
-            border: 1px solid var(--border-color);
         }
-        .algo-section h4 {
+        .algo-line:last-child { margin-bottom: 0; }
+        .algo-line-title {
+            font-weight: 600;
             color: var(--primary);
-            margin: 0 0 6px 0;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 4px;
+            flex-shrink: 0;
         }
-        .algo-section p {
+        .algo-line-data {
             color: var(--text-secondary);
-            margin-bottom: 6px;
             font-size: 0.7rem;
-            line-height: 1.3;
-            min-height: 1.3em; /* Reserve space for 1 line of analysis text */
         }
-        .algo-section .algo-suggestion {
-            font-size: 0.8rem;
-        }
-        .algo-section .algo-suggestion strong {
+        .algo-line-suggestion {
             color: var(--text-primary);
+            font-weight: 500;
+            flex-grow: 1; 
+            text-align: right;
         }
-
+        
         .tabs { display: flex; margin-bottom: 0rem; border-bottom: 1px solid var(--border-color); gap: 1.5px; background-color: var(--bg-header-footer); border-radius: 4px 4px 0 0; }
         .tabs button { flex: 1; padding: 0.35rem; background: none; border: none; color: var(--text-secondary); font-weight: 500; cursor: pointer; position: relative; transition: background-color 0.2s, color 0.2s, border-bottom-color 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.2rem; border-bottom: 2px solid transparent; font-size: 0.85rem; }
         .tabs button .tab-text-short { display: none; }
@@ -488,7 +476,8 @@
             .admin-section { padding: 5px; margin-bottom: 8px; }
             .tabs button { font-size: 0.6rem; gap: 0.1rem;}
             .tabs button i { font-size: 0.7em; }
-            .new-algo-grid { flex-direction: column; } /* Stack algo sections on very small screens */
+            .algo-line { flex-direction: column; align-items: flex-start; gap: 2px; }
+            .algo-line-suggestion { text-align: left; }
 
             #managedUsersListContainer { max-height: 250px; }
             #managedUsersListContainer .admin-list-header,
@@ -566,7 +555,7 @@
                 <h1>Predict VIP King Pro</h1>
             </div>
             <div class="header-subtitle-container">
-                <span>AI GOLD EDITION (v17.9.9)</span>
+                <span>AI GOLD EDITION (v18.1)</span>
                 <a href="https://www.bdgin03.com//#/register?invitationCode=3783710836033" target="_blank" class="header-action-icon" title="Register"> <i class="fas fa-user-plus"></i> </a>
                 <a href="#" id="soundToggleBtn" class="header-action-icon" title="Mute Sound"> <i class="fas fa-volume-up"></i> </a>
                 <a href="#" id="contactModalLink" class="header-action-icon" title="Contact Details"> <i class="fas fa-envelope"></i> </a>
@@ -694,22 +683,15 @@
         <div class="card" id="newAlgoCard">
             <div class="card-title">
                 <div><i class="fas fa-calculator"></i> New Algorithm & Calculation</div>
+                <div>
+                     <a href="#" id="toggleNewAlgoCard" class="header-action-icon" title="Toggle Algorithm">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                </div>
             </div>
-            <div class="new-algo-grid">
-                <div class="algo-section" id="algoColorSection">
-                    <h4><i class="fas fa-palette"></i> Color Analysis (Last 10)</h4>
-                    <p id="algoColorLogic">Calculating...</p>
-                    <div class="algo-suggestion" id="algoColorSuggestion">
-                        <strong>Suggestion:</strong> <span>N/A</span>
-                    </div>
-                </div>
-                <div class="algo-section" id="algoNumberSection">
-                    <h4><i class="fas fa-dice"></i> Number Analysis (Last 10)</h4>
-                    <p id="algoNumberLogic">Calculating...</p>
-                    <div class="algo-suggestion" id="algoNumberSuggestion">
-                        <strong>Suggestion:</strong> <span>N/A</span>
-                    </div>
-                </div>
+            <div id="newAlgoContent" class="new-algo-content">
+                <div class="algo-line" id="algoColorLine"></div>
+                <div class="algo-line" id="algoNumberLine"></div>
             </div>
         </div>
 
@@ -806,6 +788,7 @@
     const STORAGE_KEY_CONSECUTIVE_LOSSES = 'predictVIPKingPro_consecutiveLosses_v2';
     const STORAGE_KEY_MY_HISTORY_ITEMS_PER_PAGE = 'predictVIPKingPro_myHistoryItemsPerPage_v2';
     const STORAGE_KEY_JARVIS_VISIBLE = 'predictVIPKingPro_jarvisCardVisible_v1';
+    const STORAGE_KEY_ALGO_VISIBLE = 'predictVIPKingPro_algoCardVisible_v1';
     const STORAGE_KEY_SOUND_ON = 'predictVIPKingPro_soundOn_v1';
     const STORAGE_KEY_LOGIN_PATTERN = 'predictVIPKingPro_loginPattern_v4';
 
@@ -1021,7 +1004,7 @@
         const longTermGamesToAnalyzeForNumbers = Math.min(gameHistoryCache.length, 100);
         let applyReverseLogic = false;
 
-        if (consecutiveLosses >= 1) {
+        if (consecutiveLosses >= 1) { // **MODIFIED: Reversal logic now applies after 1 loss**
             applyReverseLogic = true;
             currentStrategyLevel = `Auto (Rev L${consecutiveLosses} ${consecutiveLosses === 1 ? 'Strong' : 'V.Strong'})`;
         } else {
@@ -1036,69 +1019,32 @@
         let messageNote = "";
         let reversalChance = 10 + Math.random() * 15;
 
-        if (consecutiveLosses > 2) {
-            console.log(`[Reversal Debug] Losses > 2 (${consecutiveLosses}). Forcing Big/Small focus.`);
-            messageNote += "(B/S Focus LStreak) ";
-            determinedType = 'bigsmall';
-            currentStrategyLevel = `Auto (B/S Focus L${consecutiveLosses})`;
-
-            if (applyReverseLogic) {
-                let trendToReverseBS = bsAnalysis.trend;
-                if (!trendToReverseBS) {
-                    const lastGameDetail = gameHistoryCache[0] ? getNumberDetails(gameHistoryCache[0].number) : null;
-                    trendToReverseBS = lastGameDetail ? (lastGameDetail.bigSmall === 'Big' ? 'Big' : 'Small') : 'Small';
-                    bsAnalysis.trend = trendToReverseBS;
-                     bsAnalysis.probability = bsAnalysis.probability || 50;
-                    console.log(`[Reversal Debug] No clear B/S trend to reverse for forced B/S focus, selected fallback: ${trendToReverseBS}`);
-                }
-                primaryCategoryResult = trendToReverseBS === 'Big' ? 'Small' : 'Big';
-                messageNote += `(Reversing ${trendToReverseBS} to ${primaryCategoryResult}) `;
-
-                let baseReversedProb = 60 + (Math.min(consecutiveLosses, 5) * 5); // Increased base confidence
-                let probabilityImpactReduction = (3 + consecutiveLosses);
-                let reversedProbability = baseReversedProb - ((bsAnalysis.probability || 50) / probabilityImpactReduction) + ((bsAnalysis.streak || 0) * 2); // Increased streak impact
-                chosenAnalysis = { trend: primaryCategoryResult, probability: parseFloat(Math.min(85, Math.max(50, reversedProbability)).toFixed(1)), count: bsAnalysis.count || 0, total: bsAnalysis.total || actualShortTermGamesToAnalyze, streak: 0 };
-
-                reversalChance = 80 + Math.min(consecutiveLosses - 2, 3) * 5; // Increased reversal chance
-                reversalChance = Math.min(95, reversalChance);
-            } else {
-                primaryCategoryResult = bsAnalysis.trend || 'Small';
-                chosenAnalysis = bsAnalysis;
-                if (!bsAnalysis.trend) chosenAnalysis = { trend: primaryCategoryResult, probability: 30, count:0, total: actualShortTermGamesToAnalyze, streak:0};
-            }
-        } else if (applyReverseLogic) {
-            console.log(`[Reversal Debug] L${consecutiveLosses} reversal activated.`);
-            let trendToReverse, typeToReverse, originalAnalysis;
-
-            if (bsAnalysis.probability > rgAnalysis.probability + 5 || (bsAnalysis.probability > rgAnalysis.probability && bsAnalysis.streak >= rgAnalysis.streak)) { originalAnalysis = bsAnalysis; typeToReverse = 'bigsmall'; }
-            else if (rgAnalysis.probability > bsAnalysis.probability + 5 || (rgAnalysis.probability > bsAnalysis.probability && rgAnalysis.streak >= bsAnalysis.streak)) { originalAnalysis = rgAnalysis; typeToReverse = 'redgreen'; }
-            else { originalAnalysis = (bsAnalysis.total >= rgAnalysis.total) ? bsAnalysis : rgAnalysis; typeToReverse = (bsAnalysis.total >= rgAnalysis.total) ? 'bigsmall' : 'redgreen'; }
-
-            trendToReverse = originalAnalysis.trend;
-            if (!trendToReverse) {
-                typeToReverse = (bsAnalysis.total >= rgAnalysis.total && bsAnalysis.trend) ? 'bigsmall' : 'redgreen';
+        // **MODIFIED ALGORITHM V18.1**
+        if (applyReverseLogic) {
+            console.log(`[Reversal Debug] Losses >= 1 (${consecutiveLosses}). Forcing B/S focus & aggressive reversal.`);
+            messageNote += "(Aggressive Reversal) ";
+            determinedType = 'bigsmall'; // Always focus on Big/Small during reversal
+            currentStrategyLevel = `Auto (Aggressive Rev L${consecutiveLosses})`;
+            
+            let trendToReverseBS = bsAnalysis.trend;
+            if (!trendToReverseBS) {
                 const lastGameDetail = gameHistoryCache[0] ? getNumberDetails(gameHistoryCache[0].number) : null;
-                trendToReverse = typeToReverse === 'bigsmall' ? (lastGameDetail ? (lastGameDetail.bigSmall === 'Big' ? 'Big' : 'Small') : 'Small') : (lastGameDetail ? lastGameDetail.rawColor : 'Green');
-                if(trendToReverse === 'Unknown' || trendToReverse === '?') trendToReverse = typeToReverse === 'bigsmall' ? 'Small' : 'Green';
-                originalAnalysis = { probability: 50, streak: 0, total: actualShortTermGamesToAnalyze, trend: trendToReverse};
-                console.log(`[Reversal Debug] No clear trend to reverse, selected fallback: ${trendToReverse} for ${typeToReverse}`);
+                trendToReverseBS = lastGameDetail ? (lastGameDetail.bigSmall === 'Big' ? 'Big' : 'Small') : 'Small';
+                bsAnalysis.trend = trendToReverseBS;
+                bsAnalysis.probability = bsAnalysis.probability || 50;
             }
+            primaryCategoryResult = trendToReverseBS === 'Big' ? 'Small' : 'Big';
+            messageNote += `(Reversing ${trendToReverseBS} to ${primaryCategoryResult}) `;
 
-            determinedType = typeToReverse;
-            primaryCategoryResult = (determinedType === 'bigsmall') ? (trendToReverse === 'Big' ? 'Small' : 'Big') : (trendToReverse === 'Red' ? 'Green' : 'Red');
+            let baseReversedProb = 65 + (Math.min(consecutiveLosses, 5) * 6); 
+            let probabilityImpactReduction = (3 + consecutiveLosses);
+            let reversedProbability = baseReversedProb - ((bsAnalysis.probability || 50) / probabilityImpactReduction) + ((bsAnalysis.streak || 0) * 3);
+            chosenAnalysis = { trend: primaryCategoryResult, probability: parseFloat(Math.min(90, Math.max(60, reversedProbability)).toFixed(1)), count: bsAnalysis.count || 0, total: bsAnalysis.total || actualShortTermGamesToAnalyze, streak: 0 };
 
-            let baseReversedProb = 60 + (Math.min(consecutiveLosses, 3) * 6); // Increased base
-            let probabilityImpactReduction = (4 + consecutiveLosses);
-            let reversedProbability = baseReversedProb - (originalAnalysis.probability / probabilityImpactReduction) + (originalAnalysis.streak * 2); // Increased streak impact
-            chosenAnalysis = { trend: primaryCategoryResult, probability: parseFloat(Math.min(85, Math.max(50, reversedProbability)).toFixed(1)), count: originalAnalysis.count || 0, total: originalAnalysis.total || actualShortTermGamesToAnalyze, streak: 0 };
+            reversalChance = 85 + Math.min(consecutiveLosses, 3) * 5; 
+            reversalChance = Math.min(98, reversalChance);
 
-            reversalChance = 75 + Math.min(consecutiveLosses, 3) * 8; // Increased chance
-            reversalChance = Math.min(95, reversalChance); // Higher cap
-
-            messageNote = `(Reversing L${consecutiveLosses} from ${trendToReverse})`;
-            console.log(`[Reversal Debug] Original Trend: ${trendToReverse}, Reversed to: ${primaryCategoryResult}. ReversedProb: ${chosenAnalysis.probability}%, ReversalChance: ${reversalChance}%`);
-
-        } else {
+        } else { // Normal logic (no losses)
             if (bsAnalysis.trend && rgAnalysis.trend) {
                 if (bsAnalysis.streak > rgAnalysis.streak + 1 && bsAnalysis.probability > 55) { chosenAnalysis = bsAnalysis; determinedType = 'bigsmall'; messageNote = `(Strong B/S Strk ${bsAnalysis.streak})`; }
                 else if (rgAnalysis.streak > bsAnalysis.streak + 1 && rgAnalysis.probability > 55) { chosenAnalysis = rgAnalysis; determinedType = 'redgreen'; messageNote = `(Strong R/G Strk ${rgAnalysis.streak})`; }
@@ -1228,25 +1174,14 @@
     
     // --- New Algorithm Calculation ---
     function updateNewAlgorithmCard() {
-        const colorSection = document.getElementById('algoColorSection');
-        const numberSection = document.getElementById('algoNumberSection');
+        const colorLineEl = document.getElementById('algoColorLine');
+        const numberLineEl = document.getElementById('algoNumberLine');
 
-        if (!colorSection || !numberSection || !cachedData || cachedData.length < 10) {
-            if (colorSection) {
-                colorSection.querySelector('#algoColorLogic').textContent = "Waiting for 10+ results...";
-                colorSection.querySelector('#algoColorSuggestion span').textContent = "N/A";
-            }
-            if (numberSection) {
-                numberSection.querySelector('#algoNumberLogic').textContent = "";
-                numberSection.querySelector('#algoNumberSuggestion span').textContent = "N/A";
-            }
+        if (!colorLineEl || !numberLineEl || !cachedData || cachedData.length < 10) {
+            if (colorLineEl) colorLineEl.innerHTML = `<span class="algo-line-title">Color:</span> <span class="algo-line-data">Waiting for 10+ results...</span>`;
+            if (numberLineEl) numberLineEl.innerHTML = `<span class="algo-line-title">Number:</span> <span class="algo-line-data"></span>`;
             return;
         }
-
-        const colorLogicEl = colorSection.querySelector('#algoColorLogic');
-        const colorSuggestionEl = colorSection.querySelector('#algoColorSuggestion span');
-        const numberLogicEl = numberSection.querySelector('#algoNumberLogic');
-        const numberSuggestionEl = numberSection.querySelector('#algoNumberSuggestion span');
 
         const lastTenResults = cachedData.slice(0, 10).map(item => getNumberDetails(item.number));
 
@@ -1257,21 +1192,21 @@
             if (details.rawColor === 'Red') redCount++;
             if (details.rawColor === 'Green') greenCount++;
         });
-
-        colorLogicEl.innerHTML = `Analysis: <strong style="color:var(--danger);">Red: ${redCount}</strong> | <strong style="color:var(--success);">Green: ${greenCount}</strong>`;
-
+        const colorAnalysisText = `Red: ${redCount} | Green: ${greenCount}`;
+        
         let colorSuggestion = '';
         if (redCount > greenCount) {
-            colorSuggestion = '<span style="color:var(--danger); font-weight:bold;">RED</span> is dominant.';
+            colorSuggestion = '<strong style="color:var(--danger);">Suggest: RED</strong>';
         } else if (greenCount > redCount) {
-            colorSuggestion = '<span style="color:var(--success); font-weight:bold;">GREEN</span> is dominant.';
+            colorSuggestion = '<strong style="color:var(--success);">Suggest: GREEN</strong>';
         } else {
             const latestColor = lastTenResults[0].rawColor;
             const latestColorName = latestColor === '?' ? 'Unknown' : latestColor;
             const colorStyle = (latestColorName === 'Red') ? 'var(--danger)' : 'var(--success)';
-            colorSuggestion = `Balanced. Latest was <strong style="color:${colorStyle};">${latestColorName}</strong>.`;
+            colorSuggestion = `Latest: <strong style="color:${colorStyle};">${latestColorName}</strong>`;
         }
-        colorSuggestionEl.innerHTML = colorSuggestion;
+        colorLineEl.innerHTML = `<span class="algo-line-title">Color:</span><span class="algo-line-data">${colorAnalysisText}</span><span class="algo-line-suggestion">${colorSuggestion}</span>`;
+        
 
         // Number Calculation
         const numberFrequency = {};
@@ -1281,23 +1216,38 @@
             }
         });
 
-        const sortedNumbers = Object.entries(numberFrequency)
-            .sort((a, b) => b[1] - a[1]);
+        const sortedNumbers = Object.entries(numberFrequency).sort((a, b) => b[1] - a[1]);
 
         if (sortedNumbers.length > 0) {
-            numberLogicEl.textContent = `Frequency: ${sortedNumbers.map(([num, count]) => `${num}(${count})`).join(', ')}.`;
+            const freqText = `Freq: ${sortedNumbers.map(([num, count]) => `${num}(${count})`).join(', ')}.`;
             const hotNumbers = sortedNumbers.slice(0, 3).map(([num]) => num).join(', ');
-            numberSuggestionEl.innerHTML = `Hot Numbers: <strong style="color:var(--primary);">${hotNumbers}</strong>`;
+            numberLineEl.innerHTML = `<span class="algo-line-title">Number:</span><span class="algo-line-data">${freqText}</span><span class="algo-line-suggestion">Hot: <strong style="color:var(--primary);">${hotNumbers}</strong></span>`;
         } else {
-             numberLogicEl.textContent = "Could not calculate frequency.";
-             numberSuggestionEl.textContent = "N/A";
+             numberLineEl.innerHTML = `<span class="algo-line-title">Number:</span> <span class="algo-line-data">Could not calculate frequency.</span>`;
         }
     }
 
 
-    function toggleJarvisCardVisibility(show, save = true) {
-        const content = document.getElementById('jarvisAnalyticsContent'); const icon = document.querySelector('#toggleJarvisCard i'); if (!content || !icon) return; if (show) { content.style.display = 'block'; icon.classList.remove('fa-eye-slash'); icon.classList.add('fa-eye'); if(save) robustLocalStorageSetItem(STORAGE_KEY_JARVIS_VISIBLE, 'true'); } else { content.style.display = 'none'; icon.classList.remove('fa-eye'); icon.classList.add('fa-eye-slash'); if(save) robustLocalStorageSetItem(STORAGE_KEY_JARVIS_VISIBLE, 'false'); }
+    function toggleCardVisibility(contentId, iconId, storageKey, show, save = true) {
+        const content = document.getElementById(contentId);
+        const icon = document.querySelector(`#${iconId} i`);
+        if (!content || !icon) return;
+
+        if (show) {
+            content.style.display = (contentId === 'newAlgoContent') ? 'block' : 'block';
+            if (contentId === 'newAlgoContent') content.parentElement.style.paddingBottom = '6px';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+            if(save) robustLocalStorageSetItem(storageKey, 'true');
+        } else {
+            content.style.display = 'none';
+            if (contentId === 'newAlgoContent') content.parentElement.style.paddingBottom = '0';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+            if(save) robustLocalStorageSetItem(storageKey, 'false');
+        }
     }
+
     function updateAccuracyDisplay() { if (currentUserRole) { updateSessionStatsBar(); updateJarvisCard(); updateNewAlgorithmCard(); } }
     function updateSessionStatsBar() {
         const statsWinsEl = document.getElementById('statsWins'); const statsLossesEl = document.getElementById('statsLosses'); const statsPartialsEl = document.getElementById('statsPartials'); const statsAccuracyEl = document.getElementById('statsAccuracy'); const statsAiRevEl = document.getElementById('statsAiRev'); const statsLevelEl = document.getElementById('statsLevel'); if (!statsWinsEl || !statsLossesEl || !statsPartialsEl || !statsAccuracyEl || !statsAiRevEl || !statsLevelEl) { return; } statsWinsEl.textContent = sessionStats.wins; statsLossesEl.textContent = sessionStats.losses; statsPartialsEl.textContent = sessionStats.partials || 0; const totalCompleted = sessionStats.wins + sessionStats.losses + (sessionStats.partials || 0); let accuracyText = "0%"; if (totalCompleted > 0) { const accuracy = Math.round((sessionStats.wins / totalCompleted) * 100); accuracyText = `${isNaN(accuracy) ? '0' : accuracy}%`; } statsAccuracyEl.textContent = accuracyText; statsAiRevEl.textContent = `${lastAiReversalChance.toFixed(1)}%`; let levelText = currentStrategyLevel; const lvMatch = currentStrategyLevel.match(/(?:Martingale L|Anti-Martingale L|Auto \(Rev L|Auto \(L|Auto \(B\/S Focus L)(\d+)\)?/i); if (lvMatch && lvMatch[1]) { levelText = `Lv${lvMatch[1]}`; } else if (currentStrategyLevel === "Auto" && consecutiveWins > 0 && !currentStrategyLevel.includes("Rev") ) { levelText = `Auto (W${consecutiveWins})`; } statsLevelEl.textContent = levelText;
@@ -1947,7 +1897,8 @@
         const accessKeyInputEl = document.getElementById('accessKeyInput'); if (accessKeyInputEl) { accessKeyInputEl.addEventListener('keypress', function(event) { if (event.key === "Enter") { event.preventDefault(); handleLoginAttempt(); } }); }
         const logoutButtonEl = document.getElementById('logoutButton'); if (logoutButtonEl) logoutButtonEl.onclick = handleLogout;
         const themeToggleBtn = document.getElementById('themeToggleBtn'); if (themeToggleBtn) { themeToggleBtn.onclick = (e) => { e.preventDefault(); toggleTheme(); }; }
-        const toggleJarvisBtn = document.getElementById('toggleJarvisCard'); if (toggleJarvisBtn) { toggleJarvisBtn.onclick = (e) => { e.preventDefault(); const content = document.getElementById('jarvisAnalyticsContent'); if(content) toggleJarvisCardVisibility(content.style.display === 'none', true); }; const jarvisVisible = robustLocalStorageGetItem(STORAGE_KEY_JARVIS_VISIBLE, 'true') === 'true'; toggleJarvisCardVisibility(jarvisVisible, false); }
+        const toggleJarvisBtn = document.getElementById('toggleJarvisCard'); if (toggleJarvisBtn) { toggleJarvisBtn.onclick = (e) => { e.preventDefault(); toggleCardVisibility('jarvisAnalyticsContent', 'toggleJarvisCard', STORAGE_KEY_JARVIS_VISIBLE, document.getElementById('jarvisAnalyticsContent').style.display === 'none'); }; const jarvisVisible = robustLocalStorageGetItem(STORAGE_KEY_JARVIS_VISIBLE, 'true') === 'true'; toggleCardVisibility('jarvisAnalyticsContent', 'toggleJarvisCard', STORAGE_KEY_JARVIS_VISIBLE, jarvisVisible, false); }
+        const toggleAlgoBtn = document.getElementById('toggleNewAlgoCard'); if (toggleAlgoBtn) { toggleAlgoBtn.onclick = (e) => { e.preventDefault(); toggleCardVisibility('newAlgoContent', 'toggleNewAlgoCard', STORAGE_KEY_ALGO_VISIBLE, document.getElementById('newAlgoContent').style.display === 'none'); }; const algoVisible = robustLocalStorageGetItem(STORAGE_KEY_ALGO_VISIBLE, 'true') === 'true'; toggleCardVisibility('newAlgoContent', 'toggleNewAlgoCard', STORAGE_KEY_ALGO_VISIBLE, algoVisible, false); }
         const deeperAnalysisButton = document.getElementById('deeperAnalysisBtn'); if (deeperAnalysisButton) deeperAnalysisButton.onclick = handleDeeperAnalysis;
 
         const aiGameTypeSelector = document.getElementById('aiGameTypeSelector');
