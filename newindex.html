@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict VIP King Pro - Final Bugfix</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(to bottom right, #111827, #000000); color: #e5e7eb; }
+        .card { background-color: #1f2937; border: 1px solid #374151; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); }
+        @media (min-width: 768px) { .card { padding: 1.5rem; } }
+        .table-container { max-height: 350px; overflow-y: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 0.75rem; text-align: center; border-bottom: 1px solid #374151; font-size: 0.875rem; }
+        th { background-color: #374151; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em; color: #d1d5db; }
+        .mode-selector button { width: 48%; padding: 0.75rem; font-size: 1rem; font-weight: 600; border-radius: 8px; border: 2px solid #4b5563; color: #9ca3af; transition: all 0.3s ease; }
+        .mode-selector button.active { border-color: #f59e0b; background-color: #374151; color: #f59e0b; }
+        .tab { padding: 0.5rem 1rem; cursor: pointer; border-bottom: 3px solid transparent; font-size: 0.875rem; color: #9ca3af; }
+        .tab.active { border-bottom: 3px solid #f59e0b; color: #f59e0b; }
+        .status-pill { padding: 4px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
+        .status-win { background-color: rgba(5, 150, 105, 0.2); color: #10b981; }
+        .status-loss { background-color: rgba(220, 38, 38, 0.2); color: #ef4444; }
+        .status-pending { background-color: #374151; color: #9ca3af; }
+        .status-btn { background-color: transparent; padding: 2px 8px; font-size: 0.75rem; border-radius: 5px; cursor: pointer; }
+        .btn-win { border: 1px solid #10b981; color: #10b981; margin-right: 4px; }
+        .btn-loss { border: 1px solid #ef4444; color: #ef4444; }
+        .color-red { color: #ef4444; } .color-green { color: #10b981; } .color-violet { color: #a78bfa; }
+    </style>
+</head>
+<body class="p-2 md:p-6">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-8"><h1 class="text-3xl md:text-5xl font-bold text-amber-400">Predict VIP King Pro</h1><p class="text-md md:text-lg text-gray-400 mt-2">Hybrid AI Prediction Engine</p></div>
+        <div class="card flex justify-center space-x-4 mode-selector"><button id="btn30s" onclick="selectMode('30s')">30 Second Engine</button><button id="btn1m" onclick="selectMode('1m')">1 Minute Engine</button></div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+            <div class="lg:col-span-1 space-y-4 md:space-y-6">
+                <div class="card"><h2 class="text-lg font-semibold mb-4 text-center text-gray-300">Engine Status</h2><div class="flex justify-around items-center text-center"><div><p class="text-xs text-gray-500 uppercase">Period</p><p id="period" class="text-lg md:text-xl font-bold break-all">Select Mode</p></div><div><p class="text-xs text-gray-500 uppercase">Countdown</p><p id="timer" class="text-2xl md:text-3xl font-bold text-red-500">--:--</p></div></div></div>
+                <div class="card"><h2 class="text-lg font-semibold mb-4 text-gray-300">AI Prediction</h2><div class="bg-gray-900 p-4 rounded-lg text-center"><div class="grid grid-cols-3 gap-2"><div><p class="text-sm text-gray-500">NUMBER</p><p id="predict-number" class="text-3xl font-bold">?</p></div><div><p class="text-sm text-gray-500">B/S</p><p id="predict-bs" class="text-3xl font-bold">?</p></div><div><p class="text-sm text-gray-500">COLOR</p><p id="predict-color" class="text-3xl font-bold">?</p></div></div></div></div>
+            </div>
+            <div class="lg:col-span-2 card">
+                <div class="flex justify-between items-center mb-4 flex-wrap"><div class="flex space-x-2 md:space-x-4 border-b border-gray-700"><div class="tab active" data-tab="my-predictions">My Predictions</div><div class="tab" data-tab="history">Game History</div></div><button id="clear-button" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 rounded-lg text-sm mt-2 sm:mt-0">Clear</button></div>
+                <div id="my-predictions" class="tab-content"><div class="table-container"><table><thead><tr><th>Period</th><th>Prediction</th><th>Set Status</th></tr></thead><tbody id="predictions-table"></tbody></table></div></div>
+                <div id="history" class="tab-content hidden"><div class="table-container"><table><thead><tr><th>Period</th><th>Actual Result</th></tr></thead><tbody id="history-table"></tbody></table></div></div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const elements = { period: document.getElementById('period'), timer: document.getElementById('timer'), predictNumber: document.getElementById('predict-number'), predictBS: document.getElementById('predict-bs'), predictColor: document.getElementById('predict-color'), historyTable: document.getElementById('history-table'), predictionsTable: document.getElementById('predictions-table'), clearButton: document.getElementById('clear-button'), };
+    let masterInterval;
+    let currentMode = null;
+    let state = { '30s': { history: [], predictions: [], currentPeriod: null }, '1m': { history: [], predictions: [], currentPeriod: null } };
+
+    function selectMode(mode) {
+        if (currentMode === mode) return;
+        clearInterval(masterInterval);
+        currentMode = mode;
+        document.getElementById('btn30s').classList.toggle('active', mode === '30s');
+        document.getElementById('btn1m').classList.toggle('active', mode === '1m');
+        elements.period.textContent = "Loading...";
+        elements.timer.textContent = "--:--";
+        render();
+        initOfflineGame();
+    }
+    
+    function generatePeriodNumber() { const now = new Date(); const dateStr = now.toISOString().split('T')[0].replace(/-/g, ''); const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds(); const startH = 5, startM = 30; let elapsedS = (h * 3600 + m * 60 + s) - (startH * 3600 + startM * 60); if (elapsedS < 0) elapsedS = (24 * 3600) + elapsedS; if (currentMode === '1m') { const elapsedMinutes = Math.floor(elapsedS / 60); return `${dateStr}10001${String(elapsedMinutes + 1).padStart(4, '0')}`; } else { const periodCounter = Math.floor(elapsedS / 30) + 1; return dateStr + "100005" + String(periodCounter).padStart(4, '0'); } }
+    function runPredictionEngine(history) { if (history.length < 3) { const num = Math.floor(Math.random() * 10); return { number: num, bigSmall: num >= 5 ? 'Big' : 'Small', color: 'Green' }; } const recentHistory = history.slice(-10); const freq = (prop) => recentHistory.reduce((acc, curr) => { acc[curr[prop]] = (acc[curr[prop]] || 0) + 1; return acc; }, {}); const getMostFrequent = (map) => Object.keys(map).reduce((a, b) => map[a] > map[b] ? a : b, null); const color = getMostFrequent(freq('color')); const number = getMostFrequent(freq('number')); const bigSmall = getMostFrequent(freq('bigSmall')); return { number: number ? parseInt(number) : 5, bigSmall: bigSmall || 'Big', color: color ? (color.includes('-') ? color.split('-')[0] : color) : 'Green' }; }
+    function setPredictionStatus(period, status) { if (!currentMode) return; const p = state[currentMode].predictions.find(p => p.period == period); if (p && p.status === 'Pending') { p.status = status; render(); } }
+    function renderResultInHTML(result) { if (!result) return '...'; const { number, bigSmall, color } = result; let colorHTML; if (color && color.includes('-')) { const [c1, c2] = color.split('-'); colorHTML = `<strong class="color-${c1.toLowerCase()}">${c1}</strong>+<strong class="color-${c2.toLowerCase()}">${c2}</strong>`; } else { colorHTML = `<strong class="color-${color?.toLowerCase() || ''}">${color}</strong>`; } return `${colorHTML} | ${bigSmall} | ${number}`; }
+
+    function render() {
+        if (!currentMode) return;
+        const activeState = state[currentMode];
+        const currentPrediction = activeState.predictions[activeState.predictions.length - 1];
+        if (currentPrediction) { const p = currentPrediction.prediction; elements.predictNumber.textContent = p.number; elements.predictBS.textContent = p.bigSmall; elements.predictColor.textContent = p.color; }
+        elements.historyTable.innerHTML = activeState.history.slice().reverse().map(item => `<tr><td>${String(item.period).slice(-6)}</td><td>${renderResultInHTML(item)}</td></tr>`).join('');
+        elements.predictionsTable.innerHTML = activeState.predictions.slice().reverse().map(item => { let s; const isRoundOver = activeState.history.some(h => h.period === item.period); if (item.status === 'Pending' && isRoundOver) { s = `<div class="flex justify-center items-center"><button class="status-btn btn-win" onclick="setPredictionStatus('${item.period}', 'Win')">W</button><button class="status-btn btn-loss" onclick="setPredictionStatus('${item.period}', 'Loss')">L</button></div>`; } else { s = `<span class="status-pill status-${item.status?.toLowerCase() || 'pending'}">${item.status || '...'}</span>`; } return `<tr><td>${String(item.period).slice(-6)}</td><td>${renderResultInHTML(item.prediction)}</td><td>${s}</td></tr>` }).join('');
+    }
+
+    // --- গেম লুপ ---
+    function offlineGameLoop() {
+        if (!currentMode) return;
+        const activeState = state[currentMode];
+        if (activeState.currentPeriod) {
+            const number = Math.floor(Math.random() * 10);
+            let color; if (number === 0) { color = 'Red-Violet'; } else if (number === 5) { color = 'Green-Violet'; } else { color = (number % 2 === 0) ? 'Red' : 'Green'; }
+            activeState.history.push({ period: activeState.currentPeriod, number, bigSmall: number >= 5 ? 'Big' : 'Small', color });
+        }
+        
+        const newPeriod = generatePeriodNumber();
+        activeState.currentPeriod = newPeriod;
+        
+        // --- এখানে ভুলটি সংশোধন করা হয়েছে ---
+        const newPrediction = runPredictionEngine(activeState.history); // এখন হিস্টোরি পাঠানো হচ্ছে
+
+        activeState.predictions.push({ period: newPeriod, prediction: newPrediction, status: 'Pending' });
+        if(activeState.predictions.length > 50) activeState.predictions.shift();
+        
+        elements.period.textContent = newPeriod;
+        render();
+    }
+    
+    function masterClock() {
+        if (!currentMode) return;
+        const now = new Date(); const seconds = now.getSeconds();
+        const duration = (currentMode === '30s') ? 30 : 60;
+        const remainingTime = (duration - 1) - (now.getTime() / 1000) % duration;
+        const displayMinutes = Math.floor(remainingTime / 60); const displaySeconds = Math.floor(remainingTime % 60);
+        elements.timer.textContent = `${String(displayMinutes).padStart(2, '0')}:${String(displaySeconds).padStart(2, '0')}`;
+        
+        if (duration === 30 && (seconds === 0 || seconds === 30)) { offlineGameLoop(); }
+        else if (duration === 60 && seconds === 0) { offlineGameLoop(); }
+    }
+    
+    function initOfflineGame() {
+        offlineGameLoop();
+        masterInterval = setInterval(masterClock, 1000);
+    }
+    
+    // --- General Init ---
+    elements.clearButton.addEventListener('click', () => { if (currentMode) { state[currentMode] = { history: [], predictions: [] }; render(); } });
+    const tabs = document.querySelectorAll('.tab'); const tabContents = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => tab.addEventListener('click', () => { tabs.forEach(t => t.classList.remove('active')); tab.classList.add('active'); tabContents.forEach(c => c.classList.add('hidden')); document.getElementById(tab.dataset.tab).classList.remove('hidden'); }));
+</script>
+</body>
+</html>
