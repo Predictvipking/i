@@ -3,124 +3,1250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predict VIP King Pro - Final Bugfix</title>
+    <title>Predictor v5.6 - Loss Recovery AI & Detailed Chart (Compact)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background: linear-gradient(to bottom right, #111827, #000000); color: #e5e7eb; }
-        .card { background-color: #1f2937; border: 1px solid #374151; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); }
-        @media (min-width: 768px) { .card { padding: 1.5rem; } }
-        .table-container { max-height: 350px; overflow-y: auto; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 0.75rem; text-align: center; border-bottom: 1px solid #374151; font-size: 0.875rem; }
-        th { background-color: #374151; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em; color: #d1d5db; }
-        .mode-selector button { width: 48%; padding: 0.75rem; font-size: 1rem; font-weight: 600; border-radius: 8px; border: 2px solid #4b5563; color: #9ca3af; transition: all 0.3s ease; }
-        .mode-selector button.active { border-color: #f59e0b; background-color: #374151; color: #f59e0b; }
-        .tab { padding: 0.5rem 1rem; cursor: pointer; border-bottom: 3px solid transparent; font-size: 0.875rem; color: #9ca3af; }
-        .tab.active { border-bottom: 3px solid #f59e0b; color: #f59e0b; }
-        .status-pill { padding: 4px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
-        .status-win { background-color: rgba(5, 150, 105, 0.2); color: #10b981; }
-        .status-loss { background-color: rgba(220, 38, 38, 0.2); color: #ef4444; }
-        .status-pending { background-color: #374151; color: #9ca3af; }
-        .status-btn { background-color: transparent; padding: 2px 8px; font-size: 0.75rem; border-radius: 5px; cursor: pointer; }
-        .btn-win { border: 1px solid #10b981; color: #10b981; margin-right: 4px; }
-        .btn-loss { border: 1px solid #ef4444; color: #ef4444; }
-        .color-red { color: #ef4444; } .color-green { color: #10b981; } .color-violet { color: #a78bfa; }
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background: linear-gradient(135deg, #87CEEB, #ADD8E6, #87CEEB); /* Sky Blue Gradient */
+            background-size: 400% 400%; /* Larger background size for animation */
+            animation: gradientAnimation 15s ease infinite; /* Smooth gradient animation */
+            color: #1f2937; /* Darker text for better contrast */
+            padding: 0.5rem;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Background Animation Styles (dots adjusted for visibility) */
+        .background-dots {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .dot {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.4); /* White, more transparent dots for lighter background */
+            border-radius: 50%;
+            opacity: 0;
+            animation: fallFade 10s linear infinite;
+        }
+
+        @keyframes fallFade {
+            0% {
+                transform: translateY(-10vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.5;
+            }
+            80% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(110vh) translateX(var(--dot-x-offset));
+                opacity: 0;
+            }
+        }
+
+        .max-w-md {
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        .text-center.my-6 {
+            margin: 1.5rem 0;
+        }
+        .text-4xl {
+            font-size: 2rem;
+        }
+        .text-sm {
+            font-size: 0.7rem;
+            margin-top: 0.2rem;
+        }
+        .main-card {
+            background-color: rgba(255, 255, 255, 0.85); /* Slightly transparent white for cards */
+            border: 1px solid rgba(0, 0, 0, 0.1); /* Lighter border */
+            border-radius: 6px;
+            padding: 0.6rem;
+            margin-bottom: 0.6rem;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        }
+        .mode-selector button, .tab-selector button {
+            width: 49%;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border-radius: 4px;
+            border: 1px solid #a0aec0; /* Lighter border for buttons */
+            color: #4a5568; /* Darker text for buttons */
+            background-color: transparent;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        .mode-selector button.active, .tab-selector button.active {
+            background-color: #4299e1; /* Sky blue active color */
+            color: #fff;
+            border-color: #4299e1;
+            box-shadow: 0 0 6px rgba(66, 153, 225, 0.4);
+        }
+        .info-line {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0.2rem;
+        }
+        .info-label {
+            font-size: 0.7rem;
+            color: #4a5568; /* Darker text */
+            display: flex;
+            align-items: center;
+        }
+        .info-label svg {
+            width: 0.9rem;
+            height: 0.9rem;
+            margin-right: 0.5rem;
+            color: #3182ce; /* Darker blue for icons */
+        }
+        .info-value {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #2d3748; /* Even darker text for values */
+        }
+
+        /* AI Sparkle Icon */
+        .ai-sparkle-icon {
+            width: 1rem;
+            height: 1rem;
+            color: #e0b000; /* Slightly desaturated yellow */
+            margin-left: 0.3rem;
+            animation: sparklePulse 1.5s infinite alternate;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        @keyframes sparklePulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+
+        /* Tab Content Containers */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Compact History Table Styles */
+        .table-container {
+            max-height: 320px;
+            overflow-y: auto;
+            border: 1px solid #cbd5e0; /* Lighter border */
+            border-radius: 4px;
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+        th, td {
+            padding: 0.4rem;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0; /* Lighter border */
+            font-size: 0.7rem;
+            color: #2d3748; /* Darker text */
+        }
+        th {
+            background-color: #edf2f7; /* Lighter background for table header */
+            text-transform: uppercase;
+            font-size: 0.6rem;
+            letter-spacing: 0.03em;
+            color: #4a5568; /* Darker text */
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        tr:last-child td { border-bottom: none; }
+
+        .status-btn {
+            display: inline-flex; justify-content: center; align-items: center; width: 22px; height: 22px;
+            border: 1px solid #a0aec0; /* Lighter border */
+            border-radius: 4px; cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.65rem;
+        }
+        .btn-win { color: #38a169; } /* Darker green */
+        .btn-win:hover { background-color: rgba(56, 161, 105, 0.15); border-color: #38a169;}
+        .btn-loss { color: #e53e3e; margin-left: 0.2rem; } /* Darker red */
+        .btn-loss:hover { background-color: rgba(229, 62, 62, 0.15); border-color: #e53e3e; }
+        .status-pill { padding: 2px 5px; border-radius: 9999px; font-size: 0.6rem; font-weight: 500; }
+        .status-win { background-color: rgba(56, 161, 105, 0.2); color: #38a169; }
+        .status-loss { background-color: rgba(229, 62, 62, 0.2); color: #e53e3e; }
+        .status-pending { background-color: #a0aec0; color: #2d3748; } /* Adjusted pending color */
+
+        /* Prediction/Result Colors */
+        .color-red { color: #e53e3e; }
+        .color-green { color: #38a169; }
+        .color-violet { color: #805ad5; } /* Darker violet */
+        .color-big { color: #dd6b20; } /* Darker orange */
+        .color-small { color: #3182ce; } /* Darker blue */
+
+        /* Chart Specific Styles */
+        .chart-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 0.6rem;
+        }
+        .stat-item {
+            background-color: #edf2f7; /* Lighter background for stats items */
+            padding: 0.5rem;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 0.65rem;
+            color: #4a5568; /* Darker text */
+            margin-bottom: 0.15rem;
+        }
+        .stat-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #2d3748; /* Darker text */
+        }
+        .stat-value.win { color: #38a169; }
+        .stat-value.loss { color: #e53e3e; }
+        .stat-value.accuracy { color: #3182ce; }
+        .stat-value.revenue {
+            font-size: 1.2rem;
+            color: #b8860b; /* Darker goldenrod */
+        }
+        .stat-value.revenue.negative { color: #e53e3e; }
+
+        .strategy-stats .strategy-item {
+            background-color: #edf2f7; /* Lighter background for strategy items */
+            padding: 0.4rem 0.5rem;
+            border-radius: 4px;
+            margin-bottom: 0.3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+        }
+        .strategy-item .name { font-weight: 500; color: #4a5568; } /* Darker text */
+        .strategy-item .acc { font-weight: 700; color: #2d3748; } /* Darker text */
+        .strategy-item .acc.positive { color: #38a169; }
+        .strategy-item .acc.negative { color: #e53e3e; }
+
+
+        /* Responsive Adjustments for Mobile (Further Compacted) */
+        @media (max-width: 600px) {
+            body {
+                padding: 0.3rem;
+            }
+            .text-center.my-6 {
+                margin: 1rem 0;
+            }
+            .text-4xl {
+                font-size: 1.8rem;
+            }
+            .text-sm {
+                font-size: 0.65rem;
+                margin-top: 0.15rem;
+            }
+            .main-card {
+                padding: 0.5rem;
+                margin-bottom: 0.5rem;
+            }
+            .mode-selector button, .tab-selector button {
+                padding: 0.4rem;
+                font-size: 0.7rem;
+            }
+            .info-line {
+                padding: 0.4rem 0.15rem;
+            }
+            .info-label {
+                font-size: 0.65rem;
+            }
+            .info-label svg {
+                width: 0.8rem;
+                height: 0.8rem;
+                margin-right: 0.3rem;
+            }
+            .info-value {
+                font-size: 0.8rem;
+            }
+            #period {
+                font-size: 0.75rem;
+            }
+            #prediction-text strong {
+                font-size: 0.9rem;
+            }
+            #insight-text {
+                font-size: 0.6rem;
+            }
+            th, td {
+                padding: 0.3rem;
+                font-size: 0.65rem;
+            }
+            th {
+                font-size: 0.55rem;
+                padding: 0.2rem;
+            }
+            .status-btn {
+                width: 20px;
+                height: 20px;
+                font-size: 0.55rem;
+            }
+            .status-btn.btn-loss {
+                margin-left: 0.15rem;
+            }
+            .status-pill {
+                padding: 1px 4px;
+                font-size: 0.55rem;
+            }
+            .table-container {
+                max-height: 380px;
+            }
+            .ai-sparkle-icon {
+                width: 0.9rem;
+                height: 0.9rem;
+                margin-left: 0.2rem;
+            }
+            .chart-stats-grid {
+                gap: 0.3rem;
+                margin-bottom: 0.4rem;
+            }
+            .stat-item {
+                padding: 0.4rem;
+            }
+            .stat-label {
+                font-size: 0.6rem;
+                margin-bottom: 0.1rem;
+            }
+            .stat-value {
+                font-size: 0.9rem;
+            }
+            .stat-value.revenue {
+                font-size: 1rem;
+            }
+            .strategy-stats .strategy-item {
+                padding: 0.3rem 0.4rem;
+                font-size: 0.7rem;
+                margin-bottom: 0.2rem;
+            }
+        }
     </style>
 </head>
-<body class="p-2 md:p-6">
-    <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-8"><h1 class="text-3xl md:text-5xl font-bold text-amber-400">Predict VIP King Pro</h1><p class="text-md md:text-lg text-gray-400 mt-2">Hybrid AI Prediction Engine</p></div>
-        <div class="card flex justify-center space-x-4 mode-selector"><button id="btn30s" onclick="selectMode('30s')">30 Second Engine</button><button id="btn1m" onclick="selectMode('1m')">1 Minute Engine</button></div>
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-            <div class="lg:col-span-1 space-y-4 md:space-y-6">
-                <div class="card"><h2 class="text-lg font-semibold mb-4 text-center text-gray-300">Engine Status</h2><div class="flex justify-around items-center text-center"><div><p class="text-xs text-gray-500 uppercase">Period</p><p id="period" class="text-lg md:text-xl font-bold break-all">Select Mode</p></div><div><p class="text-xs text-gray-500 uppercase">Countdown</p><p id="timer" class="text-2xl md:text-3xl font-bold text-red-500">--:--</p></div></div></div>
-                <div class="card"><h2 class="text-lg font-semibold mb-4 text-gray-300">AI Prediction</h2><div class="bg-gray-900 p-4 rounded-lg text-center"><div class="grid grid-cols-3 gap-2"><div><p class="text-sm text-gray-500">NUMBER</p><p id="predict-number" class="text-3xl font-bold">?</p></div><div><p class="text-sm text-gray-500">B/S</p><p id="predict-bs" class="text-3xl font-bold">?</p></div><div><p class="text-sm text-gray-500">COLOR</p><p id="predict-color" class="text-3xl font-bold">?</p></div></div></div></div>
+<body class="p-2 md:p-4">
+    <div class="background-dots"></div>
+
+    <div class="max-w-md mx-auto">
+        <div class="text-center my-6">
+            <h1 class="text-4xl font-bold text-gray-800">Predictor <span class="text-blue-600">v5.6</span></h1>
+            <p class="text-sm text-gray-600 mt-1">Loss Recovery AI & Detailed Chart</p>
+        </div>
+
+        <div class="main-card flex justify-center space-x-4 mode-selector">
+            <button id="btn30s" onclick="selectMode('30s')">30 Second</button>
+            <button id="btn1m" onclick="selectMode('1m')">1 Minute</button>
+        </div>
+
+        <div class="main-card divide-y divide-gray-300">
+            <div class="info-line"><span class="info-label"><svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>Period</span><p id="period" class="info-value break-all-hyphens">Select Mode</p></div>
+            <div class="info-line"><span class="info-label"><svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Timer</span><p id="timer" class="info-value text-red-600 font-bold text-lg">--:--</p></div>
+            <div class="info-line">
+                <span class="info-label">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>AI Predict
+                    <svg class="ai-sparkle-icon" viewBox="0 0 24 24" fill="currentColor" id="ai-sparkle-icon" style="display: none;">
+                        <path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.007z" clip-rule="evenodd" />
+                    </svg>
+                </span>
+                <p id="prediction-text" class="info-value font-bold"></p>
             </div>
-            <div class="lg:col-span-2 card">
-                <div class="flex justify-between items-center mb-4 flex-wrap"><div class="flex space-x-2 md:space-x-4 border-b border-gray-700"><div class="tab active" data-tab="my-predictions">My Predictions</div><div class="tab" data-tab="history">Game History</div></div><button id="clear-button" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 rounded-lg text-sm mt-2 sm:mt-0">Clear</button></div>
-                <div id="my-predictions" class="tab-content"><div class="table-container"><table><thead><tr><th>Period</th><th>Prediction</th><th>Set Status</th></tr></thead><tbody id="predictions-table"></tbody></table></div></div>
-                <div id="history" class="tab-content hidden"><div class="table-container"><table><thead><tr><th>Period</th><th>Actual Result</th></tr></thead><tbody id="history-table"></tbody></table></div></div>
+            <div class="info-line"><span class="info-label"><svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m-16.5 0H6M6 3v11.25A2.25 2.25 0 008.25 16.5h7.5M6 3h7.5M12 3v11.25m0 0A2.25 2.25 0 0114.25 16.5h2.25M12 3h7.5m0 0h-1.5m1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5" /></svg>Insight</span><p id="insight-text" class="info-value text-xs text-blue-600"></p></div>
+        </div>
+        
+        <div class="main-card">
+             <div class="flex justify-center space-x-4 tab-selector mb-3">
+                <button id="tab-history-btn" class="active" onclick="selectTab('history')">History</button>
+                <button id="tab-chart-btn" onclick="selectTab('chart')">Chart</button>
+            </div>
+
+            <div id="history-tab-content" class="tab-content active">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="text-lg font-semibold flex items-center text-gray-800">
+                        <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" /></svg>Prediction History
+                    </h2>
+                    <button id="clear-button" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-md text-xs">Clear</button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Period</th>
+                                <th>Prediction</th>
+                                <th>Set Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="predictions-table"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="chart-tab-content" class="tab-content">
+                <h2 class="text-lg font-semibold flex items-center text-gray-800 mb-3">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" /><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" /></svg>AI Performance Chart
+                </h2>
+                <div class="chart-stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Total Wins</div>
+                        <div id="chart-total-wins" class="stat-value win">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Total Losses</div>
+                        <div id="chart-total-losses" class="stat-value loss">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Overall Accuracy</div>
+                        <div id="chart-accuracy" class="stat-value accuracy">0%</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Net Revenue</div>
+                        <div id="chart-revenue" class="stat-value revenue">0</div>
+                    </div>
+                </div>
+
+                <h3 class="text-md font-semibold text-gray-700 mb-2">Strategy Breakdown:</h3>
+                <div id="strategy-breakdown" class="strategy-stats">
+                    </div>
             </div>
         </div>
     </div>
 
 <script>
-    const elements = { period: document.getElementById('period'), timer: document.getElementById('timer'), predictNumber: document.getElementById('predict-number'), predictBS: document.getElementById('predict-bs'), predictColor: document.getElementById('predict-color'), historyTable: document.getElementById('history-table'), predictionsTable: document.getElementById('predictions-table'), clearButton: document.getElementById('clear-button'), };
+    const elements = { 
+        period: document.getElementById('period'), 
+        timer: document.getElementById('timer'), 
+        predictionText: document.getElementById('prediction-text'), 
+        insightText: document.getElementById('insight-text'), 
+        predictionsTable: document.getElementById('predictions-table'), 
+        clearButton: document.getElementById('clear-button'), 
+        aiSparkleIcon: document.getElementById('ai-sparkle-icon'), 
+        
+        tabHistoryBtn: document.getElementById('tab-history-btn'),
+        tabChartBtn: document.getElementById('tab-chart-btn'),
+        historyTabContent: document.getElementById('history-tab-content'),
+        chartTabContent: document.getElementById('chart-tab-content'),
+
+        chartTotalWins: document.getElementById('chart-total-wins'),
+        chartTotalLosses: document.getElementById('chart-total-losses'),
+        chartAccuracy: document.getElementById('chart-accuracy'),
+        chartRevenue: document.getElementById('chart-revenue'),
+        strategyBreakdown: document.getElementById('strategy-breakdown'),
+        backgroundDots: document.querySelector('.background-dots'),
+    };
+
     let masterInterval;
     let currentMode = null;
-    let state = { '30s': { history: [], predictions: [], currentPeriod: null }, '1m': { history: [], predictions: [], currentPeriod: null } };
+    let currentTab = 'history'; // Default active tab
 
-    function selectMode(mode) {
-        if (currentMode === mode) return;
-        clearInterval(masterInterval);
-        currentMode = mode;
-        document.getElementById('btn30s').classList.toggle('active', mode === '30s');
-        document.getElementById('btn1m').classList.toggle('active', mode === '1m');
-        elements.period.textContent = "Loading...";
-        elements.timer.textContent = "--:--";
-        render();
-        initOfflineGame();
+    // Initial state structure (used for resetting and initial load)
+    const initialStateTemplate = {
+        history: [], 
+        predictions: [], 
+        currentPeriod: null, 
+        lastPredictionLost: false, 
+        stats: { 
+            totalWins: 0, 
+            totalLosses: 0, 
+            revenue: 0,
+            strategyMetrics: { 
+                "Collecting data...": { w: 0, l: 0 },
+                "Alternating Color (ABAB)": { w: 0, l: 0 },
+                "Double Color (AABB)": { w: 0, l: 0 },
+                "Triple Color (AAABBB)": { w: 0, l: 0 },
+                "Color (AABAAB)": { w: 0, l: 0 },
+                "Color (AAAB)": { w: 0, l: 0 },
+                "Color (AAABB)": { w: 0, l: 0 },
+                "Alternating Size (SBSB)": { w: 0, l: 0 },
+                "Double Size (BBSS)": { w: 0, l: 0 },
+                "Triple Size (SSSBBB)": { w: 0, l: 0 },
+                "Quadra Size (BBBBSSSS)": { w: 0, l: 0 },
+                "Following Red Trend": { w: 0, l: 0 }, 
+                "Following Green Trend": { w: 0, l: 0 }, 
+                "Attempting Break Red": { w: 0, l: 0 }, 
+                "Attempting Break Green": { w: 0, l: 0 },
+                "Following Trend": {w:0, l:0}, 
+                "Attempting Break": {w:0, l:0}, 
+                "Loss Recovery": {w:0, l:0}, 
+                "Random Guess": {w:0, l:0}, 
+                "Last 2 Same (Color)": {w:0, l:0}, // NEW STRATEGY
+                "Last 2 Same (Size)": {w:0, l:0}, // NEW STRATEGY
+            }
+        } 
+    };
+
+    let state = { 
+        '30s': JSON.parse(JSON.stringify(initialStateTemplate)), 
+        '1m': JSON.parse(JSON.stringify(initialStateTemplate)) 
+    };
+
+    // --- Local Storage Functions ---
+    function saveState() {
+        try {
+            localStorage.setItem('predictorState', JSON.stringify(state));
+        } catch (e) {
+            console.error("Error saving to localStorage", e);
+        }
+    }
+
+    function loadState() {
+        try {
+            const savedState = localStorage.getItem('predictorState');
+            if (savedState) {
+                const parsedState = JSON.parse(savedState);
+                // Merge loaded state with initial template to ensure all keys exist
+                // This handles cases where new strategies are added after a user's last save
+                for (const mode in state) {
+                    if (parsedState[mode]) {
+                        state[mode].history = parsedState[mode].history || [];
+                        state[mode].predictions = parsedState[mode].predictions || [];
+                        state[mode].currentPeriod = parsedState[mode].currentPeriod || null;
+                        state[mode].lastPredictionLost = parsedState[mode].lastPredictionLost || false;
+                        
+                        // Deep merge strategyMetrics
+                        if (parsedState[mode].stats && parsedState[mode].stats.strategyMetrics) {
+                            state[mode].stats.strategyMetrics = { 
+                                ...initialStateTemplate.stats.strategyMetrics, // Ensure all default strategies are present
+                                ...parsedState[mode].stats.strategyMetrics    // Overlay with saved values
+                            };
+                        }
+                        // Other stats
+                        state[mode].stats.totalWins = parsedState[mode].stats?.totalWins || 0;
+                        state[mode].stats.totalLosses = parsedState[mode].stats?.totalLosses || 0;
+                        state[mode].stats.revenue = parsedState[mode].stats?.revenue || 0;
+
+                    }
+                }
+                console.log("State loaded successfully!");
+            }
+        } catch (e) {
+            console.error("Error loading from localStorage", e);
+            // If loading fails, revert to initial state
+            state = { 
+                '30s': JSON.parse(JSON.stringify(initialStateTemplate)), 
+                '1m': JSON.parse(JSON.stringify(initialStateTemplate)) 
+            };
+        }
+    }
+
+    function selectMode(mode) { 
+        if (currentMode === mode) return; 
+        clearInterval(masterInterval); 
+        currentMode = mode; 
+        document.getElementById('btn30s').classList.toggle('active', mode === '30s'); 
+        document.getElementById('btn1m').classList.toggle('active', mode === '1m'); 
+        
+        render(); 
+        initOfflineGame(); 
+    }
+
+    function selectTab(tabName) {
+        currentTab = tabName;
+        elements.tabHistoryBtn.classList.toggle('active', tabName === 'history');
+        elements.tabChartBtn.classList.toggle('active', tabName === 'chart');
+        elements.historyTabContent.classList.toggle('active', tabName === 'history');
+        elements.chartTabContent.classList.toggle('active', tabName === 'chart');
+        render(); 
+    }
+
+
+    function generatePeriodNumber() { 
+        const now = new Date(); 
+        const dateStr = now.toISOString().split('T')[0].replace(/-/g, ''); 
+        
+        const istOffsetMinutes = 330; 
+        const currentUtcTime = now.getTime() + (now.getTimezoneOffset() * 60 * 1000); 
+        const istTime = new Date(currentUtcTime + (istOffsetMinutes * 60 * 1000));
+
+        const h = istTime.getHours();
+        const m = istTime.getMinutes();
+        const s = istTime.getSeconds();
+
+        const startH = 5; 
+        const startM = 30; 
+
+        let elapsedS = (h * 3600 + m * 60 + s) - (startH * 3600 + startM * 60); 
+        if (elapsedS < 0) {
+            elapsedS = (24 * 3600) + elapsedS; 
+        }
+
+        if (currentMode === '1m') { 
+            const elapsedMinutes = Math.floor(elapsedS / 60); 
+            return `${dateStr}10001${String(elapsedMinutes + 1).padStart(4, '0')}`; 
+        } else { // 30s mode
+            const periodCounter = Math.floor(elapsedS / 30) + 1; 
+            return dateStr + "100005" + String(periodCounter).padStart(4, '0'); 
+        } 
     }
     
-    function generatePeriodNumber() { const now = new Date(); const dateStr = now.toISOString().split('T')[0].replace(/-/g, ''); const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds(); const startH = 5, startM = 30; let elapsedS = (h * 3600 + m * 60 + s) - (startH * 3600 + startM * 60); if (elapsedS < 0) elapsedS = (24 * 3600) + elapsedS; if (currentMode === '1m') { const elapsedMinutes = Math.floor(elapsedS / 60); return `${dateStr}10001${String(elapsedMinutes + 1).padStart(4, '0')}`; } else { const periodCounter = Math.floor(elapsedS / 30) + 1; return dateStr + "100005" + String(periodCounter).padStart(4, '0'); } }
-    function runPredictionEngine(history) { if (history.length < 3) { const num = Math.floor(Math.random() * 10); return { number: num, bigSmall: num >= 5 ? 'Big' : 'Small', color: 'Green' }; } const recentHistory = history.slice(-10); const freq = (prop) => recentHistory.reduce((acc, curr) => { acc[curr[prop]] = (acc[curr[prop]] || 0) + 1; return acc; }, {}); const getMostFrequent = (map) => Object.keys(map).reduce((a, b) => map[a] > map[b] ? a : b, null); const color = getMostFrequent(freq('color')); const number = getMostFrequent(freq('number')); const bigSmall = getMostFrequent(freq('bigSmall')); return { number: number ? parseInt(number) : 5, bigSmall: bigSmall || 'Big', color: color ? (color.includes('-') ? color.split('-')[0] : color) : 'Green' }; }
-    function setPredictionStatus(period, status) { if (!currentMode) return; const p = state[currentMode].predictions.find(p => p.period == period); if (p && p.status === 'Pending') { p.status = status; render(); } }
-    function renderResultInHTML(result) { if (!result) return '...'; const { number, bigSmall, color } = result; let colorHTML; if (color && color.includes('-')) { const [c1, c2] = color.split('-'); colorHTML = `<strong class="color-${c1.toLowerCase()}">${c1}</strong>+<strong class="color-${c2.toLowerCase()}">${c2}</strong>`; } else { colorHTML = `<strong class="color-${color?.toLowerCase() || ''}">${color}</strong>`; } return `${colorHTML} | ${bigSmall} | ${number}`; }
+    // --- Pattern Matching Helper Function ---
+    function checkPatternMatch(historyValues, pattern) {
+        if (historyValues.length < pattern.length) {
+            return { matches: false, nextPrediction: null };
+        }
+        
+        const relevantHistory = historyValues.slice(-pattern.length); 
+        
+        const A_val = relevantHistory[0];
+        const B_val = (A_val === 'Red') ? 'Green' : ((A_val === 'Green') ? 'Red' : ((A_val === 'Big') ? 'Small' : 'Big'));
 
-    function render() {
-        if (!currentMode) return;
-        const activeState = state[currentMode];
-        const currentPrediction = activeState.predictions[activeState.predictions.length - 1];
-        if (currentPrediction) { const p = currentPrediction.prediction; elements.predictNumber.textContent = p.number; elements.predictBS.textContent = p.bigSmall; elements.predictColor.textContent = p.color; }
-        elements.historyTable.innerHTML = activeState.history.slice().reverse().map(item => `<tr><td>${String(item.period).slice(-6)}</td><td>${renderResultInHTML(item)}</td></tr>`).join('');
-        elements.predictionsTable.innerHTML = activeState.predictions.slice().reverse().map(item => { let s; const isRoundOver = activeState.history.some(h => h.period === item.period); if (item.status === 'Pending' && isRoundOver) { s = `<div class="flex justify-center items-center"><button class="status-btn btn-win" onclick="setPredictionStatus('${item.period}', 'Win')">W</button><button class="status-btn btn-loss" onclick="setPredictionStatus('${item.period}', 'Loss')">L</button></div>`; } else { s = `<span class="status-pill status-${item.status?.toLowerCase() || 'pending'}">${item.status || '...'}</span>`; } return `<tr><td>${String(item.period).slice(-6)}</td><td>${renderResultInHTML(item.prediction)}</td><td>${s}</td></tr>` }).join('');
+        for (let i = 0; i < pattern.length; i++) {
+            const expectedChar = pattern[i];
+            const actualValue = relevantHistory[i];
+
+            if ((expectedChar === 'A' && actualValue !== A_val) || (expectedChar === 'B' && actualValue !== B_val)) {
+                return { matches: false, nextPrediction: null };
+            }
+        }
+        
+        // Predict the next value in the sequence based on the pattern
+        const nextIdxInPattern = historyValues.length % pattern.length;
+        const nextExpectedChar = pattern[nextIdxInPattern]; 
+        
+        const nextPrediction = (nextExpectedChar === 'A') ? A_val : B_val;
+
+        return { matches: true, nextPrediction: nextPrediction };
     }
 
-    // --- গেম লুপ ---
+    // NEW STRATEGY: Last 2 Same
+    function checkLastTwoSame(historyValues) {
+        if (historyValues.length < 2) {
+            return { matches: false, nextPrediction: null };
+        }
+        const last = historyValues[historyValues.length - 1];
+        const secondLast = historyValues[historyValues.length - 2];
+
+        if (last === secondLast) {
+            return { matches: true, nextPrediction: last }; // Predict same again
+        }
+        return { matches: false, nextPrediction: null };
+    }
+
+
+    function runPredictionEngine(history) {
+        if (history.length < 3) { 
+            elements.aiSparkleIcon.style.display = 'none'; 
+            const randomNum = Math.random();
+            const randomColor = randomNum < 0.5 ? 'Red' : 'Green';
+            const randomBigSmall = Math.random() < 0.5 ? 'Small' : 'Big'; 
+            return { prediction: { bigSmall: randomBigSmall, color: randomColor }, strategy: 'Collecting data...', strategyKey: "Collecting data..." };
+        }
+        
+        elements.aiSparkleIcon.style.display = 'inline-block'; 
+
+        const lastResult = history[history.length - 1];
+        const lastResultColor = lastResult.color.split('-')[0]; 
+        const lastResultBigSmall = lastResult.bigSmall;
+        const oppositeColor = lastResultColor === 'Red' ? 'Green' : 'Red';
+        const oppositeBigSmall = lastResultBigSmall === 'Big' ? 'Small' : 'Big';
+
+        let bestPrediction = { color: null, bigSmall: null };
+        let bestStrategyName = "Analyzing...";
+        let bestStrategyKey = "Random Guess"; 
+        let highestConfidence = 0.5; 
+
+        const colorHistoryValues = history.map(h => h.color.split('-')[0]);
+        const bigSmallHistoryValues = history.map(h => h.bigSmall);
+
+        // --- NEW: Loss Recovery Logic ---
+        if (state[currentMode].lastPredictionLost) {
+            const randomFlipColor = Math.random() < 0.5 ? lastResultColor : oppositeColor;
+            const randomFlipBigSmall = Math.random() < 0.5 ? lastResultBigSmall : oppositeBigSmall;
+
+            bestPrediction.color = randomFlipColor;
+            bestPrediction.bigSmall = randomFlipBigSmall;
+            bestStrategyName = "Loss Recovery (Flipped)";
+            bestStrategyKey = "Loss Recovery";
+            highestConfidence = 0.6; 
+
+            state[currentMode].lastPredictionLost = false;
+
+        } else { // Proceed with normal pattern matching
+            // Try new "Last 2 Same" strategy first for higher confidence
+            const lastTwoSameColor = checkLastTwoSame(colorHistoryValues);
+            const lastTwoSameBigSmall = checkLastTwoSame(bigSmallHistoryValues);
+
+            if (lastTwoSameColor.matches && lastTwoSameBigSmall.matches) {
+                bestPrediction.color = lastTwoSameColor.nextPrediction;
+                bestPrediction.bigSmall = lastTwoSameBigSmall.nextPrediction;
+                bestStrategyName = "Last 2 Same (Color & Size)";
+                bestStrategyKey = "Last 2 Same (Color & Size)";
+                highestConfidence = 0.95; // Very high confidence
+            } else if (lastTwoSameColor.matches) {
+                bestPrediction.color = lastTwoSameColor.nextPrediction;
+                bestPrediction.bigSmall = lastResultBigSmall; // Keep last big/small
+                bestStrategyName = "Last 2 Same (Color)";
+                bestStrategyKey = "Last 2 Same (Color)";
+                highestConfidence = 0.9;
+            } else if (lastTwoSameBigSmall.matches) {
+                bestPrediction.color = lastResultColor; // Keep last color
+                bestPrediction.bigSmall = lastTwoSameBigSmall.nextPrediction;
+                bestStrategyName = "Last 2 Same (Size)";
+                bestStrategyKey = "Last 2 Same (Size)";
+                highestConfidence = 0.9;
+            } else {
+                // Existing pattern matching logic
+                const colorPatterns = [
+                    { name: "Alternating Color (ABAB)", pattern: ['A', 'B', 'A', 'B'], type: 'color', confidence: 0.85 },
+                    { name: "Double Color (AABB)", pattern: ['A', 'A', 'B', 'B'], type: 'color', confidence: 0.8 }, 
+                    { name: "Triple Color (AAABBB)", pattern: ['A', 'A', 'A', 'B', 'B', 'B'], type: 'color', confidence: 0.9 },
+                    { name: "Color (AABAAB)", pattern: ['A', 'A', 'B', 'A', 'A', 'B'], type: 'color', confidence: 0.75 },
+                    { name: "Color (AAAB)", pattern: ['A', 'A', 'A', 'B'], type: 'color', confidence: 0.7 },
+                    { name: "Color (AAABB)", pattern: ['A', 'A', 'A', 'B', 'B'], type: 'color', confidence: 0.75 },
+                ];
+
+                const bigSmallPatterns = [
+                    { name: "Alternating Size (SBSB)", pattern: ['S', 'B', 'S', 'B'], type: 'bigSmall', confidence: 0.85 },
+                    { name: "Double Size (BBSS)", pattern: ['B', 'B', 'S', 'S'], type: 'bigSmall', confidence: 0.8 },
+                    { name: "Triple Size (SSSBBB)", pattern: ['S', 'S', 'S', 'B', 'B', 'B'], type: 'bigSmall', confidence: 0.9 },
+                    { name: "Quadra Size (BBBBSSSS)", pattern: ['B','B','B','B','S','S','S','S'], type: 'bigSmall', confidence: 0.92 },
+                ];
+
+                let detectedColorPatternInfo = null;
+                for (const p of colorPatterns) {
+                    const result = checkPatternMatch(colorHistoryValues, p.pattern);
+                    if (result.matches) {
+                        detectedColorPatternInfo = { 
+                            prediction: result.nextPrediction, 
+                            name: p.name, 
+                            confidence: p.confidence,
+                            patternLength: p.pattern.length
+                        };
+                        break; 
+                    }
+                }
+
+                let detectedBigSmallPatternInfo = null;
+                for (const p of bigSmallPatterns) {
+                    const result = checkPatternMatch(bigSmallHistoryValues, p.pattern);
+                    if (result.matches) {
+                        detectedBigSmallPatternInfo = { 
+                            prediction: result.nextPrediction, 
+                            name: p.name, 
+                            confidence: p.confidence,
+                            patternLength: p.pattern.length
+                        };
+                        break;
+                    }
+                }
+
+                if (detectedColorPatternInfo && detectedBigSmallPatternInfo) {
+                    bestPrediction.color = detectedColorPatternInfo.prediction;
+                    bestPrediction.bigSmall = detectedBigSmallPatternInfo.prediction;
+                    bestStrategyName = `Color: ${detectedColorPatternInfo.name} & Size: ${detectedBigSmallPatternInfo.name}`;
+                    bestStrategyKey = `C:${detectedColorPatternInfo.name} & S:${detectedBigSmallPatternInfo.name}`; 
+                    highestConfidence = Math.max(detectedColorPatternInfo.confidence, detectedBigSmallPatternInfo.confidence);
+                } else if (detectedColorPatternInfo) {
+                    bestPrediction.color = detectedColorPatternInfo.prediction;
+                    bestPrediction.bigSmall = lastResultBigSmall; 
+                    bestStrategyName = `Color: ${detectedColorPatternInfo.name}`;
+                    bestStrategyKey = detectedColorPatternInfo.name;
+                    highestConfidence = detectedColorPatternInfo.confidence;
+                } else if (detectedBigSmallPatternInfo) {
+                    bestPrediction.color = lastResultColor; 
+                    bestPrediction.bigSmall = detectedBigSmallPatternInfo.prediction;
+                    bestStrategyName = `Size: ${detectedBigSmallPatternInfo.name}`;
+                    bestStrategyKey = detectedBigSmallPatternInfo.name;
+                    highestConfidence = detectedBigSmallPatternInfo.confidence;
+                } else {
+                    // Fallback to Trend/Breaking
+                    let currentStreakColor = 0;
+                    for (let i = history.length - 1; i >= 0; i--) {
+                        if (history[i].color.includes(lastResultColor)) {
+                            currentStreakColor++;
+                        } else {
+                            break;
+                        }
+                    }
+
+                    const stats = state[currentMode].stats;
+                    const trendStats = stats.strategyMetrics["Following Trend"] || {w:0,l:0}; 
+                    const breakingStats = stats.strategyMetrics["Attempting Break"] || {w:0,l:0}; 
+
+                    const trendAccuracy = (trendStats.w + trendStats.l > 0) ? 
+                                           trendStats.w / (trendStats.w + trendStats.l) : 0.5;
+                    const breakingAccuracy = (breakingStats.w + breakingStats.l > 0) ? 
+                                              breakingStats.w / (breakingStats.w + breakingStats.l) : 0.5;
+
+
+                    if (currentStreakColor >= 3 && breakingAccuracy > trendAccuracy && (breakingStats.w + breakingStats.l > 2)) {
+                        bestPrediction.color = oppositeColor;
+                        highestConfidence = breakingAccuracy; 
+                        bestStrategyName = `Attempting Break ${currentStreakColor}x ${lastResultColor}`;
+                        bestStrategyKey = `Attempting Break ${lastResultColor}`; 
+                    } else {
+                        bestPrediction.color = lastResultColor;
+                        highestConfidence = trendAccuracy; 
+                        bestStrategyName = `Following ${lastResultColor} Trend`;
+                        bestStrategyKey = `Following ${lastResultColor} Trend`; 
+                    }
+                    
+                    bestPrediction.bigSmall = lastResultBigSmall; 
+                }
+            } 
+        } 
+
+        bestStrategyName += ` | Conf: ${(highestConfidence * 100).toFixed(0)}%`;
+
+        if (!state[currentMode].stats.strategyMetrics[bestStrategyKey]) {
+            state[currentMode].stats.strategyMetrics[bestStrategyKey] = {w:0, l:0};
+        }
+
+        return { prediction: bestPrediction, strategy: bestStrategyName, strategyKey: bestStrategyKey };
+    }
+
+    function updateStrategyStats(actualResult) {
+        const stats = state[currentMode].stats;
+        
+        const predictionForThisPeriod = state[currentMode].predictions.find(p => p.period === actualResult.period);
+
+        if (!predictionForThisPeriod || predictionForThisPeriod.status !== 'Pending') {
+            return; 
+        }
+
+        const predictedColor = predictionForThisPeriod.prediction.color;
+        const actualColor = actualResult.color;
+        const predictedBigSmall = predictionForThisPeriod.prediction.bigSmall;
+        const actualBigSmall = actualResult.bigSmall;
+
+        let isWin = false;
+        if (predictedColor.includes('-')) { 
+            const [predCol1, predCol2] = predictedColor.split('-');
+            isWin = (actualColor.includes(predCol1) || actualColor.includes(predCol2)) &&
+                    (predictedBigSmall === actualBigSmall);
+        } else { 
+            isWin = (predictedColor === actualColor) &&
+                    (predictedBigSmall === actualBigSmall);
+        }
+
+        predictionForThisPeriod.status = isWin ? 'Win' : 'Loss';
+
+        // Update overall wins/losses and revenue
+        if (isWin) {
+            stats.totalWins++;
+            stats.revenue++;
+            state[currentMode].lastPredictionLost = false; 
+        } else {
+            stats.totalLosses++;
+            stats.revenue--;
+            state[currentMode].lastPredictionLost = true; 
+        }
+
+        // Update specific strategy metrics using the 'strategyKey'
+        const strategyKey = predictionForThisPeriod.strategyKey;
+        if (!stats.strategyMetrics[strategyKey]) {
+             stats.strategyMetrics[strategyKey] = {w:0, l:0};
+        }
+
+        if (isWin) {
+            stats.strategyMetrics[strategyKey].w++;
+        } else {
+            stats.strategyMetrics[strategyKey].l++;
+        }
+        saveState(); // Save state after every update
+    }
+
+    function setPredictionStatus(period, status) {
+        if (!currentMode) return;
+        const p = state[currentMode].predictions.find(p => p.period == period);
+        if (p && p.status !== status) { 
+            const oldStatus = p.status;
+            p.status = status;
+
+            const stats = state[currentMode].stats;
+            const strategyKey = p.strategyKey;
+
+            // Adjust overall stats based on old status
+            if (oldStatus === 'Win') { 
+                stats.totalWins--;
+                stats.revenue--;
+                if (stats.strategyMetrics[strategyKey]) stats.strategyMetrics[strategyKey].w--;
+            } else if (oldStatus === 'Loss') { 
+                stats.totalLosses--;
+                stats.revenue++;
+                if (stats.strategyMetrics[strategyKey]) stats.strategyMetrics[strategyKey].l--;
+            }
+            
+            // Apply new status
+            if (status === 'Win') {
+                stats.totalWins++;
+                stats.revenue++;
+                if (!stats.strategyMetrics[strategyKey]) stats.strategyMetrics[strategyKey] = {w:0, l:0};
+                stats.strategyMetrics[strategyKey].w++;
+                state[currentMode].lastPredictionLost = false; 
+            } else if (status === 'Loss') {
+                stats.totalLosses++;
+                stats.revenue--;
+                if (!stats.strategyMetrics[strategyKey]) stats.strategyMetrics[strategyKey] = {w:0, l:0};
+                stats.strategyMetrics[strategyKey].l--;
+                state[currentMode].lastPredictionLost = true; 
+            }
+            saveState(); // Save state after every status change
+            render(); 
+        }
+    }
+    
+    function renderResultInHTML(result) { 
+        if (!result) return '...'; 
+        const { bigSmall, color } = result; 
+        let colorHTML = `<strong class="text-base sm:text-xl color-${color?.toLowerCase() || ''}">${color}</strong>`; 
+        
+        if (color && color.includes('-')) { 
+            const [c1, c2] = color.split('-'); 
+            colorHTML = `<strong class="text-base sm:text-xl color-${c1.toLowerCase()}">${c1}</strong>+<strong class="text-base sm:text-xl color-${c2.toLowerCase()}">${c2}</strong>`; 
+        } 
+        return `${colorHTML} | <strong class="text-base sm:text-xl color-${bigSmall?.toLowerCase() || ''}">${bigSmall}</strong>`; 
+    }
+
+    function renderChart() {
+        const stats = state[currentMode].stats;
+
+        elements.chartTotalWins.textContent = stats.totalWins;
+        elements.chartTotalLosses.textContent = stats.totalLosses;
+
+        const totalPredictions = stats.totalWins + stats.totalLosses;
+        const accuracy = totalPredictions > 0 ? ((stats.totalWins / totalPredictions) * 100).toFixed(2) : 0;
+        elements.chartAccuracy.textContent = `${accuracy}%`;
+
+        elements.chartRevenue.textContent = stats.revenue;
+        elements.chartRevenue.classList.toggle('negative', stats.revenue < 0);
+        elements.chartRevenue.classList.toggle('win', stats.revenue > 0);
+        elements.chartRevenue.classList.toggle('text-yellow-400', stats.revenue === 0); 
+
+        let strategyHtml = '';
+        const sortedStrategies = Object.keys(stats.strategyMetrics).sort(); 
+
+        for (const key of sortedStrategies) {
+            const metric = stats.strategyMetrics[key];
+            const total = metric.w + metric.l;
+            if (total === 0 && key !== "Collecting data...") continue; 
+
+            const acc = total > 0 ? ((metric.w / total) * 100).toFixed(2) : 0;
+            const accClass = acc >= 50 ? 'positive' : 'negative'; 
+            
+            strategyHtml += `
+                <div class="strategy-item">
+                    <span class="name">${key}</span>
+                    <span class="acc ${accClass}">${acc}% (${metric.w}/${total})</span>
+                </div>
+            `;
+        }
+        elements.strategyBreakdown.innerHTML = strategyHtml;
+    }
+
+
+    function render() {
+        if (!currentMode) { 
+            elements.period.textContent = 'Select Mode'; 
+            elements.timer.textContent = '--:--'; 
+            elements.predictionText.textContent = '...';
+            elements.insightText.textContent = '...';
+            elements.predictionsTable.innerHTML = '';
+            elements.aiSparkleIcon.style.display = 'none'; 
+            return; 
+        }
+        const activeState = state[currentMode];
+        const currentPrediction = activeState.predictions[activeState.predictions.length - 1];
+        
+        if (currentPrediction) { 
+            elements.predictionText.innerHTML = renderResultInHTML(currentPrediction.prediction); 
+            elements.insightText.textContent = currentPrediction.strategy; 
+            elements.aiSparkleIcon.style.display = (activeState.history.length >= 3) ? 'inline-block' : 'none'; 
+        } else { 
+            elements.predictionText.textContent = '...'; 
+            elements.insightText.textContent = '...'; 
+            elements.aiSparkleIcon.style.display = 'none'; 
+        }
+
+        elements.predictionsTable.innerHTML = activeState.predictions.slice().reverse().map(item => { 
+            let s; 
+            const isPeriodResultAvailable = activeState.history.some(h => h.period === item.period);
+            
+            if (item.status === 'Pending' && isPeriodResultAvailable) { 
+                s = `<div class="flex justify-center items-center">
+                        <button class="status-btn btn-win" onclick="setPredictionStatus('${item.period}', 'Win')">W</button>
+                        <button class="status-btn btn-loss" onclick="setPredictionStatus('${item.period}', 'Loss')">L</button>
+                    </div>`; 
+            } else { 
+                s = `<span class="status-pill status-${item.status?.toLowerCase() || 'pending'}">${item.status || 'Pending'}</span>`; 
+            } 
+            return `<tr><td>${String(item.period).slice(-6)}</td><td>${renderResultInHTML(item.prediction)}</td><td>${s}</td></tr>` 
+        }).join('');
+
+        if (currentTab === 'chart') {
+            renderChart();
+        }
+    }
+
+    // --- SMARTER SIMULATION LOGIC ---
+    function generateSmartSimulatedResult(history) {
+        if (history.length < 2) { 
+            const num = Math.floor(Math.random() * 10);
+            return {
+                number: num,
+                bigSmall: num >= 5 ? 'Big' : 'Small',
+                color: (num % 2 === 0) ? 'Red' : 'Green', 
+                ...(currentMode === '30s' && (num === 0 || num === 5)) && { color: (num === 0 ? 'Red-Violet' : 'Green-Violet') }
+            };
+        }
+
+        const lastResult = history[history.length - 1];
+        const lastColor = lastResult.color.split('-')[0];
+        const lastBigSmall = lastResult.bigSmall;
+        const oppositeColor = lastColor === 'Red' ? 'Green' : 'Red';
+        const oppositeBigSmall = lastBigSmall === 'Big' ? 'Small' : 'Big';
+
+        let nextColor = null;
+        let nextBigSmall = null;
+
+        // --- Simulate Color Patterns ---
+        const colorHistoryValues = history.map(h => h.color.split('-')[0]);
+        const colorPatternsForSim = [
+            { check: checkPatternMatch(colorHistoryValues, ['A', 'B', 'A', 'B']), next: (lastColor === 'Red' ? 'Green' : 'Red'), chance: 0.7 },
+            { check: checkPatternMatch(colorHistoryValues, ['A', 'A', 'B', 'B']), next: (lastColor === 'Red' ? 'Green' : 'Red'), chance: 0.6 },
+            { check: checkPatternMatch(colorHistoryValues, ['A', 'A', 'A', 'B', 'B', 'B']), next: (lastColor === 'Red' ? 'Green' : 'Red'), chance: 0.5 },
+        ];
+        
+        // NEW SIMULATION FOR "Last 2 Same"
+        const simLastTwoSameColor = checkLastTwoSame(colorHistoryValues);
+        if (simLastTwoSameColor.matches && Math.random() < 0.8) { // High chance to follow "Last 2 Same"
+            nextColor = simLastTwoSameColor.nextPrediction;
+        } else {
+            for (const p of colorPatternsForSim) {
+                if (p.check.matches && Math.random() < p.chance) {
+                    nextColor = p.check.nextPrediction; 
+                    break;
+                }
+            }
+        }
+
+        if (nextColor === null) { 
+            let currentStreakColor = 0;
+            for (let i = history.length - 1; i >= 0; i--) {
+                if (history[i].color.includes(lastColor)) {
+                    currentStreakColor++;
+                } else {
+                    break;
+                }
+            }
+            if (currentStreakColor >= 2 && Math.random() < 0.6) { 
+                nextColor = lastColor; 
+            } else if (currentStreakColor >= 3 && Math.random() < 0.4) { 
+                nextColor = oppositeColor; 
+            } else { 
+                nextColor = Math.random() < 0.5 ? 'Red' : 'Green'; 
+            }
+        }
+
+        // --- Simulate Big/Small Patterns ---
+        const bigSmallHistoryValues = history.map(h => h.bigSmall);
+        const bigSmallPatternsForSim = [
+            { check: checkPatternMatch(bigSmallHistoryValues, ['S', 'B', 'S', 'B']), next: (lastBigSmall === 'Small' ? 'Big' : 'Small'), chance: 0.7 },
+            { check: checkPatternMatch(bigSmallHistoryValues, ['B', 'B', 'S', 'S']), next: (lastBigSmall === 'Small' ? 'Big' : 'Small'), chance: 0.6 },
+        ];
+
+        // NEW SIMULATION FOR "Last 2 Same"
+        const simLastTwoSameBigSmall = checkLastTwoSame(bigSmallHistoryValues);
+        if (simLastTwoSameBigSmall.matches && Math.random() < 0.8) { // High chance to follow "Last 2 Same"
+            nextBigSmall = simLastTwoSameBigSmall.nextPrediction;
+        } else {
+            for (const p of bigSmallPatternsForSim) {
+                if (p.check.matches && Math.random() < p.chance) {
+                    nextBigSmall = p.check.nextPrediction;
+                    break;
+                }
+            }
+        }
+
+        if (nextBigSmall === null) {
+            let currentStreakBigSmall = 0;
+            for (let i = history.length - 1; i >= 0; i--) {
+                if (history[i].bigSmall === lastBigSmall) {
+                    currentStreakBigSmall++;
+                } else {
+                    break;
+                }
+            }
+            if (currentStreakBigSmall >= 2 && Math.random() < 0.6) { 
+                nextBigSmall = lastBigSmall; 
+            } else if (currentStreakBigSmall >= 3 && Math.random() < 0.4) { 
+                nextBigSmall = oppositeBigSmall; 
+            } else {
+                nextBigSmall = Math.random() < 0.5 ? 'Small' : 'Big';
+            }
+        }
+
+        // --- Determine Number and handle Violet for 30s ---
+        let finalNumber;
+        let finalColor = nextColor; 
+
+        if (nextBigSmall === 'Big') {
+            finalNumber = Math.floor(Math.random() * 5) + 5; // 5-9
+        } else { 
+            finalNumber = Math.floor(Math.random() * 5); // 0-4
+        }
+
+        if (currentMode === '30s' && Math.random() < 0.15) { 
+            if (Math.random() < 0.5) { 
+                finalNumber = 0;
+                finalColor = 'Red-Violet';
+            } else { 
+                finalNumber = 5;
+                finalColor = 'Green-Violet';
+            }
+        } else {
+            // Adjust number to match color parity and Big/Small
+            if (finalColor === 'Red') {
+                if (finalNumber % 2 === 0) finalNumber = (finalNumber + 1) % 10; // Ensure odd
+            } else if (finalColor === 'Green') {
+                if (finalNumber % 2 !== 0) finalNumber = (finalNumber + 1) % 10; // Ensure even
+            }
+
+            if (nextBigSmall === 'Big' && finalNumber < 5) finalNumber += 5;
+            else if (nextBigSmall === 'Small' && finalNumber >= 5) finalNumber -= 5;
+            
+            // Final check to ensure consistency (can sometimes mismatch due to independent calculations)
+            if ((finalColor === 'Red' && finalNumber % 2 === 0) || (finalColor === 'Green' && finalNumber % 2 !== 0)) {
+                // If still mismatched, flip one property based on probability
+                if (Math.random() < 0.5) { // Flip color
+                    finalColor = (finalColor === 'Red') ? 'Green' : 'Red';
+                } else { // Flip number to match color parity
+                    finalNumber = (finalNumber + 1) % 10;
+                }
+            }
+        }
+
+        return {
+            number: finalNumber,
+            bigSmall: nextBigSmall,
+            color: finalColor
+        };
+    }
+
+
     function offlineGameLoop() {
         if (!currentMode) return;
         const activeState = state[currentMode];
+
         if (activeState.currentPeriod) {
-            const number = Math.floor(Math.random() * 10);
-            let color; if (number === 0) { color = 'Red-Violet'; } else if (number === 5) { color = 'Green-Violet'; } else { color = (number % 2 === 0) ? 'Red' : 'Green'; }
-            activeState.history.push({ period: activeState.currentPeriod, number, bigSmall: number >= 5 ? 'Big' : 'Small', color });
+            const actualResult = generateSmartSimulatedResult(activeState.history);
+            actualResult.period = activeState.currentPeriod; 
+            
+            updateStrategyStats(actualResult); 
+
+            activeState.history.push(actualResult); 
+            if(activeState.history.length > 50) activeState.history.shift(); 
         }
-        
+
         const newPeriod = generatePeriodNumber();
         activeState.currentPeriod = newPeriod;
-        
-        // --- এখানে ভুলটি সংশোধন করা হয়েছে ---
-        const newPrediction = runPredictionEngine(activeState.history); // এখন হিস্টোরি পাঠানো হচ্ছে
 
-        activeState.predictions.push({ period: newPeriod, prediction: newPrediction, status: 'Pending' });
-        if(activeState.predictions.length > 50) activeState.predictions.shift();
+        const { prediction, strategy, strategyKey } = runPredictionEngine(activeState.history);
         
+        activeState.predictions.push({ period: newPeriod, prediction, strategy, strategyKey: strategyKey, status: 'Pending' });
+        if(activeState.predictions.length > 50) activeState.predictions.shift(); 
+
         elements.period.textContent = newPeriod;
-        render();
+        saveState();
+        render(); 
     }
     
     function masterClock() {
         if (!currentMode) return;
-        const now = new Date(); const seconds = now.getSeconds();
+        const now = new Date(); 
         const duration = (currentMode === '30s') ? 30 : 60;
-        const remainingTime = (duration - 1) - (now.getTime() / 1000) % duration;
-        const displayMinutes = Math.floor(remainingTime / 60); const displaySeconds = Math.floor(remainingTime % 60);
-        elements.timer.textContent = `${String(displayMinutes).padStart(2, '0')}:${String(displaySeconds).padStart(2, '0')}`;
         
-        if (duration === 30 && (seconds === 0 || seconds === 30)) { offlineGameLoop(); }
-        else if (duration === 60 && seconds === 0) { offlineGameLoop(); }
+        const istOffsetMinutes = 330; 
+        const currentUtcTime = now.getTime() + (now.getTimezoneOffset() * 60 * 1000); 
+        const istTime = new Date(currentUtcTime + (istOffsetMinutes * 60 * 1000));
+        
+        const seconds = istTime.getSeconds();
+        
+        let remainingTime;
+        if (currentMode === '30s') {
+            const currentSecondInCycle = seconds % 30;
+            remainingTime = (29 - currentSecondInCycle); 
+            if (remainingTime < 0) remainingTime += 30; 
+        } else { // 1m mode
+            remainingTime = (59 - seconds); 
+            if (remainingTime < 0) remainingTime += 60; 
+        }
+        
+        elements.timer.textContent = `${String(Math.floor(remainingTime / 60)).padStart(2, '0')}:${String(Math.floor(remainingTime % 60)).padStart(2, '0')}`;
+
+        const triggerSecond = (currentMode === '30s') ? (seconds % 30 === 0) : (seconds === 0);
+        
+        if (triggerSecond) { 
+            const debounceKey = currentMode + 'Trigger';
+            if (!this[debounceKey] || (now.getTime() - this[debounceKey] > 500)) { 
+                offlineGameLoop(); 
+                this[debounceKey] = now.getTime();
+            }
+        }
     }
     
-    function initOfflineGame() {
-        offlineGameLoop();
-        masterInterval = setInterval(masterClock, 1000);
+    function initOfflineGame() { 
+        offlineGameLoop(); 
+        masterInterval = setInterval(masterClock, 1000); 
     }
     
-    // --- General Init ---
-    elements.clearButton.addEventListener('click', () => { if (currentMode) { state[currentMode] = { history: [], predictions: [] }; render(); } });
-    const tabs = document.querySelectorAll('.tab'); const tabContents = document.querySelectorAll('.tab-content');
-    tabs.forEach(tab => tab.addEventListener('click', () => { tabs.forEach(t => t.classList.remove('active')); tab.classList.add('active'); tabContents.forEach(c => c.classList.add('hidden')); document.getElementById(tab.dataset.tab).classList.remove('hidden'); }));
+    elements.clearButton.addEventListener('click', () => { 
+        if (!currentMode) return; 
+        state[currentMode] = JSON.parse(JSON.stringify(initialStateTemplate));
+        saveState();
+        render(); 
+    });
+
+    // Function to create and animate a single dot
+    function createDot() {
+        const dot = document.createElement('div');
+        dot.classList.add('dot');
+        const size = Math.random() * 5 + 3; // 3px to 8px
+        dot.style.width = `${size}px`;
+        dot.style.height = `${size}px`;
+        dot.style.left = `${Math.random() * 100}%`;
+        dot.style.animationDuration = `${Math.random() * 5 + 7}s`; // 7s to 12s
+        dot.style.animationDelay = `-${Math.random() * 10}s`; // Stagger start times
+        dot.style.setProperty('--dot-x-offset', `${(Math.random() - 0.5) * 20}vw`); // Horizontal drift
+        elements.backgroundDots.appendChild(dot);
+
+        // Remove dot after animation to prevent memory leak
+        dot.addEventListener('animationend', () => {
+            dot.remove();
+            createDot(); // Create a new dot to keep the animation continuous
+        });
+    }
+
+    // Initialize dots
+    function initBackgroundDots() {
+        for (let i = 0; i < 50; i++) { // Number of dots
+            createDot();
+        }
+    }
+
+    // Initial setup
+    loadState();
+    selectMode('30s'); 
+    selectTab('history'); 
+    initBackgroundDots();
 </script>
 </body>
 </html>
