@@ -147,7 +147,7 @@
         }
 
         .table-container {
-            max-height: 300px;
+            max-height: 200px;
             overflow-y: auto;
             overflow-x: auto;
             border: 1px solid rgba(255, 255, 255, 0.15);
@@ -166,16 +166,11 @@
             border-collapse: collapse;
             font-size: 0.6rem;
             font-family: 'Orbitron', sans-serif;
-            min-width: 400px;
-        }
-
-        tr {
-            display: flex;
-            flex-wrap: nowrap;
+            min-width: 300px;
         }
 
         th, td {
-            padding: 0.15rem 0.3rem;
+            padding: 0.1rem 0.2rem;
             text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             color: #E0E7FF;
@@ -196,17 +191,17 @@
             min-width: 60px;
         }
 
-        td:nth-child(1) { min-width: 70px; }
-        td:nth-child(2) { min-width: 130px; }
-        td:nth-child(3) { min-width: 130px; }
-        td:nth-child(4) { min-width: 80px; }
+        td:nth-child(1) { min-width: 60px; }
+        td:nth-child(2) { min-width: 100px; }
+        td:nth-child(3) { min-width: 100px; }
+        td:nth-child(4) { min-width: 60px; }
 
         tr:hover { background: rgba(255, 255, 255, 0.05); }
         tr:last-child td { border-bottom: none; }
 
         .status-btn {
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             border: 1px solid #A5B4FC;
             border-radius: 4px;
             cursor: pointer;
@@ -327,7 +322,7 @@
         }
 
         .strategy-content.visible {
-            max-height: 500px; /* Adjust based on content size */
+            max-height: 500px;
             opacity: 1;
         }
 
@@ -342,16 +337,16 @@
             .info-label { font-size: 0.65rem; }
             .info-label svg { width: 0.9rem; height: 0.9rem; margin-right: 0.4rem; }
             .info-value { font-size: 0.8rem; }
-            table { min-width: 350px; }
-            th, td { padding: 0.1rem 0.2rem; font-size: 0.55rem; }
+            table { min-width: 250px; }
+            th, td { padding: 0.1rem 0.15rem; font-size: 0.55rem; }
             th { font-size: 0.5rem; min-width: 50px; }
-            td:nth-child(1) { min-width: 60px; }
-            td:nth-child(2) { min-width: 110px; }
-            td:nth-child(3) { min-width: 110px; }
-            td:nth-child(4) { min-width: 70px; }
-            .status-btn { width: 14px; height: 14px; font-size: 0.45rem; }
+            td:nth-child(1) { min-width: 50px; }
+            td:nth-child(2) { min-width: 80px; }
+            td:nth-child(3) { min-width: 80px; }
+            td:nth-child(4) { min-width: 50px; }
+            .status-btn { width: 12px; height: 12px; font-size: 0.45rem; }
             .status-pill { padding: 1px 4px; font-size: 0.5rem; }
-            .table-container { max-height: 260px; }
+            .table-container { max-height: 180px; }
             .ai-sparkle-icon { width: 0.9rem; height: 0.9rem; }
             .chart-stats-grid { flex-direction: row; gap: 0.3rem; }
             .stat-item { padding: 0.4rem; flex: 1; }
@@ -433,7 +428,7 @@
                 </div>
             </div>
 
-            <div class="flex justify-between items-center mb-3">
+            <div class="flex justify-between items-center mb-2">
                 <h2 class="text-base font-semibold flex items-center text-indigo-100">
                     <svg fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5 mr-2"><path d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" /></svg>
                     Prediction History
@@ -454,7 +449,7 @@
                 </table>
             </div>
 
-            <div class="flex justify-between items-center mt-4 mb-2">
+            <div class="flex justify-between items-center mt-2 mb-2">
                 <h3 class="text-sm font-semibold flex items-center text-indigo-200">
                     Strategy Breakdown
                     <button id="toggle-strategy" class="toggle-button">
