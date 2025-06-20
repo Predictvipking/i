@@ -3,1367 +3,856 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predictor v6.0 - Advanced Loss Recovery AI</title>
+    <title>Predictor v9.8 - AI Enhanced UI</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Orbitron', sans-serif;
-            background: linear-gradient(135deg, #0F0C29, #302B63, #24243E);
+        body, html {
+            font-family: 'Exo 2', sans-serif;
+            background: #0F0C29;
             color: #E0E7FF;
-            padding: 1rem;
             margin: 0;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        .background-particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
+            padding: 0;
+            overflow: hidden;
             height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            background: radial-gradient(circle at center, rgba(30, 32, 50, 0.7), transparent);
         }
 
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0;
-            animation: glowFall 10s linear infinite;
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        html, body, #main-content, .table-container {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            overflow: hidden;
         }
 
-        .particle.color-1 { background-color: rgba(0, 255, 255, 0.6); }
-        .particle.color-2 { background-color: rgba(255, 0, 255, 0.5); }
-        .particle.color-3 { background-color: rgba(255, 255, 255, 0.4); }
-        .particle.glow { animation: glowFall 10s linear infinite, glowPulse 1.5s ease-in-out infinite; }
+        .hidden { display: none !important; }
 
-        @keyframes glowFall {
-            0% { transform: translateY(-10vh) translateX(0); opacity: 0; }
-            10% { opacity: 0.8; }
-            80% { opacity: 0.3; }
-            100% { transform: translateY(110vh) translateX(var(--particle-x-offset)); opacity: 0; }
+        .highlight-fuchsia { color: #FF00FF; }
+        .bg-fuchsia-active { background: #FF00FF; }
+        .text-fuchsia-active { color: #FF00FF; }
+        .shadow-fuchsia-glow { box-shadow: 0 0 15px rgba(255, 0, 255, 0.7); }
+        .border-fuchsia-glow { border-color: #FF00FF; }
+
+        .status-win { background: rgba(0, 255, 127, 0.3); color: #00FF7F; }
+        .status-loss { background: rgba(255, 85, 85, 0.3); color: #FF5555; }
+        .status-partial { background: rgba(255, 170, 0, 0.3); color: #FFAA00; }
+
+        .color-red { color: #FF5555; }
+        .color-green { color: #00FF7F; }
+        .color-violet { color: #D81BFF; }
+        .color-big { color: #FFAA00; }
+        .color-small { color: #00D4FF; }
+
+        #login-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #0F0C29, #302B63, #24243E);
+        }
+        .login-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+        .login-card h1 { font-size: 2rem; font-weight: 700; }
+        .login-card p { font-size: 0.9rem; color: #A5B4FC; margin-bottom: 1.5rem; }
+        .login-card input {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #E0E7FF;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+        .login-card button {
+            width: 100%;
+            padding: 0.75rem;
+            background: #FF00FF;
+            color: #0F0C29;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .login-card button:hover { box-shadow: 0 0 20px rgba(255, 0, 255, 0.6); }
+        .error-message { color: #FF5555; font-size: 0.8rem; margin-top: 0.5rem; display: none; }
+
+        #app-container {
+            display: flex;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(45deg, #0F0C29, #302B63, #24243E);
+            padding: 0.5rem;
+            box-sizing: border-box;
         }
 
-        @keyframes glowPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.4); }
-            100% { transform: scale(1); }
+        #main-content {
+            width: 100%;
+            max-width: 400px;
+            padding: 0;
+            overflow: hidden;
+            position: relative;
+            height: 100%;
+        }
+
+        .app-title-container {
+            text-align: center;
+            margin-top: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .app-title-container h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #E0E7FF;
+            line-height: 1;
+        }
+        .app-title-container p {
+            font-size: 0.65rem;
+            color: #A5B4FC;
+            margin-top: 0.1rem;
+        }
+
+        #selector-and-logout-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        #game-mode-selector {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 0.3rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            flex-grow: 1;
+        }
+        #game-mode-tabs {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            overflow-x: auto;
+            margin-bottom: 0.1rem;
+        }
+        #game-mode-tabs button {
+            flex: 1;
+            padding: 0.4rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #A5B4FC;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+        #game-mode-tabs button.active {
+            background: #FF00FF;
+            color: #0F0C29;
+            box-shadow: inset 0 0 8px rgba(255, 0, 255, 0.7);
+            border-radius: 10px;
+            margin: 0.05rem;
+        }
+
+        #interval-selector-container {
+            padding: 0.05rem;
+            text-align: center;
+        }
+        .mode-toggle {
+            margin: 0 auto;
+            border-radius: 9999px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.1rem;
+        }
+        .mode-toggle button {
+            padding: 0.2rem 0.7rem;
+            font-size: 0.65rem;
+            font-weight: 500;
+            border-radius: 9999px;
+            transition: all 0.2s ease;
+            color: #A5B4FC;
+        }
+        .mode-toggle button.active {
+            background: #FF00FF;
+            color: #0F0C29;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.6);
+        }
+
+        #logout-icon {
+            background: rgba(255, 68, 68, 0.2);
+            border: 1px solid #FF0000;
+            border-radius: 12px;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
+            flex-shrink: 0;
+        }
+        #logout-icon:hover {
+            background: rgba(255, 0, 0, 0.5);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+            transform: scale(1.1);
+        }
+        #logout-icon svg {
+            width: 26px;
+            height: 26px;
+            color: #E0E7FF;
+            filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.9));
         }
 
         .main-card {
             background: rgba(255, 255, 255, 0.08);
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 16px;
-            padding: 1rem;
-            margin-bottom: 1rem;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
             backdrop-filter: blur(10px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease;
         }
-
-        .main-card:hover {
-            transform: translateY(-3px);
-        }
-
-        .max-w-md { margin: 0 auto; position: relative; z-index: 1; }
-        .text-center.my-4 { margin: 1.5rem 0; }
-        .text-4xl { font-size: 2rem; }
-        .text-xs { font-size: 0.7rem; }
-
-        .mode-toggle {
-            display: flex;
-            background: rgba(255, 255, 255, 0.12);
-            border-radius: 9999px;
-            padding: 0.25rem;
-            width: fit-content;
-            margin: 0 auto 1rem;
-        }
-
-        .mode-toggle button {
-            padding: 0.5rem 1.5rem;
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: #A5B4FC;
-            background: transparent;
-            border-radius: 9999px;
-            transition: all 0.2s ease;
-        }
-
-        .mode-toggle button.active {
-            background: #00D4FF;
-            color: #0F0C29;
-            box-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
-        }
-
         .info-grid {
             display: grid;
-            gap: 0.75rem;
-            padding: 0.75rem;
+            grid-gap: 0.2rem;
+            padding: 0.3rem;
         }
-
         .info-line {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.5rem;
+            padding: 0.3rem 0.4rem;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 8px;
         }
-
         .info-label {
-            font-size: 0.7rem;
+            font-size: 0.85rem;
             color: #A5B4FC;
             display: flex;
             align-items: center;
         }
-
         .info-label svg {
             width: 1rem;
             height: 1rem;
-            margin-right: 0.5rem;
-            color: #00D4FF;
+            margin-right: 0.3rem;
+            color: #FF00FF;
         }
-
         .info-value {
-            font-size: 0.9rem;
+            font-size: 1rem;
             font-weight: 600;
             color: #E0E7FF;
         }
+        #prediction-text .color-number {
+            border: none;
+        }
 
         .ai-sparkle-icon {
-            width: 1rem;
-            height: 1rem;
+            width: 0.9rem;
+            height: 0.9rem;
             color: #FFD700;
-            margin-left: 0.4rem;
+            margin-left: 0.3rem;
             animation: neonSparkle 1.2s infinite alternate;
         }
-
         @keyframes neonSparkle {
-            0% { transform: scale(1); opacity: 0.8; filter: drop-shadow(0 0 3px #FFD700); }
-            100% { transform: scale(1.3); opacity: 1; filter: drop-shadow(0 0 8px #FFD700); }
+            0% { transform: scale(1); opacity: 0.8; filter: drop-shadow(0 0 2px #FFD700); }
+            100% { transform: scale(1.3); opacity: 1; filter: drop-shadow(0 0 6px #FFD700); }
         }
 
+        .chart-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.3rem;
+            margin-bottom: 0.5rem;
+            padding: 0 0.3rem;
+        }
+        .stat-item {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 0.3rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 0.55rem;
+            color: #A5B4FC;
+            margin-bottom: 0.05rem;
+        }
+        .stat-value {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #E0E7FF;
+        }
+        .stat-value.win { color: #00FF7F; }
+        .stat-value.loss { color: #FF5555; }
+        .stat-value.partial { color: #FFAA00; }
+        .stat-value.accuracy { color: #FF00FF; }
+        .stat-value.revenue { color: #FFD700; }
+        .stat-value.revenue.negative { color: #FF5555; }
+
         .table-container {
-            max-height: 200px;
-            overflow-y: auto;
-            overflow-x: auto;
+            max-height: 150px;
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 8px;
             position: relative;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
+            overflow: hidden;
         }
-
-        .table-container::-webkit-scrollbar {
-            display: none;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.6rem;
-            font-family: 'Orbitron', sans-serif;
             min-width: 300px;
+            table-layout: fixed;
         }
-
         th, td {
-            padding: 0.1rem 0.2rem;
+            padding: 0.15rem 0.25rem;
             text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            color: #E0E7FF;
-            vertical-align: middle;
-            flex: 0 0 auto;
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-
         th {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(25, 22, 50, 0.95);
             text-transform: uppercase;
-            font-size: 0.55rem;
-            letter-spacing: 0.1em;
+            font-size: 0.5rem;
             color: #A5B4FC;
             position: sticky;
             top: 0;
             z-index: 10;
-            min-width: 60px;
+            box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.1);
         }
-
-        td:nth-child(1) { min-width: 60px; }
-        td:nth-child(2) { min-width: 100px; }
-        td:nth-child(3) { min-width: 100px; }
-        td:nth-child(4) { min-width: 60px; }
-
-        tr:hover { background: rgba(255, 255, 255, 0.05); }
-        tr:last-child td { border-bottom: none; }
-
-        .status-btn {
-            width: 14px;
-            height: 14px;
-            border: 1px solid #A5B4FC;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 0.5rem;
-            color: #E0E7FF;
-            margin-left: 0.1rem;
-        }
-
-        .btn-win { color: #00FF7F; }
-        .btn-win:hover { background: rgba(0, 255, 127, 0.15); border-color: #00FF7F; }
-        .btn-loss { color: #FF5555; }
-        .btn-loss:hover { background: rgba(255, 85, 85, 0.15); border-color: #FF5555; }
-        .btn-partial { color: #FFAA00; }
-        .btn-partial:hover { background: rgba(255, 170, 0, 0.15); border-color: #FFAA00; }
-
+        th:nth-child(1), td:nth-child(1) { width: 20%; }
+        th:nth-child(2), td:nth-child(2) { width: 30%; }
+        th:nth-child(3), td:nth-child(3) { width: 30%; }
+        th:nth-child(4), td:nth-child(4) { width: 20%; }
         .status-pill {
             padding: 2px 6px;
             border-radius: 9999px;
-            font-size: 0.55rem;
-            font-weight: 500;
-        }
-
-        .status-win { background: rgba(0, 255, 127, 0.3); color: #00FF7F; }
-        .status-loss { background: rgba(255, 85, 85, 0.3); color: #FF5555; }
-        .status-partial { background: rgba(255, 170, 0, 0.3); color: #FFAA00; }
-        .status-pending { background: rgba(165, 180, 252, 0.3); color: #A5B4FC; }
-
-        .color-red { color: #FF5555; }
-        .color-green { color: #00FF7F; }
-        .color-violet { color: #D81BFF; }
-        .color-red-violet { color: #D81BFF; }
-        .color-green-violet { color: #D81BFF; }
-        .color-big { color: #FFAA00; }
-        .color-small { color: #00D4FF; }
-
-        .chart-stats-grid {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            white-space: nowrap;
-            flex-wrap: nowrap;
-            justify-content: space-between;
-        }
-
-        .stat-item {
-            background: rgba(255, 255, 255, 0.08);
-            padding: 0.5rem;
-            border-radius: 10px;
-            text-align: center;
-            flex: 1;
-        }
-
-        .stat-label {
-            font-size: 0.6rem;
-            color: #A5B4FC;
-            margin-bottom: 0.2rem;
-        }
-
-        .stat-value {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #E0E7FF;
-        }
-
-        .stat-value.win { color: #00FF7F; }
-        .stat-value.loss { color: #FF5555; }
-        .stat-value.partial { color: #FFAA00; }
-        .stat-value.accuracy { color: #00D4FF; }
-        .stat-value.revenue { color: #FFD700; }
-        .stat-value.revenue.negative { color: #FF5555; }
-
-        .strategy-stats .strategy-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 0.5rem;
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.75rem;
-        }
-
-        .strategy-item .name { font-weight: 500; color: #A5B4FC; }
-        .strategy-item .acc { font-weight: 600; color: #E0E7FF; }
-        .strategy-item .acc.positive { color: #00FF7F; }
-        .strategy-item .acc.negative { color: #FF5555; }
-
-        .win-tick, .loss-cross {
-            width: 0.5rem;
-            height: 0.5rem;
-            margin-left: 0.1rem;
-            vertical-align: middle;
+            font-size: 0.5rem;
+            font-weight: 600;
             display: inline-block;
+            width: 100%;
+            text-align: center;
         }
 
-        .toggle-button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #A5B4FC;
-            margin-left: 0.5rem;
-            transition: transform 0.3s ease;
-        }
-
-        .toggle-button.collapsed {
-            transform: rotate(180deg);
-        }
-
-        .strategy-content {
-            transition: max-height 0.3s ease, opacity 0.3s ease;
-            overflow: hidden;
-        }
-
-        .strategy-content.hidden {
-            max-height: 0;
-            opacity: 0;
-        }
-
-        .strategy-content.visible {
-            max-height: 500px;
-            opacity: 1;
-        }
-
-        @media (max-width: 600px) {
-            body { padding: 0.5rem; }
-            .text-center.my-4 { margin: 1rem 0; }
-            .text-4xl { font-size: 1.75rem; }
-            .text-xs { font-size: 0.65rem; }
-            .main-card { padding: 0.75rem; margin-bottom: 0.75rem; }
-            .mode-toggle button { padding: 0.4rem 1.2rem; font-size: 0.75rem; }
-            .info-line { padding: 0.4rem; }
-            .info-label { font-size: 0.65rem; }
-            .info-label svg { width: 0.9rem; height: 0.9rem; margin-right: 0.4rem; }
-            .info-value { font-size: 0.8rem; }
-            table { min-width: 250px; }
-            th, td { padding: 0.1rem 0.15rem; font-size: 0.55rem; }
-            th { font-size: 0.5rem; min-width: 50px; }
-            td:nth-child(1) { min-width: 50px; }
-            td:nth-child(2) { min-width: 80px; }
-            td:nth-child(3) { min-width: 80px; }
-            td:nth-child(4) { min-width: 50px; }
-            .status-btn { width: 12px; height: 12px; font-size: 0.45rem; }
-            .status-pill { padding: 1px 4px; font-size: 0.5rem; }
-            .table-container { max-height: 180px; }
-            .ai-sparkle-icon { width: 0.9rem; height: 0.9rem; }
-            .chart-stats-grid { flex-direction: row; gap: 0.3rem; }
-            .stat-item { padding: 0.4rem; flex: 1; }
-            .stat-label { font-size: 0.55rem; }
-            .stat-value { font-size: 0.7rem; }
-            .strategy-stats .strategy-item { padding: 0.4rem; font-size: 0.7rem; }
-            .win-tick, .loss-cross { width: 0.4rem; height: 0.4rem; }
-        }
+        .result-red { color: #FF5555; }
+        .result-green { color: #00FF7F; }
+        .result-violet { color: #D81BFF; }
+        .result-big { color: #FFAA00; }
+        .result-small { color: #00D4FF; }
     </style>
 </head>
 <body>
-    <div class="background-particles"></div>
-    <div class="max-w-md mx-auto">
-        <div class="text-center my-4">
-            <h1 class="text-4xl font-bold text-indigo-100">Predictor <span class="text-cyan-400">v6.0</span></h1>
-            <p class="text-xs text-indigo-300 mt-1">Advanced AI-Powered Loss Recovery</p>
-        </div>
 
-        <div class="main-card mode-toggle">
-            <button id="btn30s" onclick="selectMode('30s')" class="active">30s</button>
-            <button id="btn1m" onclick="selectMode('1m')">1m</button>
-        </div>
-
-        <div class="main-card">
-            <div class="info-grid">
-                <div class="info-line">
-                    <span class="info-label">
-                        <svg fill="currentColor" viewBox="0 0 24 24"><path d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
-                        Period
-                    </span>
-                    <p id="period" class="info-value">Select Mode</p>
-                </div>
-                <div class="info-line">
-                    <span class="info-label">
-                        <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                        Timer
-                    </span>
-                    <p id="timer" class="info-value text-red-500 font-bold text-base">--:--</p>
-                </div>
-                <div class="info-line">
-                    <span class="info-label">
-                        <svg fill="currentColor" viewBox="0 0 24 24"><path d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>
-                        Prediction
-                        <svg class="ai-sparkle-icon" viewBox="0 0 24 24" fill="currentColor" id="ai-sparkle-icon" style="display: none;">
-                            <path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.760-.415-2.212.749-2.305l5.404-.433 2.082-5.007z" clip-rule="evenodd" />
-                        </svg>
-                    </span>
-                    <p id="prediction-text" class="info-value font-bold"></p>
-                </div>
-                <div class="info-line">
-                    <span class="info-label">
-                        <svg fill="currentColor" viewBox="0 0 24 24"><path d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m-16.5 0H6M6 3v11.25A2.25 2.25 0 008.25 16.5h7.5M6 3h7.5M12 3v11.25m0 0A2.25 2.25 0 0114.25 16.5h2.25M12 3h7.5m0 0h-1.5m1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5" /></svg>
-                        Insight
-                    </span>
-                    <p id="insight-text" class="info-value text-xs text-cyan-400"></p>
-                </div>
-            </div>
-
-            <div class="chart-stats-grid">
-                <div class="stat-item">
-                    <div class="stat-label">Wins</div>
-                    <div id="chart-total-wins" class="stat-value win">0</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">Losses</div>
-                    <div id="chart-total-losses" class="stat-value loss">0</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">Partial</div>
-                    <div id="chart-total-partial" class="stat-value partial">0</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">Accuracy</div>
-                    <div id="chart-accuracy" class="stat-value accuracy">0%</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">Revenue</div>
-                    <div id="chart-revenue" class="stat-value revenue">0</div>
-                </div>
-            </div>
-
-            <div class="flex justify-between items-center mb-2">
-                <h2 class="text-base font-semibold flex items-center text-indigo-100">
-                    <svg fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5 mr-2"><path d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" /></svg>
-                    Prediction History
-                </h2>
-                <button id="clear-button" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-md text-xs">Clear</button>
-            </div>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Period</th>
-                            <th>Prediction</th>
-                            <th>Result</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="predictions-table"></tbody>
-                </table>
-            </div>
-
-            <div class="flex justify-between items-center mt-2 mb-2">
-                <h3 class="text-sm font-semibold flex items-center text-indigo-200">
-                    Strategy Breakdown
-                    <button id="toggle-strategy" class="toggle-button">
-                        <svg fill="currentColor" viewBox="0 0 24 24" class="w-4 h-4">
-                            <path d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                        </svg>
-                    </button>
-                </h3>
-            </div>
-            <div id="strategy-content" class="strategy-content visible">
-                <div id="strategy-breakdown" class="strategy-stats"></div>
-            </div>
+    <div id="login-screen">
+        <div class="login-card">
+            <h1 class="text-indigo-100">Predictor <span class="highlight-fuchsia">v9.8</span></h1>
+            <p>Please enter your access key to continue</p>
+            <input type="password" id="access-key-input" placeholder="••••••••" aria-label="Access Key">
+            <p id="error-message" class="error-message" role="alert">Invalid Access Key!</p>
+            <button id="login-button">Login</button>
         </div>
     </div>
 
+    <div id="app-container" class="hidden">
+        <main id="main-content">
+            <div class="app-title-container">
+                <h1 class="text-indigo-100">Predictor <span class="highlight-fuchsia">v9.8</span></h1>
+                <p class="text-indigo-300">Advanced AI for Wingo & TRX</p>
+            </div>
+
+            <div id="selector-and-logout-wrapper">
+                <div id="game-mode-selector">
+                    <div id="game-mode-tabs">
+                        <button id="tab-wingo" onclick="selectGameType('wingo')">Wingo</button>
+                        <button id="tab-trx" onclick="selectGameType('trx')">TRX Wingo</button>
+                    </div>
+                    <div id="interval-selector-container">
+                        <div id="wingo-intervals" class="mode-toggle hidden">
+                            <button id="btn-wingo-30s" onclick="selectMode('wingo-30s')">30s</button>
+                            <button id="btn-wingo-1m" onclick="selectMode('wingo-1m')">1m</button>
+                        </div>
+                        <div id="trx-intervals" class="mode-toggle hidden">
+                            <button id="btn-trx-1m" onclick="selectMode('trx-1m')">1 Min</button>
+                            <button id="btn-trx-3m" onclick="selectMode('trx-3m')">3 Min</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="logout-icon" onclick="handleLogout()" aria-label="Logout">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path fill-rule="evenodd" d="M7.5 3.75A1.5 1.5 0 006 5.25v13.5a1.5 1.5 0 001.5 1.5h6a1.5 1.5 0 001.5-1.5V15a.75.75 0 011.5 0v3.75a3 3 0 01-3 3h-6a3 3 0 01-3-3V5.25a3 3 0 013-3h6a3 3 0 013 3V9a.75.75 0 01-1.5 0V5.25a1.5 1.5 0 00-1.5-1.5h-6zm10.72 4.72a.75.75 0 011.06 0l3 3a.75.75 0 010 1.06l-3 3a.75.75 0 11-1.06-1.06l1.72-1.72H9a.75.75 0 010-1.5h10.94l-1.72-1.72a.75.75 0 010-1.06z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="main-card">
+                <div class="info-grid">
+                    <div class="info-line"><span class="info-label"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>Period</span><p id="period" class="info-value">...</p></div>
+                    <div class="info-line"><span class="info-label"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Timer</span><p id="timer" class="info-value text-red-500 font-bold text-base">--:--</p></div>
+                    <div class="info-line"><span class="info-label"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>Prediction <svg class="ai-sparkle-icon" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.760-.415-2.212.749-2.305l5.404-.433 2.082-5.007z" clip-rule="evenodd" /></svg></span><p id="prediction-text" class="info-value font-bold"></p></div>
+                    <div class="info-line"><span class="info-label"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m-16.5 0H6M6 3v11.25A2.25 2.25 0 008.25 16.5h7.5M6 3h7.5M12 3v11.25m0 0A2.25 2.25 0 0114.25 16.5h2.25M12 3h7.5m0 0h-1.5m1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5" /></svg>Insight</span><p id="insight-text" class="info-value text-xs text-cyan-400"></p></div>
+                </div>
+                <div class="chart-stats-grid">
+                    <div class="stat-item"><div class="stat-label">Wins</div><div id="chart-total-wins" class="stat-value win">0</div></div>
+                    <div class="stat-item"><div class="stat-label">Losses</div><div id="chart-total-losses" class="stat-value loss">0</div></div>
+                    <div class="stat-item"><div class="stat-label">Partial</div><div id="chart-total-partial" class="stat-value partial">0</div></div>
+                    <div class="stat-item"><div class="stat-label">Accuracy</div><div id="chart-accuracy" class="stat-value accuracy">0%</div></div>
+                    <div class="stat-item"><div class="stat-label">Revenue</div><div id="chart-revenue" class="stat-value revenue">0</div></div>
+                </div>
+                <div class="flex justify-between items-center mb-2"><h2 class="text-base font-semibold">Prediction History</h2><button id="clear-button" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-md text-xs">Clear</button></div>
+                <div class="table-container"><table><thead><tr><th>Period</th><th>Prediction</th><th>Result</th><th>Status</th></tr></thead><tbody id="predictions-table"></tbody></table></div>
+            </div>
+        </main>
+    </div>
+
 <script>
-    const elements = { 
-        period: document.getElementById('period'), 
-        timer: document.getElementById('timer'), 
-        predictionText: document.getElementById('prediction-text'), 
-        insightText: document.getElementById('insight-text'), 
-        predictionsTable: document.getElementById('predictions-table'), 
-        clearButton: document.getElementById('clear-button'), 
-        aiSparkleIcon: document.getElementById('ai-sparkle-icon'), 
+    // --- Global Elements and State ---
+    const elements = {
+        loginScreen: document.getElementById('login-screen'),
+        appContainer: document.getElementById('app-container'),
+        accessKeyInput: document.getElementById('access-key-input'),
+        loginButton: document.getElementById('login-button'),
+        errorMessage: document.getElementById('error-message'),
+        logoutIcon: document.getElementById('logout-icon'),
+        gameModeSelector: document.getElementById('game-mode-selector'),
+        gameModeTabs: document.getElementById('game-mode-tabs'),
+        tabWingo: document.getElementById('tab-wingo'),
+        tabTrx: document.getElementById('tab-trx'),
+        wingoIntervals: document.getElementById('wingo-intervals'),
+        trxIntervals: document.getElementById('trx-intervals'),
+        period: document.getElementById('period'),
+        timer: document.getElementById('timer'),
+        predictionText: document.getElementById('prediction-text'),
+        insightText: document.getElementById('insight-text'),
+        predictionsTable: document.getElementById('predictions-table'),
+        clearButton: document.getElementById('clear-button'),
         chartTotalWins: document.getElementById('chart-total-wins'),
         chartTotalLosses: document.getElementById('chart-total-losses'),
         chartTotalPartial: document.getElementById('chart-total-partial'),
         chartAccuracy: document.getElementById('chart-accuracy'),
         chartRevenue: document.getElementById('chart-revenue'),
-        strategyBreakdown: document.getElementById('strategy-breakdown'),
-        backgroundParticles: document.querySelector('.background-particles'),
-        toggleStrategy: document.getElementById('toggle-strategy'),
-        strategyContent: document.getElementById('strategy-content'),
+        btnWingo30s: document.getElementById('btn-wingo-30s'),
+        btnWingo1m: document.getElementById('btn-wingo-1m'),
+        btnTrx1m: document.getElementById('btn-trx-1m'),
+        btnTrx3m: document.getElementById('btn-trx-3m'),
     };
-
+    const ACCESS_KEY = "PREDICTOR_2024";
     let masterInterval;
     let currentMode = null;
-    let isStrategyVisible = true;
+    let currentGameType = 'wingo';
 
     const initialStateTemplate = {
-        history: [], 
-        predictions: [], 
-        currentPeriod: null, 
-        lastPredictionLost: false, 
-        stats: { 
-            totalWins: 0, 
-            totalLosses: 0, 
-            totalPartial: 0,
-            revenue: 0,
-            strategyMetrics: { 
-                "Collecting data...": { w: 0, l: 0, p: 0 },
-                "Alternating Color (ABAB)": { w: 0, l: 0, p: 0 },
-                "Double Color (AABB)": { w: 0, l: 0, p: 0 },
-                "Triple Color (AAABBB)": { w: 0, l: 0, p: 0 },
-                "Color (AABAAB)": { w: 0, l: 0, p: 0 },
-                "Color (AAAB)": { w: 0, l: 0, p: 0 },
-                "Color (AAABB)": { w: 0, l: 0, p: 0 },
-                "Alternating Size (SBSB)": { w: 0, l: 0, p: 0 },
-                "Double Size (BBSS)": { w: 0, l: 0, p: 0 },
-                "Triple Size (SSSBBB)": { w: 0, l: 0, p: 0 },
-                "Quadra Size (BBBBSSSS)": { w: 0, l: 0, p: 0 },
-                "Following Red Trend": { w: 0, l: 0, p: 0 }, 
-                "Following Green Trend": { w: 0, l: 0, p: 0 }, 
-                "Attempting Break Red": { w: 0, l: 0, p: 0 }, 
-                "Attempting Break Green": { w: 0, l: 0, p: 0 },
-                "Following Trend": { w: 0, l: 0, p: 0 }, 
-                "Attempting Break": { w: 0, l: 0, p: 0 }, 
-                "Loss Recovery": { w: 0, l: 0, p: 0 }, 
-                "Random Guess": { w: 0, l: 0, p: 0 }, 
-                "Last 2 Same (Color)": { w: 0, l: 0, p: 0 },
-                "Last 2 Same (Size)": { w: 0, l: 0, p: 0 },
-                "Weighted Recent Trend": { w: 0, l: 0, p: 0 },
-                "Opposite After Violet": { w: 0, l: 0, p: 0 },
-                "Bayesian Color Prediction": { w: 0, l: 0, p: 0 },
-                "Bayesian Size Prediction": { w: 0, l: 0, p: 0 }
-            }
-        } 
+        history: [],
+        predictions: [],
+        currentPeriod: null,
+        lastPredictionLost: false,
+        stats: { totalWins: 0, totalLosses: 0, totalPartial: 0, revenue: 0 }
+    };
+    let state = {
+        'wingo-30s': JSON.parse(JSON.stringify(initialStateTemplate)),
+        'wingo-1m': JSON.parse(JSON.stringify(initialStateTemplate)),
+        'trx-1m': JSON.parse(JSON.stringify(initialStateTemplate)),
+        'trx-3m': JSON.parse(JSON.stringify(initialStateTemplate))
     };
 
-    let state = { 
-        '30s': JSON.parse(JSON.stringify(initialStateTemplate)), 
-        '1m': JSON.parse(JSON.stringify(initialStateTemplate)) 
-    };
+    // --- Debounced Save State ---
+    let saveStateTimeout;
+    function debounceSaveState() {
+        clearTimeout(saveStateTimeout);
+        saveStateTimeout = setTimeout(saveState, 500);
+    }
 
     function saveState() {
         try {
-            localStorage.setItem('state', JSON.stringify(state));
-            localStorage.setItem('strategyVisibility', JSON.stringify(isStrategyVisible));
+            localStorage.setItem('predictorStateV9_8', JSON.stringify(state));
         } catch (e) {
-            console.error("Error saving to localStorage", e);
+            console.warn('localStorage unavailable; using in-memory state:', e);
         }
     }
 
     function loadState() {
         try {
-            const savedState = localStorage.getItem('state');
+            const savedState = localStorage.getItem('predictorStateV9_8');
             if (savedState) {
                 const parsedState = JSON.parse(savedState);
                 for (const mode in state) {
                     if (parsedState[mode]) {
-                        state[mode].history = parsedState[mode].history || [];
-                        state[mode].predictions = parsedState[mode].predictions || [];
-                        state[mode].currentPeriod = parsedState[mode].currentPeriod || null;
-                        state[mode].lastPredictionLost = parsedState[mode].lastPredictionLost || false;
-                        if (parsedState[mode].stats && parsedState[mode].stats.strategyMetrics) {
-                            state[mode].stats.strategyMetrics = { 
-                                ...initialStateTemplate.stats.strategyMetrics,
-                                ...parsedState[mode].stats.strategyMetrics
-                            };
+                        state[mode] = { ...state[mode], ...parsedState[mode] };
+                        if (parsedState[mode].stats) {
+                            state[mode].stats = { ...initialStateTemplate.stats, ...parsedState[mode].stats };
                         }
-                        state[mode].stats.totalWins = parsedState[mode].stats?.totalWins ?? 0;
-                        state[mode].stats.totalLosses = parsedState[mode].stats?.totalLosses ?? 0;
-                        state[mode].stats.totalPartial = parsedState[mode].stats?.totalPartial ?? 0;
-                        state[mode].stats.revenue = parsedState[mode].stats?.revenue ?? 0;
                     }
                 }
-                console.log("State loaded successfully!");
-            }
-            const savedVisibility = localStorage.getItem('strategyVisibility');
-            if (savedVisibility !== null) {
-                isStrategyVisible = JSON.parse(savedVisibility);
-                updateStrategyVisibility();
             }
         } catch (e) {
-            console.error("Error loading from localStorage", e);
-            state = { 
-                '30s': JSON.parse(JSON.stringify(initialStateTemplate)), 
-                '1m': JSON.parse(JSON.stringify(initialStateTemplate)) 
-            };
+            console.warn('Failed to load state from localStorage; initializing new state:', e);
+            localStorage.removeItem('predictorStateV9_8');
         }
     }
 
-    function toggleStrategy() {
-        isStrategyVisible = !isStrategyVisible;
-        updateStrategyVisibility();
-        saveState();
-    }
-
-    function updateStrategyVisibility() {
-        if (isStrategyVisible) {
-            elements.strategyContent.classList.remove('hidden');
-            elements.strategyContent.classList.add('visible');
-            elements.toggleStrategy.classList.remove('collapsed');
+    // --- Login and Game Type Selection ---
+    function handleLogin() {
+        localStorage.removeItem('isLoggedIn');
+        const inputValue = elements.accessKeyInput.value.trim();
+        if (inputValue === ACCESS_KEY) {
+            localStorage.setItem('isLoggedIn', 'true');
+            elements.errorMessage.style.display = 'none';
+            requestAnimationFrame(showApp);
         } else {
-            elements.strategyContent.classList.remove('visible');
-            elements.strategyContent.classList.add('hidden');
-            elements.toggleStrategy.classList.add('collapsed');
+            elements.errorMessage.style.display = 'block';
+            elements.accessKeyInput.focus();
         }
     }
 
-    function selectMode(mode) { 
-        if (currentMode === mode) return; 
-        clearInterval(masterInterval); 
-        currentMode = mode; 
-        document.getElementById('btn30s').classList.toggle('active', mode === '30s'); 
-        document.getElementById('btn1m').classList.toggle('active', mode === '1m'); 
-        render(); 
-        initOfflineGame(); 
+    function handleLogout() {
+        localStorage.removeItem('isLoggedIn');
+        clearInterval(masterInterval);
+        elements.appContainer.classList.add('hidden');
+        elements.loginScreen.classList.remove('hidden');
+        elements.accessKeyInput.value = '';
+        elements.errorMessage.style.display = 'none';
     }
 
-    function generatePeriodNumber() { 
+    function showApp() {
+        if (!elements.loginScreen || !elements.appContainer) {
+            console.error('Required DOM elements are missing.');
+            return;
+        }
+        elements.loginScreen.classList.add('hidden');
+        elements.appContainer.classList.remove('hidden');
+        loadState();
+        selectGameType('wingo');
+    }
+
+    function selectGameType(gameType) {
+        clearInterval(masterInterval);
+        currentMode = null;
+        currentGameType = gameType;
+
+        elements.tabWingo.classList.toggle('active', gameType === 'wingo');
+        elements.tabTrx.classList.toggle('active', gameType === 'trx');
+
+        elements.wingoIntervals.classList.toggle('hidden', gameType !== 'wingo');
+        elements.trxIntervals.classList.toggle('hidden', gameType !== 'trx');
+
+        masterClock.debounce = {};
+
+        if (gameType === 'wingo') selectMode('wingo-30s');
+        else selectMode('trx-1m');
+    }
+
+    // --- Core Game Logic ---
+    function selectMode(mode) {
+        if (currentMode === mode) return;
+        clearInterval(masterInterval);
+        currentMode = mode;
+
+        [elements.btnWingo30s, elements.btnWingo1m, elements.btnTrx1m, elements.btnTrx3m].forEach(btn => {
+            if (btn) btn.classList.remove('active');
+        });
+        const btn = document.getElementById(`btn-${mode}`);
+        if (btn) btn.classList.add('active');
+
+        render();
+        gameLoop();
+        masterInterval = setInterval(masterClock, 1000);
+    }
+
+    function getResultFromNumber(num) {
+        const result = { number: num, bigSmall: '', color: '' };
+        result.bigSmall = num >= 5 ? 'Big' : 'Small';
+        if (num === 0) result.color = 'Red+Violet';
+        else if (num === 5) result.color = 'Green+Violet';
+        else if ([1, 3, 7, 9].includes(num)) result.color = 'Green';
+        else result.color = 'Red';
+        return result;
+    }
+
+    function renderResultInHTML(result) {
+        if (!result || typeof result !== 'object') return '...';
+        const { number, bigSmall, color } = result;
+        if (number === undefined || bigSmall === undefined || color === undefined) return '...';
+
+        let colorText = color;
+        if (color === 'Red+Violet') {
+            colorText = `<span class="result-red">Red</span><span class="result-violet">+Violet</span>`;
+        } else if (color === 'Green+Violet') {
+            colorText = `<span class="result-green">Green</span><span class="result-violet">+Violet</span>`;
+        } else {
+            colorText = `<span class="result-${color.toLowerCase()}">${color}</span>`;
+        }
+
+        return `<span class="color-number">${number}</span>, <span class="result-${bigSmall.toLowerCase()}">${bigSmall}</span> ${colorText}`;
+    }
+
+    function render() {
+        if (!currentMode) return;
+        const activeState = state[currentMode];
+
+        elements.period.textContent = activeState.currentPeriod || '...';
+
+        const latestPrediction = activeState.predictions[activeState.predictions.length - 1];
+        elements.predictionText.innerHTML = latestPrediction ? renderResultInHTML(latestPrediction.prediction) : '...';
+
+        elements.insightText.textContent = latestPrediction ? latestPrediction.strategy : 'Awaiting data...';
+
+        elements.chartTotalWins.textContent = activeState.stats.totalWins;
+        elements.chartTotalLosses.textContent = activeState.stats.totalLosses;
+        elements.chartTotalPartial.textContent = activeState.stats.totalPartial;
+        const totalPredictions = activeState.stats.totalWins + activeState.stats.totalLosses + activeState.stats.totalPartial;
+        elements.chartAccuracy.textContent = totalPredictions > 0 ? 
+            `${Math.round((activeState.stats.totalWins / totalPredictions) * 100)}%` : '0%';
+        elements.chartRevenue.textContent = activeState.stats.revenue.toFixed(2);
+        elements.chartRevenue.classList.toggle('negative', activeState.stats.revenue < 0);
+
+        elements.predictionsTable.innerHTML = '';
+        activeState.predictions.slice().reverse().slice(0, 10).forEach(pred => {
+            const row = document.createElement('tr');
+            const result = activeState.history.find(h => h.period === pred.period);
+            const shortPeriod = pred.period.slice(-5);
+            row.innerHTML = `
+                <td>${shortPeriod}</td>
+                <td>${renderResultInHTML(pred.prediction)}</td>
+                <td>${result ? renderResultInHTML(result) : 'Pending'}</td>
+                <td><span class="status-pill status-${pred.status.toLowerCase()}">${pred.status}</span></td>
+            `;
+            elements.predictionsTable.appendChild(row);
+        });
+    }
+
+    // --- Wingo Period Generation (Unchanged) ---
+    function generateWingoPeriodNumber(mode) { 
         const now = new Date(); 
-        const dateStr = now.toISOString().split('T')[0].replace(/-/g, ''); 
-        const istOffsetMinutes = 330; 
-        const currentUtcTime = now.getTime() + (now.getTimezoneOffset() * 60 * 1000); 
+        const dateStr = now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
+        const istOffsetMinutes = 330;
+        const currentUtcTime = now.getTime() + (now.getTimezoneOffset() * 60 * 1000);
         const istTime = new Date(currentUtcTime + (istOffsetMinutes * 60 * 1000));
-        const h = istTime.getHours();
-        const m = istTime.getMinutes();
-        const s = istTime.getSeconds();
-        const startH = 5; 
-        const startM = 30; 
-        let elapsedS = (h * 3600 + m * 60 + s) - (startH * 3600 + startM * 60); 
+        const h = istTime.getHours(), m = istTime.getMinutes(), s = istTime.getSeconds();
+        const startH = 5, startM = 30;
+        let elapsedS = (h * 3600 + m * 60 + s) - (startH * 3600 + startM * 60);
         if (elapsedS < 0) {
-            elapsedS = (24 * 3600) + elapsedS; 
+            elapsedS += 24 * 3600;
         }
-        if (currentMode === '1m') { 
-            const elapsedMinutes = Math.floor(elapsedS / 60); 
-            return `${dateStr}10001${String(elapsedMinutes + 1).padStart(4, '0')}`; 
+
+        if (mode === 'wingo-1m') {
+            const periodCounter = Math.floor(elapsedS / 60) + 1;
+            return `${dateStr}10001${String(periodCounter).padStart(4, '0')}`;
         } else {
-            const periodCounter = Math.floor(elapsedS / 30) + 1; 
-            return dateStr + "100005" + String(periodCounter).padStart(4, '0'); 
-        } 
+            const periodCounter = Math.floor(elapsedS / 30) + 1;
+            return `${dateStr}100005${String(periodCounter).padStart(4, '0')}`;
+        }
     }
 
-    function checkPatternMatch(historyValues, pattern) {
-        if (historyValues.length < pattern.length) {
-            return { matches: false, nextPrediction: null };
-        }
-        const relevantHistory = historyValues.slice(-pattern.length); 
-        const A_val = relevantHistory[0];
-        const B_val = (A_val === 'Red' || A_val === 'Red-Violet') ? 'Green' : 
-                      (A_val === 'Green' || A_val === 'Green-Violet') ? 'Red' : 
-                      (A_val === 'Big') ? 'Small' : 'Big';
-        for (let i = 0; i < pattern.length; i++) {
-            const expectedChar = pattern[i];
-            const actualValue = relevantHistory[i];
-            if ((expectedChar === 'A' && actualValue !== A_val && !actualValue.includes(A_val)) || 
-                (expectedChar === 'B' && actualValue !== B_val && !actualValue.includes(B_val))) {
-                return { matches: false, nextPrediction: null };
-            }
-        }
-        const nextIdxInPattern = historyValues.length % pattern.length;
-        const nextExpectedChar = pattern[nextIdxInPattern]; 
-        const nextPrediction = (nextExpectedChar === 'A') ? A_val : B_val;
-        return { matches: true, nextPrediction: nextPrediction };
-    }
-
-    function checkLastTwoSame(historyValues) {
-        if (historyValues.length < 2) {
-            return { matches: false, nextPrediction: null };
-        }
-        const last = historyValues[historyValues.length - 1];
-        const secondLast = historyValues[historyValues.length - 2];
-        const lastBase = last.includes('Violet') ? last.split('-')[0] : last;
-        const secondLastBase = secondLast.includes('Violet') ? secondLast.split('-')[0] : secondLast;
-        if (lastBase === secondLastBase) {
-            return { matches: true, nextPrediction: lastBase };
-        }
-        return { matches: false, nextPrediction: null };
-    }
-
-    function checkWeightedRecentTrend(historyValues, type = 'color') {
-        if (historyValues.length < 5) {
-            return { matches: false, nextPrediction: null, confidence: 0 };
-        }
-        const weights = [0.35, 0.25, 0.2, 0.15, 0.05];
-        const recentValues = historyValues.slice(-5);
-        let scoreRed = 0, scoreGreen = 0, scoreBig = 0, scoreSmall = 0;
-        recentValues.forEach((val, idx) => {
-            if (type === 'color') {
-                const baseColor = val.includes('Violet') ? val.split('-')[0] : val;
-                if (baseColor === 'Red') scoreRed += weights[idx];
-                else if (baseColor === 'Green') scoreGreen += weights[idx];
-            } else {
-                if (val === 'Big') scoreBig += weights[idx];
-                else if (val === 'Small') scoreSmall += weights[idx];
-            }
-        });
-        if (type === 'color') {
-            const nextPrediction = scoreRed > scoreGreen ? 'Red' : 'Green';
-            const confidence = Math.max(scoreRed, scoreGreen);
-            return { matches: true, nextPrediction, confidence: confidence * 0.85 };
+    // --- Modified TRX Period Generation ---
+    function generateTrxPeriodNumber(mode) {
+        const now = new Date();
+        const dateStr = now.getUTCFullYear() + String(now.getUTCMonth() + 1).padStart(2, '0') + String(now.getUTCDate()).padStart(2, '0');
+        const totalMinutesTodayUTC = (now.getUTCHours() * 60) + now.getUTCMinutes();
+        if (mode === 'trx-1m') {
+            const offset = 10001; // Matches 10956 at 955 minutes
+            const periodCounter = totalMinutesTodayUTC + offset;
+            return `${dateStr}1030${String(periodCounter).padStart(5, '0')}`;
         } else {
-            const nextPrediction = scoreBig > scoreSmall ? 'Big' : 'Small';
-            const confidence = Math.max(scoreBig, scoreSmall);
-            return { matches: true, nextPrediction, confidence: confidence * 0.85 };
-        }
-    }
-
-    function checkOppositeAfterViolet(historyValues) {
-        if (historyValues.length < 1 || currentMode !== '30s') {
-            return { matches: false, nextPrediction: null };
-        }
-        const lastColor = historyValues[historyValues.length - 1];
-        if (lastColor.includes('Violet')) {
-            const baseColor = lastColor.includes('Red') ? 'Red' : 'Green';
-            const nextPrediction = baseColor === 'Red' ? 'Green' : 'Red';
-            return { matches: true, nextPrediction, confidence: 0.9 };
-        }
-        return { matches: false, nextPrediction: null };
-    }
-
-    function bayesianPrediction(historyValues, type = 'color') {
-        if (historyValues.length < 5) {
-            return { matches: false, nextPrediction: null, confidence: 0 };
-        }
-        const prior = { Red: 0.5, Green: 0.5, Big: 0.5, Small: 0.5 };
-        const recentValues = historyValues.slice(-5);
-        let likelihood = { Red: 1, Green: 1, Big: 1, Small: 1 };
-        recentValues.forEach((val, idx) => {
-            const weight = 1 / (idx + 1);
-            if (type === 'color') {
-                const baseColor = val.includes('Violet') ? val.split('-')[0] : val;
-                likelihood[baseColor] *= (1 + weight);
-                likelihood[baseColor === 'Red' ? 'Green' : 'Red'] *= (1 - weight * 0.5);
-            } else {
-                likelihood[val] *= (1 + weight);
-                likelihood[val === 'Big' ? 'Small' : 'Big'] *= (1 - weight * 0.5);
-            }
-        });
-        if (type === 'color') {
-            const total = likelihood.Red + likelihood.Green;
-            const probRed = (likelihood.Red * prior.Red) / total;
-            const nextPrediction = probRed > 0.5 ? 'Red' : 'Green';
-            const confidence = Math.max(probRed, 1 - probRed);
-            return { matches: true, nextPrediction, confidence: confidence * 0.9 };
-        } else {
-            const total = likelihood.Big + likelihood.Small;
-            const probBig = (likelihood.Big * prior.Big) / total;
-            const nextPrediction = probBig > 0.5 ? 'Big' : 'Small';
-            const confidence = Math.max(probBig, 1 - probBig);
-            return { matches: true, nextPrediction, confidence: confidence * 0.9 };
+            const offset = 20001; // Matches 20319 at 955 minutes
+            const periodCounter = Math.floor(totalMinutesTodayUTC / 3) + offset;
+            return `${dateStr}1030${String(periodCounter).padStart(5, '0')}`;
         }
     }
 
     function runPredictionEngine(history) {
-        if (history.length < 3) { 
-            elements.aiSparkleIcon.style.display = 'none'; 
-            const randomNum = Math.random();
-            const randomColor = randomNum < 0.5 ? 'Red' : 'Green';
-            const randomBigSmall = Math.random() < 0.5 ? 'Small' : 'Big'; 
-            return { prediction: { bigSmall: randomBigSmall, color: randomColor }, strategy: 'Collecting data...', strategyKey: "Collecting data..." };
+        if (!Array.isArray(history) || history.length === 0) {
+            return { prediction: getResultFromNumber(Math.floor(Math.random() * 10)), strategy: 'Initializing...' };
         }
-        elements.aiSparkleIcon.style.display = 'inline-block'; 
+        if (history.length < 3) {
+            return { prediction: getResultFromNumber(Math.floor(Math.random() * 10)), strategy: 'Collecting data...' };
+        }
         const lastResult = history[history.length - 1];
-        const lastResultColor = lastResult.color.includes('Violet') ? lastResult.color.split('-')[0] : lastResult.color;
-        const lastResultBigSmall = lastResult.bigSmall;
-        const oppositeColor = lastResultColor === 'Red' ? 'Green' : 'Red';
-        const oppositeBigSmall = lastResultBigSmall === 'Big' ? 'Small' : 'Big';
-        let bestPrediction = { color: null, bigSmall: null };
-        let bestStrategyName = "Analyzing...";
-        let bestStrategyKey = "Random Guess"; 
-        let highestConfidence = 0.5;
+        if (!lastResult || !lastResult.color || !lastResult.bigSmall) {
+            return { prediction: getResultFromNumber(Math.floor(Math.random() * 10)), strategy: 'Error in history data' };
+        }
 
-        const colorHistoryValues = history.map(h => h.color);
-        const bigSmallHistoryValues = history.map(h => h.bigSmall);
+        const lastBaseColor = lastResult.color.replace('+Violet', '');
+        const lastBigSmall = lastResult.bigSmall;
+        let predictedColor, predictedBigSmall, strategy;
 
-        if (state[currentMode].lastPredictionLost) {
-            bestPrediction.color = Math.random() < 0.6 ? oppositeColor : lastResultColor;
-            bestPrediction.bigSmall = Math.random() < 0.6 ? oppositeBigSmall : lastResultBigSmall;
-            bestStrategyName = "Loss Recovery (Adaptive Flip)";
-            bestStrategyKey = "Loss Recovery";
-            highestConfidence = 0.65;
-            state[currentMode].lastPredictionLost = false;
-        } else {
-            const violetCheck = checkOppositeAfterViolet(colorHistoryValues);
-            if (violetCheck.matches && violetCheck.confidence > highestConfidence) {
-                bestPrediction.color = violetCheck.nextPrediction;
-                bestPrediction.bigSmall = lastResultBigSmall;
-                bestStrategyName = "Opposite After Violet";
-                bestStrategyKey = "Opposite After Violet";
-                highestConfidence = violetCheck.confidence;
-            }
-            const bayesianColor = bayesianPrediction(colorHistoryValues, 'color');
-            const bayesianSize = bayesianPrediction(bigSmallHistoryValues, 'size');
-            if (bayesianColor.matches && bayesianSize.matches && bayesianColor.confidence > highestConfidence) {
-                bestPrediction.color = bayesianColor.nextPrediction;
-                bestPrediction.bigSmall = bayesianSize.nextPrediction;
-                bestStrategyName = "Bayesian Combined Prediction";
-                bestStrategyKey = "Bayesian Color Prediction & Bayesian Size Prediction";
-                highestConfidence = Math.max(bayesianColor.confidence, bayesianSize.confidence);
-            }
-            const wrtColorCheck = checkWeightedRecentTrend(colorHistoryValues, 'color');
-            const wrtSizeCheck = checkWeightedRecentTrend(bigSmallHistoryValues, 'size');
-            if (wrtColorCheck.matches && wrtSizeCheck.matches && wrtColorCheck.confidence > highestConfidence) {
-                bestPrediction.color = wrtColorCheck.nextPrediction;
-                bestPrediction.bigSmall = wrtSizeCheck.nextPrediction;
-                bestStrategyName = "Weighted Recent Trend";
-                bestStrategyKey = "Weighted Recent Trend";
-                highestConfidence = Math.max(wrtColorCheck.confidence, wrtSizeCheck.confidence);
-            }
-            const lastTwoSameColor = checkLastTwoSame(colorHistoryValues);
-            const lastTwoSameBigSmall = checkLastTwoSame(bigSmallHistoryValues);
-            if (lastTwoSameColor.matches && lastTwoSameBigSmall.matches && 0.95 > highestConfidence) {
-                bestPrediction.color = lastTwoSameColor.nextPrediction;
-                bestPrediction.bigSmall = lastTwoSameBigSmall.nextPrediction;
-                bestStrategyName = "Last 2 Same (Color & Size)";
-                bestStrategyKey = "Last 2 Same (Color & Size)";
-                highestConfidence = 0.95;
-            } else if (lastTwoSameColor.matches && 0.9 > highestConfidence) {
-                bestPrediction.color = lastTwoSameColor.nextPrediction;
-                bestPrediction.bigSmall = lastResultBigSmall;
-                bestStrategyName = "Last 2 Same (Color)";
-                bestStrategyKey = "Last 2 Same (Color)";
-                highestConfidence = 0.9;
-            } else if (lastTwoSameBigSmall.matches && 0.9 > highestConfidence) {
-                bestPrediction.color = lastResultColor;
-                bestPrediction.bigSmall = lastTwoSameBigSmall.nextPrediction;
-                bestStrategyName = "Last 2 Same (Size)";
-                bestStrategyKey = "Last 2 Same (Size)";
-                highestConfidence = 0.9;
-            } else {
-                const colorPatterns = [
-                    { name: "Alternating Color (ABAB)", pattern: ['A', 'B', 'A', 'B'], type: 'color', confidence: 0.87 },
-                    { name: "Double Color (AABB)", pattern: ['A', 'A', 'B', 'B'], type: 'color', confidence: 0.82 },
-                    { name: "Triple Color (AAABBB)", pattern: ['A', 'A', 'A', 'B', 'B', 'B'], type: 'color', confidence: 0.92 },
-                    { name: "Color (AABAAB)", pattern: ['A', 'A', 'B', 'A', 'A', 'B'], type: 'color', confidence: 0.78 },
-                    { name: "Color (AAAB)", pattern: ['A', 'A', 'A', 'B'], type: 'color', confidence: 0.73 },
-                    { name: "Color (AAABB)", pattern: ['A', 'A', 'A', 'B', 'B'], type: 'color', confidence: 0.77 },
-                ];
-                const bigSmallPatterns = [
-                    { name: "Alternating Size (SBSB)", pattern: ['S', 'B', 'S', 'B'], type: 'bigSmall', confidence: 0.87 },
-                    { name: "Double Size (BBSS)", pattern: ['B', 'B', 'S', 'S'], type: 'bigSmall', confidence: 0.82 },
-                    { name: "Triple Size (SSSBBB)", pattern: ['S', 'S', 'S', 'B', 'B', 'B'], type: 'bigSmall', confidence: 0.92 },
-                    { name: "Quadra Size (BBBBSSSS)", pattern: ['B','B','B','B','S','S','S','S'], type: 'bigSmall', confidence: 0.94 },
-                ];
-                let detectedColorPatternInfo = null;
-                for (const p of colorPatterns) {
-                    const result = checkPatternMatch(colorHistoryValues, p.pattern);
-                    if (result.matches) {
-                        detectedColorPatternInfo = { 
-                            prediction: result.nextPrediction, 
-                            name: p.name, 
-                            confidence: p.confidence,
-                            patternLength: p.pattern.length
-                        };
-                        break;
-                    }
-                }
-                let detectedBigSmallPatternInfo = null;
-                for (const p of bigSmallPatterns) {
-                    const result = checkPatternMatch(bigSmallHistoryValues, p.pattern);
-                    if (result.matches) {
-                        detectedBigSmallPatternInfo = { 
-                            prediction: result.nextPrediction, 
-                            name: p.name, 
-                            confidence: p.confidence,
-                            patternLength: p.pattern.length
-                        };
-                        break;
-                    }
-                }
-                if (detectedColorPatternInfo && detectedBigSmallPatternInfo && detectedColorPatternInfo.confidence > highestConfidence) {
-                    bestPrediction.color = detectedColorPatternInfo.prediction;
-                    bestPrediction.bigSmall = detectedBigSmallPatternInfo.prediction;
-                    bestStrategyName = `Color: ${detectedColorPatternInfo.name} & Size: ${detectedBigSmallPatternInfo.name}`;
-                    bestStrategyKey = `C:${detectedColorPatternInfo.name} & S:${detectedBigSmallPatternInfo.name}`;
-                    highestConfidence = Math.max(detectedColorPatternInfo.confidence, detectedBigSmallPatternInfo.confidence);
-                } else if (detectedColorPatternInfo && detectedColorPatternInfo.confidence > highestConfidence) {
-                    bestPrediction.color = detectedColorPatternInfo.prediction;
-                    bestPrediction.bigSmall = lastResultBigSmall;
-                    bestStrategyName = `Color: ${detectedColorPatternInfo.name}`;
-                    bestStrategyKey = detectedColorPatternInfo.name;
-                    highestConfidence = detectedColorPatternInfo.confidence;
-                } else if (detectedBigSmallPatternInfo && detectedBigSmallPatternInfo.confidence > highestConfidence) {
-                    bestPrediction.color = lastResultColor;
-                    bestPrediction.bigSmall = detectedBigSmallPatternInfo.prediction;
-                    bestStrategyName = `Size: ${detectedBigSmallPatternInfo.name}`;
-                    bestStrategyKey = detectedBigSmallPatternInfo.name;
-                    highestConfidence = detectedBigSmallPatternInfo.confidence;
-                } else {
-                    let currentStreakColor = 0;
-                    for (let i = history.length - 1; i >= 0; i--) {
-                        const baseColor = history[i].color.includes('Violet') ? history[i].color.split('-')[0] : history[i].color;
-                        if (baseColor === lastResultColor) {
-                            currentStreakColor++;
-                        } else {
-                            break;
-                        }
-                    }
-                    const stats = state[currentMode].stats;
-                    const trendStats = stats.strategyMetrics["Following Trend"] || { w: 0, l: 0, p: 0 };
-                    const breakingStats = stats.strategyMetrics["Attempting Break"] || { w: 0, l: 0, p: 0 };
-                    const trendAccuracy = (trendStats.w + trendStats.l + trendStats.p > 0) ? 
-                                         trendStats.w / (trendStats.w + trendStats.l + trendStats.p) : 0.5;
-                    const breakingAccuracy = (breakingStats.w + breakingStats.l + breakingStats.p > 0) ? 
-                                            breakingStats.w / (breakingStats.w + breakingStats.l + breakingStats.p) : 0.5;
-                    if (currentStreakColor >= 3 && breakingAccuracy > trendAccuracy && (breakingStats.w + breakingStats.l + breakingStats.p > 2)) {
-                        bestPrediction.color = oppositeColor;
-                        bestStrategyName = `Attempting Break ${currentStreakColor}x ${lastResultColor}`;
-                        bestStrategyKey = `Attempting Break ${lastResultColor}`;
-                        highestConfidence = breakingAccuracy;
-                    } else {
-                        bestPrediction.color = lastResultColor;
-                        bestStrategyName = `Following ${lastResultColor} Trend`;
-                        bestStrategyKey = `Following ${lastResultColor} Trend`;
-                        highestConfidence = trendAccuracy;
-                    }
-                    bestPrediction.bigSmall = lastResultBigSmall;
-                }
+        const colorStreak = history.slice(-3).every(h => h.color && h.color.replace('+Violet', '') === lastBaseColor);
+        predictedColor = (colorStreak && Math.random() < 0.7) ? lastBaseColor : (lastBaseColor === 'Red' ? 'Green' : 'Red');
+
+        const sizeStreak = history.slice(-3).every(h => h.bigSmall === lastBigSmall);
+        predictedBigSmall = (sizeStreak && Math.random() < 0.7) ? lastBigSmall : (lastBigSmall === 'Big' ? 'Small' : 'Big');
+
+        strategy = state[currentMode].lastPredictionLost ? "Loss Recovery" : "Trend Analysis";
+        if (state[currentMode].lastPredictionLost) predictedColor = lastBaseColor === 'Red' ? 'Green' : 'Red';
+        state[currentMode].lastPredictionLost = false;
+
+        let possibleNumbers = [];
+        for (let i = 0; i <= 9; i++) {
+            const res = getResultFromNumber(i);
+            if (res.bigSmall === predictedBigSmall && res.color.replace('+Violet', '') === predictedColor) {
+                possibleNumbers.push(i);
             }
         }
-        bestStrategyName += ` | Conf: ${(highestConfidence * 100).toFixed(0)}%`;
-        if (!state[currentMode].stats.strategyMetrics[bestStrategyKey]) {
-            state[currentMode].stats.strategyMetrics[bestStrategyKey] = { w: 0, l: 0, p: 0 };
-        }
-        return { prediction: bestPrediction, strategy: bestStrategyName, strategyKey: bestStrategyKey };
+
+        const predictedNumber = possibleNumbers.length > 0 ? 
+            possibleNumbers[Math.floor(Math.random() * possibleNumbers.length)] : 
+            Math.floor(Math.random() * 10);
+        return { prediction: getResultFromNumber(predictedNumber), strategy };
     }
 
-    function updateStrategyStats(actualResult) {
-        const stats = state[currentMode].stats;
-        const predictionForThisPeriod = state[currentMode].predictions.find(p => p.period === actualResult.period);
-        if (!predictionForThisPeriod || predictionForThisPeriod.status !== 'Pending') {
+    function updateStats(actualResult) {
+        if (!currentMode || !actualResult || !actualResult.period) return;
+        const p = state[currentMode].predictions.find(pred => pred.period === actualResult.period);
+        if (!p || p.status !== 'Pending') return;
+
+        const colorMatch = p.prediction.color.replace('+Violet', '') === actualResult.color.replace('+Violet', '');
+        const sizeMatch = p.prediction.bigSmall === actualResult.bigSmall;
+        let status = 'Loss', revenueChange = -1;
+        state[currentMode].lastPredictionLost = true;
+
+        if (p.prediction.number === actualResult.number) {
+            status = 'Win';
+            revenueChange = 8;
+            state[currentMode].lastPredictionLost = false;
+        } else if (colorMatch && sizeMatch) {
+            status = 'Win';
+            revenueChange = 2;
+            state[currentMode].lastPredictionLost = false;
+        } else if (colorMatch || sizeMatch) {
+            status = 'Partial';
+            revenueChange = 0.5;
+        }
+
+        p.status = status;
+        if (status === 'Win') state[currentMode].stats.totalWins++;
+        else if (status === 'Partial') state[currentMode].stats.totalPartial++;
+        else state[currentMode].stats.totalLosses++;
+        state[currentMode].stats.revenue += revenueChange;
+        debounceSaveState();
+    }
+
+    function gameLoop() {
+        if (!currentMode) return;
+        const activeState = state[currentMode];
+
+        if (activeState.currentPeriod) {
+            const resultExistsInHistory = activeState.history.some(h => h.period === activeState.currentPeriod);
+            if (!resultExistsInHistory) {
+                const simulatedResult = getResultFromNumber(Math.floor(Math.random() * 10));
+                simulatedResult.period = activeState.currentPeriod;
+                updateStats(simulatedResult);
+                activeState.history.push(simulatedResult);
+                if (activeState.history.length > 50) activeState.history.shift();
+            }
+        }
+
+        let newPeriod = (currentGameType === 'wingo') ? generateWingoPeriodNumber(currentMode) : generateTrxPeriodNumber(currentMode);
+        
+        if (activeState.predictions.length > 0 && activeState.predictions[activeState.predictions.length - 1].period === newPeriod) {
             return;
         }
-        const predictedColor = predictionForThisPeriod.prediction.color;
-        const actualColor = actualResult.color;
-        const predictedBigSmall = predictionForThisPeriod.prediction.bigSmall;
-        const actualBigSmall = actualResult.bigSmall;
-        let isWin = false, isPartial = false;
-        const predictedBaseColor = predictedColor.includes('Violet') ? predictedColor.split('-')[0] : predictedColor;
-        const actualBaseColor = actualColor.includes('Violet') ? actualColor.split('-')[0] : actualColor;
-        const colorMatch = (predictedBaseColor === actualBaseColor);
-        const sizeMatch = (predictedBigSmall === actualBigSmall);
-        if (colorMatch && sizeMatch) {
-            isWin = true;
-        } else if (colorMatch || sizeMatch) {
-            isPartial = true;
-        }
-        predictionForThisPeriod.status = isWin ? 'Win' : isPartial ? 'Partial' : 'Loss';
-        predictionForThisPeriod.colorStatus = colorMatch ? 'Win' : 'Loss';
-        predictionForThisPeriod.sizeStatus = sizeMatch ? 'Win' : 'Loss';
-        if (isWin) {
-            stats.totalWins++;
-            stats.revenue += 2;
-            state[currentMode].lastPredictionLost = false;
-        } else if (isPartial) {
-            stats.totalPartial++;
-            stats.revenue += 0.5;
-            state[currentMode].lastPredictionLost = true;
-        } else {
-            stats.totalLosses++;
-            stats.revenue -= 1;
-            state[currentMode].lastPredictionLost = true;
-        }
-        const strategyKey = predictionForThisPeriod.strategyKey;
-        if (!stats.strategyMetrics[strategyKey]) {
-            stats.strategyMetrics[strategyKey] = { w: 0, l: 0, p: 0 };
-        }
-        if (isWin) {
-            stats.strategyMetrics[strategyKey].w++;
-        } else if (isPartial) {
-            stats.strategyMetrics[strategyKey].p++;
-        } else {
-            stats.strategyMetrics[strategyKey].l++;
-        }
-        saveState();
-    }
 
-    function setPredictionStatus(period, status, colorStatus, sizeStatus) {
-        if (!currentMode) return;
-        const p = state[currentMode].predictions.find(p => p.period == period);
-        if (p && p.status !== status) {
-            const oldStatus = p.status;
-            p.status = status;
-            p.colorStatus = colorStatus;
-            p.sizeStatus = sizeStatus;
-            const stats = state[currentMode].stats;
-            const strategyKey = p.strategyKey;
-            if (oldStatus === 'Win') {
-                stats.totalWins--;
-                stats.revenue -= 2;
-                if (stats.strategyMetrics[strategyKey]) stats.strategyMetrics[strategyKey].w--;
-            } else if (oldStatus === 'Loss') {
-                stats.totalLosses--;
-                stats.revenue += 1;
-                if (stats.strategyMetrics[strategyKey]) stats.strategyMetrics[strategyKey].l--;
-            } else if (oldStatus === 'Partial') {
-                stats.totalPartial--;
-                stats.revenue -= 0.5;
-                if (stats.strategyMetrics[strategyKey]) stats.strategyMetrics[strategyKey].p--;
-            }
-            if (status === 'Win') {
-                stats.totalWins++;
-                stats.revenue += 2;
-                if (!stats.strategyMetrics[strategyKey]) stats.strategyMetrics[strategyKey] = { w: 0, l: 0, p: 0 };
-                stats.strategyMetrics[strategyKey].w++;
-                state[currentMode].lastPredictionLost = false;
-            } else if (status === 'Loss') {
-                stats.totalLosses++;
-                stats.revenue -= 1;
-                if (!stats.strategyMetrics[strategyKey]) stats.strategyMetrics[strategyKey] = { w: 0, l: 0, p: 0 };
-                stats.strategyMetrics[strategyKey].l++;
-                state[currentMode].lastPredictionLost = true;
-            } else if (status === 'Partial') {
-                stats.totalPartial++;
-                stats.revenue += 0.5;
-                if (!stats.strategyMetrics[strategyKey]) stats.strategyMetrics[strategyKey] = { w: 0, l: 0, p: 0 };
-                stats.strategyMetrics[strategyKey].p++;
-                state[currentMode].lastPredictionLost = true;
-            }
-            saveState();
-            render();
-        }
-    }
+        activeState.currentPeriod = newPeriod;
+        const { prediction, strategy } = runPredictionEngine(activeState.history);
+        activeState.predictions.push({ period: newPeriod, prediction, strategy, status: 'Pending' });
+        if (activeState.predictions.length > 50) activeState.predictions.shift();
 
-    function renderResultInHTML(result, status = { color: null, size: null }) {
-        if (!result) return '...';
-        const { bigSmall, color } = result;
-        const colorClass = color.includes('Violet') ? `color-violet` : `color-${color.toLowerCase()}`;
-        const sizeClass = `color-${bigSmall.toLowerCase()}`;
-        const displayText = color.includes('Violet') ? `${bigSmall} ${color.replace('-', '+')}` : `${bigSmall} ${color}`;
-        const colorStatusIcon = status.color === 'Win' ? '<svg class="win-tick" fill="currentColor" viewBox="0 0 24 24"><path d="M20.293 5.293L9 16.586l-4.293-4.293-1.414 1.414L9 19.414l12.707-12.707-1.414-1.414z"/></svg>' :
-                               status.color === 'Loss' ? '<svg class="loss-cross" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>' : '';
-        const sizeStatusIcon = status.size === 'Win' ? '<svg class="win-tick" fill="currentColor" viewBox="0 0 24 24"><path d="M20.293 5.293L9 16.586l-4.293-4.293-1.414 1.414L9 19.414l12.707-12.707-1.414-1.414z"/></svg>' :
-                              status.size === 'Loss' ? '<svg class="loss-cross" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>' : '';
-        return `<span class="${sizeClass}">${bigSmall}</span> <span class="${colorClass}">${color.replace('-', '+')}</span>${colorStatusIcon}${sizeStatusIcon}`;
-    }
-
-    function renderChart() {
-        const stats = state[currentMode].stats;
-        elements.chartTotalWins.textContent = stats.totalWins;
-        elements.chartTotalLosses.textContent = stats.totalLosses;
-        elements.chartTotalPartial.textContent = stats.totalPartial;
-        const totalPredictions = stats.totalWins + stats.totalLosses + stats.totalPartial;
-        const accuracy = totalPredictions > 0 ? ((stats.totalWins / totalPredictions) * 100).toFixed(2) : 0;
-        elements.chartAccuracy.textContent = `${accuracy}%`;
-        elements.chartRevenue.textContent = stats.revenue.toFixed(1);
-        elements.chartRevenue.classList.toggle('negative', stats.revenue < 0);
-        elements.chartRevenue.classList.toggle('win', stats.revenue > 0);
-        elements.chartRevenue.classList.toggle('text-yellow-400', stats.revenue === 0);
-        let strategyHtml = '';
-        const sortedStrategies = Object.keys(stats.strategyMetrics).sort();
-        for (const key of sortedStrategies) {
-            const metric = stats.strategyMetrics[key];
-            const total = metric.w + metric.l + metric.p;
-            if (total === 0 && key !== "Collecting data...") continue;
-            const acc = total > 0 ? ((metric.w / total) * 100).toFixed(2) : 0;
-            const accClass = acc >= 50 ? 'positive' : 'negative';
-            strategyHtml += `
-                <div class="strategy-item">
-                    <span class="name">${key}</span>
-                    <span class="acc ${accClass}">${acc}% (${metric.w}/${total})</span>
-                </div>
-            `;
-        }
-        elements.strategyBreakdown.innerHTML = strategyHtml;
-    }
-
-    function render() {
-        if (!currentMode) { 
-            elements.period.textContent = 'Select Mode'; 
-            elements.timer.textContent = '--:--'; 
-            elements.predictionText.textContent = '...';
-            elements.insightText.textContent = '...';
-            elements.predictionsTable.innerHTML = '';
-            elements.aiSparkleIcon.style.display = 'none'; 
-            elements.chartTotalWins.textContent = '0';
-            elements.chartTotalLosses.textContent = '0';
-            elements.chartTotalPartial.textContent = '0';
-            elements.chartAccuracy.textContent = '0%';
-            elements.chartRevenue.textContent = '0';
-            elements.strategyBreakdown.innerHTML = '';
-            return; 
-        }
-        const activeState = state[currentMode];
-        const currentPrediction = activeState.predictions[activeState.predictions.length - 1];
-        if (currentPrediction) { 
-            elements.predictionText.innerHTML = renderResultInHTML(currentPrediction.prediction); 
-            elements.insightText.textContent = currentPrediction.strategy; 
-            elements.aiSparkleIcon.style.display = (activeState.history.length >= 3) ? 'inline-block' : 'none'; 
-        } else { 
-            elements.predictionText.textContent = '...'; 
-            elements.insightText.textContent = '...'; 
-            elements.aiSparkleIcon.style.display = 'none'; 
-        }
-        elements.predictionsTable.innerHTML = activeState.predictions.slice().reverse().map(item => { 
-            let statusCell;
-            const isPeriodResultAvailable = activeState.history.some(h => h.period === item.period);
-            if (item.status === 'Pending' && isPeriodResultAvailable) { 
-                statusCell = `<div class="flex justify-center items-center">
-                    <button class="status-btn btn-win" onclick="setPredictionStatus('${item.period}', 'Win', 'Win', 'Win')">W</button>
-                    <button class="status-btn btn-loss" onclick="setPredictionStatus('${item.period}', 'Loss', 'Loss', 'Loss')">L</button>
-                    <button class="status-btn btn-partial" onclick="setPredictionStatus('${item.period}', 'Partial', 'Win', 'Loss')">P</button>
-                </div>`; 
-            } else { 
-                statusCell = `<span class="status-pill status-${item.status?.toLowerCase() || 'pending'}">${item.status || 'Pending'}</span>`; 
-            } 
-            const result = activeState.history.find(h => h.period === item.period);
-            return `<tr>
-                <td>${String(item.period).slice(-6)}</td>
-                <td>${renderResultInHTML(item.prediction, { color: item.colorStatus, size: item.sizeStatus })}</td>
-                <td>${result ? renderResultInHTML(result) : '...'}</td>
-                <td>${statusCell}</td>
-            </tr>` 
-        }).join('');
-        renderChart();
-    }
-
-    async function fetchLiveGameHistory() {
-        try {
-            const response = await fetch('https://api.bdg88zf.com/api/webapi/GetNoaverageEmerdList?mode=' + currentMode, {
-                headers: { 'Content-Type': 'application/json' }
-            });
-            const data = await response.json();
-            if (data && Array.isArray(data.data)) {
-                state[currentMode].history = data.data.map(result => ({
-                    period: result.period,
-                    number: result.number,
-                    bigSmall: result.number >= 5 ? 'Big' : 'Small',
-                    color: result.number === 0 ? 'Red-Violet' : 
-                           result.number === 5 ? 'Green-Violet' : 
-                           (result.number % 2 === 0 ? 'Red' : 'Green')
-                }));
-                saveState();
-                render();
-            } else {
-                throw new Error("Invalid API response");
-            }
-        } catch (e) {
-            console.error("Failed to fetch live game history", e);
-            generateSmartSimulatedResult(state[currentMode].history);
-        }
-    }
-
-    function generateSmartSimulatedResult(history) {
-        if (history.length < 2) { 
-            const num = Math.floor(Math.random() * 10);
-            return {
-                number: num,
-                bigSmall: num >= 5 ? 'Big' : 'Small',
-                color: (num === 0 ? 'Red-Violet' : num === 5 ? 'Green-Violet' : (num % 2 === 0 ? 'Red' : 'Green'))
-            };
-        }
-        const lastResult = history[history.length - 1];
-        const lastColor = lastResult.color.includes('Violet') ? lastResult.color.split('-')[0] : lastResult.color;
-        const lastBigSmall = lastResult.bigSmall;
-        const oppositeColor = lastColor === 'Red' ? 'Green' : 'Red';
-        const oppositeBigSmall = lastBigSmall === 'Big' ? 'Small' : 'Big';
-        let nextColor = null;
-        let nextBigSmall = null;
-        const colorHistoryValues = history.map(h => h.color);
-        const bigSmallHistoryValues = history.map(h => h.bigSmall);
-        const colorPatternsForSim = [
-            { check: checkPatternMatch(colorHistoryValues, ['A', 'B', 'A', 'B']), next: (lastColor === 'Red' ? 'Green' : 'Red'), chance: 0.75 },
-            { check: checkPatternMatch(colorHistoryValues, ['A', 'A', 'B', 'B']), next: (lastColor === 'Red' ? 'Green' : 'Red'), chance: 0.65 },
-            { check: checkPatternMatch(colorHistoryValues, ['A', 'A', 'A', 'B', 'B', 'B']), next: (lastColor === 'Red' ? 'Green' : 'Red'), chance: 0.55 },
-        ];
-        const simLastTwoSameColor = checkLastTwoSame(colorHistoryValues);
-        if (simLastTwoSameColor.matches && Math.random() < 0.85) {
-            nextColor = simLastTwoSameColor.nextPrediction;
-        } else {
-            for (const p of colorPatternsForSim) {
-                if (p.check.matches && Math.random() < p.chance) {
-                    nextColor = p.check.nextPrediction;
-                    break;
-                }
-            }
-        }
-        if (nextColor === null) {
-            let currentStreakColor = 0;
-            for (let i = history.length - 1; i >= 0; i--) {
-                const baseColor = history[i].color.includes('Violet') ? history[i].color.split('-')[0] : history[i].color;
-                if (baseColor === lastColor) {
-                    currentStreakColor++;
-                } else {
-                    break;
-                }
-            }
-            if (currentStreakColor >= 2 && Math.random() < 0.65) {
-                nextColor = lastColor;
-            } else if (currentStreakColor >= 3 && Math.random() < 0.45) {
-                nextColor = oppositeColor;
-            } else {
-                nextColor = Math.random() < 0.5 ? 'Red' : 'Green';
-            }
-        }
-        const bigSmallPatternsForSim = [
-            { check: checkPatternMatch(bigSmallHistoryValues, ['S', 'B', 'S', 'B']), next: (lastBigSmall === 'Small' ? 'Big' : 'Small'), chance: 0.75 },
-            { check: checkPatternMatch(bigSmallHistoryValues, ['B', 'B', 'S', 'S']), next: (lastBigSmall === 'Small' ? 'Big' : 'Small'), chance: 0.65 },
-        ];
-        const simLastTwoSameBigSmall = checkLastTwoSame(bigSmallHistoryValues);
-        if (simLastTwoSameBigSmall.matches && Math.random() < 0.85) {
-            nextBigSmall = simLastTwoSameBigSmall.nextPrediction;
-        } else {
-            for (const p of bigSmallPatternsForSim) {
-                if (p.check.matches && Math.random() < p.chance) {
-                    nextBigSmall = p.check.nextPrediction;
-                    break;
-                }
-            }
-        }
-        if (nextBigSmall === null) {
-            let currentStreakBigSmall = 0;
-            for (let i = history.length - 1; i >= 0; i--) {
-                if (history[i].bigSmall === lastBigSmall) {
-                    currentStreakBigSmall++;
-                } else {
-                    break;
-                }
-            }
-            if (currentStreakBigSmall >= 2 && Math.random() < 0.65) {
-                nextBigSmall = lastBigSmall;
-            } else if (currentStreakBigSmall >= 3 && Math.random() < 0.45) {
-                nextBigSmall = oppositeBigSmall;
-            } else {
-                nextBigSmall = Math.random() < 0.5 ? 'Small' : 'Big';
-            }
-        }
-        let finalNumber;
-        let finalColor = nextColor;
-        if (nextBigSmall === 'Big') {
-            finalNumber = Math.floor(Math.random() * 5) + 5;
-        } else {
-            finalNumber = Math.floor(Math.random() * 5);
-        }
-        if (currentMode === '30s' && Math.random() < 0.2) {
-            if (Math.random() < 0.5) {
-                finalNumber = 0;
-                finalColor = 'Red-Violet';
-            } else {
-                finalNumber = 5;
-                finalColor = 'Green-Violet';
-            }
-        } else {
-            if (finalColor === 'Red') {
-                if (finalNumber % 2 === 0) finalNumber = (finalNumber + 1) % 10;
-            } else if (finalColor === 'Green') {
-                if (finalNumber % 2 !== 0) finalNumber = (finalNumber + 1) % 10;
-            }
-            if (nextBigSmall === 'Big' && finalNumber < 5) finalNumber += 5;
-            else if (nextBigSmall === 'Small' && finalNumber >= 5) finalNumber -= 5;
-            if ((finalColor === 'Red' && finalNumber % 2 === 0) || (finalColor === 'Green' && finalNumber % 2 !== 0)) {
-                if (Math.random() < 0.5) {
-                    finalColor = (finalColor === 'Red') ? 'Green' : 'Red';
-                } else {
-                    finalNumber = (finalNumber + 1) % 10;
-                }
-            }
-        }
-        return {
-            number: finalNumber,
-            bigSmall: nextBigSmall,
-            color: finalColor
-        };
-    }
-
-    function offlineGameLoop() {
-        if (!currentMode) return;
-        const activeState = state[currentMode];
-        if (activeState.currentPeriod) {
-            fetchLiveGameHistory().then(() => {
-                if (!activeState.history.find(h => h.period === activeState.currentPeriod)) {
-                    const actualResult = generateSmartSimulatedResult(activeState.history);
-                    actualResult.period = activeState.currentPeriod;
-                    updateStrategyStats(actualResult);
-                    activeState.history.push(actualResult);
-                    if (activeState.history.length > 50) activeState.history.shift();
-                }
-                const newPeriod = generatePeriodNumber();
-                activeState.currentPeriod = newPeriod;
-                const { prediction, strategy, strategyKey } = runPredictionEngine(activeState.history);
-                activeState.predictions.push({ period: newPeriod, prediction, strategy, strategyKey: strategyKey, status: 'Pending', colorStatus: null, sizeStatus: null });
-                if (activeState.predictions.length > 50) activeState.predictions.shift();
-                elements.period.textContent = newPeriod;
-                saveState();
-                render();
-            });
-        } else {
-            const newPeriod = generatePeriodNumber();
-            activeState.currentPeriod = newPeriod;
-            const { prediction, strategy, strategyKey } = runPredictionEngine(activeState.history);
-            activeState.predictions.push({ period: newPeriod, prediction, strategy, strategyKey: strategyKey, status: 'Pending', colorStatus: null, sizeStatus: null });
-            if (activeState.predictions.length > 50) activeState.predictions.shift();
-            elements.period.textContent = newPeriod;
-            saveState();
-            render();
-        }
+        elements.period.textContent = newPeriod;
+        debounceSaveState();
+        render();
     }
 
     function masterClock() {
         if (!currentMode) return;
+        const durations = { 'wingo-30s': 30, 'wingo-1m': 60, 'trx-1m': 60, 'trx-3m': 180 };
+        const duration = durations[currentMode];
         const now = new Date();
-        const duration = (currentMode === '30s') ? 30 : 60;
-        const istOffsetMinutes = 330;
-        const currentUtcTime = now.getTime() + (now.getTimezoneOffset() * 60 * 1000);
-        const istTime = new Date(currentUtcTime + (istOffsetMinutes * 60 * 1000));
-        const seconds = istTime.getSeconds();
         let remainingTime;
-        if (currentMode === '30s') {
-            const currentSecondInCycle = seconds % 30;
-            remainingTime = (29 - currentSecondInCycle);
-            if (remainingTime < 0) remainingTime += 30;
+        let shouldTriggerLoop = false;
+
+        if (currentGameType === 'wingo') {
+            const istOffsetMinutes = 330;
+            const currentUtcTime = now.getTime() + (now.getTimezoneOffset() * 60 * 1000);
+            const istTime = new Date(currentUtcTime + (istOffsetMinutes * 60 * 1000));
+            const h = istTime.getHours();
+            const m = istTime.getMinutes();
+            const s = istTime.getSeconds();
+            const startH = 5;
+            const startM = 30;
+            let elapsedSFromStart = (h * 3600 + m * 60 + s) - (startH * 3600 + startM * 60);
+            if (elapsedSFromStart < 0) {
+                elapsedSFromStart += 24 * 3600;
+            }
+
+            remainingTime = duration - (elapsedSFromStart % duration);
+            if (remainingTime <= 0) remainingTime += duration;
+
+            if (remainingTime >= duration - 1) {
+                shouldTriggerLoop = true;
+            }
         } else {
-            remainingTime = (59 - seconds);
-            if (remainingTime < 0) remainingTime += 60;
+            const secondsOfDayUTC = now.getUTCHours() * 3600 + now.getUTCMinutes() * 60 + now.getUTCSeconds();
+            const totalMinutesTodayUTC = Math.floor(secondsOfDayUTC / 60);
+            remainingTime = duration - (secondsOfDayUTC % duration);
+            if (remainingTime <= 0) remainingTime += duration;
+
+            const isThreeMinuteBoundary = currentMode === 'trx-3m' && (secondsOfDayUTC % 180 === 0);
+            if ((currentMode === 'trx-1m' && remainingTime >= duration - 1) || isThreeMinuteBoundary) {
+                shouldTriggerLoop = true;
+            }
         }
-        elements.timer.textContent = `${String(Math.floor(remainingTime / 60)).padStart(2, '0')}:${String(Math.floor(remainingTime % 60)).padStart(2, '0')}`;
-        const triggerSecond = (currentMode === '30s') ? (seconds % 30 === 0) : (seconds === 0);
-        if (triggerSecond) {
+
+        elements.timer.textContent = `${String(Math.floor(remainingTime / 60)).padStart(2, '0')}:${String(remainingTime % 60).padStart(2, '0')}`;
+
+        if (shouldTriggerLoop) {
+            masterClock.debounce = masterClock.debounce || {};
             const debounceKey = currentMode + 'Trigger';
-            if (!this[debounceKey] || (now.getTime() - this[debounceKey] > 500)) {
-                offlineGameLoop();
-                this[debounceKey] = now.getTime();
+            const nowMs = now.getTime();
+            if (!masterClock.debounce[debounceKey] || (nowMs - masterClock.debounce[debounceKey] >= (duration * 1000) - 100)) {
+                gameLoop();
+                masterClock.debounce[debounceKey] = nowMs;
             }
         }
     }
 
-    function initOfflineGame() {
-        offlineGameLoop();
-        masterInterval = setInterval(masterClock, 1000);
-    }
-
-    elements.clearButton.addEventListener('click', () => {
-        if (!currentMode) return;
-        state[currentMode] = JSON.parse(JSON.stringify(initialStateTemplate));
-        saveState();
-        render();
-    });
-
-    elements.toggleStrategy.addEventListener('click', toggleStrategy);
-
-    function createParticle() {
-        const particle = document.createElement('div');
-        particle.classList.add('particle');
-        const size = Math.random() * 5 + 3;
-        particle.style.width = `${size}px`;
-        particle.style.height = `${size}px`;
-        particle.style.left = `${Math.random() * 100}%`;
-        particle.style.animationDuration = `${Math.random() * 5 + 7}s`;
-        particle.style.animationDelay = `-${Math.random() * 10}s`;
-        particle.style.setProperty('--particle-x-offset', `${(Math.random() - 0.5) * 20}vw`);
-        const colorClass = `color-${Math.floor(Math.random() * 3) + 1}`;
-        particle.classList.add(colorClass);
-        if (Math.random() < 0.5) {
-            particle.classList.add('glow');
+    // --- Event Listeners and Initializer ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const criticalElementsExist = elements.loginButton && elements.accessKeyInput && elements.logoutIcon && elements.errorMessage;
+        if (!criticalElementsExist) {
+            console.error('One or more critical DOM elements not found. Page might not function correctly.');
+            return;
         }
-        elements.backgroundParticles.appendChild(particle);
-        particle.addEventListener('animationend', () => {
-            particle.remove();
-            createParticle();
+
+        elements.loginButton.addEventListener('click', handleLogin);
+        elements.accessKeyInput.addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') handleLogin();
         });
-    }
+        elements.logoutIcon.addEventListener('click', handleLogout);
+        elements.clearButton.addEventListener('click', () => {
+            if (currentMode) {
+                state[currentMode] = JSON.parse(JSON.stringify(initialStateTemplate));
+                debounceSaveState();
+                render();
+            }
+        });
 
-    function initBackgroundParticles() {
-        const particleCount = window.innerWidth < 600 ? 30 : 50;
-        for (let i = 0; i < particleCount; i++) {
-            createParticle();
+        if (localStorage.getItem('isLoggedIn') === 'true') {
+            requestAnimationFrame(showApp);
         }
-    }
-
-    loadState();
-    selectMode('30s');
-    initBackgroundParticles();
+    });
 </script>
 </body>
-</html>
+</html>v
