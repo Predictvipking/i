@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BDG GAME</title>
+    <style>
+        :root {
+            --gold: #FFC107;
+            --gold-darker: #e0a800;
+            --gold-light: #FFD54F;
+            --gold-text: #FFEB3B;
+            --bg-dark: #121212;
+            --bg-medium: #1f1f1f;
+            --bg-light: #2c2c2c;
+            --bg-lighter: #3a3a3a;
+            --text-light: #ffffff;
+            --text-dark: #1a1a1a;
+            --text-grey: #aaaaaa;
+            --green: #28a745;
+            --violet: #8e44ad;
+            --red: #dc3545;
+            --orange: #fd7e14;
+            --blue: #007bff;
+            --result-num-red: #dc3545;
+            --glow-color: var(--gold);
+            --active-tab-underline: #00bcd4;
+            --ai-mode-color: #e800e8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-size: 14px;
+            padding: 8px;
+            box-sizing: border-box;
+            line-height: 1.5;
+        }
+
+        .game-container {
+            background: var(--bg-medium);
+            padding: 12px;
+            border-radius: 10px;
+            width: 98%;
+            max-width: 380px;
+            box-shadow: 0 0 18px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            display: none;
+        }
+
+        .login-container {
+            background: var(--bg-medium);
+            padding: 20px;
+            border-radius: 10px;
+            width: 98%;
+            max-width: 380px;
+            box-shadow: 0 0 18px rgba(0, 0, 0, 0.6);
+            text-align: center;
+        }
+
+        .login-container h2 {
+            color: var(--gold);
+            margin-bottom: 15px;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid var(--gold-darker);
+            border-radius: 5px;
+            background: var(--bg-light);
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            background: var(--gold);
+            color: var(--text-dark);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .login-container button:hover {
+            background: var(--gold-darker);
+        }
+
+        button {
+            border: none;
+            cursor: pointer;
+            background: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            padding: 0;
+            box-sizing: border-box;
+            font-weight: bold;
+            white-space: nowrap;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3px;
+        }
+
+        header .header-left,
+        header .header-right {
+            display: flex;
+            gap: 8px;
+        }
+
+        header .icon {
+            font-size: 18px;
+            color: var(--text-grey);
+        }
+        header .icon-arrow-left {
+            color: var(--text-light);
+        }
+        .icon-headset::before { content: '\f025'; font-family: 'Font Awesome 5 Free'; font-weight: 900; }
+        .icon-clock::before { content: '\f017'; font-family: 'Font Awesome 5 Free'; font-weight: 900; }
+        .icon-info::before { content: '\f129'; font-family: 'Font Awesome 5 Free'; font-weight: 900; }
+        .icon-logout::before { content: '\f2f5'; font-family: 'Font Awesome 5 Free'; font-weight: 900; }
+
+        header h1 {
+            color: var(--gold);
+            font-size: 20px;
+            margin: 0;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+        }
+
+        #gamePlayLiveView {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .game-options {
+            display: flex;
+            justify-content: space-between;
+            background: var(--bg-dark);
+            padding: 4px;
+            border-radius: 7px;
+            border: 1px solid var(--gold-darker);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .game-options .option {
+            padding: 7px 5px;
+            border-radius: 5px;
+            text-align: center;
+            flex: 1;
+            margin: 0 1.5px;
+            background: var(--bg-light);
+            font-size: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .game-options .option .clock-icon {
+            width: 22px;
+            height: 22px;
+            margin-bottom: 2px;
+            background-color: var(--text-grey);
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 3px rgba(0,0,0,0.3);
+        }
+        .game-options .option .clock-icon::before,
+        .game-options .option .clock-icon::after {
+            content: '';
+            position: absolute;
+            background-color: var(--bg-dark);
+            top: 50%;
+            left: 50%;
+            transform-origin: 0% 0%;
+        }
+        .game-options .option .clock-icon::before {
+            width: 1.2px;
+            height: 7px;
+            transform: translate(-50%, -100%) rotate(45deg);
+        }
+        .game-options .option .clock-icon::after {
+            width: 1.2px;
+            height: 9px;
+            transform: translate(-50%, -100%) rotate(135deg);
+        }
+
+        .game-options .option.active {
+            background: var(--gold-darker);
+            color: var(--text-dark);
+            box-shadow: 0 0 5px rgba(0,0,0,0.4);
+        }
+        .game-options .option.active .clock-icon {
+            background-color: var(--text-dark);
+        }
+        .game-options .option.active .clock-icon::before,
+        .game-options .option.active .clock-icon::after {
+            background-color: var(--gold-text);
+        }
+
+        .timer-section {
+            background: var(--bg-dark);
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.3);
+            border: 1px solid var(--gold-darker);
+        }
+
+        .timer-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0;
+        }
+
+        .left-align-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 2px;
+        }
+
+        .how-to-play {
+            background: var(--gold);
+            color: var(--text-dark);
+            padding: 4px 8px;
+            border-radius: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            font-weight: bold;
+        }
+        .how-to-play .icon {
+            font-size: 13px;
+            color: var(--text-dark);
+        }
+
+        .wingo-current-interval-text {
+            font-size: 10px;
+            color: var(--text-grey);
+            font-weight: normal;
+            margin-top: 0;
+        }
+
+        .previous-results {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            max-width: 60%;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .previous-results .ball {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--text-dark);
+            box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
+            flex-shrink: 0;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .previous-results .ball.red { background-color: var(--red); }
+        .previous-results .ball.violet { background-color: var(--violet); color: var(--text-light); }
+        .previous-results .ball.green { background-color: var(--green); }
+
+        .timer-bottom-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            color: var(--text-grey);
+            font-size: 11px;
+            margin-top: 0;
+        }
+
+        .timer-display {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 2px;
+        }
+
+        #timer {
+            display: flex;
+            align-items: center;
+            padding: 0;
+            border-radius: 0;
+            color: var(--gold-text);
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 1.2px;
+            box-shadow: none;
+        }
+
+        #timer .digit {
+            width: 18px;
+            text-align: center;
+        }
+        #timer .colon {
+            margin: 0 2px;
+            color: var(--text-grey);
+        }
+
+        .period-input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 2px;
+        }
+
+        .period-input {
+            background: var(--bg-medium);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--gold-text);
+            font-size: 18px;
+            text-align: right;
+            width: 150px;
+            padding: 3px 6px;
+            border-radius: 5px;
+            outline: none;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-sizing: border-box;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: clip;
+        }
+        .period-input::placeholder {
+            color: rgba(255,235,59,0.5);
+        }
+        .period-input:focus {
+            color: var(--gold-text);
+            border-color: var(--gold);
+            box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.3);
+        }
+
+        .color-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 6px;
+        }
+
+        .color-buttons .btn-color {
+            flex: 1;
+            margin: 0 2px;
+            height: 40px;
+            font-size: 14px;
+            border-radius: 7px;
+            color: var(--text-light);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            transition: box-shadow 0.3s ease-out, transform 0.3s ease-out;
+        }
+
+        .color-buttons .btn-color.green { background-color: var(--green); }
+        .color-buttons .btn-color.violet { background-color: var(--violet); }
+        .color-buttons .btn-color.red { background-color: var(--red); }
+
+        .color-buttons .btn-color.glow {
+            box-shadow: 0 0 12px 5px var(--glow-color);
+            transform: scale(1.01);
+        }
+
+        .number-buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 7px;
+            margin-top: 6px;
+        }
+
+        .number-buttons .ball {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+            color: var(--text-dark);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: box-shadow 0.3s ease-out, transform 0.3s ease-out, font-weight 0.3s ease-out;
+        }
+
+        .number-buttons .ball[data-number="0"] { background: linear-gradient(135deg, var(--violet) 50%, var(--red) 50%); color: var(--text-light); }
+        .number-buttons .ball[data-number="1"],
+        .number-buttons .ball[data-number="3"],
+        .number-buttons .ball[data-number="7"],
+        .number-buttons .ball[data-number="9"] { background-color: var(--green); color: var(--text-light); }
+        .number-buttons .ball[data-number="2"],
+        .number-buttons .ball[data-number="4"],
+        .number-buttons .ball[data-number="6"],
+        .number-buttons .ball[data-number="8"] { background-color: var(--red); color: var(--text-light); }
+        .number-buttons .ball[data-number="5"] { background: linear-gradient(135deg, var(--violet) 50%, var(--green) 50%); color: var(--text-light); }
+
+        .number-buttons .ball.glow {
+            box-shadow: 0 0 12px 5px var(--glow-color), 0 0 7px rgba(0,0,0,0.6);
+            transform: scale(1.05);
+            font-weight: bolder;
+            z-index: 10;
+        }
+
+        .big-small {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 6px;
+        }
+
+        .big-small .btn-big-small {
+            flex: 1;
+            margin: 0 2px;
+            height: 40px;
+            font-size: 14px;
+            border-radius: 7px;
+            color: var(--text-light);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            transition: box-shadow 0.3s ease-out, transform 0.3s ease-out;
+        }
+
+        .big-small .btn-big-small.big { background-color: var(--orange); }
+        .big-small .btn-big-small.small { background-color: var(--blue); }
+
+        .big-small .btn-big-small.glow {
+            box-shadow: 0 0 12px 5px var(--glow-color), 0 0 7px rgba(0,0,0,0.6);
+            transform: scale(1.05);
+            font-weight: bolder;
+            z-index: 10;
+        }
+
+        .ai-mode-indicator {
+            background-color: var(--ai-mode-color);
+            color: var(--text-light);
+            padding: 7px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+            margin-top: 10px;
+            display: none;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.4);
+            font-size: 13px;
+            animation: pulse-glow 1.5s infinite alternate;
+        }
+        @keyframes pulse-glow {
+            from { box-shadow: 0 0 3px var(--ai-mode-color); }
+            to { box-shadow: 0 0 10px var(--ai-mode-color), 0 0 18px rgba(255,0,255,0.2); }
+        }
+
+        .history-tabs {
+            display: flex;
+            justify-content: space-between;
+            background: var(--bg-lighter);
+            border-radius: 7px;
+            overflow: hidden;
+            margin-top: 10px;
+            padding: 2.5px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .history-tabs button {
+            flex: 1;
+            padding: 7px 0;
+            background-color: transparent;
+            color: var(--text-grey);
+            font-size: 12px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .history-tabs button.active {
+            background-color: var(--gold);
+            color: var(--text-dark);
+            box-shadow: 0 1px 5px rgba(0,0,0,0.3);
+            font-weight: bold;
+        }
+
+        .history-view-content {
+            display: none;
+            background-color: var(--bg-light);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 7px;
+            overflow-x: auto;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.3);
+        }
+        .history-view-content.active {
+            display: block;
+        }
+
+        .game-history-table, .my-history-table, .chart-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 3px;
+            font-size: 11px;
+        }
+
+        .game-history-table th, .game-history-table td,
+        .my-history-table th, .my-history-table td,
+        .chart-table th, .chart-table td {
+            padding: 7px 5px;
+            text-align: left;
+        }
+
+        .game-history-table tbody tr,
+        .my-history-table tbody tr,
+        .chart-table tbody tr {
+            background-color: var(--bg-medium);
+            border-radius: 5px;
+            margin-bottom: 3px;
+            box-shadow: 0 1px 1.5px rgba(0,0,0,0.2);
+        }
+
+        .game-history-table tbody tr:first-child,
+        .my-history-table tbody tr:first-child {
+            background-color: var(--bg-lighter);
+            font-weight: bold;
+        }
+
+        .game-history-table th,
+        .my-history-table th,
+        .chart-table th {
+            color: var(--text-grey);
+            font-weight: normal;
+            background-color: var(--bg-light);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .game-history-table td,
+        .my-history-table td,
+        .chart-table td {
+            color: var(--text-light);
+        }
+
+        .game-history-table td:nth-child(2),
+        .game-history-table td:nth-child(3),
+        .game-history-table td:nth-child(4),
+        .my-history-table td:nth-child(2),
+        .my-history-table td:nth-child(3),
+        .my-history-table td:nth-child(4) {
+            text-align: center;
+        }
+        .my-history-table td:nth-child(5) {
+            text-align: right;
+            width: 70px;
+            padding-right: 0;
+        }
+
+        .color-indicator {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            vertical-align: middle;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .color-indicator.red { background-color: var(--red); }
+        .color-indicator.green { background-color: var(--green); }
+        .color-indicator.violet { background-color: var(--violet); }
+        .color-indicator.zero-color { background: linear-gradient(135deg, var(--violet) 50%, var(--red) 50%); }
+        .color-indicator.five-color { background: linear-gradient(135deg, var(--violet) 50%, var(--green) 50%); }
+
+        .chart-header {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--gold);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .chart-table th:nth-child(2),
+        .chart-table td:nth-child(2) {
+            text-align: center;
+        }
+        .chart-table th:nth-child(3),
+        .chart-table td:nth-child(3) {
+            text-align: right;
+            color: var(--gold);
+            font-weight: bold;
+        }
+        .chart-table th:nth-child(3) {
+            color: var(--text-grey);
+        }
+
+        .color-dot {
+            display: inline-block;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            margin-right: 6px;
+            vertical-align: middle;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .color-dot.red { background-color: var(--red); }
+        .color-dot.green { background-color: var(--green); }
+        .color-dot.violet { background-color: var(--violet); }
+
+        .big-small-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-right: 6px;
+            color: var(--text-light);
+        }
+        .big-small-icon.big { background-color: var(--orange); }
+        .big-small-icon.small { background-color: var(--blue); }
+
+        .session-accuracy {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--gold);
+            margin-top: 12px;
+            text-align: center;
+            padding: 8px;
+            background-color: var(--bg-medium);
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            border: 1px solid var(--gold-darker);
+        }
+
+        .status-buttons-container {
+            display: flex;
+            gap: 2px;
+            justify-content: flex-end;
+            align-items: center;
+            height: 100%;
+        }
+        .status-button {
+            padding: 4px 7px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--text-light);
+            cursor: pointer;
+            flex-grow: 1;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+        .status-button.win { background-color: var(--green); }
+        .status-button.loss { background-color: var(--red); }
+        .status-button.mark {
+            background-color: var(--blue);
+            color: var(--text-light);
+            flex-grow: 1;
+        }
+        .status-text {
+            padding: 4px 7px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            text-align: center;
+            color: var(--text-light);
+            display: inline-block;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .status-text.W { background-color: var(--green); }
+        .status-text.L { background-color: var(--red); }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(4px);
+            padding-top: 50px;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .modal-content {
+            background-color: var(--bg-medium);
+            margin: 4% auto;
+            padding: 20px;
+            border: 1px solid var(--gold);
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            position: relative;
+            animation: slideInFromTop 0.2s ease-out;
+            color: var(--text-light);
+        }
+
+        .modal-content h2 {
+            color: var(--gold);
+            font-size: 20px;
+            margin-top: 0;
+            margin-bottom: 12px;
+            text-align: center;
+            border-bottom: 1.5px solid var(--gold-darker);
+            padding-bottom: 8px;
+        }
+
+        .modal-content p {
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 8px;
+            color: var(--text-grey);
+        }
+
+        .modal-content strong {
+            color: var(--text-light);
+            font-weight: bold;
+        }
+        .modal-content ul {
+            list-style-type: none;
+            padding: 0;
+            margin-bottom: 12px;
+        }
+        .modal-content ul li {
+            background-color: var(--bg-light);
+            padding: 7px 10px;
+            border-radius: 4px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        .modal-content ul li::before {
+            content: '\2022';
+            color: var(--gold);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+
+        .close-button {
+            color: var(--text-grey);
+            font-size: 24px;
+            font-weight: bold;
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: var(--gold);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInFromTop {
+            from { transform: translateY(-40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (max-width: 360px) {
+            .game-container { max-width: 320px; }
+            .login-container { max-width: 320px; }
+            .previous-results .ball { width: 20px; height: 20px; font-size: 10px; }
+            .game-options .option { font-size: 9px; }
+            .timer-section, .color-buttons, .number-buttons, .big-small { gap: 5px; }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="login-container" id="loginContainer">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+    </div>
+    <div class="game-container" id="gameContainer">
+        <header>
+            <div class="header-left">
+                <i class="fas fa-chevron-left icon icon-arrow-left"></i>
+            </div>
+            <h1>BDG GAME</h1>
+            <div class="header-right">
+                <i class="fas fa-headset icon"></i>
+                <i class="fas fa-clock icon"></i>
+                <button class="icon-logout" onclick="logout()" title="Logout"></button>
+            </div>
+        </header>
+
+        <div id="gamePlayLiveView" class="active">
+            <div class="game-options">
+                <div class="option" data-time="30">
+                    <div class="clock-icon"></div>
+                    <span>WinGo 30sec</span>
+                </div>
+                <div class="option active" data-time="60">
+                    <div class="clock-icon"></div>
+                    <span>WinGo 1 Min</span>
+                </div>
+                <div class="option" data-time="180">
+                    <div class="clock-icon"></div>
+                    <span>WinGo 3 Min</span>
+                </div>
+                <div class="option" data-time="300">
+                    <div class="clock-icon"></div>
+                    <span>WinGo 5 Min</span>
+                </div>
+            </div>
+
+            <div class="timer-section">
+                <div class="timer-top-row">
+                    <div class="left-align-group">
+                        <button class="how-to-play" id="howToPlayBtn">
+                            <i class="fas fa-info-circle icon"></i> How to play
+                        </button>
+                        <span class="wingo-current-interval-text" id="wingoIntervalText">WinGo 1 Min</span>
+                    </div>
+                    <div class="previous-results" id="previousResultsContainer"></div>
+                </div>
+
+                <div class="timer-bottom-row">
+                    <div class="timer-display">
+                        <span>Time remaining</span>
+                        <div id="timer">
+                            <span class="digit">0</span><span class="digit">0</span>
+                            <span class="colon">:</span>
+                            <span class="digit">0</span><span class="digit">0</span>
+                        </div>
+                    </div>
+                    <div class="period-input-container">
+                        <span>Period No.</span>
+                        <input type="text" id="periodInput" class="period-input" placeholder="Enter Period" title="Enter Period Number to start countdown">
+                    </div>
+                </div>
+            </div>
+
+            <div class="color-buttons">
+                <button class="btn-color green" aria-label="Predict Green">Green</button>
+                <button class="btn-color violet" aria-label="Predict Violet">Violet</button>
+                <button class="btn-color red" aria-label="Predict Red">Red</button>
+            </div>
+
+            <div class="number-buttons">
+                <button class="ball" data-number="0" aria-label="Predict Number 0">0</button>
+                <button class="ball" data-number="1" aria-label="Predict Number 1">1</button>
+                <button class="ball" data-number="2" aria-label="Predict Number 2">2</button>
+                <button class="ball" data-number="3" aria-label="Predict Number 3">3</button>
+                <button class="ball" data-number="4" aria-label="Predict Number 4">4</button>
+                <button class="ball" data-number="5" aria-label="Predict Number 5">5</button>
+                <button class="ball" data-number="6" aria-label="Predict Number 6">6</button>
+                <button class="ball" data-number="7" aria-label="Predict Number 7">7</button>
+                <button class="ball" data-number="8" aria-label="Predict Number 8">8</button>
+                <button class="ball" data-number="9" aria-label="Predict Number 9">9</button>
+            </div>
+
+            <div class="big-small">
+                <button class="btn-big-small big" data-type="big" aria-label="Predict Big">Big</button>
+                <button class="btn-big-small small" data-type="small" aria-label="Predict Small">Small</button>
+            </div>
+
+            <div id="aiModeIndicator" class="ai-mode-indicator">AI Prediction: Normal Mode</div>
+
+            <div class="history-tabs">
+                <button id="tabGameHistory" class="active" data-view="gameHistoryView">Game History</button>
+                <button id="tabChart" data-view="chartView">Chart</button>
+                <button id="tabMyHistory" data-view="myHistoryView">My History</button>
+            </div>
+
+            <div id="gameHistoryView" class="history-view-content active">
+                <table class="game-history-table">
+                    <thead>
+                        <tr>
+                            <th>Period</th>
+                            <th>Number</th>
+                            <th>Big Small</th>
+                            <th>Color</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gameHistoryTableBody"></tbody>
+                </table>
+            </div>
+            <div id="chartView" class="history-view-content">
+                <div class="chart-header">Recent (Last 10 Games)</div>
+                <table class="chart-table">
+                    <thead>
+                        <tr>
+                            <th>Outcome</th>
+                            <th>Count</th>
+                            <th>Percent</th>
+                        </tr>
+                    </thead>
+                    <tbody id="chartTableBody"></tbody>
+                </table>
+                <div class="session-accuracy">Session Accuracy: Loading...</div>
+            </div>
+            <div id="myHistoryView" class="history-view-content">
+                <table class="my-history-table">
+                    <thead>
+                        <tr>
+                            <th>Period</th>
+                            <th>Num</th>
+                            <th>B/S</th>
+                            <th>Col</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="myHistoryTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="howToPlayModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">×</span>
+            <h2>How to Play BDG Game</h2>
+            <p>Welcome to BDG Game! Here's a quick guide to understanding the game and its features:</p>
+            
+            <h3>Game Basics:</h3>
+            <ul>
+                <li><strong>Periods:</strong> Each round is a new "Period." You enter the period number to start the game.</li>
+                <li><strong>Timer:</strong> A countdown shows time remaining for the current period.</li>
+                <li><strong>Prediction:</strong> Once a period starts (after you enter its number or mark a previous result), the game automatically predicts a winning number, Big/Small, and Color.</li>
+                <li><strong>Results:</strong> The winning number, its size (Big/Small), and color(s) are highlighted.</li>
+            </ul>
+
+            <h3>Understanding Outcomes:</h3>
+            <ul>
+                <li>Numbers 1, 3, 7, 9 are <strong>Green</strong>.</li>
+                <li>Numbers 2, 4, 6, 8 are <strong>Red</strong>.</li>
+                <li>Number 0 is <strong>Violet/Red</strong> (primarily Violet, also Red).</li>
+                <li>Number 5 is <strong>Violet/Green</strong> (primarily Violet, also Green).</li>
+                <li>Numbers 0, 1, 2, 3, 4 are <strong>Small</strong>.</li>
+                <li>Numbers 5, 6, 7, 8, 9 are <strong>Big</strong>.</li>
+            </ul>
+
+            <h3>AI Prediction Modes:</h3>
+            <p>Our intelligent AI analyzes recent game history to provide predictions. It has two main modes:</p>
+            <ul>
+                <li><strong>Normal Mode (Trend Following):</strong> By default, the AI tries to identify and follow recent trends in Big/Small outcomes. If it sees a pattern (e.g., several 'Big' results in a row), it will lean towards predicting that trend to continue.</li>
+                <li><strong>Reverse Mode (Anti-Loss Strategy):</strong> If you mark <strong>two consecutive 'Loss' (L)</strong> results in your "My History", the AI will switch to "Reverse Mode". In this mode, it attempts to predict the <strong>opposite</strong> of what it predicted in the previous losing game, aiming to break the losing streak. The AI will revert to Normal Mode once your losing streak is broken.</li>
+            </ul>
+            <p>Remember to mark your Win/Loss status in "My History" accurately for the AI to learn and adapt effectively!</p>
+        </div>
+    </div>
+
+    <script>
+        let timeRemaining = 0;
+        let timerInterval;
+        let selectedGameTime = 60;
+        let isAuthenticated = false;
+        const currentPeriodInput = document.getElementById("periodInput");
+        const howToPlayBtn = document.getElementById("howToPlayBtn");
+        const howToPlayModal = document.getElementById("howToPlayModal");
+        const closeModalBtn = document.querySelector("#howToPlayModal .close-button");
+        const wingoIntervalText = document.getElementById("wingoIntervalText");
+        const tabGameHistory = document.getElementById('tabGameHistory');
+        const tabChart = document.getElementById('tabChart');
+        const tabMyHistory = document.getElementById('tabMyHistory');
+        const gameHistoryView = document.getElementById('gameHistoryView');
+        const chartView = document.getElementById('chartView');
+        const myHistoryView = document.getElementById('myHistoryView');
+        const gameHistoryTableBody = document.getElementById('gameHistoryTableBody');
+        const chartTableBody = document.getElementById('chartTableBody');
+        const myHistoryTableBody = document.getElementById('myHistoryTableBody');
+        const previousResultsContainer = document.getElementById('previousResultsContainer');
+        const aiModeIndicator = document.getElementById('aiModeIndicator');
+        const loginContainer = document.getElementById('loginContainer');
+        const gameContainer = document.getElementById('gameContainer');
+        const historicalResults = [];
+        const MAX_PREVIOUS_RESULTS_DISPLAY = 5;
+        const MAX_CHART_GAMES_CALC = 10;
+        let aiReverseMode = false;
+        let lastBigSmallPredictionMade = null;
+        let lastActualBigSmallOutcome = null;
+
+        function login() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            if ((username === "admin" && password === "Kingvip@1991$") || (username === "user" && password === "demo@123$")) {
+                isAuthenticated = true;
+                loginContainer.style.display = "none";
+                gameContainer.style.display = "flex";
+                initializeGame();
+            } else {
+                alert("Invalid username or password!");
+            }
+        }
+
+        function logout() {
+            isAuthenticated = false;
+            loginContainer.style.display = "block";
+            gameContainer.style.display = "none";
+            clearInterval(timerInterval);
+            historicalResults.length = 0;
+            gameHistoryTableBody.innerHTML = "";
+            myHistoryTableBody.innerHTML = "";
+            chartTableBody.innerHTML = "";
+            previousResultsContainer.innerHTML = "";
+            document.getElementById("sessionAccuracy").textContent = "Session Accuracy: Loading...";
+            document.getElementById("username").value = "";
+            document.getElementById("password").value = "";
+        }
+
+        function clearGlowEffects() {
+            document.querySelectorAll('.ball.glow').forEach(el => el.classList.remove('glow'));
+            document.querySelectorAll('.btn-big-small.glow').forEach(el => el.classList.remove('glow'));
+            document.querySelectorAll('.color-buttons .btn-color.glow').forEach(el => el.classList.remove('glow'));
+        }
+
+        function updateTimer() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            const timerElement = document.getElementById("timer");
+            timerElement.children[0].textContent = String(Math.floor(minutes / 10));
+            timerElement.children[1].textContent = String(minutes % 10);
+            timerElement.children[3].textContent = String(Math.floor(seconds / 10));
+            timerElement.children[4].textContent = String(seconds % 10);
+        }
+
+        function startTimer() {
+            if (!isAuthenticated) return;
+            clearGlowEffects();
+            clearInterval(timerInterval);
+            timeRemaining = selectedGameTime;
+            updateTimer();
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimer();
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    timeRemaining = 0;
+                    updateTimer();
+                    const periodValue = currentPeriodInput.value.trim();
+                    const parsedPeriod = parseInt(periodValue);
+                    if (periodValue && !isNaN(parsedPeriod) && parsedPeriod > 0 && !historicalResults.some(r => r.period === periodValue)) {
+                        console.log('Timer expired, generating result for period:', periodValue);
+                        determineResult();
+                        nextPeriod();
+                    } else {
+                        console.log('Timer expired, generating new period due to invalid/no period');
+                        nextPeriod();
+                    }
+                }
+            }, 1000);
+        }
+
+        function nextPeriod() {
+            if (!isAuthenticated) return;
+            let newPeriodNum;
+            const currentInputVal = currentPeriodInput.value.trim();
+            const parsedInputVal = parseInt(currentInputVal);
+
+            console.log('nextPeriod called. Current input:', currentInputVal, 'Parsed:', parsedInputVal);
+
+            let lastPeriodNum = 0;
+            if (historicalResults.length > 0) {
+                const lastPeriod = historicalResults[0].period;
+                const parsedLastPeriod = parseInt(lastPeriod);
+                lastPeriodNum = !isNaN(parsedLastPeriod) ? parsedLastPeriod : 0;
+                console.log('Last historical period:', lastPeriod, 'Parsed:', parsedLastPeriod);
+            }
+
+            if (!isNaN(parsedInputVal) && currentInputVal !== '' && parsedInputVal > 0) {
+                newPeriodNum = Math.max(parsedInputVal, lastPeriodNum) + 1;
+                console.log('Using incremented input or history:', newPeriodNum);
+            } else {
+                newPeriodNum = lastPeriodNum > 0 ? lastPeriodNum + 1 : 10000000 + Math.floor(Date.now() / 1000);
+                console.log('No valid input, using history or timestamp:', newPeriodNum);
+            }
+
+            while (historicalResults.some(result => result.period === newPeriodNum.toString())) {
+                newPeriodNum++;
+                console.log('Period conflict, incremented to:', newPeriodNum);
+            }
+
+            currentPeriodInput.value = newPeriodNum.toString();
+            currentPeriodInput.dispatchEvent(new Event('input'));
+            console.log('Updated period input to:', newPeriodNum);
+
+            startTimer();
+        }
+
+        function determineResult() {
+            if (!isAuthenticated) return;
+            try {
+                let randomNumber;
+                let isBig;
+                const allNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+                if (aiReverseMode && lastBigSmallPredictionMade !== null) {
+                    console.log("AI Reverse Mode Active. Last prediction was", lastBigSmallPredictionMade);
+                    aiModeIndicator.textContent = `AI Prediction: Reverse Mode (Predicting ${lastBigSmallPredictionMade === 'Big' ? 'Small' : 'Big'})`;
+                    aiModeIndicator.style.display = 'block';
+                    let targetRange = lastBigSmallPredictionMade === 'Big' ? [0, 1, 2, 3, 4] : [5, 6, 7, 8, 9];
+                    randomNumber = targetRange[Math.floor(Math.random() * targetRange.length)];
+                } else {
+                    const lastFewOutcomes = historicalResults.slice(0, 3).map(r => r.bigSmall);
+                    let bigCount = lastFewOutcomes.filter(s => s === 'Big').length;
+                    let smallCount = lastFewOutcomes.filter(s => s === 'Small').length;
+                    if (bigCount >= 2 && lastActualBigSmallOutcome === 'Big') {
+                        console.log("AI Normal Mode: Following Big trend.");
+                        aiModeIndicator.textContent = `AI Prediction: Trend Mode (Leaning Big)`;
+                        aiModeIndicator.style.display = 'block';
+                        randomNumber = Math.floor(Math.random() * 5) + 5;
+                    } else if (smallCount >= 2 && lastActualBigSmallOutcome === 'Small') {
+                        console.log("AI Normal Mode: Following Small trend.");
+                        aiModeIndicator.textContent = `AI Prediction: Trend Mode (Leaning Small)`;
+                        aiModeIndicator.style.display = 'block';
+                        randomNumber = Math.floor(Math.random() * 5);
+                    } else {
+                        console.log("AI Normal Mode: Random/Breaking trend.");
+                        aiModeIndicator.textContent = `AI Prediction: Random Mode`;
+                        aiModeIndicator.style.display = 'block';
+                        randomNumber = allNumbers[Math.floor(Math.random() * allNumbers.length)];
+                    }
+                }
+
+                isBig = randomNumber >= 5;
+                let resultColorText;
+                let resultColorClass;
+                if (randomNumber === 0) {
+                    resultColorText = 'Violet/Red';
+                    resultColorClass = 'violet';
+                } else if (randomNumber === 5) {
+                    resultColorText = 'Violet/Green';
+                    resultColorClass = 'violet';
+                } else if (randomNumber % 2 === 0) {
+                    resultColorText = 'Red';
+                    resultColorClass = 'red';
+                } else {
+                    resultColorText = 'Green';
+                    resultColorClass = 'green';
+                }
+
+                clearGlowEffects();
+                const resultBall = document.querySelector(`.number-buttons .ball[data-number="${randomNumber}"]`);
+                if (resultBall) resultBall.classList.add('glow');
+                const bigSmallBtn = document.querySelector(`.big-small .btn-big-small[data-type="${isBig ? 'big' : 'small'}"]`);
+                if (bigSmallBtn) bigSmallBtn.classList.add('glow');
+                const primaryColorButton = document.querySelector(`.color-buttons .btn-color.${resultColorClass}`);
+                if (primaryColorButton) primaryColorButton.classList.add('glow');
+                if (randomNumber === 0) {
+                    document.querySelector('.color-buttons .btn-color.red').classList.add('glow');
+                } else if (randomNumber === 5) {
+                    document.querySelector('.color-buttons .btn-color.green').classList.add('glow');
+                }
+                setTimeout(clearGlowEffects, 3000);
+
+                const newResult = {
+                    period: currentPeriodInput.value,
+                    number: randomNumber,
+                    bigSmall: isBig ? 'Big' : 'Small',
+                    colorText: resultColorText,
+                    colorClass: resultColorClass,
+                    userStatus: 'Pending'
+                };
+
+                historicalResults.unshift(newResult);
+                if (historicalResults.length > 50) historicalResults.pop();
+                updatePreviousResultsDisplay();
+                addResultToGameHistory(newResult);
+                addResultToMyHistory(newResult);
+                updateChartData();
+                lastBigSmallPredictionMade = newResult.bigSmall;
+                lastActualBigSmallOutcome = newResult.bigSmall;
+            } catch (error) {
+                console.error('Error determining result:', error);
+                alert('An error occurred while processing the result. Please try again.');
+            }
+        }
+
+        function switchHistoryView(viewId) {
+            if (!isAuthenticated) return;
+            document.querySelectorAll('.history-view-content').forEach(view => view.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            document.querySelectorAll('.history-tabs button').forEach(tab => tab.classList.remove('active'));
+            document.querySelector(`.history-tabs button[data-view="${viewId}"]`).classList.add('active');
+            if (viewId === 'chartView') updateChartData();
+        }
+
+        function updatePreviousResultsDisplay() {
+            if (!isAuthenticated) return;
+            previousResultsContainer.innerHTML = '';
+            historicalResults.slice(0, MAX_PREVIOUS_RESULTS_DISPLAY).forEach(result => {
+                const span = document.createElement('span');
+                span.classList.add('ball');
+                span.classList.add(result.number === 0 || result.number === 5 ? 'violet' : result.colorClass);
+                span.textContent = result.number;
+                previousResultsContainer.appendChild(span);
+            });
+        }
+
+        function addResultToGameHistory(resultData) {
+            if (!isAuthenticated) return;
+            if (gameHistoryTableBody.rows.length >= 20) gameHistoryTableBody.deleteRow(-1);
+            const newRow = gameHistoryTableBody.insertRow(0);
+            newRow.insertCell(0).textContent = resultData.period;
+            newRow.insertCell(1).textContent = resultData.number;
+            newRow.insertCell(2).textContent = resultData.bigSmall;
+            const colorCell = newRow.insertCell(3);
+            const colorDot = document.createElement('span');
+            colorDot.classList.add('color-indicator');
+            if (resultData.number === 0) colorDot.classList.add('zero-color');
+            else if (resultData.number === 5) colorDot.classList.add('five-color');
+            else colorDot.classList.add(resultData.colorClass);
+            colorCell.appendChild(colorDot);
+        }
+
+        function addResultToMyHistory(resultData) {
+            if (!isAuthenticated) return;
+            if (myHistoryTableBody.rows.length >= 20) myHistoryTableBody.deleteRow(-1);
+            const newRow = myHistoryTableBody.insertRow(0);
+            newRow.insertCell(0).textContent = resultData.period;
+            newRow.insertCell(1).textContent = resultData.number;
+            newRow.insertCell(2).textContent = resultData.bigSmall;
+            const colorCell = newRow.insertCell(3);
+            const colorDot = document.createElement('span');
+            colorDot.classList.add('color-indicator');
+            if (resultData.number === 0) colorDot.classList.add('zero-color');
+            else if (resultData.number === 5) colorDot.classList.add('five-color');
+            else colorDot.classList.add(resultData.colorClass);
+            colorCell.appendChild(colorDot);
+            const statusCell = newRow.insertCell(4);
+            const statusContainer = document.createElement('div');
+            statusContainer.classList.add('status-buttons-container');
+            const markButton = document.createElement('button');
+            markButton.classList.add('status-button', 'mark');
+            markButton.textContent = 'Mark Status';
+            const resultIndex = historicalResults.indexOf(resultData);
+            markButton.dataset.resultIndex = resultIndex;
+            markButton.addEventListener('click', function() {
+                const index = parseInt(this.dataset.resultIndex);
+                if (index >= 0 && historicalResults[index]) {
+                    this.style.display = 'none';
+                    const winButton = document.createElement('button');
+                    winButton.classList.add('status-button', 'win');
+                    winButton.textContent = 'W';
+                    winButton.addEventListener('click', () => updateMyHistoryStatus(index, 'W', statusContainer));
+                    const lossButton = document.createElement('button');
+                    lossButton.classList.add('status-button', 'loss');
+                    lossButton.textContent = 'L';
+                    lossButton.addEventListener('click', () => updateMyHistoryStatus(index, 'L', statusContainer));
+                    statusContainer.innerHTML = '';
+                    statusContainer.appendChild(winButton);
+                    statusContainer.appendChild(lossButton);
+                }
+            });
+            statusContainer.appendChild(markButton);
+            statusCell.appendChild(statusContainer);
+        }
+
+        function updateMyHistoryStatus(index, status, container) {
+            if (!isAuthenticated) return;
+            if (index >= 0 && historicalResults[index]) {
+                console.log('Updating status for index:', index, 'to:', status);
+                historicalResults[index].userStatus = status;
+                container.innerHTML = '';
+                const statusTextSpan = document.createElement('span');
+                statusTextSpan.classList.add('status-text', status);
+                statusTextSpan.textContent = status;
+                container.appendChild(statusTextSpan);
+                checkAIReverseMode();
+                updateSessionAccuracy();
+                determineResult();
+                nextPeriod();
+            } else {
+                console.error('Invalid index or missing result:', index);
+                alert('Error updating status. Please try again.');
+            }
+        }
+
+        function checkAIReverseMode() {
+            if (!isAuthenticated) return;
+            const markedResults = historicalResults.filter(r => r.userStatus === 'W' || r.userStatus === 'L');
+            if (markedResults.length >= 2) {
+                const lastMarkedStatus = markedResults[0].userStatus;
+                const secondLastMarkedStatus = markedResults[1].userStatus;
+                if (lastMarkedStatus === 'L' && secondLastMarkedStatus === 'L' && lastBigSmallPredictionMade !== null) {
+                    aiReverseMode = true;
+                    aiModeIndicator.textContent = `AI Prediction: Reverse Mode (Predicting ${lastBigSmallPredictionMade === 'Big' ? 'Small' : 'Big'})`;
+                    aiModeIndicator.style.display = 'block';
+                    console.log("AI Reverse Mode Activated due to 2 consecutive losses!");
+                } else {
+                    aiReverseMode = false;
+                    aiModeIndicator.style.display = 'none';
+                    console.log("AI Reverse Mode Deactivated.");
+                }
+            } else {
+                aiReverseMode = false;
+                aiModeIndicator.style.display = 'none';
+                console.log("AI Reverse Mode Deactivated (less than 2 marked results).");
+            }
+            if (!aiReverseMode) {
+                aiModeIndicator.textContent = `AI Prediction: Normal Mode`;
+                aiModeIndicator.style.display = 'block';
+            }
+        }
+
+        function updateChartData() {
+            if (!isAuthenticated) return;
+            const currentChartData = {
+                red: { count: 0, percent: 0 },
+                green: { count: 0, percent: 0 },
+                violet: { count: 0, percent: 0 },
+                big: { count: 0, percent: 0 },
+                small: { count: 0, percent: 0 },
+                totalGames: 0
+            };
+
+            historicalResults.slice(0, MAX_CHART_GAMES_CALC).forEach(result => {
+                if (result.number === 0) {
+                    currentChartData.violet.count++;
+                    currentChartData.red.count++;
+                } else if (result.number === 5) {
+                    currentChartData.violet.count++;
+                    currentChartData.green.count++;
+                } else if (result.colorClass === 'red') {
+                    currentChartData.red.count++;
+                } else if (result.colorClass === 'green') {
+                    currentChartData.green.count++;
+                } else if (result.colorClass === 'violet') {
+                    currentChartData.violet.count++;
+                }
+                if (result.bigSmall === 'Big') {
+                    currentChartData.big.count++;
+                } else {
+                    currentChartData.small.count++;
+                }
+                currentChartData.totalGames++;
+            });
+
+            if (currentChartData.totalGames > 0) {
+                const totalColorOutcomes = currentChartData.red.count + currentChartData.green.count + currentChartData.violet.count;
+                currentChartData.red.percent = totalColorOutcomes > 0 ? (currentChartData.red.count / totalColorOutcomes * 100).toFixed(1) : '0.0';
+                currentChartData.green.percent = totalColorOutcomes > 0 ? (currentChartData.green.count / totalColorOutcomes * 100).toFixed(1) : '0.0';
+                currentChartData.violet.percent = totalColorOutcomes > 0 ? (currentChartData.violet.count / totalColorOutcomes * 100).toFixed(1) : '0.0';
+                currentChartData.big.percent = (currentChartData.big.count / currentChartData.totalGames * 100).toFixed(1);
+                currentChartData.small.percent = (currentChartData.small.count / currentChartData.totalGames * 100).toFixed(1);
+            } else {
+                currentChartData.red.percent = '0.0';
+                currentChartData.green.percent = '0.0';
+                currentChartData.violet.percent = '0.0';
+                currentChartData.big.percent = '0.0';
+                currentChartData.small.percent = '0.0';
+            }
+
+            renderChart(currentChartData);
+        }
+
+        function renderChart(data) {
+            if (!isAuthenticated) return;
+            chartTableBody.innerHTML = '';
+            const dataToRender = [
+                { outcome: 'Red', count: data.red.count, percent: data.red.percent, class: 'red', type: 'color' },
+                { outcome: 'Green', count: data.green.count, percent: data.green.percent, class: 'green', type: 'color' },
+                { outcome: 'Violet', count: data.violet.count, percent: data.violet.percent, class: 'violet', type: 'color' },
+                { outcome: '', count: '', percent: '', type: 'spacer' },
+                { outcome: 'Big (5-9)', count: data.big.count, percent: data.big.percent, class: 'big', type: 'bs' },
+                { outcome: 'Small (0-4)', count: data.small.count, percent: data.small.percent, class: 'small', type: 'bs' }
+            ];
+
+            dataToRender.forEach(item => {
+                const row = chartTableBody.insertRow();
+                if (item.type === 'spacer') {
+                    const cell = row.insertCell(0);
+                    cell.colSpan = 3;
+                    cell.style.height = '10px';
+                    cell.style.backgroundColor = 'transparent';
+                } else {
+                    const outcomeCell = row.insertCell(0);
+                    if (item.type === 'color') {
+                        outcomeCell.innerHTML = `<span class="color-dot ${item.class}"></span>${item.outcome}`;
+                    } else if (item.type === 'bs') {
+                        outcomeCell.innerHTML = `<span class="big-small-icon ${item.class}">${item.class.charAt(0).toUpperCase()}</span> ${item.outcome}`;
+                    }
+                    row.insertCell(1).textContent = item.count;
+                    row.insertCell(2).textContent = `${item.percent}%`;
+                }
+            });
+
+            updateSessionAccuracy();
+        }
+
+        function updateSessionAccuracy() {
+            if (!isAuthenticated) return;
+            let wins = 0;
+            let losses = 0;
+            let pending = 0;
+            let totalMarked = 0;
+            historicalResults.forEach(result => {
+                if (result.userStatus === 'W') {
+                    wins++;
+                    totalMarked++;
+                } else if (result.userStatus === 'L') {
+                    losses++;
+                    totalMarked++;
+                } else {
+                    pending++;
+                }
+            });
+            const accuracy = totalMarked > 0 ? ((wins / totalMarked) * 100).toFixed(0) : 0;
+            const sessionAccuracyElement = document.querySelector('#chartView .session-accuracy');
+            if (sessionAccuracyElement) {
+                sessionAccuracyElement.textContent = `Session Accuracy: ${accuracy}% (W:${wins} L:${losses} P:${pending})`;
+            }
+        }
+
+        currentPeriodInput.addEventListener('keypress', function(e) {
+            if (!isAuthenticated) return;
+            if (e.key === 'Enter') {
+                const periodValue = this.value.trim();
+                const parsedPeriod = parseInt(periodValue);
+                console.log('Enter pressed. Period value:', periodValue, 'Parsed:', parsedPeriod);
+                if (periodValue && !isNaN(parsedPeriod) && parsedPeriod > 0) {
+                    if (historicalResults.some(result => result.period === periodValue)) {
+                        console.log('Duplicate period detected:', periodValue);
+                        alert('This period number already exists! Please enter a unique period.');
+                        return;
+                    }
+                    console.log('Valid period, generating result and advancing to next period');
+                    determineResult();
+                    nextPeriod();
+                } else {
+                    console.log('Invalid period input');
+                    alert('Please enter a valid, positive period number!');
+                }
+            }
+        });
+
+        currentPeriodInput.addEventListener('input', function() {
+            if (!isAuthenticated) return;
+            this.value = this.value.trim();
+        });
+
+        document.querySelectorAll('.game-options .option').forEach(option => {
+            option.addEventListener('click', function() {
+                if (!isAuthenticated) return;
+                document.querySelectorAll('.game-options .option').forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                selectedGameTime = parseInt(this.dataset.time);
+                wingoIntervalText.textContent = this.querySelector('span').textContent;
+                startTimer();
+            });
+        });
+
+        howToPlayBtn.addEventListener('click', () => {
+            if (!isAuthenticated) return;
+            howToPlayModal.style.display = 'block';
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            howToPlayModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target == howToPlayModal) {
+                howToPlayModal.style.display = 'none';
+            }
+        });
+
+        tabGameHistory.addEventListener('click', () => switchHistoryView('gameHistoryView'));
+        tabChart.addEventListener('click', () => switchHistoryView('chartView'));
+        tabMyHistory.addEventListener('click', () => switchHistoryView('myHistoryView'));
+
+        function initializeGame() {
+            if (!isAuthenticated) return;
+            currentPeriodInput.value = '';
+            switchHistoryView('gameHistoryView');
+            startTimer();
+            updateSessionAccuracy();
+            checkAIReverseMode();
+        }
+    </script>
+</body>
+</html>
