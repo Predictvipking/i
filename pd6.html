@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predictor v9.8 - AI Enhanced UI</title>
+    <title>Predictor v11.0 - Gemini AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -17,13 +17,14 @@
             height: 100%;
         }
 
-        ::-webkit-scrollbar {
-            display: none;
-        }
-        html, body, #main-content, .table-container {
+        ::-webkit-scrollbar { display: none; }
+        html, body, #main-content {
             scrollbar-width: none;
             -ms-overflow-style: none;
-            overflow: hidden;
+            overflow: auto;
+        }
+        .table-container {
+             overflow: auto;
         }
 
         .hidden { display: none !important; }
@@ -65,207 +66,110 @@
         .login-card h1 { font-size: 2rem; font-weight: 700; }
         .login-card p { font-size: 0.9rem; color: #A5B4FC; margin-bottom: 1.5rem; }
         .login-card input {
-            width: 100%;
-            padding: 0.75rem;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            color: #E0E7FF;
-            margin-bottom: 1rem;
-            font-size: 1rem;
+            width: 100%; padding: 0.75rem; background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px;
+            color: #E0E7FF; margin-bottom: 1rem; font-size: 1rem;
         }
         .login-card button {
-            width: 100%;
-            padding: 0.75rem;
-            background: #FF00FF;
-            color: #0F0C29;
-            font-weight: 700;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
+            width: 100%; padding: 0.75rem; background: #FF00FF; color: #0F0C29;
+            font-weight: 700; border: none; border-radius: 8px; cursor: pointer;
             transition: all 0.3s ease;
         }
         .login-card button:hover { box-shadow: 0 0 20px rgba(255, 0, 255, 0.6); }
         .error-message { color: #FF5555; font-size: 0.8rem; margin-top: 0.5rem; display: none; }
 
         #app-container {
-            display: flex;
-            justify-content: center;
-            height: 100vh;
+            display: flex; justify-content: center; height: 100vh;
             background: linear-gradient(45deg, #0F0C29, #302B63, #24243E);
-            padding: 0.5rem;
-            box-sizing: border-box;
+            padding: 0.5rem; box-sizing: border-box;
         }
 
         #main-content {
-            width: 100%;
-            max-width: 400px;
-            padding: 0;
-            overflow: hidden;
-            position: relative;
-            height: 100%;
+            width: 100%; max-width: 400px; padding: 0;
+            position: relative; height: 100%;
         }
 
         .app-title-container {
-            text-align: center;
-            margin-top: 0.25rem;
-            margin-bottom: 0.5rem;
+            text-align: center; margin-top: 0.25rem; margin-bottom: 0.5rem;
         }
-        .app-title-container h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #E0E7FF;
-            line-height: 1;
-        }
-        .app-title-container p {
-            font-size: 0.65rem;
-            color: #A5B4FC;
-            margin-top: 0.1rem;
-        }
-
-        #selector-and-logout-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
+        .app-title-container h1 { font-size: 2rem; font-weight: 700; color: #E0E7FF; line-height: 1; }
+        .app-title-container p { font-size: 0.65rem; color: #A5B4FC; margin-top: 0.1rem; }
 
         #game-mode-selector {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 16px;
-            padding: 0.3rem;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            flex-grow: 1;
+            background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px; padding: 0.3rem; backdrop-filter: blur(10px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3); overflow: hidden;
+            width: 100%; margin-bottom: 0.5rem;
         }
         #game-mode-tabs {
-            display: flex;
-            justify-content: space-around;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 12px;
-            overflow-x: auto;
-            margin-bottom: 0.1rem;
+            display: flex; justify-content: space-around; background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px; overflow-x: auto; margin-bottom: 0.1rem;
         }
         #game-mode-tabs button {
-            flex: 1;
-            padding: 0.4rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #A5B4FC;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
+            flex: 1; padding: 0.4rem; font-size: 0.75rem; font-weight: 600;
+            color: #A5B4FC; background: transparent; border: none; cursor: pointer;
+            transition: all 0.3s ease; text-transform: uppercase;
         }
         #game-mode-tabs button.active {
-            background: #FF00FF;
-            color: #0F0C29;
+            background: #FF00FF; color: #0F0C29;
             box-shadow: inset 0 0 8px rgba(255, 0, 255, 0.7);
-            border-radius: 10px;
-            margin: 0.05rem;
+            border-radius: 10px; margin: 0.05rem;
         }
 
-        #interval-selector-container {
-            padding: 0.05rem;
-            text-align: center;
-        }
+        #interval-selector-container { padding: 0.05rem; text-align: center; }
         .mode-toggle {
-            margin: 0 auto;
-            border-radius: 9999px;
-            background: rgba(0, 0, 0, 0.2);
+            margin: 0 auto; border-radius: 9999px; background: rgba(0, 0, 0, 0.2);
             padding: 0.1rem;
         }
         .mode-toggle button {
-            padding: 0.2rem 0.7rem;
-            font-size: 0.65rem;
-            font-weight: 500;
-            border-radius: 9999px;
-            transition: all 0.2s ease;
-            color: #A5B4FC;
+            padding: 0.2rem 0.7rem; font-size: 0.65rem; font-weight: 500;
+            border-radius: 9999px; transition: all 0.2s ease; color: #A5B4FC;
         }
         .mode-toggle button.active {
-            background: #FF00FF;
-            color: #0F0C29;
+            background: #FF00FF; color: #0F0C29;
             box-shadow: 0 0 10px rgba(255, 0, 255, 0.6);
         }
 
-        #logout-icon {
-            background: rgba(255, 68, 68, 0.2);
-            border: 1px solid #FF0000;
-            border-radius: 12px;
-            width: 45px;
-            height: 45px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease-in-out;
-            box-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
-            flex-shrink: 0;
-        }
-        #logout-icon:hover {
-            background: rgba(255, 0, 0, 0.5);
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
-            transform: scale(1.1);
-        }
-        #logout-icon svg {
-            width: 26px;
-            height: 26px;
-            color: #E0E7FF;
-            filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.9));
-        }
-
         .main-card {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 16px;
-            padding: 0.5rem;
-            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px; padding: 0.5rem; margin-bottom: 0.5rem;
             backdrop-filter: blur(10px);
         }
-        .info-grid {
-            display: grid;
-            grid-gap: 0.2rem;
-            padding: 0.3rem;
-        }
+        .info-grid { display: grid; grid-gap: 0.2rem; padding: 0.3rem; }
         .info-line {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.3rem 0.4rem;
-            background: rgba(255, 255, 255, 0.05);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.3rem 0.4rem; background: rgba(255, 255, 255, 0.05);
             border-radius: 8px;
         }
-        .info-label {
-            font-size: 0.85rem;
-            color: #A5B4FC;
-            display: flex;
-            align-items: center;
+        .info-label { font-size: 0.85rem; color: #A5B4FC; display: flex; align-items: center; }
+        .info-label svg { width: 1rem; height: 1rem; margin-right: 0.3rem; color: #FF00FF; }
+        .info-value { font-size: 1rem; font-weight: 600; color: #E0E7FF; }
+        #prediction-text .color-number { border: none; }
+
+        .toggle-switch-container {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.3rem 0.4rem; background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px; margin: 0.5rem 0.3rem 0.3rem;
         }
-        .info-label svg {
-            width: 1rem;
-            height: 1rem;
-            margin-right: 0.3rem;
-            color: #FF00FF;
+        .toggle-switch-label { font-size: 0.85rem; font-weight: 600; color: #A5B4FC; }
+        .toggle-switch {
+            position: relative; display: inline-block; width: 44px; height: 24px;
+            cursor: pointer;
         }
-        .info-value {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #E0E7FF;
+        .toggle-switch-handle {
+            position: absolute; top: 2px; left: 2px; width: 20px; height: 20px;
+            background-color: #E0E7FF; border-radius: 50%; transition: transform 0.3s ease;
         }
-        #prediction-text .color-number {
-            border: none;
+        .toggle-switch-bg {
+            position: absolute; width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.2); border-radius: 12px;
+            transition: background-color 0.3s ease;
         }
+        .toggle-switch.active .toggle-switch-bg { background-color: #FF00FF; }
+        .toggle-switch.active .toggle-switch-handle { transform: translateX(20px); }
 
         .ai-sparkle-icon {
-            width: 0.9rem;
-            height: 0.9rem;
-            color: #FFD700;
-            margin-left: 0.3rem;
+            width: 0.9rem; height: 0.9rem; color: #FFD700; margin-left: 0.3rem;
             animation: neonSparkle 1.2s infinite alternate;
         }
         @keyframes neonSparkle {
@@ -274,28 +178,15 @@
         }
 
         .chart-stats-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 0.3rem;
-            margin-bottom: 0.5rem;
-            padding: 0 0.3rem;
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.3rem;
+            margin-bottom: 0.5rem; padding: 0 0.3rem;
         }
         .stat-item {
-            background: rgba(255, 255, 255, 0.08);
-            padding: 0.3rem;
-            border-radius: 8px;
-            text-align: center;
+            background: rgba(255, 255, 255, 0.08); padding: 0.3rem;
+            border-radius: 8px; text-align: center;
         }
-        .stat-label {
-            font-size: 0.55rem;
-            color: #A5B4FC;
-            margin-bottom: 0.05rem;
-        }
-        .stat-value {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: #E0E7FF;
-        }
+        .stat-label { font-size: 0.55rem; color: #A5B4FC; margin-bottom: 0.05rem; }
+        .stat-value { font-size: 0.75rem; font-weight: 700; color: #E0E7FF; }
         .stat-value.win { color: #00FF7F; }
         .stat-value.loss { color: #FF5555; }
         .stat-value.partial { color: #FFAA00; }
@@ -304,49 +195,31 @@
         .stat-value.revenue.negative { color: #FF5555; }
 
         .table-container {
-            max-height: 150px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 8px;
+            max-height: 200px;
+            border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px;
             position: relative;
-            overflow: hidden;
         }
         table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.6rem;
-            min-width: 300px;
-            table-layout: fixed;
+            width: 100%; border-collapse: collapse; font-size: 0.7rem;
+            min-width: 350px; table-layout: fixed;
         }
         th, td {
-            padding: 0.15rem 0.25rem;
-            text-align: center;
+            padding: 0.25rem 0.3rem; text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         th {
-            background: rgba(25, 22, 50, 0.95);
-            text-transform: uppercase;
-            font-size: 0.5rem;
-            color: #A5B4FC;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+            background: rgba(25, 22, 50, 0.95); text-transform: uppercase;
+            font-size: 0.6rem; color: #A5B4FC; position: sticky; top: 0;
+            z-index: 10; box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.1);
         }
-        th:nth-child(1), td:nth-child(1) { width: 20%; }
+        th:nth-child(1), td:nth-child(1) { width: 35%; }
         th:nth-child(2), td:nth-child(2) { width: 30%; }
-        th:nth-child(3), td:nth-child(3) { width: 30%; }
-        th:nth-child(4), td:nth-child(4) { width: 20%; }
+        th:nth-child(3), td:nth-child(3) { width: 20%; }
+        th:nth-child(4), td:nth-child(4) { width: 15%; }
         .status-pill {
-            padding: 2px 6px;
-            border-radius: 9999px;
-            font-size: 0.5rem;
-            font-weight: 600;
-            display: inline-block;
-            width: 100%;
-            text-align: center;
+            padding: 2px 6px; border-radius: 9999px; font-size: 0.6rem;
+            font-weight: 600; display: inline-block; width: 100%; text-align: center;
         }
 
         .result-red { color: #FF5555; }
@@ -354,13 +227,50 @@
         .result-violet { color: #D81BFF; }
         .result-big { color: #FFAA00; }
         .result-small { color: #00D4FF; }
+        
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .history-header h2 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .header-buttons {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        #logout-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        #logout-button:hover {
+            background: rgba(255, 0, 255, 0.3);
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+        }
+        #logout-button svg {
+            width: 18px;
+            height: 18px;
+            color: #E0E7FF;
+        }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
         <div class="login-card">
-            <h1 class="text-indigo-100">Predictor <span class="highlight-fuchsia">v9.8</span></h1>
+            <h1 class="text-indigo-100">Predictor <span class="highlight-fuchsia">v11.0</span></h1>
             <p>Please enter your access key to continue</p>
             <input type="password" id="access-key-input" placeholder="••••••••" aria-label="Access Key">
             <p id="error-message" class="error-message" role="alert">Invalid Access Key!</p>
@@ -371,35 +281,35 @@
     <div id="app-container" class="hidden">
         <main id="main-content">
             <div class="app-title-container">
-                <h1 class="text-indigo-100">Predictor <span class="highlight-fuchsia">v9.8</span></h1>
-                <p class="text-indigo-300">Advanced AI for Wingo & TRX</p>
+                <h1 class="text-indigo-100">Predictor <span class="highlight-fuchsia">v11.0</span></h1>
+                <p class="text-indigo-300">Gemini AI for Wingo & TRX</p>
             </div>
 
-            <div id="selector-and-logout-wrapper">
-                <div id="game-mode-selector">
-                    <div id="game-mode-tabs">
-                        <button id="tab-wingo" onclick="selectGameType('wingo')">Wingo</button>
-                        <button id="tab-trx" onclick="selectGameType('trx')">TRX Wingo</button>
-                    </div>
-                    <div id="interval-selector-container">
-                        <div id="wingo-intervals" class="mode-toggle hidden">
-                            <button id="btn-wingo-30s" onclick="selectMode('wingo-30s')">30s</button>
-                            <button id="btn-wingo-1m" onclick="selectMode('wingo-1m')">1m</button>
-                        </div>
-                        <div id="trx-intervals" class="mode-toggle hidden">
-                            <button id="btn-trx-1m" onclick="selectMode('trx-1m')">1 Min</button>
-                            <button id="btn-trx-3m" onclick="selectMode('trx-3m')">3 Min</button>
-                        </div>
-                    </div>
+            <div id="game-mode-selector">
+                <div id="game-mode-tabs">
+                    <button id="tab-wingo" onclick="selectGameType('wingo')">Wingo</button>
+                    <button id="tab-trx" onclick="selectGameType('trx')">TRX Wingo</button>
                 </div>
-                <div id="logout-icon" onclick="handleLogout()" aria-label="Logout">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path fill-rule="evenodd" d="M7.5 3.75A1.5 1.5 0 006 5.25v13.5a1.5 1.5 0 001.5 1.5h6a1.5 1.5 0 001.5-1.5V15a.75.75 0 011.5 0v3.75a3 3 0 01-3 3h-6a3 3 0 01-3-3V5.25a3 3 0 013-3h6a3 3 0 013 3V9a.75.75 0 01-1.5 0V5.25a1.5 1.5 0 00-1.5-1.5h-6zm10.72 4.72a.75.75 0 011.06 0l3 3a.75.75 0 010 1.06l-3 3a.75.75 0 11-1.06-1.06l1.72-1.72H9a.75.75 0 010-1.5h10.94l-1.72-1.72a.75.75 0 010-1.06z" clip-rule="evenodd" />
-                    </svg>
+                <div id="interval-selector-container">
+                    <div id="wingo-intervals" class="mode-toggle hidden">
+                        <button id="btn-wingo-30s" onclick="selectMode('wingo-30s')">30s</button>
+                        <button id="btn-wingo-1m" onclick="selectMode('wingo-1m')">1m</button>
+                    </div>
+                    <div id="trx-intervals" class="mode-toggle hidden">
+                        <button id="btn-trx-1m" onclick="selectMode('trx-1m')">1 Min</button>
+                        <button id="btn-trx-3m" onclick="selectMode('trx-3m')">3 Min</button>
+                    </div>
                 </div>
             </div>
 
             <div class="main-card">
+                <div class="toggle-switch-container">
+                    <span class="toggle-switch-label">Reverse Pattern</span>
+                    <div id="reverse-pattern-switch" class="toggle-switch">
+                        <div class="toggle-switch-bg"></div>
+                        <div class="toggle-switch-handle"></div>
+                    </div>
+                </div>
                 <div class="info-grid">
                     <div class="info-line"><span class="info-label"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>Period</span><p id="period" class="info-value">...</p></div>
                     <div class="info-line"><span class="info-label"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Timer</span><p id="timer" class="info-value text-red-500 font-bold text-base">--:--</p></div>
@@ -413,7 +323,17 @@
                     <div class="stat-item"><div class="stat-label">Accuracy</div><div id="chart-accuracy" class="stat-value accuracy">0%</div></div>
                     <div class="stat-item"><div class="stat-label">Revenue</div><div id="chart-revenue" class="stat-value revenue">0</div></div>
                 </div>
-                <div class="flex justify-between items-center mb-2"><h2 class="text-base font-semibold">Prediction History</h2><button id="clear-button" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-md text-xs">Clear</button></div>
+                <div class="history-header">
+                    <h2>Prediction History</h2>
+                    <div class="header-buttons">
+                        <button id="clear-button" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-md text-xs">Clear</button>
+                        <button id="logout-button" onclick="handleLogout()" aria-label="Logout">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path fill-rule="evenodd" d="M7.5 3.75A1.5 1.5 0 006 5.25v13.5a1.5 1.5 0 001.5 1.5h6a1.5 1.5 0 001.5-1.5V15a.75.75 0 011.5 0v3.75a3 3 0 01-3 3h-6a3 3 0 01-3-3V5.25a3 3 0 013-3h6a3 3 0 013 3V9a.75.75 0 01-1.5 0V5.25a1.5 1.5 0 00-1.5-1.5h-6zm10.72 4.72a.75.75 0 011.06 0l3 3a.75.75 0 010 1.06l-3 3a.75.75 0 11-1.06-1.06l1.72-1.72H9a.75.75 0 010-1.5h10.94l-1.72-1.72a.75.75 0 010-1.06z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
                 <div class="table-container"><table><thead><tr><th>Period</th><th>Prediction</th><th>Result</th><th>Status</th></tr></thead><tbody id="predictions-table"></tbody></table></div>
             </div>
         </main>
@@ -427,9 +347,8 @@
         accessKeyInput: document.getElementById('access-key-input'),
         loginButton: document.getElementById('login-button'),
         errorMessage: document.getElementById('error-message'),
-        logoutIcon: document.getElementById('logout-icon'),
+        logoutButton: document.getElementById('logout-button'),
         gameModeSelector: document.getElementById('game-mode-selector'),
-        gameModeTabs: document.getElementById('game-mode-tabs'),
         tabWingo: document.getElementById('tab-wingo'),
         tabTrx: document.getElementById('tab-trx'),
         wingoIntervals: document.getElementById('wingo-intervals'),
@@ -449,6 +368,7 @@
         btnWingo1m: document.getElementById('btn-wingo-1m'),
         btnTrx1m: document.getElementById('btn-trx-1m'),
         btnTrx3m: document.getElementById('btn-trx-3m'),
+        reversePatternSwitch: document.getElementById('reverse-pattern-switch'),
     };
     const ACCESS_KEY = "Kingvip@1990$";
     let masterInterval;
@@ -459,8 +379,9 @@
         history: [],
         predictions: [],
         currentPeriod: null,
-        lastPredictionLost: false,
-        stats: { totalWins: 0, totalLosses: 0, totalPartial: 0, revenue: 0 }
+        isReversePattern: false,
+        stats: { totalWins: 0, totalLosses: 0, totalPartial: 0, revenue: 0 },
+        consecutiveLosses: 0,
     };
     let state = {
         'wingo-30s': JSON.parse(JSON.stringify(initialStateTemplate)),
@@ -469,7 +390,7 @@
         'trx-3m': JSON.parse(JSON.stringify(initialStateTemplate))
     };
 
-    // --- Debounced Save State ---
+    // --- State Management ---
     let saveStateTimeout;
     function debounceSaveState() {
         clearTimeout(saveStateTimeout);
@@ -478,37 +399,30 @@
 
     function saveState() {
         try {
-            localStorage.setItem('predictorStateV9_8', JSON.stringify(state));
-        } catch (e) {
-            console.warn('localStorage unavailable; using in-memory state:', e);
-        }
+            localStorage.setItem('predictorStateV11_0', JSON.stringify(state));
+        } catch (e) { console.warn('localStorage unavailable:', e); }
     }
 
     function loadState() {
         try {
-            const savedState = localStorage.getItem('predictorStateV9_8');
+            const savedState = localStorage.getItem('predictorStateV11_0');
             if (savedState) {
                 const parsedState = JSON.parse(savedState);
                 for (const mode in state) {
                     if (parsedState[mode]) {
-                        state[mode] = { ...state[mode], ...parsedState[mode] };
-                        if (parsedState[mode].stats) {
-                            state[mode].stats = { ...initialStateTemplate.stats, ...parsedState[mode].stats };
-                        }
+                        state[mode] = { ...JSON.parse(JSON.stringify(initialStateTemplate)), ...parsedState[mode] };
                     }
                 }
             }
         } catch (e) {
-            console.warn('Failed to load state from localStorage; initializing new state:', e);
-            localStorage.removeItem('predictorStateV9_8');
+            console.warn('Failed to load state:', e);
+            localStorage.removeItem('predictorStateV11_0');
         }
     }
 
-    // --- Login and Game Type Selection ---
+    // --- Auth & Navigation ---
     function handleLogin() {
-        localStorage.removeItem('isLoggedIn');
-        const inputValue = elements.accessKeyInput.value.trim();
-        if (inputValue === ACCESS_KEY) {
+        if (elements.accessKeyInput.value.trim() === ACCESS_KEY) {
             localStorage.setItem('isLoggedIn', 'true');
             elements.errorMessage.style.display = 'none';
             requestAnimationFrame(showApp);
@@ -524,14 +438,9 @@
         elements.appContainer.classList.add('hidden');
         elements.loginScreen.classList.remove('hidden');
         elements.accessKeyInput.value = '';
-        elements.errorMessage.style.display = 'none';
     }
 
     function showApp() {
-        if (!elements.loginScreen || !elements.appContainer) {
-            console.error('Required DOM elements are missing.');
-            return;
-        }
         elements.loginScreen.classList.add('hidden');
         elements.appContainer.classList.remove('hidden');
         loadState();
@@ -542,39 +451,32 @@
         clearInterval(masterInterval);
         currentMode = null;
         currentGameType = gameType;
-
         elements.tabWingo.classList.toggle('active', gameType === 'wingo');
         elements.tabTrx.classList.toggle('active', gameType === 'trx');
-
         elements.wingoIntervals.classList.toggle('hidden', gameType !== 'wingo');
         elements.trxIntervals.classList.toggle('hidden', gameType !== 'trx');
-
         masterClock.debounce = {};
-
         if (gameType === 'wingo') selectMode('wingo-30s');
         else selectMode('trx-1m');
     }
 
-    // --- Core Game Logic ---
     function selectMode(mode) {
         if (currentMode === mode) return;
         clearInterval(masterInterval);
         currentMode = mode;
-
         [elements.btnWingo30s, elements.btnWingo1m, elements.btnTrx1m, elements.btnTrx3m].forEach(btn => {
             if (btn) btn.classList.remove('active');
         });
         const btn = document.getElementById(`btn-${mode}`);
         if (btn) btn.classList.add('active');
-
         render();
         gameLoop();
         masterInterval = setInterval(masterClock, 1000);
     }
 
+    // --- UI Rendering ---
     function getResultFromNumber(num) {
-        const result = { number: num, bigSmall: '', color: '' };
-        result.bigSmall = num >= 5 ? 'Big' : 'Small';
+        const result = { number: num, bigSmall: num >= 5 ? 'Big' : 'Small', color: '' };
         if (num === 0) result.color = 'Red+Violet';
         else if (num === 5) result.color = 'Green+Violet';
         else if ([1, 3, 7, 9].includes(num)) result.color = 'Green';
@@ -583,49 +485,35 @@
     }
 
     function renderResultInHTML(result) {
-        if (!result || typeof result !== 'object') return '...';
+        if (!result) return '...';
         const { number, bigSmall, color } = result;
-        if (number === undefined || bigSmall === undefined || color === undefined) return '...';
-
-        let colorText = color;
-        if (color === 'Red+Violet') {
-            colorText = `<span class="result-red">Red</span><span class="result-violet">+Violet</span>`;
-        } else if (color === 'Green+Violet') {
-            colorText = `<span class="result-green">Green</span><span class="result-violet">+Violet</span>`;
-        } else {
-            colorText = `<span class="result-${color.toLowerCase()}">${color}</span>`;
-        }
-
-        return `<span class="color-number">${number}</span>, <span class="result-${bigSmall.toLowerCase()}">${bigSmall}</span> ${colorText}`;
+        let colorText = `<span class="result-${color.toLowerCase()}">${color}</span>`;
+        if (color === 'Red+Violet') colorText = `<span class="result-red">Red</span><span class="result-violet">+Violet</span>`;
+        else if (color === 'Green+Violet') colorText = `<span class="result-green">Green</span><span class="result-violet">+Violet</span>`;
+        return `<span class="color-number">${number}</span>, <span class="result-${bigSmall.toLowerCase()}">${bigSmall}</span>, ${colorText}`;
     }
 
     function render() {
         if (!currentMode) return;
         const activeState = state[currentMode];
-
         elements.period.textContent = activeState.currentPeriod || '...';
-
+        elements.reversePatternSwitch.classList.toggle('active', activeState.isReversePattern);
         const latestPrediction = activeState.predictions[activeState.predictions.length - 1];
         elements.predictionText.innerHTML = latestPrediction ? renderResultInHTML(latestPrediction.prediction) : '...';
-
         elements.insightText.textContent = latestPrediction ? latestPrediction.strategy : 'Awaiting data...';
-
         elements.chartTotalWins.textContent = activeState.stats.totalWins;
         elements.chartTotalLosses.textContent = activeState.stats.totalLosses;
         elements.chartTotalPartial.textContent = activeState.stats.totalPartial;
-        const totalPredictions = activeState.stats.totalWins + activeState.stats.totalLosses + activeState.stats.totalPartial;
-        elements.chartAccuracy.textContent = totalPredictions > 0 ? 
-            `${Math.round((activeState.stats.totalWins / totalPredictions) * 100)}%` : '0%';
+        const totalGames = activeState.stats.totalWins + activeState.stats.totalLosses;
+        elements.chartAccuracy.textContent = totalGames > 0 ? `${Math.round((activeState.stats.totalWins / totalGames) * 100)}%` : '0%';
         elements.chartRevenue.textContent = activeState.stats.revenue.toFixed(2);
         elements.chartRevenue.classList.toggle('negative', activeState.stats.revenue < 0);
-
         elements.predictionsTable.innerHTML = '';
-        activeState.predictions.slice().reverse().slice(0, 10).forEach(pred => {
+        activeState.predictions.slice().reverse().slice(0, 20).forEach(pred => {
             const row = document.createElement('tr');
             const result = activeState.history.find(h => h.period === pred.period);
-            const shortPeriod = pred.period.slice(-5);
             row.innerHTML = `
-                <td>${shortPeriod}</td>
+                <td>${pred.period}</td>
                 <td>${renderResultInHTML(pred.prediction)}</td>
                 <td>${result ? renderResultInHTML(result) : 'Pending'}</td>
                 <td><span class="status-pill status-${pred.status.toLowerCase()}">${pred.status}</span></td>
@@ -634,213 +522,235 @@
         });
     }
 
-    // --- Wingo Period Generation (Unchanged) ---
+    // --- Period Generation ---
     function generateWingoPeriodNumber(mode) { 
         const now = new Date(); 
         const dateStr = now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
         const istOffsetMinutes = 330;
-        const currentUtcTime = now.getTime() + (now.getTimezoneOffset() * 60 * 1000);
-        const istTime = new Date(currentUtcTime + (istOffsetMinutes * 60 * 1000));
+        const istTime = new Date(now.getTime() + (istOffsetMinutes * 60 * 1000) + (now.getTimezoneOffset() * 60 * 1000));
         const h = istTime.getHours(), m = istTime.getMinutes(), s = istTime.getSeconds();
         const startH = 5, startM = 30;
         let elapsedS = (h * 3600 + m * 60 + s) - (startH * 3600 + startM * 60);
-        if (elapsedS < 0) {
-            elapsedS += 24 * 3600;
-        }
-
-        if (mode === 'wingo-1m') {
-            const periodCounter = Math.floor(elapsedS / 60) + 1;
-            return `${dateStr}10001${String(periodCounter).padStart(4, '0')}`;
-        } else {
-            const periodCounter = Math.floor(elapsedS / 30) + 1;
-            return `${dateStr}100005${String(periodCounter).padStart(4, '0')}`;
-        }
+        if (elapsedS < 0) elapsedS += 24 * 3600;
+        const periodDuration = mode === 'wingo-1m' ? 60 : 30;
+        const periodCounter = Math.floor(elapsedS / periodDuration) + 1;
+        const suffix = mode === 'wingo-1m' ? `10001${String(periodCounter).padStart(4, '0')}` : `100005${String(periodCounter).padStart(4, '0')}`;
+        return dateStr + suffix;
     }
 
-    // --- Modified TRX Period Generation ---
     function generateTrxPeriodNumber(mode) {
         const now = new Date();
         const dateStr = now.getUTCFullYear() + String(now.getUTCMonth() + 1).padStart(2, '0') + String(now.getUTCDate()).padStart(2, '0');
         const totalMinutesTodayUTC = (now.getUTCHours() * 60) + now.getUTCMinutes();
         if (mode === 'trx-1m') {
-            const offset = 10001; // Matches 10956 at 955 minutes
-            const periodCounter = totalMinutesTodayUTC + offset;
-            return `${dateStr}1030${String(periodCounter).padStart(5, '0')}`;
+            return `${dateStr}1030${String(totalMinutesTodayUTC + 10001).padStart(5, '0')}`;
         } else {
-            const offset = 20001; // Matches 20319 at 955 minutes
-            const periodCounter = Math.floor(totalMinutesTodayUTC / 3) + offset;
-            return `${dateStr}1030${String(periodCounter).padStart(5, '0')}`;
+            return `${dateStr}1030${String(Math.floor(totalMinutesTodayUTC / 3) + 20001).padStart(5, '0')}`;
         }
     }
 
-    function runPredictionEngine(history) {
-        if (!Array.isArray(history) || history.length === 0) {
-            return { prediction: getResultFromNumber(Math.floor(Math.random() * 10)), strategy: 'Initializing...' };
+    // --- Gemini AI Prediction Engine ---
+    async function getAIPrediction(history) {
+        const schema = {
+            type: "OBJECT",
+            properties: {
+                "color": { "type": "STRING", "enum": ["Red", "Green"] },
+                "bigSmall": { "type": "STRING", "enum": ["Big", "Small"] }
+            },
+            required: ["color", "bigSmall"]
+        };
+
+        const historyForPrompt = history.slice(-10).map(h => ({ number: h.number, color: h.color.replace('+Violet', ''), size: h.bigSmall }));
+        const prompt = `You are an expert Wingo game analyst. Based on the following recent game history (most recent is last), predict the color and size for the next round. Provide your prediction in JSON format. History: ${JSON.stringify(historyForPrompt)}`;
+        
+        try {
+            let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+            const payload = {
+                contents: chatHistory,
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: schema
+                }
+            };
+            const apiKey = ""; // API key is handled by the environment
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                console.error("API Error Response:", await response.text());
+                return null;
+            }
+
+            const result = await response.json();
+            if (result.candidates && result.candidates.length > 0 &&
+                result.candidates[0].content && result.candidates[0].content.parts &&
+                result.candidates[0].content.parts.length > 0) {
+                const jsonText = result.candidates[0].content.parts[0].text;
+                return JSON.parse(jsonText);
+            }
+            return null;
+        } catch (error) {
+            console.error("Error fetching AI prediction:", error);
+            return null;
         }
-        if (history.length < 3) {
+    }
+
+
+    async function runPredictionEngine(history) {
+        const activeState = state[currentMode];
+        if (history.length < 5) {
             return { prediction: getResultFromNumber(Math.floor(Math.random() * 10)), strategy: 'Collecting data...' };
         }
-        const lastResult = history[history.length - 1];
-        if (!lastResult || !lastResult.color || !lastResult.bigSmall) {
-            return { prediction: getResultFromNumber(Math.floor(Math.random() * 10)), strategy: 'Error in history data' };
-        }
 
-        const lastBaseColor = lastResult.color.replace('+Violet', '');
-        const lastBigSmall = lastResult.bigSmall;
+        elements.insightText.textContent = 'AI is thinking...';
+        const aiResult = await getAIPrediction(history);
+        
         let predictedColor, predictedBigSmall, strategy;
 
-        const colorStreak = history.slice(-3).every(h => h.color && h.color.replace('+Violet', '') === lastBaseColor);
-        predictedColor = (colorStreak && Math.random() < 0.7) ? lastBaseColor : (lastBaseColor === 'Red' ? 'Green' : 'Red');
+        if (aiResult && aiResult.color && aiResult.bigSmall) {
+            predictedColor = aiResult.color;
+            predictedBigSmall = aiResult.bigSmall;
+            strategy = "Gemini AI Analysis";
+        } else {
+            // Fallback to old logic if AI fails
+            const lastResult = history[history.length - 1];
+            predictedColor = lastResult.color.includes('Red') ? 'Green' : 'Red';
+            predictedBigSmall = lastResult.bigSmall === 'Big' ? 'Small' : 'Big';
+            strategy = "Fallback Logic";
+        }
+        
+        // Reverse logic if toggled
+        if (activeState.isReversePattern) {
+            predictedColor = predictedColor === 'Red' ? 'Green' : 'Red';
+            predictedBigSmall = predictedBigSmall === 'Big' ? 'Small' : 'Big';
+            strategy += " (Reversed)";
+        }
 
-        const sizeStreak = history.slice(-3).every(h => h.bigSmall === lastBigSmall);
-        predictedBigSmall = (sizeStreak && Math.random() < 0.7) ? lastBigSmall : (lastBigSmall === 'Big' ? 'Small' : 'Big');
-
-        strategy = state[currentMode].lastPredictionLost ? "Loss Recovery" : "Trend Analysis";
-        if (state[currentMode].lastPredictionLost) predictedColor = lastBaseColor === 'Red' ? 'Green' : 'Red';
-        state[currentMode].lastPredictionLost = false;
-
-        let possibleNumbers = [];
+        // Find a matching number
+        const possibleNumbers = [];
         for (let i = 0; i <= 9; i++) {
             const res = getResultFromNumber(i);
-            if (res.bigSmall === predictedBigSmall && res.color.replace('+Violet', '') === predictedColor) {
+            if (res.bigSmall === predictedBigSmall && res.color.includes(predictedColor)) {
                 possibleNumbers.push(i);
             }
         }
-
-        const predictedNumber = possibleNumbers.length > 0 ? 
-            possibleNumbers[Math.floor(Math.random() * possibleNumbers.length)] : 
-            Math.floor(Math.random() * 10);
+        
+        const predictedNumber = possibleNumbers.length > 0 ? possibleNumbers[Math.floor(Math.random() * possibleNumbers.length)] : Math.floor(Math.random() * 10);
         return { prediction: getResultFromNumber(predictedNumber), strategy };
     }
 
+    // --- Game Simulation & Stats ---
     function updateStats(actualResult) {
-        if (!currentMode || !actualResult || !actualResult.period) return;
+        if (!currentMode || !actualResult) return;
         const p = state[currentMode].predictions.find(pred => pred.period === actualResult.period);
         if (!p || p.status !== 'Pending') return;
 
-        const colorMatch = p.prediction.color.replace('+Violet', '') === actualResult.color.replace('+Violet', '');
+        const predColor = p.prediction.color.replace('+Violet', '');
+        const actualColor = actualResult.color.replace('+Violet', '');
+        const colorMatch = predColor === actualColor;
         const sizeMatch = p.prediction.bigSmall === actualResult.bigSmall;
-        let status = 'Loss', revenueChange = -1;
-        state[currentMode].lastPredictionLost = true;
+        let revenueChange = -1;
 
         if (p.prediction.number === actualResult.number) {
-            status = 'Win';
+            p.status = 'Win';
             revenueChange = 8;
-            state[currentMode].lastPredictionLost = false;
         } else if (colorMatch && sizeMatch) {
-            status = 'Win';
-            revenueChange = 2;
-            state[currentMode].lastPredictionLost = false;
+            p.status = 'Win';
+            revenueChange = 1;
         } else if (colorMatch || sizeMatch) {
-            status = 'Partial';
-            revenueChange = 0.5;
+            p.status = 'Partial';
+            revenueChange = -0.5;
+        } else {
+            p.status = 'Loss';
         }
 
-        p.status = status;
-        if (status === 'Win') state[currentMode].stats.totalWins++;
-        else if (status === 'Partial') state[currentMode].stats.totalPartial++;
-        else state[currentMode].stats.totalLosses++;
-        state[currentMode].stats.revenue += revenueChange;
+        const activeState = state[currentMode];
+        if (p.status === 'Win') {
+            activeState.stats.totalWins++;
+        } else if (p.status === 'Partial') {
+            activeState.stats.totalPartial++;
+        } else {
+            activeState.stats.totalLosses++;
+        }
+        activeState.stats.revenue += revenueChange;
         debounceSaveState();
     }
 
-    function gameLoop() {
+    async function gameLoop() {
         if (!currentMode) return;
         const activeState = state[currentMode];
 
         if (activeState.currentPeriod) {
-            const resultExistsInHistory = activeState.history.some(h => h.period === activeState.currentPeriod);
-            if (!resultExistsInHistory) {
+            const resultExists = activeState.history.some(h => h.period === activeState.currentPeriod);
+            if (!resultExists) {
                 const simulatedResult = getResultFromNumber(Math.floor(Math.random() * 10));
                 simulatedResult.period = activeState.currentPeriod;
                 updateStats(simulatedResult);
                 activeState.history.push(simulatedResult);
-                if (activeState.history.length > 50) activeState.history.shift();
+                if (activeState.history.length > 100) activeState.history.shift();
             }
         }
 
-        let newPeriod = (currentGameType === 'wingo') ? generateWingoPeriodNumber(currentMode) : generateTrxPeriodNumber(currentMode);
-        
-        if (activeState.predictions.length > 0 && activeState.predictions[activeState.predictions.length - 1].period === newPeriod) {
+        const newPeriod = (currentGameType === 'wingo') ? generateWingoPeriodNumber(currentMode) : generateTrxPeriodNumber(currentMode);
+        const predictionExists = activeState.predictions.some(p => p.period === newPeriod);
+        if (predictionExists) {
+            render();
             return;
         }
 
         activeState.currentPeriod = newPeriod;
-        const { prediction, strategy } = runPredictionEngine(activeState.history);
+        
+        // This is now async
+        const { prediction, strategy } = await runPredictionEngine(activeState.history);
+        
         activeState.predictions.push({ period: newPeriod, prediction, strategy, status: 'Pending' });
-        if (activeState.predictions.length > 50) activeState.predictions.shift();
+        if (activeState.predictions.length > 100) activeState.predictions.shift();
 
-        elements.period.textContent = newPeriod;
         debounceSaveState();
         render();
     }
 
     function masterClock() {
         if (!currentMode) return;
-        const durations = { 'wingo-30s': 30, 'wingo-1m': 60, 'trx-1m': 60, 'trx-3m': 180 };
-        const duration = durations[currentMode];
+        const duration = { 'wingo-30s': 30, 'wingo-1m': 60, 'trx-1m': 60, 'trx-3m': 180 }[currentMode];
         const now = new Date();
-        let remainingTime;
-        let shouldTriggerLoop = false;
+        let remainingTime, secondsSinceEpoch;
 
         if (currentGameType === 'wingo') {
-            const istOffsetMinutes = 330;
-            const currentUtcTime = now.getTime() + (now.getTimezoneOffset() * 60 * 1000);
-            const istTime = new Date(currentUtcTime + (istOffsetMinutes * 60 * 1000));
-            const h = istTime.getHours();
-            const m = istTime.getMinutes();
-            const s = istTime.getSeconds();
-            const startH = 5;
-            const startM = 30;
-            let elapsedSFromStart = (h * 3600 + m * 60 + s) - (startH * 3600 + startM * 60);
-            if (elapsedSFromStart < 0) {
-                elapsedSFromStart += 24 * 3600;
-            }
-
-            remainingTime = duration - (elapsedSFromStart % duration);
-            if (remainingTime <= 0) remainingTime += duration;
-
-            if (remainingTime >= duration - 1) {
-                shouldTriggerLoop = true;
-            }
+            const istOffsetMs = 330 * 60 * 1000;
+            const istTime = new Date(now.getTime() + istOffsetMs + (now.getTimezoneOffset() * 60 * 1000));
+            const startOfDay = new Date(istTime);
+            startOfDay.setHours(5, 30, 0, 0);
+            secondsSinceEpoch = Math.floor((istTime - startOfDay) / 1000);
+            if (secondsSinceEpoch < 0) secondsSinceEpoch += 86400;
         } else {
-            const secondsOfDayUTC = now.getUTCHours() * 3600 + now.getUTCMinutes() * 60 + now.getUTCSeconds();
-            const totalMinutesTodayUTC = Math.floor(secondsOfDayUTC / 60);
-            remainingTime = duration - (secondsOfDayUTC % duration);
-            if (remainingTime <= 0) remainingTime += duration;
-
-            const isThreeMinuteBoundary = currentMode === 'trx-3m' && (secondsOfDayUTC % 180 === 0);
-            if ((currentMode === 'trx-1m' && remainingTime >= duration - 1) || isThreeMinuteBoundary) {
-                shouldTriggerLoop = true;
-            }
+            secondsSinceEpoch = now.getUTCHours() * 3600 + now.getUTCMinutes() * 60 + now.getUTCSeconds();
         }
-
+        
+        remainingTime = duration - (secondsSinceEpoch % duration);
         elements.timer.textContent = `${String(Math.floor(remainingTime / 60)).padStart(2, '0')}:${String(remainingTime % 60).padStart(2, '0')}`;
-
-        if (shouldTriggerLoop) {
-            masterClock.debounce = masterClock.debounce || {};
-            const debounceKey = currentMode + 'Trigger';
-            const nowMs = now.getTime();
-            if (!masterClock.debounce[debounceKey] || (nowMs - masterClock.debounce[debounceKey] >= (duration * 1000) - 100)) {
-                gameLoop();
-                masterClock.debounce[debounceKey] = nowMs;
-            }
+        
+        if (remainingTime === duration || remainingTime === 1) {
+             const debounceKey = currentMode + 'Trigger';
+             const nowMs = now.getTime();
+             if (!masterClock.debounce[debounceKey] || (nowMs - masterClock.debounce[debounceKey] > 1500)) {
+                 gameLoop(); // Call async function
+                 masterClock.debounce[debounceKey] = nowMs;
+             }
         }
     }
 
-    // --- Event Listeners and Initializer ---
+    // --- Event Listeners ---
     document.addEventListener('DOMContentLoaded', () => {
-        const criticalElementsExist = elements.loginButton && elements.accessKeyInput && elements.logoutIcon && elements.errorMessage;
-        if (!criticalElementsExist) {
-            console.error('One or more critical DOM elements not found. Page might not function correctly.');
-            return;
-        }
-
+        if (!elements.loginButton) return;
         elements.loginButton.addEventListener('click', handleLogin);
-        elements.accessKeyInput.addEventListener('keyup', (event) => {
-            if (event.key === 'Enter') handleLogin();
-        });
-        elements.logoutIcon.addEventListener('click', handleLogout);
+        elements.accessKeyInput.addEventListener('keyup', e => e.key === 'Enter' && handleLogin());
+        elements.logoutButton.addEventListener('click', handleLogout);
         elements.clearButton.addEventListener('click', () => {
             if (currentMode) {
                 state[currentMode] = JSON.parse(JSON.stringify(initialStateTemplate));
@@ -848,11 +758,16 @@
                 render();
             }
         });
-
+        elements.reversePatternSwitch.addEventListener('click', () => {
+            if (currentMode) {
+                state[currentMode].isReversePattern = !state[currentMode].isReversePattern;
+                gameLoop(); // Call async function
+            }
+        });
         if (localStorage.getItem('isLoggedIn') === 'true') {
             requestAnimationFrame(showApp);
         }
     });
 </script>
 </body>
-</html>v
+</html>
