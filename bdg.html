@@ -16,37 +16,102 @@
             --text-dark: #1a1a1a; --text-grey: #aaaaaa; --green: #28a745;
             --violet: #8e44ad; --red: #dc3545; --orange: #fd7e14;
             --blue: #007bff; --ai-mode-color: #e800e8; --body-bg: var(--bg-dark);
+            
+            /* AI Prediction and Actual Result colors */
+            --ai-prediction-bg: rgba(255, 193, 7, 0.1); /* Light gold/yellow tint for AI prediction */
+            --ai-prediction-border: rgba(255, 193, 7, 0.5); /* Gold border for AI prediction */
+            --ai-prediction-text-color: var(--gold-text);
+            --ai-actual-bg: rgba(0, 0, 0, 0.4); /* Darker background for actual result */
+            --ai-actual-text-color: var(--text-light);
         }
 
         /* --- 1. 55Club দ্বারা অনুপ্রাণিত নতুন লগইন থিম --- */
         .login-theme {
-            --login-primary: var(--red); /* লাল রঙ */
-            --login-primary-darker: #c82333; /* গাঢ় লাল */
+            --login-primary: #dc3545; /* লাল রঙ (original red from root) */
+            --login-primary-darker: #c82333; /* গাঢ় লাল */
             --login-accent: var(--gold); /* সোনালী রঙ */
             --login-text-dark: var(--text-light); /* সাদা টেক্সট */
             --login-bg-light: rgba(220, 53, 69, 0.1);
-            --body-bg: var(--bg-dark); /* গেমের মতো ডার্ক ব্যাকগ্রাউন্ড */
+            --body-bg: #222222; /* Dark background from previous screenshot */
         }
         body {
             font-family: 'Orbitron', 'Segoe UI', Arial, sans-serif;
-            background: var(--body-bg); color: var(--text-light);
+            background: var(--body-bg);
+            color: var(--text-light);
             display: flex; justify-content: center; align-items: center; min-height: 100vh;
             margin: 0; font-size: 14px; padding: 8px; box-sizing: border-box; transition: background 0.5s ease-in-out;
         }
-        .login-container{
-            background: var(--bg-medium);
-            padding: 30px; border-radius:12px;width:100%;max-width:380px;
-            box-shadow: 0 0 25px rgba(0, 0, 0, 0.5); text-align:center;
-            border: 1px solid var(--login-accent);
+        /* Body for app view */
+        body.app-active {
+            align-items: flex-start; /* Align to top for the app view */
+            padding: 4px; /* Even tighter padding for the whole app */
         }
+        /* Login Container */
+        .login-container{
+            background-color: #2e2e2e; /* Solid dark background */
+            background-image: none; /* REMOVED BACKGROUND IMAGE */
+            
+            padding: 20px; /* Overall padding */
+            padding-top: 40px; /* Space for the top logo */
+            border-radius:12px;width:100%;max-width:380px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.5); 
+            text-align:center;
+            border: 1px solid var(--gold); /* Gold border from screenshot */
+            position: relative; /* For positioning elements within */
+            overflow: hidden; /* Ensure content doesn't overflow */
+        }
+        /* New class for the main login logo */
+        .login-main-logo {
+            width: 180px; /* Increased size for prominence */
+            height: auto;
+            margin-bottom: 20px; /* Space below the logo */
+            filter: drop-shadow(0 0 8px rgba(255,193,7,0.7)); /* Stronger glow */
+        }
+
+        /* Overlay Text (now below the main logo) */
+        .splash-overlay-text {
+            position: static; /* Removed absolute positioning */
+            transform: none; /* Removed transform */
+            width: auto; /* Allow natural width */
+            color: var(--text-light);
+            font-size: 1.1em;
+            font-weight: 400;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+            margin-bottom: 30px; /* Space between text and username field */
+            white-space: normal; /* Allow text to wrap */
+            overflow: visible; /* Allow content to overflow if needed */
+            text-overflow: clip; /* Don't clip text */
+        }
+
+        /* login-bdg-logo-bottom is no longer used in login screen */
+        /* .login-bdg-logo-bottom {
+            width: 120px; 
+            height: auto;
+            margin-top: 25px; 
+            filter: drop-shadow(0 0 5px rgba(255,193,7,0.5));
+        } */
+
+        /* NEW STYLE FOR HEADER LOGO (replaces H1) */
+        .header-logo {
+            height: 28px; /* Adjust as needed */
+            width: auto;
+            filter: drop-shadow(0 0 3px rgba(255,193,7,0.5)); /* Subtle glow */
+        }
+
+
         .login-container h2{
-            color: var(--login-accent); margin-bottom:25px; font-size:26px;
+            color:var(--login-accent); 
+            margin-top: 0; /* No explicit margin-top here, controlled by container padding-top */
+            margin-bottom:20px; /* Reduced margin */
+            font-size:26px;
             text-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
         }
         .login-container input{
             box-sizing:border-box; width:100%; padding:12px 15px; margin-bottom:15px;
-            border:1px solid var(--text-grey); border-radius:8px;
-            background: var(--bg-light); color:var(--text-light); font-size:16px;
+            border:1px solid #555; /* Darker border for inputs */
+            border-radius:8px;
+            background: #3a3a3a; /* Darker input background */
+            color:var(--text-light); font-size:16px;
             font-family: 'Segoe UI', Arial, sans-serif;
             transition: all 0.3s ease;
         }
@@ -89,36 +154,247 @@
             box-shadow: 0 0 20px rgba(220, 53, 69, 0.7);
         }
 
-        /* --- বাকি সব CSS আগের মতোই --- */
+        /* --- Main Game UI CSS (compacted) --- */
         .game-container {
-            background: var(--bg-medium); padding: 12px; border-radius: 12px; width: 100%; max-width: 400px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7); display: flex; flex-direction: column; gap: 8px; display: none;
+            background: var(--bg-medium); padding: 8px; /* Reduced overall container padding */
+            border-radius: 10px; /* Reduced rounding */
+            width: 100%;
+            max-width: 380px; /* More constrained max-width */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7); /* Reduced shadow */
+            display: flex;
+            flex-direction: column;
+            gap: 5px; /* Reduced gap between sections */
+            display: none; /* Hidden by default */
         }
-        #predictionReason {
-            font-size: 11px; color: var(--text-grey); background-color: var(--bg-dark);
-            text-align: center; padding: 6px; border-radius: 6px;
-            border: 1px solid var(--bg-lighter); min-height: 16px;
+        header{
+            display:flex;justify-content:space-between;align-items:center;
+            padding-bottom: 4px; /* Reduced padding */
+            border-bottom: 1px solid rgba(255,255,255,0.08); /* Thinner separator */
+            margin-bottom: 6px; /* Space after header */
         }
-        .highlight { color: var(--gold-text); font-weight: bold; }
-        button{border:none;cursor:pointer;background:0 0;color:inherit;display:flex;align-items:center;justify-content:center;font-size:14px;padding:0;box-sizing:border-box;font-weight:700;white-space:nowrap;transition:transform .2s ease,background-color .2s ease}button:active{transform:scale(.98)}header{display:flex;justify-content:space-between;align-items:center}header .header-left,header .header-right{display:flex;gap:10px;align-items:center}header .icon{font-size:20px;color:var(--text-grey)}header .icon-arrow-left{color:var(--text-light)}.icon-logout::before{content:'\f2f5';font-family:'Font Awesome 5 Free';font-weight:900}header h1{color:var(--gold);font-size:22px;margin:0;font-weight:700;text-transform:uppercase;letter-spacing:1.5px}#gamePlayLiveView{display:flex;flex-direction:column;gap:8px}.game-options{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;background:var(--bg-dark);padding:5px;border-radius:9px;border:1px solid var(--gold-darker)}.game-options .option{padding:8px 5px;border-radius:7px;text-align:center;background:var(--bg-light);font-size:11px;color:var(--text-light);cursor:pointer;transition:background-color .3s ease,color .3s ease}.game-options .option.active{background:var(--gold);color:var(--text-dark)}.timer-section{background:var(--bg-dark);padding:10px;border-radius:10px;display:flex;flex-direction:column;gap:8px;border:1px solid var(--gold-darker)}.timer-top-row{display:flex;justify-content:space-between;align-items:center;gap:10px}.left-align-group{display:flex;flex-direction:column;align-items:flex-start;gap:4px}.how-to-play{background:var(--gold);color:var(--text-dark);padding:5px 10px;border-radius:18px;font-size:11px;gap:5px;box-shadow:0 1px 3px rgba(0,0,0,.2)}.how-to-play .icon{font-size:13px;color:var(--text-dark)}.wingo-current-interval-text{font-size:11px;color:var(--text-grey);font-weight:400}.previous-results{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center}.previous-results .ball{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--text-light);box-shadow:inset 0 0 3px rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.15)}.previous-results .ball.red{background-color:var(--red)}.previous-results .ball.violet{background-color:var(--violet)}.previous-results .ball.green{background-color:var(--green)}.timer-bottom-row{display:flex;justify-content:space-between;align-items:flex-end}.timer-display{display:flex;flex-direction:column;align-items:flex-start;gap:3px}#timer{display:flex;align-items:center;color:var(--gold-text);font-size:24px;font-weight:700;letter-spacing:1.5px}#timer .digit{width:20px;text-align:center}#timer .colon{margin:0 2px;color:var(--text-grey)}.period-input-container{display:flex;flex-direction:column;align-items:flex-end;gap:3px}.period-input{background:var(--bg-medium);border:1px solid rgba(255,255,255,.2);color:var(--gold-text);font-size:18px;text-align:right;width:140px;padding:4px 8px;border-radius:7px;outline:0;font-weight:700}.period-input:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(255,193,7,.3)}.ai-toggle-container{display:flex;align-items:center;justify-content:space-between;background-color:var(--bg-dark);padding:8px 12px;border-radius:8px;border:1px solid var(--bg-lighter)}.ai-toggle-label{font-weight:700;color:var(--text-grey);font-size:13px}.switch{position:relative;display:inline-block;width:44px;height:24px}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:var(--bg-light);transition:.4s;border-radius:24px}.slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background-color:#fff;transition:.4s;border-radius:50%}input:checked+.slider{background-color:var(--ai-mode-color)}input:focus+.slider{box-shadow:0 0 1px var(--ai-mode-color)}input:checked+.slider:before{transform:translateX(20px)}.color-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.color-buttons .btn-color{height:38px;font-size:14px;border-radius:8px;color:var(--text-light);box-shadow:0 2px 5px rgba(0,0,0,.4)}.color-buttons .btn-color.green{background-color:var(--green)}.color-buttons .btn-color.violet{background-color:var(--violet)}.color-buttons .btn-color.red{background-color:var(--red)}.number-buttons{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;justify-items:center}.number-buttons .ball{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;box-shadow:0 3px 6px rgba(0,0,0,.4);color:var(--text-light);border:1px solid rgba(255,255,255,.15)}.number-buttons .ball[data-number="0"]{background:linear-gradient(135deg,var(--violet) 50%,var(--red) 50%)}.number-buttons .ball[data-number="1"],.number-buttons .ball[data-number="3"],.number-buttons .ball[data-number="7"],.number-buttons .ball[data-number="9"]{background-color:var(--green)}.number-buttons .ball[data-number="2"],.number-buttons .ball[data-number="4"],.number-buttons .ball[data-number="6"],.number-buttons .ball[data-number="8"]{background-color:var(--red)}.number-buttons .ball[data-number="5"]{background:linear-gradient(135deg,var(--violet) 50%,var(--green) 50%)}.big-small{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}.big-small .btn-big-small{height:38px;font-size:14px;border-radius:8px;color:var(--text-light);box-shadow:0 2px 5px rgba(0,0,0,.4)}.big-small .btn-big-small.big{background-color:var(--orange)}.big-small .btn-big-small.small{background-color:var(--blue)}.glow{box-shadow:0 0 12px 5px var(--glow-color),0 0 7px rgba(0,0,0,.6)!important;transform:scale(1.05);font-weight:bolder!important;z-index:10}#aiModeIndicator{background-color:var(--ai-mode-color);color:var(--text-light);padding:8px;border-radius:8px;text-align:center;font-weight:700;font-size:13px;box-shadow:0 1px 6px rgba(0,0,0,.4);animation:pulse-glow 1.5s infinite alternate;display:none}@keyframes pulse-glow{0%{box-shadow:0 0 4px var(--ai-mode-color)}to{box-shadow:0 0 12px var(--ai-mode-color),0 0 20px rgba(255,0,255,.25)}}.history-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--bg-lighter);border-radius:9px;padding:4px}.history-tabs button{padding:8px 0;background-color:transparent;color:var(--text-grey);font-size:13px;border-radius:7px;transition:all .3s ease}.history-tabs button.active{background-color:var(--gold);color:var(--text-dark);box-shadow:0 1px 5px rgba(0,0,0,.3);font-weight:700}.history-view-content{display:none;background-color:var(--bg-light);padding:10px;border-radius:10px}.history-view-content.active{display:block}.game-history-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.clear-history-btn{background-color:var(--red);color:#fff;padding:5px 12px;border-radius:6px;font-size:12px}.game-history-table,.my-history-table,.chart-table{width:100%;border-collapse:separate;border-spacing:0 4px;font-size:11px}.game-history-table td,.game-history-table th,.my-history-table td,.my-history-table th,.chart-table td,.chart-table th{padding:6px 5px}.game-history-table th,.my-history-table th,.chart-table th{color:var(--text-grey);font-weight:400}tbody tr{background-color:var(--bg-medium);border-radius:6px}.game-history-table td,.my-history-table td,.chart-table td{color:var(--text-light)}.game-history-table td:first-child,.my-history-table td:first-child,.chart-table td:first-child{border-top-left-radius:6px;border-bottom-left-radius:6px}.game-history-table td:last-child,.my-history-table td:last-child,.chart-table td:last-child{border-top-right-radius:6px;border-bottom-right-radius:6px}.game-history-table td:nth-child(n+2),.game-history-table th:nth-child(n+2),.my-history-table td:nth-child(n+2),.my-history-table th:nth-child(n+2){text-align:center}.my-history-table td:nth-child(5){padding:4px;text-align:center;width:80px}.color-indicator{display:inline-block;width:16px;height:16px;border-radius:50%;vertical-align:middle;border:1px solid rgba(255,255,255,.1)}.color-indicator.red{background-color:var(--red)}.color-indicator.green{background-color:var(--green)}.color-indicator.violet{background-color:var(--violet)}.color-indicator.zero-color{background:linear-gradient(135deg,var(--violet) 50%,var(--red) 50%)}.color-indicator.five-color{background:linear-gradient(135deg,var(--violet) 50%,var(--green) 50%)}.session-accuracy{font-size:13px;font-weight:700;color:var(--gold);margin-top:15px;text-align:center;padding:10px;background-color:var(--bg-medium);border-radius:8px;border:1px solid var(--gold-darker)}.status-buttons-container{display:flex;gap:4px;justify-content:center;align-items:center;height:100%}.status-button{padding:5px 8px;border-radius:5px;font-size:12px;font-weight:700;color:var(--text-light);cursor:pointer;flex:1}.status-button.win{background-color:var(--green)}.status-button.loss{background-color:var(--red)}.status-text{padding:5px 8px;border-radius:5px;font-size:12px;font-weight:700;text-align:center;color:var(--text-light);display:inline-block;width:100%;box-sizing:border-box}.status-text.W{background-color:var(--green)}.status-text.L{background-color:var(--red)}.modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background-color:rgba(0,0,0,.8);backdrop-filter:blur(5px);justify-content:center;align-items:center;display:flex;opacity:0;transition:opacity .3s ease;pointer-events:none}.modal.show{opacity:1;pointer-events:auto}.modal-content{background-color:var(--bg-medium);margin:auto;padding:20px;border:1px solid var(--gold);border-radius:12px;width:95%;max-width:450px;box-shadow:0 4px 15px rgba(0,0,0,.7);position:relative;color:var(--text-light);transform:scale(.95);transition:transform .3s ease}.modal.show .modal-content{transform:scale(1)}.modal-content h2{color:var(--gold);font-size:20px;margin-top:0;text-align:center;border-bottom:1px solid var(--gold-darker);padding-bottom:10px}.close-button{color:var(--text-grey);font-size:28px;font-weight:700;position:absolute;top:10px;right:15px;cursor:pointer;transition:color .3s ease}.close-button:hover{color:var(--gold)}
+        header .header-left,header .header-right{
+            display:flex;gap:6px;align-items:center; /* Reduced gap */
+        }
+        header .icon{font-size:16px;color:var(--text-grey)}.icon-arrow-left{color:var(--text-light)} /* Smaller icons */
+        .icon-logout::before{content:'\f2f5';font-family:'Font Awesome 5 Free';font-weight:900}
+        
+        #gamePlayLiveView{display:flex;flex-direction:column;gap:5px;} /* Reduced gap */
+
+        .game-options{
+            display:grid;grid-template-columns:repeat(4,1fr);gap:3px; /* Reduced gap */
+            background:var(--bg-dark);padding:3px; /* Reduced padding */
+            border-radius:7px; /* Reduced rounding */
+            border:1px solid var(--gold-darker);
+        }
+        .game-options .option{
+            padding:5px 3px; /* Reduced padding */
+            border-radius:5px; /* Reduced rounding */
+            text-align:center;background:var(--bg-light);font-size:9px; /* Reduced font size */
+            color:var(--text-light);cursor:pointer;transition:background-color .3s ease,color .3s ease;
+        }
+        .game-options .option.active{background:var(--gold);color:var(--text-dark)}
+        .timer-section{
+            background:var(--bg-dark);padding:7px; /* Reduced padding */
+            border-radius:8px; /* Reduced rounding */
+            display:flex;flex-direction:column;gap:5px; /* Reduced gap */
+            border:1px solid var(--gold-darker);
+        }
+        .timer-top-row{display:flex;justify-content:space-between;align-items:center;gap:8px;} /* Reduced gap */
+        .left-align-group{display:flex;flex-direction:column;align-items:flex-start;gap:1px;} /* Reduced gap */
+
+        .how-to-play{background:var(--gold);color:var(--text-dark);padding:3px 7px; /* Reduced padding */
+            border-radius:14px; /* Reduced rounding */
+            font-size:9px;gap:3px;box-shadow:0 1px 2px rgba(0,0,0,.2)} /* Reduced shadow */
+        .how-to-play .icon{font-size:10px;color:var(--text-dark)} /* Reduced icon size */
+        .wingo-current-interval-text{font-size:9px;color:var(--text-grey);font-weight:400} /* Reduced font size */
+
+        .previous-results{display:flex;gap:4px;flex-wrap:nowrap;justify-content:flex-end;align-items:center; overflow-x: auto; -webkit-overflow-scrolling: touch;}
+        .previous-results::-webkit-scrollbar { display: none; } /* Hide scrollbar for previous results */
+        .previous-results .ball{
+            width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+            font-size:9px; /* Reduced font size */
+            font-weight:700;color:var(--text-light);box-shadow:inset 0 0 2px rgba(0,0,0,.3); /* Reduced shadow */
+            border:1px solid rgba(255,255,255,.08); /* Thinner border */
+            flex-shrink: 0; /* Prevent shrinking */
+        }
+        .previous-results .ball.red{background-color:var(--red)}.previous-results .ball.violet{background-color:var(--violet)}.previous-results .ball.green{background-color:var(--green)}
+        .timer-bottom-row{display:flex;justify-content:space-between;align-items:flex-end}
+        .timer-display{display:flex;flex-direction:column;align-items:flex-start;gap:1px;} /* Reduced gap */
+        #timer{display:flex;align-items:center;color:var(--gold-text);font-size:20px; /* Reduced font size */
+            font-weight:700;letter-spacing:1px}
+        #timer .digit{width:16px;text-align:center} /* Smaller digit width */
+        #timer .colon{margin:0 1px;color:var(--text-grey)}.period-input-container{display:flex;flex-direction:column;align-items:flex-end;gap:1px;} /* Reduced gap */
+        .period-input{
+            background:var(--bg-medium);border:1px solid rgba(255,255,255,.15);color:var(--gold-text);
+            font-size:14px;text-align:right;width:100px; /* Reduced width */
+            padding:3px 5px;border-radius:5px;outline:0;font-weight:700; /* Reduced padding/rounding */
+        }
+        .period-input:focus{border-color:var(--gold);box-shadow:0 0 0 1.5px rgba(255,193,7,.3)}
+        
+        /* AI Prediction & Actual Result Sections (Compact) */
+        #aiPredictionSection, #aiActualResultDisplay {
+            background-color: var(--ai-prediction-bg);
+            border: 1.5px dashed var(--ai-prediction-border); /* Thinner dashed border */
+            padding: 6px; /* Reduced padding */
+            border-radius: 6px; /* Reduced rounding */
+            text-align: center;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.4), inset 0 0 6px rgba(255, 193, 7, 0.3); /* Reduced shadows */
+            margin-top: 4px; /* Reduced margin */
+            position: relative; /* For toggle icon */
+            overflow: hidden; /* Ensure content doesn't overflow padding */
+            /* Flexbox for inner content to be inline */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px; /* Gap between label and value */
+            flex-wrap: wrap; /* Allow wrapping if content is too long */
+        }
+        #aiPredictionSection .label, #aiActualResultDisplay .label {
+            font-size: 10px; /* Reduced font size */
+            color: var(--text-grey);
+            display: inline; /* Make it inline */
+            margin-bottom: 0; /* No margin-bottom */
+            flex-shrink: 0; /* Prevent shrinking */
+        }
+        #aiPredictionSection .value, #aiActualResultDisplay .value {
+            font-size: 1.1em; /* Reduced font size */
+            font-weight: 700;
+            color: var(--gold-text);
+            text-shadow: 0 0 4px rgba(255, 193, 7, 0.6); /* Reduced shadow */
+            flex-grow: 1; /* Allow value to grow */
+            white-space: nowrap; /* Keep value on single line */
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        /* Specific colors for AI Result values */
+        #aiActualResultDisplay .value .red-text { color: var(--red); }
+        #aiActualResultDisplay .value .green-text { color: var(--green); }
+        #aiActualResultDisplay .value .violet-text { color: var(--violet); }
+        #aiActualResultDisplay .value .orange-text { color: var(--orange); } /* For Big */
+        #aiActualResultDisplay .value .blue-text { color: var(--blue); } /* For Small */
+
+        /* AI Prediction Toggle Icon */
+        #toggleActualResultBtn {
+            background: none;
+            border: none;
+            color: var(--text-grey);
+            font-size: 0.9em; /* Adjusted size */
+            cursor: pointer;
+            transition: color 0.2s ease, transform 0.2s ease;
+            padding: 2px;
+            position: absolute; /* Absolute positioning relative to #aiPredictionSection */
+            top: 50%;
+            right: 5px;
+            transform: translateY(-50%);
+            z-index: 10; /* Ensure it's above text */
+        }
+        #toggleActualResultBtn:hover {
+            color: var(--gold);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .ai-toggle-container{display:flex;align-items:center;justify-content:space-between;background-color:var(--bg-dark);padding:6px 10px; /* Reduced padding */
+            border-radius:7px; /* Reduced rounding */
+            border:1px solid var(--bg-lighter)}.ai-toggle-label{font-weight:700;color:var(--text-grey);font-size:12px;}.switch{position:relative;display:inline-block;width:38px;height:20px;}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:var(--bg-light);transition:.4s;border-radius:20px}.slider:before{position:absolute;content:"";height:14px;width:14px;left:3px;bottom:3px;background-color:#fff;transition:.4s;border-radius:50%}input:checked+.slider{background-color:var(--ai-mode-color)}input:focus+.slider{box-shadow:0 0 1px var(--ai-mode-color)}input:checked+.slider:before{transform:translateX(18px)} /* Adjusted translate */
+
+        .color-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;} /* Reduced gap */
+        .color-buttons .btn-color{height:34px;font-size:13px;border-radius:7px;color:var(--text-light);box-shadow:0 1px 3px rgba(0,0,0,.4)} /* Reduced size/shadow */
+        .color-buttons .btn-color.green{background-color:var(--green)}.color-buttons .btn-color.violet{background-color:var(--violet)}.color-buttons .btn-color.red{background-color:var(--red)}
+
+        .number-buttons{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;justify-items:center} /* Reduced gap */
+        .number-buttons .ball{
+            width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+            font-weight:700;font-size:16px;box-shadow:0 2px 5px rgba(0,0,0,.4);color:var(--text-light);
+            border:1px solid rgba(255,255,255,.1); /* Thinner border */
+        }
+        .number-buttons .ball[data-number="0"]{background:linear-gradient(135deg,var(--violet) 50%,var(--red) 50%)}.number-buttons .ball[data-number="1"],.number-buttons .ball[data-number="3"],.number-buttons .ball[data-number="7"],.number-buttons .ball[data-number="9"]{background-color:var(--green)}.number-buttons .ball[data-number="2"],.number-buttons .ball[data-number="4"],.number-buttons .ball[data-number="6"],.number-buttons .ball[data-number="8"]{background-color:var(--red)}.number-buttons .ball[data-number="5"]{background:linear-gradient(135deg,var(--violet) 50%,var(--green) 50%)}.big-small{display:grid;grid-template-columns:repeat(2,1fr);gap:4px} /* Reduced gap */
+        .big-small .btn-big-small{height:34px;font-size:13px;border-radius:7px;color:var(--text-light);box-shadow:0 1px 3px rgba(0,0,0,.4)} /* Reduced size/shadow */
+        .big-small .btn-big-small.big{background-color:var(--orange)}.big-small .btn-big-small.small{background-color:var(--blue)}.glow{box-shadow:0 0 10px 4px var(--glow-color),0 0 6px rgba(0,0,0,.6)!important;transform:scale(1.03);font-weight:bolder!important;z-index:10} /* Reduced glow effect */
+
+        #aiModeIndicator{background-color:var(--ai-mode-color);color:var(--text-light);padding:6px;border-radius:7px;text-align:center;font-weight:700;font-size:12px;box-shadow:0 1px 5px rgba(0,0,0,.4);animation:pulse-glow 1.5s infinite alternate;display:none} /* Reduced size/shadow */
+        @keyframes pulse-glow{0%{box-shadow:0 0 3px var(--ai-mode-color)}to{box-shadow:0 0 10px var(--ai-mode-color),0 0 15px rgba(255,0,255,.25)}} /* Reduced glow effect */
+
+        .history-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;background:var(--bg-lighter);border-radius:8px;padding:3px} /* Reduced padding/gap */
+        .history-tabs button{padding:6px 0;background-color:transparent;color:var(--text-grey);font-size:12px;border-radius:6px;transition:all .3s ease} /* Reduced padding/font size */
+        .history-tabs button.active{background-color:var(--gold);color:var(--text-dark);box-shadow:0 1px 4px rgba(0,0,0,.3);font-weight:700} /* Reduced shadow */
+
+        .history-view-content{display:none;background-color:var(--bg-light);padding:8px;border-radius:9px} /* Reduced padding/rounding */
+        .history-view-content.active{display:block}
+        .game-history-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px} /* Reduced margin */
+        .clear-history-btn{background-color:var(--red);color:#fff;padding:4px 10px;border-radius:5px;font-size:11px} /* Reduced size/padding */
+
+        .game-history-table,.my-history-table,.chart-table{
+            width:100%;border-collapse:separate;border-spacing:0 3px; /* Reduced spacing */
+            font-size:10px; /* Reduced font size for table content */
+            table-layout: fixed; /* Ensures fixed column widths */
+        }
+        .game-history-table td,.game-history-table th,.my-history-table td,.my-history-table th,.chart-table td,.chart-table th{padding:4px 3px} /* Reduced padding */
+        .game-history-table th,.my-history-table th,.chart-table th{color:var(--text-grey);font-weight:400}
+        tbody tr{background-color:var(--bg-medium);border-radius:5px} /* Reduced rounding */
+        .game-history-table td,.my-history-table td,.chart-table td{color:var(--text-light)}
+        .game-history-table td:first-child,.my-history-table td:first-child,.chart-table td:first-child{border-top-left-radius:5px;border-bottom-left-radius:5px}
+        .game-history-table td:last-child,.my-history-table td:last-child,.chart-table td:last-child{border-top-right-radius:5px;border-bottom-right-radius:5px}
+        .game-history-table td:nth-child(n+2),.game-history-table th:nth-child(n+2),.my-history-table td:nth-child(n+2),.my-history-table th:nth-child(n+2){text-align:center}
+        
+        /* Specific column widths for tables to prevent horizontal scroll */
+        .game-history-table th:nth-child(1), .game-history-table td:nth-child(1) { width: 25%; } /* Period */
+        .game-history-table th:nth-child(2), .game-history-table td:nth-child(2) { width: 15%; } /* Number */
+        .game-history-table th:nth-child(3), .game-history-table td:nth-child(3) { width: 20%; } /* Big/Small */
+        .game-history-table th:nth-child(4), .game-history-table td:nth-child(4) { width: 15%; } /* Color */
+        
+        .my-history-table th:nth-child(1), .my-history-table td:nth-child(1) { width: 22%; } /* Period */
+        .my-history-table th:nth-child(2), .my-history-table td:nth-child(2) { width: 12%; } /* Num (AI Predicted) */
+        .my-history-table th:nth-child(3), .my-history-table td:nth-child(3) { width: 15%; } /* B/S (AI Predicted) */
+        .my-history-table th:nth-child(4), .my-history-table td:nth-child(4) { width: 12%; } /* Col (AI Predicted) */
+        .my-history-table th:nth-child(5), .my-history-table td:nth-child(5) { width: 39%; } /* Status (Win/Loss buttons or text) */
+
+
+        .color-indicator{display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:middle;border:1px solid rgba(255,255,255,.05)}.color-indicator.red{background-color:var(--red)}.color-indicator.green{background-color:var(--green)}.color-indicator.violet{background-color:var(--violet)}.color-indicator.zero-color{background:linear-gradient(135deg,var(--violet) 50%,var(--red) 50%)}.color-indicator.five-color{background:linear-gradient(135deg,var(--violet) 50%,var(--green) 50%)}
+        
+        .session-accuracy{font-size:12px;font-weight:700;color:var(--gold);margin-top:10px;text-align:center;padding:8px;background-color:var(--bg-medium);border-radius:7px;border:1px solid var(--gold-darker)} /* Reduced size/padding */
+
+        .status-buttons-container{display:flex;gap:3px;justify-content:center;align-items:center;height:100%} /* Reduced gap */
+        .status-button{padding:4px 6px;border-radius:4px;font-size:10px;font-weight:700;color:var(--text-light);cursor:pointer;flex:1} /* Reduced size/padding */
+        .status-button.Win{background-color:var(--green)} /* Changed from .win to .Win */
+        .status-button.Loss{background-color:var(--red)} /* Changed from .loss to .Loss */
+        .status-text{padding:4px 6px;border-radius:4px;font-size:10px;font-weight:700;text-align:center;color:var(--text-light);display:inline-block;width:100%;box-sizing:border-box} /* Reduced size/padding */
+        .status-text.Win{background-color:var(--green)} /* Changed from .W to .Win */
+        .status-text.Loss{background-color:var(--red)} /* Changed from .L to .Loss */
+
+        .modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background-color:rgba(0,0,0,.8);backdrop-filter:blur(5px);justify-content:center;align-items:center;opacity:0;transition:opacity .3s ease;pointer-events:none}
+        .modal.show{opacity:1;pointer-events:auto; display:flex;} /* Ensure display flex for show */
+        .modal-content{background-color:var(--bg-medium);margin:auto;padding:15px;border:1px solid var(--gold);border-radius:10px;width:95%;max-width:350px;box-shadow:0 4px 15px rgba(0,0,0,.7);position:relative;color:var(--text-light);transform:scale(.95);transition:transform .3s ease} /* Reduced padding/max-width */
+        .modal.show .modal-content{transform:scale(1)}
+        .modal-content h2{color:var(--gold);font-size:18px;margin-top:0;text-align:center;border-bottom:1px solid var(--gold-darker);padding-bottom:8px} /* Reduced font/padding */
+        .close-button{color:var(--text-grey);font-size:24px;font-weight:700;position:absolute;top:5px;right:10px;cursor:pointer;transition:color .3s ease} /* Adjusted size/position */
+        .close-button:hover{color:var(--gold)}
     </style>
 </head>
 <body class="login-theme">
     <div class="login-container" id="loginContainer">
-        <h2>AI Simulation Access</h2>
-        <input type="text" id="username" placeholder="Enter Username" autocomplete="username">
+        <a href="https://imgbb.com/" target="_blank">
+            <img src="https://i.ibb.co/ymdKZh0t/h5setting-202401100608011fs2.png" alt="BDG GAME Logo" class="login-main-logo">
+        </a>
+        
+        <div class="splash-overlay-text">Withdraw fast, safe and stable</div>
+        
+        <h2 style="margin-top: 0;"></h2> 
+        <input type="text" id="username" placeholder="Username" autocomplete="username">
         <div class="password-wrapper">
-            <input type="password" id="password" placeholder="Enter Password" autocomplete="current-password">
+            <input type="password" id="password" placeholder="Password" autocomplete="current-password">
             <i class="fas fa-eye" id="togglePassword"></i>
         </div>
         <p id="loginErrorMessage"></p>
         <button onclick="login()">Connect</button>
-    </div>
+
+        </div>
 
     <div class="game-container" id="gameContainer">
         <header>
             <div class="header-left"><i class="fas fa-chevron-left icon icon-arrow-left"></i></div>
-            <h1>AI GAME</h1>
+            <a href="https://imgbb.com/" target="_blank">
+                <img src="https://i.ibb.co/ymdKZh0t/h5setting-202401100608011fs2.png" alt="BDG GAME" class="header-logo">
+            </a>
             <div class="header-right">
                 <i class="fas fa-headset icon"></i>
                 <button class="icon icon-logout" onclick="logout()" title="Logout"></button>
@@ -150,12 +426,27 @@
                     </div>
                 </div>
             </div>
+            
+            <div id="aiPredictionSection" class="prediction-display-section">
+                <span class="label">AI Prediction:</span>
+                <div class="value" id="aiPredictionValue">Waiting for analysis...</div>
+                <button id="toggleActualResultBtn" class="toggle-icon" title="Toggle Actual Result">
+                    <i class="fas fa-eye-slash"></i> </button>
+            </div>
+
+            <div id="aiActualResultDisplay" class="actual-result-section hidden">
+                <span class="label">Actual Result:</span>
+                <div class="value" id="aiActualResultValue"></div>
+                <p style="font-size: 0.6em; color: var(--text-grey); margin-top: 3px;">Compare with AI Prediction to mark status.</p>
+            </div>
+
             <div class="ai-toggle-container">
                 <span class="ai-toggle-label">Manual Reverse Mode</span>
                 <label class="switch"><input type="checkbox" id="aiReverseToggle"><span class="slider"></span></label>
             </div>
             <div id="predictionReason">AI analysis will appear here.</div>
             <div id="aiModeIndicator">REVERSE MODE ACTIVE</div>
+
             <div class="color-buttons">
                 <button class="btn-color green">Green</button>
                 <button class="btn-color violet">Violet</button>
@@ -179,7 +470,7 @@
             </div>
             <div id="gameHistoryView" class="history-view-content active">
                 <div class="game-history-header">
-                    <span>Recent Plays</span>
+                    <span>Recent Plays (Last 10)</span>
                     <button id="clearHistoryBtn" class="clear-history-btn">Clear History</button>
                 </div>
                 <table class="game-history-table"><thead><tr><th>Period</th><th>Number</th><th>Big/Small</th><th>Color</th></tr></thead><tbody id="gameHistoryTableBody"></tbody></table>
@@ -189,7 +480,21 @@
                 <div class="session-accuracy">Session Accuracy: Loading...</div>
             </div>
             <div id="myHistoryView" class="history-view-content">
-                <table class="my-history-table"><thead><tr><th>Period</th><th>Num</th><th>B/S</th><th>Col</th><th>Status</th></tr></thead><tbody id="myHistoryTableBody"></tbody></table>
+                <div class="game-history-header">
+                    <span>My History (Last 10)</span>
+                    </div>
+                <table class="my-history-table">
+                    <thead>
+                        <tr>
+                            <th>Period</th>
+                            <th style="width:10%;">Num</th>
+                            <th>B/S</th>
+                            <th>Col</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="myHistoryTableBody"></tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -201,15 +506,16 @@
 document.addEventListener('DOMContentLoaded', function() {
 
     const users = [
-        { username: 'admin', password: 'password123' },
-        { username: 'user', password: 'userpass' },
-        { username: 'test', password: '12345' }
+        { username: 'admin', password: 'password123', role: 'admin' },
+        { username: 'user', password: 'userpass', role: 'normal' },
+        { username: 'test', password: '12345', role: 'normal' }
     ];
 
     let timerInterval;
     let selectedGameTime = 60;
-    const historicalResults = [];
-    const HISTORY_FOR_ANALYSIS = 20;
+    const historicalResults = []; // Stores {period, number, bigSmall, colorClass, userStatus, aiPredictedSize, aiPredictedColor, aiPredictedNumber}
+    const HISTORY_FOR_ANALYSIS = 20; // Number of past results AI considers for analysis
+    const DISPLAY_HISTORY_LIMIT = 10; // Number of results to display in history tables
 
     const elements = {
         body: document.body,
@@ -230,9 +536,18 @@ document.addEventListener('DOMContentLoaded', function() {
         tabGameHistory: document.getElementById('tabGameHistory'),
         tabChart: document.getElementById('tabChart'),
         tabMyHistory: document.getElementById('tabMyHistory'),
-        clearHistoryBtn: document.getElementById('clearHistoryBtn')
+        clearHistoryBtn: document.getElementById('clearHistoryBtn'),
+        aiPredictionSection: document.getElementById('aiPredictionSection'),
+        aiPredictionValue: document.getElementById('aiPredictionValue'),
+        aiActualResultDisplay: document.getElementById('aiActualResultDisplay'),
+        aiActualResultValue: document.getElementById('aiActualResultValue'),
+        toggleActualResultBtn: document.getElementById('toggleActualResultBtn'),
+        gameOptions: document.querySelectorAll('.game-options .option')
     };
     
+    let currentUserRole = null; // To store 'admin' or 'normal'
+
+    // --- Authentication & Role-based UI ---
     elements.togglePassword.addEventListener('click', function () {
         const type = elements.passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
         elements.passwordInput.setAttribute('type', type);
@@ -242,16 +557,93 @@ document.addEventListener('DOMContentLoaded', function() {
     elements.usernameInput.addEventListener('input', () => elements.loginErrorMessage.style.display = 'none');
     elements.passwordInput.addEventListener('input', () => elements.loginErrorMessage.style.display = 'none');
 
+    window.login = () => {
+        const username = elements.usernameInput.value;
+        const password = elements.passwordInput.value;
+        const foundUser = users.find(user => user.username === username);
 
+        if (foundUser && foundUser.password === password) {
+            currentUserRole = foundUser.role; // Set the role
+            localStorage.setItem('currentUserRole', currentUserRole);
+            localStorage.setItem('isLoggedIn', 'true');
+
+            elements.body.classList.add('app-active'); // Adjust body alignment for app view
+            elements.loginContainer.style.display = 'none';
+            elements.gameContainer.style.display = 'flex'; // Use flex for game container
+
+            applyRoleBasedUI(); // Apply UI changes based on role
+            // Initial period set only on first load or after clear history
+            if (!elements.periodInput.value || historicalResults.length === 0) {
+                 setInitialPeriod(); // Set a new period only if not set or history is empty
+            }
+            startTimer(); // Start the game timer
+            updateAllViews(); // Ensure all views are updated on login
+        } else {
+            elements.loginErrorMessage.textContent = 'Invalid username or password';
+            elements.loginErrorMessage.style.display = 'block';
+        }
+    };
+
+    window.logout = () => {
+        localStorage.removeItem('currentUserRole');
+        localStorage.removeItem('isLoggedIn');
+        currentUserRole = null;
+
+        elements.body.classList.remove('app-active'); // Revert body alignment for login view
+        elements.loginContainer.style.display = 'block';
+        elements.gameContainer.style.display = 'none'; // Hide game container
+
+        elements.usernameInput.value = '';
+        elements.passwordInput.value = '';
+        elements.loginErrorMessage.style.display = 'none';
+        clearInterval(timerInterval); // Stop the timer
+        clearAllHistory(false); // Clear all data (pass false to avoid confirmation on logout)
+        setInitialPeriod(); // Reset period input on logout
+    };
+
+    function checkLoginStatus() {
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        if (isLoggedIn) {
+            currentUserRole = localStorage.getItem('currentUserRole');
+            elements.body.classList.add('app-active'); // Adjust body alignment for app view
+            elements.loginContainer.style.display = 'none';
+            elements.gameContainer.style.display = 'flex'; // Use flex for game container
+            applyRoleBasedUI();
+            // Do not call setNextPeriod here directly; it's handled by startTimer's loop
+            startTimer(); // Start the game timer
+            updateAllViews(); // Update views based on any potentially loaded history
+        } else {
+            elements.body.classList.remove('app-active'); // Ensure body is centered for login view
+            elements.loginContainer.style.display = 'block';
+            elements.gameContainer.style.display = 'none'; // Hide game container
+        }
+    }
+
+    function applyRoleBasedUI() {
+        // Adjust visibility based on role
+        if (currentUserRole === 'admin') {
+            elements.clearHistoryBtn.style.display = 'block'; // Admin can clear history
+        } else { // Normal user
+            elements.clearHistoryBtn.style.display = 'none'; // Normal users cannot clear history
+        }
+    }
+    // --- End Authentication & Role-based UI ---
+
+    // --- AI Prediction Logic ---
     function runAdvancedPredictionAnalysis() {
         if (historicalResults.length < 3) {
             elements.predictionReasonEl.innerHTML = "AI: <span class='highlight'>Gathering data...</span> Random prediction.";
-            return { predictedSize: Math.random() < 0.5 ? 'Big' : 'Small', predictedColor: Math.random() < 0.5 ? 'Green' : 'Red' };
+            const predicted = { predictedSize: Math.random() < 0.5 ? 'Big' : 'Small', predictedColor: Math.random() < 0.5 ? 'Green' : 'Red' };
+            displayAIPrediction(predicted.predictedSize, predicted.predictedColor); // Display AI's prediction
+            return predicted;
         }
+
         let bigScore = 0, smallScore = 0;
         const reasons = [];
         const weights = { FREQUENCY: 1.0, TREND: 2.0, ALTERNATING: 1.5 };
         const recentHistory = historicalResults.slice(0, HISTORY_FOR_ANALYSIS);
+
+        // Frequency analysis
         const bigCount = recentHistory.filter(r => r.bigSmall === 'Big').length;
         const smallCount = recentHistory.filter(r => r.bigSmall === 'Small').length;
         if (bigCount > smallCount) {
@@ -261,59 +653,129 @@ document.addEventListener('DOMContentLoaded', function() {
             smallScore += weights.FREQUENCY;
             reasons.push(`Freq(S)+${weights.FREQUENCY}`);
         }
+
+        // Trend/Alternating analysis (last two results)
         const last = historicalResults[0].bigSmall;
         const secondLast = historicalResults[1].bigSmall;
-        if (last === secondLast) {
+        if (last === secondLast) { // If last two are same, predict continuation
             if (last === 'Big') bigScore += weights.TREND; else smallScore += weights.TREND;
             reasons.push(`Trend(${last[0]})+${weights.TREND}`);
-        } else {
-            if (last === 'Small') bigScore += weights.ALTERNATING; else smallScore += weights.ALTERNATING;
+        } else { // If last two alternate, predict continuation of alternation
+            if (last === 'Small') bigScore += weights.ALTERNATING; else smallScore += weights.ALTERNATING; // Predict next in alternating pattern
             reasons.push(`Alt(${last === 'Small' ? 'B' : 'S'})+${weights.ALTERNATING}`);
         }
+
         const predictedSize = bigScore > smallScore ? 'Big' : 'Small';
         if (bigScore === smallScore) reasons.push("Tiebreak");
-        const findLastIndex = (color) => historicalResults.findIndex(r => r.colorClass === color || (color === 'Red' && r.number === 0) || (color === 'Green' && r.number === 5));
-        const lastGreenIndex = findLastIndex('Green');
-        const lastRedIndex = findLastIndex('Red');
-        let predictedColor = (lastGreenIndex > lastRedIndex) ? 'Green' : 'Red';
+
+        // Color prediction (simple: predict the color that has appeared least recently)
+        const lastGreenIndex = recentHistory.findIndex(r => r.colorClass === 'green' || r.number === 5);
+        const lastRedIndex = recentHistory.findIndex(r => r.colorClass === 'red' || r.number === 0);
+        let predictedColor = 'Green'; // Default
+        if (lastRedIndex === -1 && lastGreenIndex === -1) { // No colors yet, random
+            predictedColor = Math.random() < 0.5 ? 'Green' : 'Red';
+        } else if (lastRedIndex === -1) { // Only green seen, predict red
+            predictedColor = 'Red';
+        } else if (lastGreenIndex === -1) { // Only red seen, predict green
+            predictedColor = 'Green';
+        } else if (lastGreenIndex > lastRedIndex) { // Green more recent, predict red
+            predictedColor = 'Red';
+        } else { // Red more recent, predict green
+            predictedColor = 'Green';
+        }
         reasons.push(`ColorGap(${predictedColor[0]})`);
-        elements.predictionReasonEl.innerHTML = `AI Analysis: ${reasons.join(' | ')} &rarr; <span class='highlight'>${predictedSize}</span>`;
+
+        elements.predictionReasonEl.innerHTML = `AI Analysis: ${reasons.join(' | ')}`;
+        displayAIPrediction(predictedSize, predictedColor); // Display AI's prediction
         return { predictedSize, predictedColor };
     }
 
+    // Function to display the AI's actual prediction to the user
+    function displayAIPrediction(size, color) {
+        let sizeTextClass = size === 'Big' ? 'orange-text' : 'blue-text'; // Using orange for Big, blue for Small
+        let colorTextClass = color === 'Green' ? 'green-text' : 'red-text';
+        
+        elements.aiPredictionValue.innerHTML = 
+            `<span class="${sizeTextClass}">${size}</span> | <span class="${colorTextClass}">${color}</span>`;
+    }
+
+    // Function to display the AI's simulated actual result
+    function displayAIActualResult(number, size, color) {
+        let numberTextClass;
+        if (number === 0 || number === 5) {
+            numberTextClass = 'violet-text';
+        } else if ([1, 3, 7, 9].includes(number)) {
+            numberTextClass = 'green-text';
+        } else {
+            numberTextClass = 'red-text';
+        }
+
+        let sizeTextClass = size === 'Big' ? 'orange-text' : 'blue-text';
+        let colorTextClass = color === 'Green' ? 'green-text' : 'red-text';
+
+        elements.aiActualResultValue.innerHTML = 
+            `<span class="${numberTextClass}">${number}</span> | <span class="${sizeTextClass}">${size}</span> | <span class="${colorTextClass}">${color}</span>`;
+        
+        // Don't show by default, rely on toggle button
+        elements.aiActualResultDisplay.classList.add('hidden'); 
+        elements.toggleActualResultBtn.querySelector('i').className = 'fas fa-eye-slash'; // Set icon to "eye-slash" (hidden)
+    }
+
     function generateAndProcessResult() {
+        let predictionResult;
+
         if (elements.aiReverseToggle.checked) {
             elements.aiModeIndicator.style.display = 'block';
             const lastResult = historicalResults[0];
             const predictedSize = lastResult ? (lastResult.bigSmall === 'Big' ? 'Small' : 'Big') : 'Big';
-            elements.predictionReasonEl.innerHTML = `AI: <span class='highlight'>MANUAL REVERSE</span> &rarr; Predicting <span class='highlight'>${predictedSize}</span>`;
-            processPrediction(predictedSize, Math.random() < 0.5 ? 'Green' : 'Red');
+            elements.predictionReasonEl.innerHTML = `AI: <span class='highlight'>MANUAL REVERSE</span>`;
+            predictionResult = { predictedSize: predictedSize, predictedColor: Math.random() < 0.5 ? 'Green' : 'Red' };
         } else {
             elements.aiModeIndicator.style.display = 'none';
-            const { predictedSize, predictedColor } = runAdvancedPredictionAnalysis();
-            processPrediction(predictedSize, predictedColor);
+            predictionResult = runAdvancedPredictionAnalysis(); // This function already calls displayAIPrediction
         }
-    }
-    
-    function processPrediction(predictedSize, predictedColor) {
-        let possibleNumbers = [];
-        const isBig = predictedSize === 'Big';
-        const isGreen = predictedColor === 'Green';
-        if (isBig) {
-            possibleNumbers = isGreen ? [5, 7, 9] : [6, 8];
-        } else {
-            possibleNumbers = isGreen ? [1, 3] : [0, 2, 4];
-        }
-        if (possibleNumbers.length === 0) possibleNumbers = isBig ? [5,6,7,8,9] : [0,1,2,3,4];
-        const randomNumber = possibleNumbers[Math.floor(Math.random() * possibleNumbers.length)];
-        let colorClass = ([1,3,5,7,9].includes(randomNumber)) ? 'green' : 'red';
-        if ([0,5].includes(randomNumber)) colorClass = 'violet';
+
+        // --- Simulate the ACTUAL game outcome ---
+        const actualNumber = Math.floor(Math.random() * 10);
+        let actualColorClass = ([1, 3, 5, 7, 9].includes(actualNumber)) ? 'green' : 'red';
+        if ([0, 5].includes(actualNumber)) actualColorClass = 'violet';
+        const actualBigSmall = actualNumber >= 5 ? 'Big' : 'Small';
+
+        displayAIActualResult(actualNumber, actualBigSmall, actualColorClass); // Display the ACTUAL result to the hidden element
+
         const newResult = {
-            period: elements.periodInput.value, number: randomNumber, bigSmall: randomNumber >= 5 ? 'Big' : 'Small',
-            colorClass: colorClass, userStatus: 'Pending'
+            period: elements.periodInput.value,
+            number: actualNumber, // Actual number
+            bigSmall: actualBigSmall, // Actual big/small
+            colorClass: actualColorClass, // Actual color
+            // Store AI's prediction for comparison in "My History"
+            aiPredictedSize: predictionResult.predictedSize, 
+            aiPredictedColor: predictionResult.predictedColor,
+            aiPredictedNumber: null // Initialize, will be set below
         };
-        historicalResults.unshift(newResult);
-        applyGlowEffects(newResult);
+        
+        // This is where we ensure aiPredictedNumber is set based on the AI's predicted size/color
+        let predictedNumberForMyHistory;
+        let possibleNumbersForAI = [];
+        if (predictionResult.predictedSize === 'Big') {
+            possibleNumbersForAI = predictionResult.predictedColor === 'Green' ? [5, 7, 9] : [6, 8];
+        } else { // Small
+            possibleNumbersForAI = predictionResult.predictedColor === 'Green' ? [1, 3] : [0, 2, 4];
+        }
+        // If AI predicted both Green and Red for special numbers (0, 5) that have both colors
+        if ((predictionResult.predictedColor === 'Green' && predictionResult.predictedSize === 'Big' && actualNumber === 5) ||
+            (predictionResult.predictedColor === 'Red' && predictionResult.predictedSize === 'Small' && actualNumber === 0)) {
+            predictedNumberForMyHistory = actualNumber; // AI 'predicted' the exact special number
+        } else if (possibleNumbersForAI.length === 0) { // Fallback just in case, should not happen with current logic
+            predictedNumberForMyHistory = Math.floor(Math.random() * 10); // Random number if no specific logic applies
+        } else {
+            // Pick a random number from the possible numbers that match AI's size/color prediction
+            predictedNumberForMyHistory = possibleNumbersForAI[Math.floor(Math.random() * possibleNumbersForAI.length)];
+        }
+        newResult.aiPredictedNumber = predictedNumberForMyHistory; // Store the AI's specific predicted number
+
+        historicalResults.unshift(newResult); // Add to the beginning of the array
+        applyGlowEffects(newResult); // Apply glow based on ACTUAL result
         updateAllViews();
     }
     
@@ -329,28 +791,100 @@ document.addEventListener('DOMContentLoaded', function() {
             timerEl.children[4].textContent = String(Math.floor(timeRemaining % 60 % 10));
         };
         updateDisplay();
+
+        // Check if the current period in the input field has already been processed.
+        const currentPeriodValue = elements.periodInput.value;
+        const periodAlreadyProcessed = historicalResults.some(r => r.period === currentPeriodValue);
+
+        if (currentPeriodValue && !periodAlreadyProcessed) {
+            // This is a new, valid period number entered by the user, so generate prediction and result.
+            generateAndProcessResult(); // This will display AI Prediction and then Actual Result (hidden)
+        } else if (currentPeriodValue && periodAlreadyProcessed) {
+            // If the period number is in the input AND it's already in history,
+            // just display its existing prediction/result without regenerating.
+            const existingResult = historicalResults.find(r => r.period === currentPeriodValue);
+            if (existingResult) {
+                displayAIPrediction(existingResult.aiPredictedSize, existingResult.aiPredictedColor);
+                displayAIActualResult(existingResult.number, existingResult.bigSmall, existingResult.colorClass);
+                // Apply glow for the existing actual result
+                applyGlowEffects(existingResult); 
+            }
+        } else {
+            // If period input is empty (e.g., first load without an initial period, or after clear history)
+            elements.aiPredictionValue.innerHTML = "Enter Period Number to Start Prediction";
+            elements.aiActualResultValue.innerHTML = "";
+            elements.aiActualResultDisplay.classList.add('hidden');
+            elements.toggleActualResultBtn.querySelector('i').className = 'fas fa-eye-slash';
+            elements.predictionReasonEl.innerHTML = "AI analysis will appear here.";
+            // Clear glows if no prediction is active
+            document.querySelectorAll(".glow").forEach(el=>el.classList.remove("glow"));
+        }
+
         timerInterval = setInterval(() => {
             timeRemaining--;
             updateDisplay();
             if (timeRemaining <= 0) {
                 clearInterval(timerInterval);
-                if (elements.periodInput.value && !historicalResults.some(r => r.period === elements.periodInput.value)) {
-                    generateAndProcessResult();
+                // When timer hits 0, if the current period in the input had a result,
+                // we set a new period (increment). If it was empty or not yet processed, we keep it as is
+                // waiting for user input or generate initial if truly empty.
+                const currentPeriodAfterTimer = elements.periodInput.value;
+                const isCurrentPeriodLastInHistory = historicalResults.length > 0 && historicalResults[0].period === currentPeriodAfterTimer;
+
+                if (currentPeriodAfterTimer && isCurrentPeriodLastInHistory) {
+                    setNextPeriod(); // Only increment if the displayed period was just completed
+                } else if (!currentPeriodAfterTimer || historicalResults.length === 0) {
+                    setInitialPeriod(); // Ensure an initial period is present if user cleared it or it's genuinely empty
                 }
-                setNextPeriod();
-                startTimer();
+                
+                startTimer(); // Restart timer for the current/next period
             }
         }, 1000);
     }
     
-    function setNextPeriod() {
-        const currentPeriod = parseInt(elements.periodInput.value, 10);
-        if (!isNaN(currentPeriod) && currentPeriod > 0) {
-            elements.periodInput.value = currentPeriod + 1;
-        } else {
-            elements.periodInput.value = Math.floor(Date.now() / 1000);
-        }
+    function setInitialPeriod() {
+        // Generate a new period number using the current date/time to make it somewhat unique
+        // For example, YYMMDDHHMM (last 10 digits of timestamp often too long)
+        const now = new Date();
+        const year = String(now.getFullYear()).slice(-2);
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        elements.periodInput.value = `${year}${month}${day}${hours}${minutes}`;
     }
+
+    function setNextPeriod() {
+        const currentPeriod = elements.periodInput.value;
+        const lastTwoDigits = parseInt(currentPeriod.slice(-2), 10); // Get last two digits as number
+        let newLastTwoDigits = (lastTwoDigits + 1).toString().padStart(2, '0'); // Increment and pad
+
+        let newPeriod;
+        if (newLastTwoDigits === '60') { // Handle minute rollover if period based on minutes
+            const currentHours = parseInt(currentPeriod.slice(-4, -2), 10);
+            const newHours = (currentHours + 1).toString().padStart(2, '0');
+            newPeriod = currentPeriod.slice(0, -4) + newHours + '00';
+        } else {
+            newPeriod = currentPeriod.slice(0, -2) + newLastTwoDigits;
+        }
+        elements.periodInput.value = newPeriod;
+
+        // Clear prediction/actual display for the new period
+        elements.aiPredictionValue.innerHTML = "Waiting for analysis...";
+        elements.aiActualResultValue.innerHTML = "";
+        elements.aiActualResultDisplay.classList.add('hidden'); 
+        elements.toggleActualResultBtn.querySelector('i').className = 'fas fa-eye-slash'; 
+        elements.predictionReasonEl.innerHTML = "AI analysis will appear here.";
+        document.querySelectorAll(".glow").forEach(el=>el.classList.remove("glow")); // Clear glows
+    }
+
+    // Event listener for manual period input changes
+    elements.periodInput.addEventListener('change', () => {
+        clearInterval(timerInterval); // Stop current timer
+        startTimer(); // Restart timer with logic to check for prediction
+    });
+
 
     function switchHistoryView(viewId) {
         document.querySelectorAll('.history-view-content').forEach(v => v.classList.remove('active'));
@@ -369,7 +903,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderHistoryTables() {
         elements.gameHistoryTableBody.innerHTML = '';
         elements.myHistoryTableBody.innerHTML = '';
-        historicalResults.forEach((result, index) => {
+        
+        // Slice to display only the last DISPLAY_HISTORY_LIMIT entries
+        const displayHistory = historicalResults.slice(0, DISPLAY_HISTORY_LIMIT);
+
+        displayHistory.forEach((result, index) => {
+            // Game History Table (shows actual results)
             const gameRow = elements.gameHistoryTableBody.insertRow();
             gameRow.insertCell(0).textContent = result.period;
             gameRow.insertCell(1).textContent = result.number;
@@ -381,96 +920,252 @@ document.addEventListener('DOMContentLoaded', function() {
             else if (result.number === 5) colorIndicator.classList.add('five-color');
             else colorIndicator.classList.add(result.colorClass);
             colorCellGame.appendChild(colorIndicator);
+
+            // My History Table (shows user's status and AI's prediction for that period)
             const myRow = elements.myHistoryTableBody.insertRow();
-            myRow.innerHTML = gameRow.innerHTML;
+            myRow.insertCell(0).textContent = result.period;
+            
+            const predictedNumCell = myRow.insertCell(1);
+            predictedNumCell.textContent = result.aiPredictedNumber !== undefined ? result.aiPredictedNumber : '?'; 
+            
+            const predictedBSCell = myRow.insertCell(2);
+            predictedBSCell.textContent = result.aiPredictedSize; 
+            
+            const predictedColCell = myRow.insertCell(3);
+            let predictedColorIndicator = document.createElement('span');
+            predictedColorIndicator.className = 'color-indicator';
+            let predColorClass;
+            // Determine predicted color class based on the predicted number or directly from aiPredictedColor
+            if (result.aiPredictedNumber === 0) predColorClass = 'zero-color';
+            else if (result.aiPredictedNumber === 5) predColorClass = 'five-color';
+            else if ([1, 3, 7, 9].includes(result.aiPredictedNumber)) predColorClass = 'green';
+            else if ([2, 4, 6, 8].includes(result.aiPredictedNumber)) predColorClass = 'red';
+            else if (result.aiPredictedColor) predColorClass = result.aiPredictedColor.toLowerCase(); // Fallback to direct predicted color
+            else predColorClass = 'gray'; // Fallback if number/color is not correctly set or special
+            
+            predictedColorIndicator.classList.add(predColorClass);
+            predictedColCell.appendChild(predictedColorIndicator);
+
+
             const statusCell = myRow.insertCell(4);
-            updateStatusCell(statusCell, result.userStatus, index);
+            // Pass the actual index from historicalResults for accurate updates
+            updateStatusCell(statusCell, result.userStatus, historicalResults.indexOf(result), result.bigSmall, result.aiPredictedSize);
         });
     }
 
-    function updateStatusCell(cell, status, index) {
+    function updateStatusCell(cell, status, index, actualSize, aiPredictedSize) {
         cell.innerHTML = '';
         if (status === 'Pending') {
-            const winBtn = document.createElement('button'); winBtn.className = 'status-button win'; winBtn.textContent = 'W';
-            winBtn.onclick = () => updateMyHistoryStatus(index, 'W');
-            const lossBtn = document.createElement('button'); lossBtn.className = 'status-button loss'; lossBtn.textContent = 'L';
-            lossBtn.onclick = () => updateMyHistoryStatus(index, 'L');
-            const container = document.createElement('div'); container.className = 'status-buttons-container';
-            container.append(winBtn, lossBtn); cell.appendChild(container);
+            const winBtn = document.createElement('button');
+            winBtn.className = 'status-button Win'; 
+            winBtn.textContent = 'Win'; // Full text "Win"
+            // Use data attributes to store necessary info for the click handler
+            winBtn.dataset.historyIndex = index;
+            winBtn.dataset.actualSize = actualSize;
+            winBtn.dataset.aiPredictedSize = aiPredictedSize;
+            winBtn.onclick = (e) => {
+                const i = parseInt(e.target.dataset.historyIndex, 10);
+                const aSize = e.target.dataset.actualSize;
+                const aiPSize = e.target.dataset.aiPredictedSize;
+                updateMyHistoryStatus(i, 'Win', aSize, aiPSize);
+            };
+
+            const lossBtn = document.createElement('button');
+            lossBtn.className = 'status-button Loss'; 
+            lossBtn.textContent = 'Loss'; // Full text "Loss"
+            lossBtn.dataset.historyIndex = index;
+            lossBtn.dataset.actualSize = actualSize;
+            lossBtn.dataset.aiPredictedSize = aiPredictedSize;
+            lossBtn.onclick = (e) => {
+                const i = parseInt(e.target.dataset.historyIndex, 10);
+                const aSize = e.target.dataset.actualSize;
+                const aiPSize = e.target.dataset.aiPredictedSize;
+                updateMyHistoryStatus(i, 'Loss', aSize, aiPSize);
+            };
+
+            const container = document.createElement('div');
+            container.className = 'status-buttons-container';
+            container.append(winBtn, lossBtn);
+            cell.appendChild(container);
         } else {
-            const statusText = document.createElement('span'); statusText.className = `status-text ${status}`; statusText.textContent = status;
+            const statusText = document.createElement('span');
+            statusText.className = `status-text ${status}`; // Will be 'Win' or 'Loss'
+            statusText.textContent = status; // Display "Win" or "Loss"
             cell.appendChild(statusText);
         }
     }
     
-    function updateMyHistoryStatus(index, status) {
+    function updateMyHistoryStatus(index, status, actualSize, aiPredictedSize) {
         if(historicalResults[index]) {
             historicalResults[index].userStatus = status;
+            historicalResults[index].aiResultMatch = (actualSize === aiPredictedSize) ? 'Match' : 'Mismatch';
             updateAllViews();
         }
     }
-
-    window.login = () => {
-        const username = elements.usernameInput.value;
-        const password = elements.passwordInput.value;
-        const foundUser = users.find(user => user.username === username);
-
-        if (foundUser && foundUser.password === password) {
-            elements.body.classList.remove('login-theme');
-            elements.loginContainer.style.display = 'none';
-            elements.gameContainer.style.display = 'flex';
-            setNextPeriod();
-            startTimer();
-        } else {
-            elements.loginErrorMessage.textContent = 'Invalid username or password';
-            elements.loginErrorMessage.style.display = 'block';
-        }
-    };
-
-    window.logout = () => {
-        elements.body.classList.add('login-theme');
-        elements.loginContainer.style.display = 'block';
-        elements.gameContainer.style.display = 'none';
-        elements.usernameInput.value = '';
-        elements.passwordInput.value = '';
-        elements.loginErrorMessage.style.display = 'none';
-        clearInterval(timerInterval);
-        clearAllHistory(false);
-    };
 
     function clearAllHistory(confirmFirst = true) {
+        // Only admin can clear history
+        if (currentUserRole !== 'admin') {
+            alert("You do not have permission to clear history.");
+            return;
+        }
+
         if (!confirmFirst || confirm("Clear all history? This can't be undone.")) {
-            historicalResults.length = 0;
-            updateAllViews();
+            historicalResults.length = 0; // Clears the array
+            updateAllViews(); // Re-renders empty tables
             elements.predictionReasonEl.innerHTML = "AI analysis will appear here.";
+            elements.aiPredictionValue.innerHTML = "Waiting for analysis..."; // Clear AI prediction
+            elements.aiActualResultValue.innerHTML = ""; // Clear AI actual result
+            elements.aiActualResultDisplay.classList.add('hidden'); // Hide actual result display
+            elements.toggleActualResultBtn.querySelector('i').className = 'fas fa-eye-slash'; // Reset icon to eye-slash
+            
+            setInitialPeriod(); // Set a new initial period after clearing
+            clearInterval(timerInterval); // Stop the current timer
+            startTimer(); // Restart timer for the new period
         }
     }
 
+    // --- Toggle AI Actual Result Display ---
+    elements.toggleActualResultBtn.addEventListener('click', function() {
+        elements.aiActualResultDisplay.classList.toggle('hidden');
+        if (elements.aiActualResultDisplay.classList.contains('hidden')) {
+            this.querySelector('i').className = 'fas fa-eye-slash'; // Change to eye-slash icon
+            this.title = "Show Actual Result";
+        } else {
+            this.querySelector('i').className = 'fas fa-eye'; // Change to eye icon
+            this.title = "Hide Actual Result";
+        }
+    });
+
+    // --- UI Update Helper Functions ---
+    function updatePreviousResultsDisplay(){
+        elements.previousResultsContainer.innerHTML="";
+        // Show up to 5 latest actual results
+        historicalResults.slice(0,5).forEach(e=>{
+            const t=document.createElement("span");
+            t.className=`ball ${e.colorClass}`;
+            t.textContent=e.number;
+            elements.previousResultsContainer.appendChild(t);
+        });
+        // Ensure no horizontal scroll is needed for these 5 balls
+        elements.previousResultsContainer.style.flexWrap = 'nowrap';
+        elements.previousResultsContainer.style.overflowX = 'auto';
+        elements.previousResultsContainer.style.justifyContent = 'flex-end'; // Align to right
+    }
+    function applyGlowEffects(e){
+        document.querySelectorAll(".glow").forEach(el=>el.classList.remove("glow"));
+        const bigSmallEl=document.querySelector(`.big-small .btn-big-small.${e.bigSmall.toLowerCase()}`);
+        if(bigSmallEl){
+            bigSmallEl.classList.add("glow");
+            bigSmallEl.style.setProperty("--glow-color",e.bigSmall==="Big"?"var(--orange)":"var(--blue)");
+        }
+        const numEl=document.querySelector(`.number-buttons .ball[data-number="${e.number}"]`);
+        if(numEl){
+            numEl.classList.add("glow");
+            const numColor=window.getComputedStyle(numEl).backgroundColor;
+            numEl.style.setProperty("--glow-color",numColor);
+        }
+        const colorEl=document.querySelector(`.color-buttons .btn-color.${e.colorClass}`);
+        if(colorEl){
+            colorEl.classList.add("glow");
+            colorEl.style.setProperty("--glow-color",`var(--${e.colorClass})`);
+        }
+        // Handle 0 and 5 special colors for glow (if they exist)
+        if(0===e.number){
+            const redEl=document.querySelector(".color-buttons .btn-color.red");
+            if(redEl){redEl.classList.add("glow");redEl.style.setProperty("--glow-color","var(--red)")}
+        }
+        if(5===e.number){
+            const greenEl=document.querySelector(".color-buttons .btn-color.green");
+            if(greenEl){greenEl.classList.add("glow");greenEl.style.setProperty("--glow-color","var(--green)")}
+        }
+    }
+    function updateChartData(){
+        const counts={red:0,green:0,violet:0,big:0,small:0};
+        const relevantHistory=historicalResults.filter(r => r.number !== undefined).slice(0,100); // Only count actual results for chart
+        relevantHistory.forEach(r=>{
+            // Note: For chart, numbers 0 and 5 are counted under both their base color AND violet.
+            // If you only want one, you'll need to adjust this logic.
+            // Current logic counts a '0' as both red and violet, and a '5' as both green and violet.
+            if(r.colorClass === "red") counts.red++;
+            if(r.colorClass === "green") counts.green++;
+            if(r.colorClass === "violet") counts.violet++; // This will count 0 and 5 if they were explicitly violet
+            
+            if(r.number === 0 && r.colorClass !== 'violet') counts.red++; // Double count red for 0 if not primary violet
+            if(r.number === 5 && r.colorClass !== 'violet') counts.green++; // Double count green for 5 if not primary violet
+
+
+            r.bigSmall==="Big"?counts.big++:counts.small++;
+        });
+        const total = relevantHistory.length;
+        elements.chartTableBody.innerHTML=total > 0 ?`
+            <tr><td>Red</td><td style="text-align:center">${counts.red}</td><td style="text-align:right">${(counts.red/total*100).toFixed(0)}%</td></tr>
+            <tr><td>Green</td><td style="text-align:center">${counts.green}</td><td style="text-align:right">${(counts.green/total*100).toFixed(0)}%</td></tr>
+            <tr><td>Violet</td><td style="text-align:center">${counts.violet}</td><td style="text-align:right">${(counts.violet/total*100).toFixed(0)}%</td></td></tr>
+            <tr><td colspan="3" style="height:10px;"></td></tr>
+            <tr><td>Big</td><td style="text-align:center">${counts.big}</td><td style="text-align:right">${(counts.big/total*100).toFixed(0)}%</td></tr>
+            <tr><td>Small</td><td style="text-align:center">${counts.small}</td><td style="text-align:right">${(counts.small/total*100).toFixed(0)}%</td></tr>
+        `:'<tr><td colspan="3" style="text-align:center">No history yet.</td></tr>';
+    }
+    function updateSessionAccuracy(){
+        const evaluatedResults=historicalResults.filter(r=>r.userStatus!=="Pending");
+        // Count how many times AI's PREDICTION (aiPredictedSize) matched the ACTUAL result (bigSmall)
+        const correctPredictions = evaluatedResults.filter(r => r.aiPredictedSize === r.bigSmall).length; 
+        const totalEvaluated = evaluatedResults.length;
+        const accuracy = totalEvaluated > 0 ? (correctPredictions / totalEvaluated * 100).toFixed(0) : 0;
+        document.querySelector("#chartView .session-accuracy").textContent=`AI Accuracy: ${accuracy}% (Matched:${correctPredictions} Total:${totalEvaluated})`;
+    }
+    // --- End UI Update Helper Functions ---
+
+    // --- Event Listeners for new functionality ---
+
+    // 1. Game Options (Timer Intervals)
+    elements.gameOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            document.querySelectorAll('.game-options .option').forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+            selectedGameTime = parseInt(this.dataset.time, 10);
+            document.getElementById('wingoIntervalText').textContent = `WinGo ${this.textContent}`;
+            clearInterval(timerInterval); // Stop current timer
+            startTimer(); // Restart timer with new duration, but don't force new period prediction
+        });
+    });
+
+    // 2. History Tabs
     elements.tabGameHistory.addEventListener('click', () => switchHistoryView('gameHistoryView'));
     elements.tabChart.addEventListener('click', () => switchHistoryView('chartView'));
     elements.tabMyHistory.addEventListener('click', () => switchHistoryView('myHistoryView'));
-    elements.clearHistoryBtn.addEventListener('click', () => clearAllHistory(true));
-    document.querySelectorAll('.game-options .option').forEach(option => {
-        option.addEventListener('click', function() {
-            document.querySelector('.game-options .option.active').classList.remove('active');
-            this.classList.add('active');
-            selectedGameTime = parseInt(this.dataset.time);
-            document.getElementById('wingoIntervalText').textContent = `WinGo ${this.textContent}`;
-            startTimer();
-        });
+
+    // 3. How to Play Modal
+    const howToPlayModal = document.getElementById('howToPlayModal');
+    const howToPlayBtn = document.getElementById('howToPlayBtn');
+    const closeModalBtn = howToPlayModal.querySelector('.close-button');
+
+    howToPlayBtn.addEventListener('click', () => {
+        howToPlayModal.classList.add('show');
     });
-    
-    function updatePreviousResultsDisplay(){elements.previousResultsContainer.innerHTML="";historicalResults.slice(0,5).forEach(e=>{const t=document.createElement("span");t.className=`ball ${e.colorClass}`,t.textContent=e.number,elements.previousResultsContainer.appendChild(t)})}
-    function applyGlowEffects(e){document.querySelectorAll(".glow").forEach(e=>e.classList.remove("glow"));const bigSmallEl=document.querySelector(`.big-small .btn-big-small.${e.bigSmall.toLowerCase()}`);if(bigSmallEl){bigSmallEl.classList.add("glow");bigSmallEl.style.setProperty("--glow-color",e.bigSmall==="Big"?"var(--orange)":"var(--blue)")}const numEl=document.querySelector(`.number-buttons .ball[data-number="${e.number}"]`);if(numEl){numEl.classList.add("glow");const numColor=window.getComputedStyle(numEl).backgroundColor;numEl.style.setProperty("--glow-color",numColor)}const colorEl=document.querySelector(`.color-buttons .btn-color.${e.colorClass}`);if(colorEl){colorEl.classList.add("glow");colorEl.style.setProperty("--glow-color",`var(--${e.colorClass})`)}if(0===e.number){const redEl=document.querySelector(".color-buttons .btn-color.red");if(redEl){redEl.classList.add("glow");redEl.style.setProperty("--glow-color","var(--red)")}}if(5===e.number){const greenEl=document.querySelector(".color-buttons .btn-color.green");if(greenEl){greenEl.classList.add("glow");greenEl.style.setProperty("--glow-color","var(--green)")}}}
-    function updateChartData(){const e={red:0,green:0,violet:0,big:0,small:0},t=historicalResults.slice(0,100);t.forEach(t=>{if(t.colorClass.includes("red")||t.number===0)e.red++;if(t.colorClass.includes("green")||t.number===5)e.green++;if(t.colorClass.includes("violet"))e.violet++;"Big"===t.bigSmall?e.big++:e.small++});const l=t.length;elements.chartTableBody.innerHTML=l>0?`
-            <tr><td>Red</td><td style="text-align:center">${e.red}</td><td style="text-align:right">${(e.red/l*100).toFixed(0)}%</td></tr>
-            <tr><td>Green</td><td style="text-align:center">${e.green}</td><td style="text-align:right">${(e.green/l*100).toFixed(0)}%</td></tr>
-            <tr><td>Violet</td><td style="text-align:center">${e.violet}</td><td style="text-align:right">${(e.violet/l*100).toFixed(0)}%</td></tr>
-            <tr><td colspan="3" style="height:10px;"></td></tr>
-            <tr><td>Big</td><td style="text-align:center">${e.big}</td><td style="text-align:right">${(e.big/l*100).toFixed(0)}%</td></tr>
-            <tr><td>Small</td><td style="text-align:center">${e.small}</td><td style="text-align:right">${(e.small/l*100).toFixed(0)}%</td></tr>
-        `:'<tr><td colspan="3" style="text-align:center">No history yet.</td></tr>'}
-    function updateSessionAccuracy(){const e=historicalResults.filter(e=>"Pending"!==e.userStatus),t=e.filter(e=>"W"===e.userStatus).length,l=e.length,a=l>0?(t/l*100).toFixed(0):0;document.querySelector("#chartView .session-accuracy").textContent=`Session Accuracy: ${a}% (W:${t} L:${l-t})`}
+
+    closeModalBtn.addEventListener('click', () => {
+        howToPlayModal.classList.remove('show');
+    });
+
+    // Close modal if clicked outside content
+    howToPlayModal.addEventListener('click', (e) => {
+        if (e.target === howToPlayModal) {
+            howToPlayModal.classList.remove('show');
+        }
+    });
+
+    // 4. Clear History Button (Admin only)
+    elements.clearHistoryBtn.addEventListener('click', () => clearAllHistory(true));
+
+    // Initial checks and setup when page loads
+    checkLoginStatus();
+
+    // Set initial period if not already set (e.g., on first load before login, or after clear history)
+    if (!elements.periodInput.value) {
+        setInitialPeriod();
+    }
 });
 </script>
 </body>
