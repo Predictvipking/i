@@ -3,287 +3,470 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predictor v11.0 - Gemini AI</title>
+    <title>BDG GAME Predictor - Gemini AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
     <style>
+        /* Base Styling - Matching the provided screenshot theme */
         body, html {
-            font-family: 'Exo 2', sans-serif;
-            background: #0F0C29;
-            color: #E0E7FF;
+            font-family: 'Exo 2', sans-serif; /* Primary font as seen in screenshot */
+            background: #0F0C29; /* Deep dark background */
+            color: #E0E7FF; /* Light blue-white text */
             margin: 0;
             padding: 0;
-            overflow: hidden;
+            overflow: hidden; /* Hide body scrollbars */
             height: 100%;
         }
 
+        /* Custom scrollbar hiding (for elements with overflow) */
         ::-webkit-scrollbar { display: none; }
-        html, body, #main-content {
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            overflow: auto;
-        }
         .table-container {
-             overflow: auto;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+            overflow-y: auto; /* Enable vertical scrolling for table content */
         }
 
+        /* Utility classes from the original base script */
         .hidden { display: none !important; }
 
-        .highlight-fuchsia { color: #FF00FF; }
-        .bg-fuchsia-active { background: #FF00FF; }
-        .text-fuchsia-active { color: #FF00FF; }
-        .shadow-fuchsia-glow { box-shadow: 0 0 15px rgba(255, 0, 255, 0.7); }
-        .border-fuchsia-glow { border-color: #FF00FF; }
+        /* Theme-specific colors and highlights as seen in screenshot */
+        .highlight-fuchsia { color: #FF00FF; } /* Bright fuchsia for accents */
+        .bg-fuchsia-active { background: #FF00FF; } /* Solid fuchsia for active states */
+        .text-fuchsia-active { color: #FF00FF; } /* Fuchsia text */
+        .shadow-fuchsia-glow { box-shadow: 0 0 15px rgba(255, 0, 255, 0.7); } /* Fuchsia glow */
+        .border-fuchsia-glow { border-color: #FF00FF; } /* Fuchsia border */
 
-        .status-win { background: rgba(0, 255, 127, 0.3); color: #00FF7F; }
-        .status-loss { background: rgba(255, 85, 85, 0.3); color: #FF5555; }
-        .status-partial { background: rgba(255, 170, 0, 0.3); color: #FFAA00; }
+        /* Status colors */
+        .status-win { background: rgba(0, 255, 127, 0.2); color: #00FF7F; } /* Green for win, lighter background */
+        .status-loss { background: rgba(255, 85, 85, 0.2); color: #FF5555; } /* Red for loss, lighter background */
+        .status-partial { background: rgba(255, 170, 0, 0.2); color: #FFAA00; } /* Orange for partial, lighter background */
 
+        /* Prediction Result colors as seen in screenshot */
+        .color-red { color: #FF5555; } /* Red for numbers 2,4,6,8 and Red color text */
+        .color-green { color: #00FF7F; } /* Green for numbers 1,3,7,9 and Green color text */
+        .color-violet { color: #D81BFF; } /* Violet for numbers 0,5 and Violet text */
+        .color-big { color: #FFAA00; } /* Orange for Big text */
+        .color-small { color: #00D4FF; } /* Light Blue for Small text */
+
+        /* --- LOGIN SCREEN STYLES (COMPACTED & SCREENSHOT-MATCHED) --- */
+        #login-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #0F0C29, #302B63, #24243E); /* Matching deep gradient */
+        }
+        .login-card {
+            background: rgba(255, 255, 255, 0.08); /* Semi-transparent background */
+            border: 1px solid rgba(255, 255, 255, 0.15); /* Subtle border */
+            border-radius: 12px; /* Screenshot border-radius */
+            padding: 18px; /* Slightly reduced padding */
+            backdrop-filter: blur(8px); /* Subtle blur */
+            box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.3); /* Softer shadow */
+            text-align: center;
+            width: 90%;
+            max-width: 380px; /* Matching initial width */
+        }
+        /* Login screen header title (from original script) */
+        .login-card h1 { font-size: 1.8rem; font-weight: 700; color: #E0E7FF; margin-bottom: 5px; } /* Smaller font, less margin */
+        .login-card p { font-size: 0.85rem; color: #A5B4FC; margin-bottom: 12px; } /* Smaller font, less margin */
+        
+        /* Input fields */
+        .login-card input {
+            width: 100%; padding: 10px; background: rgba(0, 0, 0, 0.3); /* Darker input background */
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 6px; /* Reduced border radius */
+            color: #E0E7FF; margin-bottom: 10px; font-size: 1rem; /* Reduced margin */
+            box-sizing: border-box; /* Crucial for consistent sizing */
+        }
+        .login-card input:focus {
+            outline: none;
+            border-color: #FF00FF; /* Fuchsia border on focus */
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.5); /* Fuchsia glow */
+        }
+        .password-wrapper {
+            position: relative;
+            display: flex; /* Ensures input and icon are on one line */
+            align-items: center;
+            margin-bottom: 10px; /* Added margin-bottom to the wrapper itself */
+        }
+        .password-wrapper input { padding-right: 35px; margin-bottom: 0; } /* Space for eye icon, remove input's margin */
+        #toggle-password-icon {
+            position: absolute;
+            right: 10px;
+            cursor: pointer;
+            color: #A5B4FC; /* Lighter grey for icon */
+            font-size: 0.9rem; /* Smaller icon */
+            transition: color 0.2s ease;
+        }
+        #toggle-password-icon:hover { color: #E0E7FF; }
+        
+        /* Login button */
+        .login-card button {
+            width: 100%; padding: 10px; background: #FF00FF; color: #0F0C29; /* Fuchsia button with dark text */
+            font-weight: 700; border: none; border-radius: 8px; cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .login-card button:hover { box-shadow: 0 0 15px rgba(255, 0, 255, 0.6); } /* Fuchsia glow on hover */
+        .error-message { 
+            color: #FF5555; 
+            font-size: 0.8rem; 
+            margin-top: 5px; /* Reduced margin */
+            margin-bottom: 10px; /* Reduced margin */
+            display: none; 
+        }
+        /* BDG GAME Logo (matching previous screenshot positioning, adjust for no username) */
+        .login-logo {
+            width: 180px; /* Size from previous screenshot */
+            height: auto;
+            margin-bottom: 20px; /* Space below logo before withdrawal text */
+        }
+        .login-card .splash-overlay-text { /* Specific adjustment for login text */
+            margin-bottom: 20px; /* Space between text and input */
+        }
+
+
+        /* --- APP CONTAINER STYLES (COMPACTED & SCREENSHOT-MATCHED) --- */
+        #app-container {
+            display: flex; 
+            justify-content: center; 
+            height: 100vh; /* Fixed height for consistent layout */
+            background: linear-gradient(45deg, #0F0C29, #302B63, #24243E); /* Matching gradient */
+            padding: 8px; /* Overall small padding */
+            box-sizing: border-box;
+        }
+        #main-content {
+            width: 100%; 
+            max-width: 380px; /* Max width as per screenshot */
+            display: flex; 
+            flex-direction: column;
+            gap: 8px; /* Space between main sections like in screenshot */
+            overflow-y: auto; /* Allow main content to scroll if needed */
+            padding-right: 2px; /* Small padding for scrollbar visibility if needed */
+        }
+        /* App Header */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 0; /* Reduced padding */
+            margin-bottom: 5px; /* Reduced margin */
+        }
+        .app-header .header-left, .app-header .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px; /* Reduced gap */
+        }
+        .app-header-icon {
+            font-size: 1.1rem; /* Icon size */
+            color: #E0E7FF; /* White color */
+        }
+        .app-header-logo-img { /* Style for the BDG GAME logo in header */
+            height: 22px; /* Height as per screenshot */
+            width: auto;
+            filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5)); /* Subtle glow */
+        }
+        /* Logout button style */
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.3s ease;
+        }
+        .logout-btn:hover {
+            background: rgba(255, 85, 85, 0.3); /* Reddish tint on hover */
+            box-shadow: 0 0 8px rgba(255, 85, 85, 0.5);
+        }
+        .logout-btn svg {
+            width: 18px; height: 18px; color: #E0E7FF;
+        }
+
+        /* Game Mode Selector (Wingo/TRX) & Intervals) */
+        #game-mode-selector {
+            background: rgba(255, 255, 255, 0.08); 
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px; /* Matches screenshot */
+            padding: 4px; /* Reduced padding */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Softer shadow */
+            margin-bottom: 8px; /* Reduced margin */
+        }
+        #game-mode-tabs {
+            display: flex; justify-content: space-around; 
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px; /* Matches screenshot inner rounding */
+            padding: 2px; /* Reduced padding */
+            margin-bottom: 4px; /* Reduced margin */
+        }
+        #game-mode-tabs button {
+            flex: 1; padding: 6px 0; /* Reduced padding, flex handles width */
+            font-size: 0.8rem; font-weight: 600;
+            color: #A5B4FC; background: transparent; border: none; cursor: pointer;
+            transition: all 0.3s ease; text-transform: uppercase;
+            border-radius: 6px; /* Matches screenshot inner rounding */
+        }
+        #game-mode-tabs button.active {
+            background: #FFD700; /* Gold-yellow as in screenshot */
+            color: #0F0C29; /* Dark text on gold */
+            box-shadow: inset 0 0 6px rgba(255, 215, 0, 0.7); /* Gold inner glow */
+        }
+
+        #interval-selector-container { text-align: center; padding: 4px 0; } /* Reduced padding */
+        .mode-toggle {
+            display: inline-flex; 
+            border-radius: 9999px; /* Pill shape */
+            background: rgba(0, 0, 0, 0.2);
+            padding: 2px; /* Reduced padding */
+            gap: 4px; /* Space between buttons */
+        }
+        .mode-toggle button {
+            padding: 5px 10px; font-size: 0.7rem; font-weight: 500; /* Reduced font size */
+            border-radius: 9999px; transition: all 0.2s ease; color: #A5B4FC;
+            background: transparent; border: none; cursor: pointer;
+        }
+        .mode-toggle button.active {
+            background: #FFD700; /* Gold-yellow as in screenshot */
+            color: #0F0C29;
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.6); /* Gold glow */
+        }
+
+        /* Main Prediction Card */
+        .main-card {
+            background: rgba(255, 255, 255, 0.08); 
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px; /* Matches screenshot */
+            padding: 10px; /* Slightly increased padding for content inside */
+            margin-bottom: 8px; /* Reduced margin */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Softer shadow */
+        }
+        .toggle-switch-container {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 6px 8px; /* Reduced padding */
+            background: rgba(0, 0, 0, 0.2); /* Darker background for toggle row */
+            border-radius: 8px; margin: 0 0 8px 0; /* Adjusted margin to match screenshot (no horizontal margin) */
+        }
+        .toggle-switch-label { font-size: 0.8rem; font-weight: 600; color: #A5B4FC; } /* Smaller font */
+        .toggle-switch {
+            position: relative; display: inline-block; width: 40px; height: 22px; /* Smaller switch */
+            cursor: pointer;
+        }
+        .toggle-switch-handle {
+            position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; /* Smaller handle */
+            background-color: #E0E7FF; border-radius: 50%; transition: transform 0.3s ease;
+        }
+        .toggle-switch-bg {
+            position: absolute; width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.2); border-radius: 11px; /* Matches handle border-radius */
+            transition: background-color 0.3s ease;
+        }
+        .toggle-switch.active .toggle-switch-bg { background-color: #FF00FF; } /* Fuchsia for active */
+        .toggle-switch.active .toggle-switch-handle { transform: translateX(18px); } /* Adjusted for size */
+
+        .info-grid { 
+            display: grid; 
+            grid-template-columns: 1fr; /* Stack rows */
+            gap: 5px; /* Reduced gap between info lines */
+            padding: 0 0 5px 0; /* Reduced padding */
+        }
+        .info-line {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 5px 8px; /* Further reduced padding */
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px; /* Rounded corners */
+        }
+        .info-label { font-size: 0.8rem; color: #A5B4FC; display: flex; align-items: center; }
+        .info-label svg { width: 1rem; height: 1rem; margin-right: 0.5rem; color: #FFD700; } /* Gold icons */
+        .info-value { font-family: 'Exo 2', sans-serif; font-size: 1rem; font-weight: 600; color: #E0E7FF; } /* Exo 2, matches screenshot */
+
+        #timer.info-value { color: #FF5555; font-weight: 700; } /* Red and bold for timer */
+        /* Changed prediction-text to have fuchsia highlight since it's now 'Gemini AI Result' */
+        #prediction-text.info-value {
+             color: #FF00FF; /* Fuchsia for main AI Result */
+             text-shadow: 0 0 2px rgba(255, 0, 255, 0.5); /* Fuchsia glow */
+             font-weight: 700; /* Bold */
+        }
+        .ai-sparkle-icon {
+            width: 0.9rem; height: 0.9rem; color: #FFD700; margin-left: 0.3rem;
+            animation: neonSparkle 1.2s infinite alternate;
+        }
+        @keyframes neonSparkle {
+            0% { transform: scale(1); opacity: 0.8; filter: drop-shadow(0 0 1px #FFD700); }
+            100% { transform: scale(1.2); opacity: 1; filter: drop-shadow(0 0 4px #FFD700); }
+        }
+
+        /* Loader for AI prediction */
+        .loader {
+            border: 2px solid #f3f3f3; /* Light grey */
+            border-top: 2px solid #FF00FF; /* Fuchsia */
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Chart Stats Grid */
+        .chart-stats-grid {
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 5px; /* Gap for the stats grid items */
+            margin-top: 10px; /* Margin above the grid */
+            padding: 0 0 5px 0; /* Reduced bottom padding */
+        }
+        .stat-item {
+            background: rgba(255, 255, 255, 0.05); /* Subtle background */
+            padding: 8px 4px; /* Reduced padding */
+            border-radius: 8px; /* Rounded corners */
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+        }
+        .stat-label { font-size: 0.65rem; color: #A5B4FC; margin-bottom: 2px; } /* Smaller font */
+        .stat-value { font-family: 'Exo 2', sans-serif; font-size: 0.9rem; font-weight: 700; color: #E0E7FF; } /* Exo 2, bold */
+        .stat-value.win { color: #00FF7F; }
+        .stat-value.loss { color: #FF5555; }
+        .stat-value.partial { color: #FFAA00; }
+        .stat-value.accuracy { color: #FF00FF; } /* Fuchsia for accuracy */
+        .stat-value.revenue { color: #FFD700; } /* Gold for revenue */
+        .stat-value.revenue.negative { color: #FF5555; }
+
+        /* History Header & Buttons */
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px; /* Consistent margin below main-card */
+            padding: 0 0; /* No horizontal padding needed here */
+        }
+        .history-header h2 {
+            font-family: 'Exo 2', sans-serif; font-size: 1.1rem; font-weight: 700; color: #FFD700; /* Gold text */
+        }
+        .header-buttons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .clear-btn {
+            background: #FF5555; /* Red background */
+            color: #E0E7FF; /* White text */
+            font-weight: 600;
+            padding: 6px 12px; /* Standard padding for action button */
+            border-radius: 8px;
+            font-size: 0.8rem;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .clear-btn:hover {
+            background: #c82333; /* Darker red */
+            box-shadow: 0 0 10px rgba(255, 85, 85, 0.5);
+        }
+
+        /* Table Styling (Prediction History) */
+        .table-container {
+            flex-grow: 1; /* Allows table to fill remaining vertical space */
+            max-height: calc(100vh - 350px); /* Adjusted max-height based on overall compact layout */
+            overflow-y: auto; /* Enable vertical scrolling */
+            background: rgba(255, 255, 255, 0.08); /* Card background */
+            border: 1px solid rgba(255, 255, 255, 0.15); /* Subtle border */
+            border-radius: 12px; /* Matches other cards */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Softer shadow */
+        }
+        table {
+            width: 100%; border-collapse: collapse; font-size: 0.75rem; /* Standard font size for table */
+            table-layout: fixed; /* Fix column widths for consistent layout */
+            /* Removed min-width from table itself to ensure it always fits parent */
+        }
+        th, td {
+            padding: 6px 4px; /* Reduced padding for compact rows */
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle row separators */
+            white-space: nowrap; /* Prevent wrapping in cells */
+            overflow: hidden; /* Hide overflow */
+            text-overflow: ellipsis; /* Show ellipsis for overflowing text */
+        }
+        th {
+            background: rgba(25, 22, 50, 0.95); /* Darker header background */
+            text-transform: uppercase;
+            font-size: 0.65rem; color: #A5B4FC; /* Smaller font for headers */
+            position: sticky; top: 0; /* Sticky header when scrolling */
+            z-index: 10; 
+            box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+        }
+        /* Adjusted column widths to prioritize full period number and compactness */
+        th:nth-child(1), td:nth-child(1) { width: 35%; text-align: left; padding-left: 8px; } /* Period - wider, left-aligned */
+        th:nth-child(2), td:nth-child(2) { width: 28%; } /* Prediction */
+        th:nth-child(3), td:nth-child(3) { width: 20%; } /* Result */
+        th:nth-child(4), td:nth-child(4) { width: 17%; } /* Status (adjusting slightly for space) */
+
+        /* Table Row Styling */
+        tbody tr:nth-child(odd) { background-color: rgba(0, 0, 0, 0.05); } 
+        tbody tr:hover { background-color: rgba(255, 255, 255, 0.08); } 
+        
+        /* Result Specific Colors (Applied by JS) */
         .color-red { color: #FF5555; }
         .color-green { color: #00FF7F; }
         .color-violet { color: #D81BFF; }
         .color-big { color: #FFAA00; }
         .color-small { color: #00D4FF; }
 
-        #login-screen {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background: linear-gradient(135deg, #0F0C29, #302B63, #24243E);
-        }
-        .login-card {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 16px;
-            padding: 2rem;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            text-align: center;
-            width: 90%;
-            max-width: 400px;
-        }
-        .login-card h1 { font-size: 2rem; font-weight: 700; }
-        .login-card p { font-size: 0.9rem; color: #A5B4FC; margin-bottom: 1.5rem; }
-        .login-card input {
-            width: 100%; padding: 0.75rem; background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px;
-            color: #E0E7FF; margin-bottom: 1rem; font-size: 1rem;
-        }
-        .login-card button {
-            width: 100%; padding: 0.75rem; background: #FF00FF; color: #0F0C29;
-            font-weight: 700; border: none; border-radius: 8px; cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .login-card button:hover { box-shadow: 0 0 20px rgba(255, 0, 255, 0.6); }
-        .error-message { color: #FF5555; font-size: 0.8rem; margin-top: 0.5rem; display: none; }
-
-        #app-container {
-            display: flex; justify-content: center; height: 100vh;
-            background: linear-gradient(45deg, #0F0C29, #302B63, #24243E);
-            padding: 0.5rem; box-sizing: border-box;
-        }
-
-        #main-content {
-            width: 100%; max-width: 400px; padding: 0;
-            position: relative; height: 100%;
-        }
-
-        .app-title-container {
-            text-align: center; margin-top: 0.25rem; margin-bottom: 0.5rem;
-        }
-        .app-title-container h1 { font-size: 2rem; font-weight: 700; color: #E0E7FF; line-height: 1; }
-        .app-title-container p { font-size: 0.65rem; color: #A5B4FC; margin-top: 0.1rem; }
-
-        #game-mode-selector {
-            background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 16px; padding: 0.3rem; backdrop-filter: blur(10px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3); overflow: hidden;
-            width: 100%; margin-bottom: 0.5rem;
-        }
-        #game-mode-tabs {
-            display: flex; justify-content: space-around; background: rgba(0, 0, 0, 0.2);
-            border-radius: 12px; overflow-x: auto; margin-bottom: 0.1rem;
-        }
-        #game-mode-tabs button {
-            flex: 1; padding: 0.4rem; font-size: 0.75rem; font-weight: 600;
-            color: #A5B4FC; background: transparent; border: none; cursor: pointer;
-            transition: all 0.3s ease; text-transform: uppercase;
-        }
-        #game-mode-tabs button.active {
-            background: #FF00FF; color: #0F0C29;
-            box-shadow: inset 0 0 8px rgba(255, 0, 255, 0.7);
-            border-radius: 10px; margin: 0.05rem;
-        }
-
-        #interval-selector-container { padding: 0.05rem; text-align: center; }
-        .mode-toggle {
-            margin: 0 auto; border-radius: 9999px; background: rgba(0, 0, 0, 0.2);
-            padding: 0.1rem;
-        }
-        .mode-toggle button {
-            padding: 0.2rem 0.7rem; font-size: 0.65rem; font-weight: 500;
-            border-radius: 9999px; transition: all 0.2s ease; color: #A5B4FC;
-        }
-        .mode-toggle button.active {
-            background: #FF00FF; color: #0F0C29;
-            box-shadow: 0 0 10px rgba(255, 0, 255, 0.6);
-        }
-
-        .main-card {
-            background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 16px; padding: 0.5rem; margin-bottom: 0.5rem;
-            backdrop-filter: blur(10px);
-        }
-        .info-grid { display: grid; grid-gap: 0.2rem; padding: 0.3rem; }
-        .info-line {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0.3rem 0.4rem; background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-        }
-        .info-label { font-size: 0.85rem; color: #A5B4FC; display: flex; align-items: center; }
-        .info-label svg { width: 1rem; height: 1rem; margin-right: 0.3rem; color: #FF00FF; }
-        .info-value { font-size: 1rem; font-weight: 600; color: #E0E7FF; }
-        #prediction-text .color-number { border: none; }
-
-        .toggle-switch-container {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0.3rem 0.4rem; background: rgba(0, 0, 0, 0.2);
-            border-radius: 8px; margin: 0.5rem 0.3rem 0.3rem;
-        }
-        .toggle-switch-label { font-size: 0.85rem; font-weight: 600; color: #A5B4FC; }
-        .toggle-switch {
-            position: relative; display: inline-block; width: 44px; height: 24px;
-            cursor: pointer;
-        }
-        .toggle-switch-handle {
-            position: absolute; top: 2px; left: 2px; width: 20px; height: 20px;
-            background-color: #E0E7FF; border-radius: 50%; transition: transform 0.3s ease;
-        }
-        .toggle-switch-bg {
-            position: absolute; width: 100%; height: 100%;
-            background-color: rgba(255, 255, 255, 0.2); border-radius: 12px;
-            transition: background-color 0.3s ease;
-        }
-        .toggle-switch.active .toggle-switch-bg { background-color: #FF00FF; }
-        .toggle-switch.active .toggle-switch-handle { transform: translateX(20px); }
-
-        .ai-sparkle-icon {
-            width: 0.9rem; height: 0.9rem; color: #FFD700; margin-left: 0.3rem;
-            animation: neonSparkle 1.2s infinite alternate;
-        }
-        @keyframes neonSparkle {
-            0% { transform: scale(1); opacity: 0.8; filter: drop-shadow(0 0 2px #FFD700); }
-            100% { transform: scale(1.3); opacity: 1; filter: drop-shadow(0 0 6px #FFD700); }
-        }
-
-        .chart-stats-grid {
-            display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.3rem;
-            margin-bottom: 0.5rem; padding: 0 0.3rem;
-        }
-        .stat-item {
-            background: rgba(255, 255, 255, 0.08); padding: 0.3rem;
-            border-radius: 8px; text-align: center;
-        }
-        .stat-label { font-size: 0.55rem; color: #A5B4FC; margin-bottom: 0.05rem; }
-        .stat-value { font-size: 0.75rem; font-weight: 700; color: #E0E7FF; }
-        .stat-value.win { color: #00FF7F; }
-        .stat-value.loss { color: #FF5555; }
-        .stat-value.partial { color: #FFAA00; }
-        .stat-value.accuracy { color: #FF00FF; }
-        .stat-value.revenue { color: #FFD700; }
-        .stat-value.revenue.negative { color: #FF5555; }
-
-        .table-container {
-            max-height: 200px;
-            border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px;
-            position: relative;
-        }
-        table {
-            width: 100%; border-collapse: collapse; font-size: 0.7rem;
-            min-width: 350px; table-layout: fixed;
-        }
-        th, td {
-            padding: 0.25rem 0.3rem; text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        th {
-            background: rgba(25, 22, 50, 0.95); text-transform: uppercase;
-            font-size: 0.6rem; color: #A5B4FC; position: sticky; top: 0;
-            z-index: 10; box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.1);
-        }
-        th:nth-child(1), td:nth-child(1) { width: 35%; }
-        th:nth-child(2), td:nth-child(2) { width: 30%; }
-        th:nth-child(3), td:nth-child(3) { width: 20%; }
-        th:nth-child(4), td:nth-child(4) { width: 15%; }
+        /* Status Pills */
         .status-pill {
-            padding: 2px 6px; border-radius: 9999px; font-size: 0.6rem;
-            font-weight: 600; display: inline-block; width: 100%; text-align: center;
+            padding: 3px 6px; border-radius: 9999px; font-size: 0.65rem; /* Standard size for pills */
+            font-weight: 600; display: inline-block; text-align: center;
+            min-width: 50px; /* Ensure consistent pill width */
         }
+        .status-win { background: rgba(0, 255, 127, 0.2); color: #00FF7F; }
+        .status-loss { background: rgba(255, 85, 85, 0.2); color: #FF5555; }
+        .status-partial { background: rgba(255, 170, 0, 0.2); color: #FFAA00; }
 
-        .result-red { color: #FF5555; }
-        .result-green { color: #00FF7F; }
-        .result-violet { color: #D81BFF; }
-        .result-big { color: #FFAA00; }
-        .result-small { color: #00D4FF; }
-        
-        .history-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-        .history-header h2 {
-            font-size: 1rem;
-            font-weight: 600;
-        }
-        .header-buttons {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        #logout-button {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        #logout-button:hover {
-            background: rgba(255, 0, 255, 0.3);
-            box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
-        }
-        #logout-button svg {
-            width: 18px;
-            height: 18px;
-            color: #E0E7FF;
-        }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
         <div class="login-card">
-            <h1 class="text-indigo-100">Predictor <span class="highlight-fuchsia">v11.0</span></h1>
-            <p>Please enter your access key to continue</p>
-            <input type="password" id="access-key-input" placeholder="••••••••" aria-label="Access Key">
+            <a href="https://ibb.co/ymdKZh0t" target="_blank">
+                <img src="https://i.ibb.co/ymdKZh0t/h5setting-202401100608011fs2.png" alt="BDG GAME Logo" class="login-main-logo">
+            </a>
+            
+            <div class="splash-overlay-text">Withdraw fast, safe and stable</div>
+            
+            <div class="password-wrapper">
+                <input type="password" id="access-key-input" placeholder="Access Key" autocomplete="current-password">
+                <i class="fas fa-eye" id="toggle-password-icon"></i>
+            </div>
             <p id="error-message" class="error-message" role="alert">Invalid Access Key!</p>
-            <button id="login-button">Login</button>
+            <button id="login-button">Connect</button>
         </div>
     </div>
 
     <div id="app-container" class="hidden">
         <main id="main-content">
-            <div class="app-title-container">
-                <h1 class="text-indigo-100">Predictor <span class="highlight-fuchsia">v11.0</span></h1>
-                <p class="text-indigo-300">Gemini AI for Wingo & TRX</p>
-            </div>
+            <header class="app-header">
+                <div class="header-left">
+                    <i class="fas fa-home app-header-icon"></i> 
+                </div>
+                <a href="https://ibb.co/ymdKZh0t" target="_blank">
+                    <img src="https://i.ibb.co/ymdKZh0t/h5setting-202401100608011fs2.png" alt="BDG GAME" class="app-header-logo-img">
+                </a>
+                <div class="header-right">
+                    <i class="fas fa-headset app-header-icon"></i>
+                    <button id="logout-button" class="logout-btn" aria-label="Logout">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path fill-rule="evenodd" d="M7.5 3.75A1.5 1.5 0 006 5.25v13.5a1.5 1.5 0 001.5 1.5h6a1.5 1.5 0 001.5-1.5V15a.75.75 0 011.5 0v3.75a3 3 0 01-3 3h-6a3 3 0 01-3-3V5.25a3 3 0 013-3h6a3 3 0 013 3V9a.75.75 0 01-1.5 0V5.25a1.5 1.5 0 00-1.5-1.5h-6zm10.72 4.72a.75.75 0 011.06 0l3 3a.75.75 0 010 1.06l-3 3a.75.75 0 11-1.06-1.06l1.72-1.72H9a.75.75 0 010-1.5h10.94l-1.72-1.72a.75.75 0 010-1.06z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            </header>
 
             <div id="game-mode-selector">
                 <div id="game-mode-tabs">
@@ -294,10 +477,14 @@
                     <div id="wingo-intervals" class="mode-toggle hidden">
                         <button id="btn-wingo-30s" onclick="selectMode('wingo-30s')">30s</button>
                         <button id="btn-wingo-1m" onclick="selectMode('wingo-1m')">1m</button>
+                        <button id="btn-wingo-3m" onclick="selectMode('wingo-3m')">3m</button>
+                        <button id="btn-wingo-5m" onclick="selectMode('wingo-5m')">5m</button>
                     </div>
                     <div id="trx-intervals" class="mode-toggle hidden">
-                        <button id="btn-trx-1m" onclick="selectMode('trx-1m')">1 Min</button>
-                        <button id="btn-trx-3m" onclick="selectMode('trx-3m')">3 Min</button>
+                        <button id="btn-trx-1m" onclick="selectMode('trx-1m')">1m</button>
+                        <button id="btn-trx-3m" onclick="selectMode('trx-3m')">3m</button>
+                        <button id="btn-trx-5m" onclick="selectMode('trx-5m')">5m</button>
+                        <button id="btn-trx-10m" onclick="selectMode('trx-10m')">10m</button>
                     </div>
                 </div>
             </div>
@@ -311,10 +498,42 @@
                     </div>
                 </div>
                 <div class="info-grid">
-                    <div class="info-line"><span class="info-label"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>Period</span><p id="period" class="info-value">...</p></div>
-                    <div class="info-line"><span class="info-label"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Timer</span><p id="timer" class="info-value text-red-500 font-bold text-base">--:--</p></div>
-                    <div class="info-line"><span class="info-label"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>Prediction <svg class="ai-sparkle-icon" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.760-.415-2.212.749-2.305l5.404-.433 2.082-5.007z" clip-rule="evenodd" /></svg></span><p id="prediction-text" class="info-value font-bold"></p></div>
-                    <div class="info-line"><span class="info-label"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m-16.5 0H6M6 3v11.25A2.25 2.25 0 008.25 16.5h7.5M6 3h7.5M12 3v11.25m0 0A2.25 2.25 0 0114.25 16.5h2.25M12 3h7.5m0 0h-1.5m1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5" /></svg>Insight</span><p id="insight-text" class="info-value text-xs text-cyan-400"></p></div>
+                    <div class="info-line">
+                        <span class="info-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path fill-rule="evenodd" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" clip-rule="evenodd" />
+                            </svg>
+                            Period
+                        </span>
+                        <p id="period" class="info-value"></p>
+                    </div>
+                    <div class="info-line">
+                        <span class="info-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path fill-rule="evenodd" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" clip-rule="evenodd" />
+                            </svg>
+                            Timer
+                        </span>
+                        <p id="timer" class="info-value"></p>
+                    </div>
+                    <div class="info-line">
+                        <span class="info-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path fill-rule="evenodd" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" clip-rule="evenodd" />
+                            </svg>
+                            Gemini AI Result <svg class="ai-sparkle-icon" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.760-.415-2.212.749-2.305l5.404-.433 2.082-5.007z" clip-rule="evenodd" /></svg>
+                        </span>
+                        <p id="prediction-text" class="info-value"></p>
+                    </div>
+                    <div class="info-line">
+                        <span class="info-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path fill-rule="evenodd" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m-16.5 0H6M6 3v11.25A2.25 2.25 0 008.25 16.5h7.5M6 3h7.5M12 3v11.25m0 0A2.25 2.25 0 0114.25 16.5h2.25M12 3h7.5m0 0h-1.5m1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5" clip-rule="evenodd" />
+                            </svg>
+                            Insight
+                        </span>
+                        <p id="insight-text" class="info-value text-xs"></p>
+                    </div>
                 </div>
                 <div class="chart-stats-grid">
                     <div class="stat-item"><div class="stat-label">Wins</div><div id="chart-total-wins" class="stat-value win">0</div></div>
@@ -326,15 +545,23 @@
                 <div class="history-header">
                     <h2>Prediction History</h2>
                     <div class="header-buttons">
-                        <button id="clear-button" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-md text-xs">Clear</button>
-                        <button id="logout-button" onclick="handleLogout()" aria-label="Logout">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                <path fill-rule="evenodd" d="M7.5 3.75A1.5 1.5 0 006 5.25v13.5a1.5 1.5 0 001.5 1.5h6a1.5 1.5 0 001.5-1.5V15a.75.75 0 011.5 0v3.75a3 3 0 01-3 3h-6a3 3 0 01-3-3V5.25a3 3 0 013-3h6a3 3 0 013 3V9a.75.75 0 01-1.5 0V5.25a1.5 1.5 0 00-1.5-1.5h-6zm10.72 4.72a.75.75 0 011.06 0l3 3a.75.75 0 010 1.06l-3 3a.75.75 0 11-1.06-1.06l1.72-1.72H9a.75.75 0 010-1.5h10.94l-1.72-1.72a.75.75 0 010-1.06z" clip-rule="evenodd" />
-                            </svg>
-                        </button>
+                        <button id="clear-button" class="clear-btn">Clear</button>
                     </div>
                 </div>
-                <div class="table-container"><table><thead><tr><th>Period</th><th>Prediction</th><th>Result</th><th>Status</th></tr></thead><tbody id="predictions-table"></tbody></table></div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Period</th>
+                                <th>Prediction</th>
+                                <th>Result</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="predictions-table">
+                            </tbody>
+                    </table>
+                </div>
             </div>
         </main>
     </div>
@@ -345,6 +572,7 @@
         loginScreen: document.getElementById('login-screen'),
         appContainer: document.getElementById('app-container'),
         accessKeyInput: document.getElementById('access-key-input'),
+        togglePasswordIcon: document.getElementById('toggle-password-icon'), 
         loginButton: document.getElementById('login-button'),
         errorMessage: document.getElementById('error-message'),
         logoutButton: document.getElementById('logout-button'),
@@ -355,7 +583,7 @@
         trxIntervals: document.getElementById('trx-intervals'),
         period: document.getElementById('period'),
         timer: document.getElementById('timer'),
-        predictionText: document.getElementById('prediction-text'),
+        predictionText: document.getElementById('prediction-text'), // This is now "Gemini AI Result"
         insightText: document.getElementById('insight-text'),
         predictionsTable: document.getElementById('predictions-table'),
         clearButton: document.getElementById('clear-button'),
@@ -366,18 +594,24 @@
         chartRevenue: document.getElementById('chart-revenue'),
         btnWingo30s: document.getElementById('btn-wingo-30s'),
         btnWingo1m: document.getElementById('btn-wingo-1m'),
+        btnWingo3m: document.getElementById('btn-wingo-3m'), 
+        btnWingo5m: document.getElementById('btn-wingo-5m'), 
         btnTrx1m: document.getElementById('btn-trx-1m'),
         btnTrx3m: document.getElementById('btn-trx-3m'),
+        btnTrx5m: document.getElementById('btn-trx-5m'), 
+        btnTrx10m: document.getElementById('btn-trx-10m'), 
         reversePatternSwitch: document.getElementById('reverse-pattern-switch'),
     };
-    const ACCESS_KEY = "Kingvip@1990$";
+
+    const ACCESS_KEY = "Kingvip@1990$"; 
+    
     let masterInterval;
-    let currentMode = null;
-    let currentGameType = 'wingo';
+    let currentMode = null; 
+    let currentGameType = 'wingo'; 
 
     const initialStateTemplate = {
-        history: [],
-        predictions: [],
+        history: [], 
+        predictions: [], 
         currentPeriod: null,
         isReversePattern: false,
         stats: { totalWins: 0, totalLosses: 0, totalPartial: 0, revenue: 0 },
@@ -386,21 +620,27 @@
     let state = {
         'wingo-30s': JSON.parse(JSON.stringify(initialStateTemplate)),
         'wingo-1m': JSON.parse(JSON.stringify(initialStateTemplate)),
+        'wingo-3m': JSON.parse(JSON.stringify(initialStateTemplate)), 
+        'wingo-5m': JSON.parse(JSON.stringify(initialStateTemplate)), 
         'trx-1m': JSON.parse(JSON.stringify(initialStateTemplate)),
-        'trx-3m': JSON.parse(JSON.stringify(initialStateTemplate))
+        'trx-3m': JSON.parse(JSON.stringify(initialStateTemplate)),
+        'trx-5m': JSON.parse(JSON.stringify(initialStateTemplate)), 
+        'trx-10m': JSON.parse(JSON.stringify(initialStateTemplate)) 
     };
 
-    // --- State Management ---
+    // --- State Management (Save/Load to Local Storage) ---
     let saveStateTimeout;
     function debounceSaveState() {
         clearTimeout(saveStateTimeout);
-        saveStateTimeout = setTimeout(saveState, 500);
+        saveStateTimeout = setTimeout(saveState, 500); 
     }
 
     function saveState() {
         try {
             localStorage.setItem('predictorStateV11_0', JSON.stringify(state));
-        } catch (e) { console.warn('localStorage unavailable:', e); }
+        } catch (e) { 
+            console.warn('localStorage unavailable or full:', e); 
+        }
     }
 
     function loadState() {
@@ -415,18 +655,20 @@
                 }
             }
         } catch (e) {
-            console.warn('Failed to load state:', e);
-            localStorage.removeItem('predictorStateV11_0');
+            console.warn('Failed to load state from local storage:', e);
+            localStorage.removeItem('predictorStateV11_0'); 
         }
     }
 
-    // --- Auth & Navigation ---
+    // --- Authentication & Navigation ---
     function handleLogin() {
         if (elements.accessKeyInput.value.trim() === ACCESS_KEY) {
             localStorage.setItem('isLoggedIn', 'true');
             elements.errorMessage.style.display = 'none';
-            requestAnimationFrame(showApp);
+            elements.accessKeyInput.value = ''; 
+            requestAnimationFrame(showApp); 
         } else {
+            elements.errorMessage.textContent = 'Invalid Access Key!';
             elements.errorMessage.style.display = 'block';
             elements.accessKeyInput.focus();
         }
@@ -434,44 +676,59 @@
 
     function handleLogout() {
         localStorage.removeItem('isLoggedIn');
-        clearInterval(masterInterval);
+        clearInterval(masterInterval); 
+        currentMode = null; 
         elements.appContainer.classList.add('hidden');
         elements.loginScreen.classList.remove('hidden');
-        elements.accessKeyInput.value = '';
     }
 
     function showApp() {
         elements.loginScreen.classList.add('hidden');
         elements.appContainer.classList.remove('hidden');
-        loadState();
-        selectGameType('wingo');
+        loadState(); 
+        selectGameType('wingo'); 
     }
 
+    // --- Game Type and Mode Selection ---
     function selectGameType(gameType) {
-        clearInterval(masterInterval);
-        currentMode = null;
+        clearInterval(masterInterval); 
+        currentMode = null; 
         currentGameType = gameType;
+
         elements.tabWingo.classList.toggle('active', gameType === 'wingo');
         elements.tabTrx.classList.toggle('active', gameType === 'trx');
+
         elements.wingoIntervals.classList.toggle('hidden', gameType !== 'wingo');
         elements.trxIntervals.classList.toggle('hidden', gameType !== 'trx');
-        masterClock.debounce = {};
-        if (gameType === 'wingo') selectMode('wingo-30s');
-        else selectMode('trx-1m');
+
+        masterClock.debounce = {}; 
+
+        if (gameType === 'wingo') {
+            selectMode('wingo-1m'); 
+        } else {
+            selectMode('trx-1m'); 
+        }
     }
 
     function selectMode(mode) {
-        if (currentMode === mode) return;
-        clearInterval(masterInterval);
-        currentMode = mode;
-        [elements.btnWingo30s, elements.btnWingo1m, elements.btnTrx1m, elements.btnTrx3m].forEach(btn => {
+        if (currentMode === mode) return; 
+        
+        clearInterval(masterInterval); 
+        currentMode = mode; 
+
+        const allIntervalButtons = [
+            elements.btnWingo30s, elements.btnWingo1m, elements.btnWingo3m, elements.btnWingo5m,
+            elements.btnTrx1m, elements.btnTrx3m, elements.btnTrx5m, elements.btnTrx10m
+        ];
+        allIntervalButtons.forEach(btn => {
             if (btn) btn.classList.remove('active');
         });
         const btn = document.getElementById(`btn-${mode}`);
         if (btn) btn.classList.add('active');
-        render();
-        gameLoop();
-        masterInterval = setInterval(masterClock, 1000);
+
+        render(); 
+        gameLoop(); 
+        masterInterval = setInterval(masterClock, 1000); 
     }
 
     // --- UI Rendering ---
@@ -485,29 +742,73 @@
     }
 
     function renderResultInHTML(result) {
-        if (!result) return '...';
+        if (!result) return '<span style="color: var(--text-grey);">Pending</span>'; 
+
         const { number, bigSmall, color } = result;
-        let colorText = `<span class="result-${color.toLowerCase()}">${color}</span>`;
-        if (color === 'Red+Violet') colorText = `<span class="result-red">Red</span><span class="result-violet">+Violet</span>`;
-        else if (color === 'Green+Violet') colorText = `<span class="result-green">Green</span><span class="result-violet">+Violet</span>`;
-        return `<span class="color-number">${number}</span>, <span class="result-${bigSmall.toLowerCase()}">${bigSmall}</span>, ${colorText}`;
+        let numberHtml = ''; // Initialize empty
+        let bigSmallClass = '';
+        let colorHtml = '';
+
+        // Only render number if it's explicitly available (i.e., not null/undefined from raw AI)
+        if (number !== null && number !== undefined) {
+             if (number === 0) numberHtml = `<span class="color-red color-violet">${number}</span>, `; 
+             else if (number === 5) numberHtml = `<span class="color-green color-violet">${number}</span>, `; 
+             else if ([1, 3, 7, 9].includes(number)) numberHtml = `<span class="color-green">${number}</span>, `;
+             else if ([2, 4, 6, 8].includes(number)) numberHtml = `<span class="color-red">${number}</span>, `;
+        }
+
+        if (bigSmall === 'Big') bigSmallClass = 'color-big'; 
+        else if (bigSmall === 'Small') bigSmallClass = 'color-small'; 
+
+        if (color === 'Red+Violet') {
+            colorHtml = `<span class="color-red">Red</span><span class="color-violet">+Violet</span>`;
+        } else if (color === 'Green+Violet') {
+            colorHtml = `<span class="color-green">Green</span><span class="color-violet">+Violet</span>`;
+        } else if (color === 'Red') {
+            colorHtml = `<span class="color-red">Red</span>`;
+        } else if (color === 'Green') {
+            colorHtml = `<span class="color-green">Green</span>`;
+        }
+        
+        // Concatenate parts. If numberHtml is empty, it won't add the leading number and comma.
+        return `${numberHtml}<span class="${bigSmallClass}">${bigSmall}</span>, ${colorHtml}`;
     }
 
+
     function render() {
-        if (!currentMode) return;
+        if (!currentMode) {
+            elements.period.textContent = '...';
+            elements.timer.textContent = '--:--';
+            elements.predictionText.innerHTML = '<span style="color: var(--text-grey);">Select Game Mode</span>';
+            elements.insightText.textContent = '...';
+            elements.chartTotalWins.textContent = '0';
+            elements.chartTotalLosses.textContent = '0';
+            elements.chartTotalPartial.textContent = '0';
+            elements.chartAccuracy.textContent = '0%';
+            elements.chartRevenue.textContent = '0.00';
+            elements.chartRevenue.classList.remove('negative');
+            elements.predictionsTable.innerHTML = '';
+            elements.reversePatternSwitch.classList.remove('active');
+            return;
+        }
+
         const activeState = state[currentMode];
-        elements.period.textContent = activeState.currentPeriod || '...';
-        elements.reversePatternSwitch.classList.toggle('active', activeState.isReversePattern);
+        
+        elements.period.textContent = activeState.currentPeriod || '...'; 
+        elements.reversePatternSwitch.classList.toggle('active', activeState.isReversePattern); 
+
         const latestPrediction = activeState.predictions[activeState.predictions.length - 1];
-        elements.predictionText.innerHTML = latestPrediction ? renderResultInHTML(latestPrediction.prediction) : '...';
-        elements.insightText.textContent = latestPrediction ? latestPrediction.strategy : 'Awaiting data...';
+        elements.predictionText.innerHTML = latestPrediction ? renderResultInHTML(latestPrediction.prediction) : '<span style="color: var(--text-grey);">...</span>';
+        elements.insightText.textContent = latestPrediction ? latestPrediction.strategy : 'Collecting data...'; 
+
         elements.chartTotalWins.textContent = activeState.stats.totalWins;
         elements.chartTotalLosses.textContent = activeState.stats.totalLosses;
         elements.chartTotalPartial.textContent = activeState.stats.totalPartial;
-        const totalGames = activeState.stats.totalWins + activeState.stats.totalLosses;
+        const totalGames = activeState.stats.totalWins + activeState.stats.totalLosses + activeState.stats.totalPartial;
         elements.chartAccuracy.textContent = totalGames > 0 ? `${Math.round((activeState.stats.totalWins / totalGames) * 100)}%` : '0%';
         elements.chartRevenue.textContent = activeState.stats.revenue.toFixed(2);
         elements.chartRevenue.classList.toggle('negative', activeState.stats.revenue < 0);
+
         elements.predictionsTable.innerHTML = '';
         activeState.predictions.slice().reverse().slice(0, 20).forEach(pred => {
             const row = document.createElement('tr');
@@ -515,38 +816,71 @@
             row.innerHTML = `
                 <td>${pred.period}</td>
                 <td>${renderResultInHTML(pred.prediction)}</td>
-                <td>${result ? renderResultInHTML(result) : 'Pending'}</td>
+                <td>${result ? renderResultInHTML(result) : '<span class="status-pill" style="background: rgba(255,255,255,0.1); color: var(--text-grey);">Pending</span>'}</td>
                 <td><span class="status-pill status-${pred.status.toLowerCase()}">${pred.status}</span></td>
             `;
             elements.predictionsTable.appendChild(row);
         });
     }
 
-    // --- Period Generation ---
-    function generateWingoPeriodNumber(mode) { 
-        const now = new Date(); 
-        const dateStr = now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
-        const istOffsetMinutes = 330;
+    // --- Period Number Generation ---
+    function generateWingoPeriodNumber(mode) {
+        const now = new Date();
+        const istOffsetMinutes = 330; // UTC+5:30
         const istTime = new Date(now.getTime() + (istOffsetMinutes * 60 * 1000) + (now.getTimezoneOffset() * 60 * 1000));
-        const h = istTime.getHours(), m = istTime.getMinutes(), s = istTime.getSeconds();
-        const startH = 5, startM = 30;
-        let elapsedS = (h * 3600 + m * 60 + s) - (startH * 3600 + startM * 60);
-        if (elapsedS < 0) elapsedS += 24 * 3600;
-        const periodDuration = mode === 'wingo-1m' ? 60 : 30;
-        const periodCounter = Math.floor(elapsedS / periodDuration) + 1;
-        const suffix = mode === 'wingo-1m' ? `10001${String(periodCounter).padStart(4, '0')}` : `100005${String(periodCounter).padStart(4, '0')}`;
+        
+        const year = istTime.getFullYear();
+        const month = String(istTime.getMonth() + 1).padStart(2, '0');
+        const day = String(istTime.getDate()).padStart(2, '0');
+        const dateStr = `${year}${month}${day}`;
+        
+        const startH = 5; 
+        const startM = 30;
+        
+        const currentSecondsToday = istTime.getHours() * 3600 + istTime.getMinutes() * 60 + istTime.getSeconds();
+        const startSecondsOfDay = startH * 3600 + startM * 60;
+
+        let elapsedSecondsSinceStart = currentSecondsToday - startSecondsOfDay;
+        if (elapsedSecondsSinceStart < 0) {
+            elapsedSecondsSinceStart += 24 * 3600; // Account for periods crossing midnight if logic starts before 05:30
+        }
+        
+        let periodDuration;
+        let suffixPrefix; 
+        switch (mode) {
+            case 'wingo-30s': periodDuration = 30; suffixPrefix = '000'; break; 
+            case 'wingo-1m': periodDuration = 60; suffixPrefix = '1000'; break; 
+            case 'wingo-3m': periodDuration = 180; suffixPrefix = '3000'; break; 
+            case 'wingo-5m': periodDuration = 300; suffixPrefix = '5000'; break; 
+            default: periodDuration = 60; suffixPrefix = '1000'; break; 
+        }
+        
+        const periodCounter = Math.floor(elapsedSecondsSinceStart / periodDuration) + 1; 
+        const suffix = `${suffixPrefix}${String(periodCounter).padStart(4, '0')}`; 
         return dateStr + suffix;
     }
 
     function generateTrxPeriodNumber(mode) {
-        const now = new Date();
-        const dateStr = now.getUTCFullYear() + String(now.getUTCMonth() + 1).padStart(2, '0') + String(now.getUTCDate()).padStart(2, '0');
-        const totalMinutesTodayUTC = (now.getUTCHours() * 60) + now.getUTCMinutes();
-        if (mode === 'trx-1m') {
-            return `${dateStr}1030${String(totalMinutesTodayUTC + 10001).padStart(5, '0')}`;
-        } else {
-            return `${dateStr}1030${String(Math.floor(totalMinutesTodayUTC / 3) + 20001).padStart(5, '0')}`;
+        const now = new Date(); 
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const dateStr = `${year}${month}${day}`;
+
+        const totalMinutesToday = (now.getHours() * 60) + now.getMinutes();
+        
+        let periodDuration;
+        let baseNumber; 
+        switch(mode) {
+            case 'trx-1m': periodDuration = 1; baseNumber = 10001; break;
+            case 'trx-3m': periodDuration = 3; baseNumber = 20001; break;
+            case 'trx-5m': periodDuration = 5; baseNumber = 30001; break;
+            case 'trx-10m': periodDuration = 10; baseNumber = 40001; break;
+            default: periodDuration = 1; baseNumber = 10001; break; 
         }
+        
+        const periodCounter = Math.floor(totalMinutesToday / periodDuration) + baseNumber;
+        return `${dateStr}1030${String(periodCounter).padStart(5, '0')}`; 
     }
 
     // --- Gemini AI Prediction Engine ---
@@ -555,13 +889,16 @@
             type: "OBJECT",
             properties: {
                 "color": { "type": "STRING", "enum": ["Red", "Green"] },
-                "bigSmall": { "type": "STRING", "enum": ["Big", "Small"] }
+                "bigSmall": { "type": "STRING", "enum": ["Big", "Small"] },
+                "reason": {"type": "STRING", "description": "A very short (2-5 words) explanation for the prediction."}
             },
-            required: ["color", "bigSmall"]
+            required: ["color", "bigSmall", "reason"]
         };
 
         const historyForPrompt = history.slice(-10).map(h => ({ number: h.number, color: h.color.replace('+Violet', ''), size: h.bigSmall }));
-        const prompt = `You are an expert Wingo game analyst. Based on the following recent game history (most recent is last), predict the color and size for the next round. Provide your prediction in JSON format. History: ${JSON.stringify(historyForPrompt)}`;
+        
+        const prompt = `You are an expert Wingo/TRX game pattern analyst. Based on the following recent game history (most recent is last), predict the color (Red or Green) and size (Big or Small) for the NEXT round. Primary colors for prediction should be Red or Green. Numbers 0 and 5 are special: 0 is Red+Violet, 5 is Green+Violet. When analyzing color, consider 0 as primarily Red and 5 as primarily Green. Provide your prediction and a very short reason (2-5 words) for your prediction in JSON format according to the given schema.
+        History: ${JSON.stringify(historyForPrompt)}`;
         
         try {
             let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
@@ -569,10 +906,18 @@
                 contents: chatHistory,
                 generationConfig: {
                     responseMimeType: "application/json",
+                    temperature: 0.7, 
                     responseSchema: schema
                 }
             };
-            const apiKey = ""; // API key is handled by the environment
+            
+            // --- YOUR NEW GEMINI API KEY GOES HERE ---
+            const apiKey = "AIzaSyAJm9etx5ZiESBt9Ln6K6cQ_eBVhIl68ew"; 
+            if (!apiKey || apiKey.length < 30) { 
+                console.error("Gemini API Key is missing or invalid. Please check the code.");
+                return null; 
+            }
+
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
             
             const response = await fetch(apiUrl, {
@@ -582,7 +927,8 @@
             });
 
             if (!response.ok) {
-                console.error("API Error Response:", await response.text());
+                const errorBody = await response.text();
+                console.error("Gemini API Error:", response.status, response.statusText, "Body:", errorBody);
                 return null;
             }
 
@@ -591,7 +937,13 @@
                 result.candidates[0].content && result.candidates[0].content.parts &&
                 result.candidates[0].content.parts.length > 0) {
                 const jsonText = result.candidates[0].content.parts[0].text;
-                return JSON.parse(jsonText);
+                try {
+                    return JSON.parse(jsonText);
+                } catch (parseError) {
+                    console.error("Failed to parse AI response JSON (attempting cleanup):", parseError, "Raw text:", jsonText);
+                    const cleanedJsonText = jsonText.replace(/```json\n|\n```/g, '').trim(); 
+                    return JSON.parse(cleanedJsonText); 
+                }
             }
             return null;
         } catch (error) {
@@ -600,172 +952,255 @@
         }
     }
 
-
     async function runPredictionEngine(history) {
         const activeState = state[currentMode];
-        if (history.length < 5) {
-            return { prediction: getResultFromNumber(Math.floor(Math.random() * 10)), strategy: 'Collecting data...' };
-        }
-
-        elements.insightText.textContent = 'AI is thinking...';
-        const aiResult = await getAIPrediction(history);
-        
         let predictedColor, predictedBigSmall, strategy;
 
-        if (aiResult && aiResult.color && aiResult.bigSmall) {
-            predictedColor = aiResult.color;
-            predictedBigSmall = aiResult.bigSmall;
-            strategy = "Gemini AI Analysis";
+        elements.insightText.innerHTML = 'AI thinking <span class="loader"></span>'; // Show loader for insight
+
+        if (history.length >= 5) { 
+            const aiPredictionData = await getAIPrediction(history); 
+            
+            if (aiPredictionData && aiPredictionData.color && aiPredictionData.bigSmall) {
+                predictedColor = aiPredictionData.color;
+                predictedBigSmall = aiPredictionData.bigSmall;
+                strategy = aiPredictionData.reason || "Gemini AI Analysis"; 
+                if (predictedColor !== 'Red' && predictedColor !== 'Green') {
+                    console.warn("AI returned non-standard color, falling back for color.");
+                    predictedColor = (history[history.length -1]?.color || 'Red').includes('Red') ? 'Green' : 'Red';
+                    strategy += " (Color Fallback)";
+                }
+            } else {
+                console.warn("AI prediction failed or returned incomplete data. Falling back to simple logic.");
+                strategy = "AI Unavailable / Fallback";
+                const lastResult = history[history.length - 1] || getResultFromNumber(Math.floor(Math.random() * 10)); 
+                predictedColor = lastResult.color.includes('Red') ? 'Green' : 'Red';
+                predictedBigSmall = lastResult.bigSmall === 'Big' ? 'Small' : 'Big';
+            }
         } else {
-            // Fallback to old logic if AI fails
-            const lastResult = history[history.length - 1];
-            predictedColor = lastResult.color.includes('Red') ? 'Green' : 'Red';
-            predictedBigSmall = lastResult.bigSmall === 'Big' ? 'Small' : 'Big';
-            strategy = "Fallback Logic";
+            strategy = 'Collecting data... (Random)';
+            const randomNum = Math.floor(Math.random() * 10);
+            const randomResult = getResultFromNumber(randomNum);
+            predictedColor = randomResult.color.includes('Violet') ? (randomNum === 0 ? 'Red' : 'Green') : randomResult.color; 
+            predictedBigSmall = randomResult.bigSmall;
         }
         
-        // Reverse logic if toggled
         if (activeState.isReversePattern) {
             predictedColor = predictedColor === 'Red' ? 'Green' : 'Red';
             predictedBigSmall = predictedBigSmall === 'Big' ? 'Small' : 'Big';
             strategy += " (Reversed)";
         }
 
-        // Find a matching number
-        const possibleNumbers = [];
+        let matchingNumbers = [];
         for (let i = 0; i <= 9; i++) {
             const res = getResultFromNumber(i);
-            if (res.bigSmall === predictedBigSmall && res.color.includes(predictedColor)) {
-                possibleNumbers.push(i);
+            const resColor = res.color.includes('Violet') ? (i === 0 ? 'Red' : 'Green') : res.color; 
+            
+            if (res.bigSmall === predictedBigSmall && resColor === predictedColor) {
+                matchingNumbers.push(i);
             }
         }
         
-        const predictedNumber = possibleNumbers.length > 0 ? possibleNumbers[Math.floor(Math.random() * possibleNumbers.length)] : Math.floor(Math.random() * 10);
+        const predictedNumber = matchingNumbers.length > 0 ? matchingNumbers[Math.floor(Math.random() * matchingNumbers.length)] : Math.floor(Math.random() * 10);
+        
         return { prediction: getResultFromNumber(predictedNumber), strategy };
     }
 
-    // --- Game Simulation & Stats ---
     function updateStats(actualResult) {
         if (!currentMode || !actualResult) return;
-        const p = state[currentMode].predictions.find(pred => pred.period === actualResult.period);
-        if (!p || p.status !== 'Pending') return;
+        const activeState = state[currentMode];
 
-        const predColor = p.prediction.color.replace('+Violet', '');
-        const actualColor = actualResult.color.replace('+Violet', '');
-        const colorMatch = predColor === actualColor;
+        const p = activeState.predictions.find(pred => pred.period === actualResult.period);
+
+        if (!p || p.status !== 'Pending') {
+            return;
+        }
+
+        const predBaseColor = p.prediction.color.replace('+Violet', ''); 
+        const actualBaseColor = actualResult.color.replace('+Violet', ''); 
+
+        const colorMatch = predBaseColor === actualBaseColor;
         const sizeMatch = p.prediction.bigSmall === actualResult.bigSmall;
-        let revenueChange = -1;
+        let revenueChange = -1; 
 
         if (p.prediction.number === actualResult.number) {
             p.status = 'Win';
-            revenueChange = 8;
+            revenueChange = 8; 
+            activeState.consecutiveLosses = 0; 
         } else if (colorMatch && sizeMatch) {
             p.status = 'Win';
-            revenueChange = 1;
-        } else if (colorMatch || sizeMatch) {
+            revenueChange = 1; 
+            activeState.consecutiveLosses = 0;
+        } else if (colorMatch || sizeMatch) { 
             p.status = 'Partial';
-            revenueChange = -0.5;
+            revenueChange = -0.5; 
+            activeState.consecutiveLosses++; 
         } else {
             p.status = 'Loss';
+            revenueChange = -1; 
+            activeState.consecutiveLosses++;
         }
-
-        const activeState = state[currentMode];
+        
         if (p.status === 'Win') {
             activeState.stats.totalWins++;
         } else if (p.status === 'Partial') {
             activeState.stats.totalPartial++;
-        } else {
+        } else { 
             activeState.stats.totalLosses++;
         }
         activeState.stats.revenue += revenueChange;
-        debounceSaveState();
+        
+        debounceSaveState(); 
+        render(); 
     }
 
     async function gameLoop() {
         if (!currentMode) return;
         const activeState = state[currentMode];
 
-        if (activeState.currentPeriod) {
-            const resultExists = activeState.history.some(h => h.period === activeState.currentPeriod);
-            if (!resultExists) {
-                const simulatedResult = getResultFromNumber(Math.floor(Math.random() * 10));
-                simulatedResult.period = activeState.currentPeriod;
-                updateStats(simulatedResult);
+        const expectedPeriod = (currentGameType === 'wingo') ? generateWingoPeriodNumber(currentMode) : generateTrxPeriodNumber(currentMode);
+
+        const lastPredictedEntry = activeState.predictions.find(p => p.period === activeState.currentPeriod && p.status === 'Pending');
+        if (lastPredictedEntry) {
+            const simulatedResult = getResultFromNumber(Math.floor(Math.random() * 10)); 
+            simulatedResult.period = activeState.currentPeriod; 
+            
+            const historyExists = activeState.history.some(h => h.period === simulatedResult.period);
+            if (!historyExists) {
                 activeState.history.push(simulatedResult);
-                if (activeState.history.length > 100) activeState.history.shift();
+                if (activeState.history.length > 100) activeState.history.shift(); 
             }
+            updateStats(simulatedResult); 
         }
 
-        const newPeriod = (currentGameType === 'wingo') ? generateWingoPeriodNumber(currentMode) : generateTrxPeriodNumber(currentMode);
-        const predictionExists = activeState.predictions.some(p => p.period === newPeriod);
-        if (predictionExists) {
-            render();
-            return;
+        activeState.currentPeriod = expectedPeriod;
+        elements.period.textContent = activeState.currentPeriod; 
+
+        const predictionForNewPeriodExists = activeState.predictions.some(p => p.period === expectedPeriod);
+        if (!predictionForNewPeriodExists) {
+            const { prediction, strategy } = await runPredictionEngine(activeState.history); 
+            activeState.predictions.push({ period: expectedPeriod, prediction, strategy, status: 'Pending' });
+            if (activeState.predictions.length > 100) activeState.predictions.shift(); 
         }
 
-        activeState.currentPeriod = newPeriod;
-        
-        // This is now async
-        const { prediction, strategy } = await runPredictionEngine(activeState.history);
-        
-        activeState.predictions.push({ period: newPeriod, prediction, strategy, status: 'Pending' });
-        if (activeState.predictions.length > 100) activeState.predictions.shift();
-
-        debounceSaveState();
-        render();
+        debounceSaveState(); 
+        render(); 
     }
+
+    masterClock.debounce = {}; 
 
     function masterClock() {
-        if (!currentMode) return;
-        const duration = { 'wingo-30s': 30, 'wingo-1m': 60, 'trx-1m': 60, 'trx-3m': 180 }[currentMode];
+        if (!currentMode) return; 
+        const durationMap = { 
+            'wingo-30s': 30, 'wingo-1m': 60, 'wingo-3m': 180, 'wingo-5m': 300,
+            'trx-1m': 60, 'trx-3m': 180, 'trx-5m': 300, 'trx-10m': 600
+        };
+        const duration = durationMap[currentMode];
+
         const now = new Date();
-        let remainingTime, secondsSinceEpoch;
+        let remainingTime;
+        let secondsSinceReferencePoint; 
 
         if (currentGameType === 'wingo') {
-            const istOffsetMs = 330 * 60 * 1000;
-            const istTime = new Date(now.getTime() + istOffsetMs + (now.getTimezoneOffset() * 60 * 1000));
-            const startOfDay = new Date(istTime);
-            startOfDay.setHours(5, 30, 0, 0);
-            secondsSinceEpoch = Math.floor((istTime - startOfDay) / 1000);
-            if (secondsSinceEpoch < 0) secondsSinceEpoch += 86400;
-        } else {
-            secondsSinceEpoch = now.getUTCHours() * 3600 + now.getUTCMinutes() * 60 + now.getUTCSeconds();
+            const istOffsetMs = 330 * 60 * 1000; 
+            const istTime = new Date(now.getTime() + (istOffsetMs + now.getTimezoneOffset() * 60 * 1000));
+            const startOfDayIST = new Date(istTime);
+            startOfDayIST.setHours(0, 0, 0, 0); 
+            
+            secondsSinceReferencePoint = Math.floor((istTime.getTime() - startOfDayIST.getTime()) / 1000);
+            
+            const wingoCycleStartH = 5;
+            const wingoCycleStartM = 30;
+            const wingoCycleStartSeconds = wingoCycleStartH * 3600 + wingoCycleStartM * 60;
+
+            secondsSinceReferencePoint = secondsSinceReferencePoint - wingoCycleStartSeconds;
+
+            if (secondsSinceReferencePoint < 0) {
+                secondsSinceReferencePoint += 24 * 3600; 
+            }
+
+        } else { 
+            secondsSinceReferencePoint = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
         }
         
-        remainingTime = duration - (secondsSinceEpoch % duration);
+        remainingTime = duration - (secondsSinceReferencePoint % duration);
+        if (remainingTime <= 0) remainingTime += duration; 
+
         elements.timer.textContent = `${String(Math.floor(remainingTime / 60)).padStart(2, '0')}:${String(remainingTime % 60).padStart(2, '0')}`;
         
-        if (remainingTime === duration || remainingTime === 1) {
-             const debounceKey = currentMode + 'Trigger';
-             const nowMs = now.getTime();
-             if (!masterClock.debounce[debounceKey] || (nowMs - masterClock.debounce[debounceKey] > 1500)) {
-                 gameLoop(); // Call async function
-                 masterClock.debounce[debounceKey] = nowMs;
-             }
+        if (remainingTime === duration) { 
+            const debounceKey = currentMode + 'Trigger';
+            const nowMs = now.getTime();
+            if (!masterClock.debounce[debounceKey] || (nowMs - masterClock.debounce[debounceKey] > 1500)) {
+                gameLoop(); 
+                masterClock.debounce[debounceKey] = nowMs;
+            }
         }
     }
 
-    // --- Event Listeners ---
     document.addEventListener('DOMContentLoaded', () => {
-        if (!elements.loginButton) return;
         elements.loginButton.addEventListener('click', handleLogin);
-        elements.accessKeyInput.addEventListener('keyup', e => e.key === 'Enter' && handleLogin());
+        elements.accessKeyInput.addEventListener('keyup', e => {
+            elements.errorMessage.style.display = 'none'; 
+            if (e.key === 'Enter') handleLogin();
+        });
+
+        elements.togglePasswordIcon.addEventListener('click', function () {
+            const type = elements.accessKeyInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            elements.accessKeyInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+            this.classList.toggle('fa-eye');
+        });
+
         elements.logoutButton.addEventListener('click', handleLogout);
+
         elements.clearButton.addEventListener('click', () => {
-            if (currentMode) {
-                state[currentMode] = JSON.parse(JSON.stringify(initialStateTemplate));
+            if (currentMode && confirm("Are you sure you want to clear all history and stats for this mode? This cannot be undone.")) {
+                state[currentMode] = JSON.parse(JSON.stringify(initialStateTemplate)); 
                 debounceSaveState();
-                render();
+                gameLoop(); 
+                render(); 
             }
         });
-        elements.reversePatternSwitch.addEventListener('click', () => {
+
+        elements.reversePatternSwitch.addEventListener('click', async () => { 
             if (currentMode) {
                 state[currentMode].isReversePattern = !state[currentMode].isReversePattern;
-                gameLoop(); // Call async function
+                debounceSaveState();
+                // Rerun prediction immediately to reflect reverse pattern
+                const { prediction, strategy } = await runPredictionEngine(state[currentMode].history);
+                const latestPredictionIndex = state[currentMode].predictions.length - 1;
+                if (latestPredictionIndex >= 0) {
+                    state[currentMode].predictions[latestPredictionIndex].prediction = prediction;
+                    state[currentMode].predictions[latestPredictionIndex].strategy = strategy;
+                } else {
+                    state[currentMode].predictions.push({ period: state[currentMode].currentPeriod, prediction, strategy, status: 'Pending' });
+                }
+                render(); 
             }
         });
+
+        const wingoIntervals = [
+            elements.btnWingo30s, elements.btnWingo1m, elements.btnWingo3m, elements.btnWingo5m
+        ];
+        wingoIntervals.forEach(btn => {
+            if (btn) btn.onclick = () => selectMode(btn.id.replace('btn-', ''));
+        });
+
+        const trxIntervals = [
+            elements.btnTrx1m, elements.btnTrx3m, elements.btnTrx5m, elements.btnTrx10m
+        ];
+        trxIntervals.forEach(btn => {
+            if (btn) btn.onclick = () => selectMode(btn.id.replace('btn-', ''));
+        });
+
+
         if (localStorage.getItem('isLoggedIn') === 'true') {
-            requestAnimationFrame(showApp);
+            requestAnimationFrame(showApp); 
+        } else {
+            elements.loginScreen.classList.remove('hidden');
+            elements.appContainer.classList.add('hidden');
+            elements.accessKeyInput.focus(); 
         }
     });
 </script>
