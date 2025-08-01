@@ -6,7 +6,7 @@
     <title>BDG GAME - Gemini AI Simulation</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         :root {
@@ -18,101 +18,82 @@
             --blue: #007bff; --ai-mode-color: #e800e8; --body-bg: var(--bg-dark);
             
             /* AI Prediction and Actual Result colors */
-            --ai-prediction-bg: rgba(255, 193, 7, 0.1); /* Light gold/yellow tint for AI prediction */
-            --ai-prediction-border: rgba(255, 193, 7, 0.5); /* Gold border for AI prediction */
+            --ai-prediction-bg: rgba(255, 193, 7, 0.1);
+            --ai-prediction-border: rgba(255, 193, 7, 0.5);
             --ai-prediction-text-color: var(--gold-text);
-            --ai-actual-bg: rgba(0, 0, 0, 0.4); /* Darker background for actual result */
+            --ai-actual-bg: rgba(0, 0, 0, 0.4);
             --ai-actual-text-color: var(--text-light);
         }
 
-        /* --- 1. 55Club দ্বারা অনুপ্রাণিত নতুন লগইন থিম --- */
         .login-theme {
-            --login-primary: #dc3545; /* লাল রঙ (original red from root) */
-            --login-primary-darker: #c82333; /* গাঢ় লাল */
-            --login-accent: var(--gold); /* সোনালী রঙ */
-            --login-text-dark: var(--text-light); /* সাদা টেক্সট */
+            --login-primary: #dc3545;
+            --login-primary-darker: #c82333;
+            --login-accent: var(--gold);
+            --login-text-dark: var(--text-light);
             --login-bg-light: rgba(220, 53, 69, 0.1);
-            --body-bg: #222222; /* Dark background from previous screenshot */
+            --body-bg: #222222;
         }
         body {
-            font-family: 'Orbitron', 'Segoe UI', Arial, sans-serif;
+            font-family: 'Open Sans', 'Segoe UI', Arial, sans-serif;
             background: var(--body-bg);
             color: var(--text-light);
             display: flex; justify-content: center; align-items: center; min-height: 100vh;
             margin: 0; font-size: 14px; padding: 8px; box-sizing: border-box; transition: background 0.5s ease-in-out;
         }
-        /* Body for app view */
         body.app-active {
-            align-items: flex-start; /* Align to top for the app view */
-            padding: 4px; /* Even tighter padding for the whole app */
+            align-items: flex-start;
+            padding: 4px;
         }
-        /* Login Container */
         .login-container{
-            background-color: #2e2e2e; /* Solid dark background */
-            background-image: none; /* REMOVED BACKGROUND IMAGE */
-            
-            padding: 20px; /* Overall padding */
-            padding-top: 40px; /* Space for the top logo */
+            background-color: #2e2e2e;
+            background-image: none;
+            padding: 20px;
+            padding-top: 40px;
             border-radius:12px;width:100%;max-width:380px;
-            box-shadow: 0 0 25px rgba(0, 0, 0, 0.5); 
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
             text-align:center;
-            border: 1px solid var(--gold); /* Gold border from screenshot */
-            position: relative; /* For positioning elements within */
-            overflow: hidden; /* Ensure content doesn't overflow */
+            border: 1px solid var(--gold);
+            position: relative;
+            overflow: hidden;
         }
-        /* New class for the main login logo */
         .login-main-logo {
-            width: 180px; /* Increased size for prominence */
+            width: 180px;
             height: auto;
-            margin-bottom: 20px; /* Space below the logo */
-            filter: drop-shadow(0 0 8px rgba(255,193,7,0.7)); /* Stronger glow */
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 8px rgba(255,193,7,0.7));
         }
-
-        /* Overlay Text (now below the main logo) */
         .splash-overlay-text {
-            position: static; /* Removed absolute positioning */
-            transform: none; /* Removed transform */
-            width: auto; /* Allow natural width */
+            position: static;
+            transform: none;
+            width: auto;
             color: var(--text-light);
             font-size: 1.1em;
             font-weight: 400;
             text-shadow: 0 1px 3px rgba(0,0,0,0.7);
-            margin-bottom: 30px; /* Space between text and username field */
-            white-space: normal; /* Allow text to wrap */
-            overflow: visible; /* Allow content to overflow if needed */
-            text-overflow: clip; /* Don't clip text */
+            margin-bottom: 30px;
+            white-space: normal;
+            overflow: visible;
+            text-overflow: clip;
         }
-
-        /* login-bdg-logo-bottom is no longer used in login screen */
-        /* .login-bdg-logo-bottom {
-            width: 120px; 
-            height: auto;
-            margin-top: 25px; 
-            filter: drop-shadow(0 0 5px rgba(255,193,7,0.5));
-        } */
-
-        /* NEW STYLE FOR HEADER LOGO (replaces H1) */
         .header-logo {
-            height: 28px; /* Adjust as needed */
+            height: 28px;
             width: auto;
-            filter: drop-shadow(0 0 3px rgba(255,193,7,0.5)); /* Subtle glow */
+            filter: drop-shadow(0 0 3px rgba(255,193,7,0.5));
         }
-
-
         .login-container h2{
-            color:var(--login-accent); 
-            margin-top: 0; /* No explicit margin-top here, controlled by container padding-top */
-            margin-bottom:20px; /* Reduced margin */
+            color:var(--login-accent);
+            margin-top: 0;
+            margin-bottom:20px;
             font-size:26px;
             text-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
         }
         .login-container input{
             box-sizing:border-box; width:100%; padding:12px 15px; margin-bottom:15px;
-            border:1px solid #555; /* Darker border for inputs */
+            border:1px solid #555;
             border-radius:8px;
-            background: #3a3a3a; /* Darker input background */
+            background: #3a3a3a;
             color:var(--text-light); font-size:16px;
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: 'Open Sans', Arial, sans-serif;
             transition: all 0.3s ease;
         }
         .login-container input:focus {
@@ -134,7 +115,7 @@
         #loginErrorMessage {
             color: #ff4757;
             font-size: 13px;
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: 'Open Sans', Arial, sans-serif;
             margin-top: -10px;
             margin-bottom: 15px;
             min-height: 15px;
@@ -145,7 +126,7 @@
             background: var(--login-primary); color: var(--login-text-dark);
             border:none; border-radius:8px; cursor:pointer;
             font-weight:700; font-size:18px; transition:all .3s;
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Roboto', sans-serif;
             letter-spacing: 1px;
             box-shadow: 0 0 10px rgba(220, 53, 69, 0.5);
         }
@@ -153,232 +134,242 @@
             background: var(--login-primary-darker);
             box-shadow: 0 0 20px rgba(220, 53, 69, 0.7);
         }
-
-        /* --- Main Game UI CSS (compacted) --- */
         .game-container {
-            background: var(--bg-medium); padding: 8px; /* Reduced overall container padding */
-            border-radius: 10px; /* Reduced rounding */
+            background: var(--bg-medium); padding: 8px;
+            border-radius: 10px;
             width: 100%;
-            max-width: 380px; /* More constrained max-width */
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7); /* Reduced shadow */
+            max-width: 380px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
             display: flex;
             flex-direction: column;
-            gap: 5px; /* Reduced gap between sections */
-            display: none; /* Hidden by default */
+            gap: 5px;
+            display: none;
         }
         header{
             display:flex;justify-content:space-between;align-items:center;
-            padding-bottom: 4px; /* Reduced padding */
-            border-bottom: 1px solid rgba(255,255,255,0.08); /* Thinner separator */
-            margin-bottom: 6px; /* Space after header */
+            padding-bottom: 4px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 6px;
         }
         header .header-left,header .header-right{
-            display:flex;gap:6px;align-items:center; /* Reduced gap */
+            display:flex;gap:6px;align-items:center;
         }
-        header .icon{font-size:16px;color:var(--text-grey)}.icon-arrow-left{color:var(--text-light)} /* Smaller icons */
+        header .icon{font-size:16px;color:var(--text-grey)}.icon-arrow-left{color:var(--text-light)}
         .icon-logout::before{content:'\f2f5';font-family:'Font Awesome 5 Free';font-weight:900}
         
-        #gamePlayLiveView{display:flex;flex-direction:column;gap:5px;} /* Reduced gap */
+        #gamePlayLiveView{display:flex;flex-direction:column;gap:5px;}
 
         .game-options{
-            display:grid;grid-template-columns:repeat(4,1fr);gap:3px; /* Reduced gap */
-            background:var(--bg-dark);padding:3px; /* Reduced padding */
-            border-radius:7px; /* Reduced rounding */
+            display:grid;grid-template-columns:repeat(4,1fr);gap:3px;
+            background:var(--bg-dark);padding:3px;
+            border-radius:7px;
             border:1px solid var(--gold-darker);
         }
         .game-options .option{
-            padding:5px 3px; /* Reduced padding */
-            border-radius:5px; /* Reduced rounding */
-            text-align:center;background:var(--bg-light);font-size:9px; /* Reduced font size */
+            padding:5px 3px;
+            border-radius:5px;
+            text-align:center;background:var(--bg-light);font-size:9px;
             color:var(--text-light);cursor:pointer;transition:background-color .3s ease,color .3s ease;
         }
         .game-options .option.active{background:var(--gold);color:var(--text-dark)}
         .timer-section{
-            background:var(--bg-dark);padding:7px; /* Reduced padding */
-            border-radius:8px; /* Reduced rounding */
-            display:flex;flex-direction:column;gap:5px; /* Reduced gap */
+            background:var(--bg-dark);padding:7px;
+            border-radius:8px;
+            display:flex;flex-direction:column;gap:5px;
             border:1px solid var(--gold-darker);
         }
-        .timer-top-row{display:flex;justify-content:space-between;align-items:center;gap:8px;} /* Reduced gap */
-        .left-align-group{display:flex;flex-direction:column;align-items:flex-start;gap:1px;} /* Reduced gap */
+        .timer-top-row{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+        .left-align-group{display:flex;flex-direction:column;align-items:flex-start;gap:1px;}
 
-        .how-to-play{background:var(--gold);color:var(--text-dark);padding:3px 7px; /* Reduced padding */
-            border-radius:14px; /* Reduced rounding */
-            font-size:9px;gap:3px;box-shadow:0 1px 2px rgba(0,0,0,.2)} /* Reduced shadow */
-        .how-to-play .icon{font-size:10px;color:var(--text-dark)} /* Reduced icon size */
-        .wingo-current-interval-text{font-size:9px;color:var(--text-grey);font-weight:400} /* Reduced font size */
+        .how-to-play{background:var(--gold);color:var(--text-dark);padding:3px 7px;
+            border-radius:14px;
+            font-size:9px;gap:3px;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+        .how-to-play .icon{font-size:10px;color:var(--text-dark)}
+        .wingo-current-interval-text{font-size:9px;color:var(--text-grey);font-weight:400}
 
         .previous-results{display:flex;gap:4px;flex-wrap:nowrap;justify-content:flex-end;align-items:center; overflow-x: auto; -webkit-overflow-scrolling: touch;}
-        .previous-results::-webkit-scrollbar { display: none; } /* Hide scrollbar for previous results */
+        .previous-results::-webkit-scrollbar { display: none; }
         .previous-results .ball{
             width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-            font-size:9px; /* Reduced font size */
-            font-weight:700;color:var(--text-light);box-shadow:inset 0 0 2px rgba(0,0,0,.3); /* Reduced shadow */
-            border:1px solid rgba(255,255,255,.08); /* Thinner border */
-            flex-shrink: 0; /* Prevent shrinking */
+            font-size:9px;
+            font-weight:700;color:var(--text-light);box-shadow:inset 0 0 2px rgba(0,0,0,.3);
+            border:1px solid rgba(255,255,255,.08);
+            flex-shrink: 0;
         }
         .previous-results .ball.red{background-color:var(--red)}.previous-results .ball.violet{background-color:var(--violet)}.previous-results .ball.green{background-color:var(--green)}
         .timer-bottom-row{display:flex;justify-content:space-between;align-items:flex-end}
-        .timer-display{display:flex;flex-direction:column;align-items:flex-start;gap:1px;} /* Reduced gap */
-        #timer{display:flex;align-items:center;color:var(--gold-text);font-size:20px; /* Reduced font size */
-            font-weight:700;letter-spacing:1px}
-        #timer .digit{width:16px;text-align:center} /* Smaller digit width */
-        #timer .colon{margin:0 1px;color:var(--text-grey)}.period-input-container{display:flex;flex-direction:column;align-items:flex-end;gap:1px;} /* Reduced gap */
+        .timer-display{display:flex;flex-direction:column;align-items:flex-start;gap:1px;}
+        #timer{display:flex;align-items:center;color:var(--gold-text);font-size:20px;
+            font-weight:700;letter-spacing:1px; font-family: 'Roboto', sans-serif;}
+        #timer .digit{width:16px;text-align:center}
+        #timer .colon{margin:0 1px;color:var(--text-grey)}.period-input-container{display:flex;flex-direction:column;align-items:flex-end;gap:1px;}
         .period-input{
             background:var(--bg-medium);border:1px solid rgba(255,255,255,.15);color:var(--gold-text);
-            font-size:14px;text-align:right;width:100px; /* Reduced width */
-            padding:3px 5px;border-radius:5px;outline:0;font-weight:700; /* Reduced padding/rounding */
+            font-size:14px;text-align:right;width:100px;
+            padding:3px 5px;border-radius:5px;outline:0;font-weight:700;
+            font-family: 'Open Sans', Arial, sans-serif;
         }
         .period-input:focus{border-color:var(--gold);box-shadow:0 0 0 1.5px rgba(255,193,7,.3)}
         
-        /* AI Prediction & Actual Result Sections (Compact) */
         #aiPredictionSection, #aiActualResultDisplay {
             background-color: var(--ai-prediction-bg);
-            border: 1.5px dashed var(--ai-prediction-border); /* Thinner dashed border */
-            padding: 6px; /* Reduced padding */
-            border-radius: 6px; /* Reduced rounding */
+            border: 1.5px dashed var(--ai-prediction-border);
+            padding: 6px;
+            border-radius: 6px;
             text-align: center;
-            box-shadow: 0 1px 6px rgba(0,0,0,0.4), inset 0 0 6px rgba(255, 193, 7, 0.3); /* Reduced shadows */
-            margin-top: 4px; /* Reduced margin */
-            position: relative; /* For toggle icon */
-            overflow: hidden; /* Ensure content doesn't overflow padding */
-            /* Flexbox for inner content to be inline */
+            box-shadow: 0 1px 6px rgba(0,0,0,0.4), inset 0 0 6px rgba(255, 193, 7, 0.3);
+            margin-top: 4px;
+            position: relative;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 5px; /* Gap between label and value */
-            flex-wrap: wrap; /* Allow wrapping if content is too long */
+            gap: 5px;
+            flex-wrap: wrap;
         }
         #aiPredictionSection .label, #aiActualResultDisplay .label {
-            font-size: 10px; /* Reduced font size */
+            font-size: 10px;
             color: var(--text-grey);
-            display: inline; /* Make it inline */
-            margin-bottom: 0; /* No margin-bottom */
-            flex-shrink: 0; /* Prevent shrinking */
+            display: inline;
+            margin-bottom: 0;
+            flex-shrink: 0;
         }
         #aiPredictionSection .value, #aiActualResultDisplay .value {
-            font-size: 1.1em; /* Reduced font size */
+            font-size: 1.1em;
             font-weight: 700;
             color: var(--gold-text);
-            text-shadow: 0 0 4px rgba(255, 193, 7, 0.6); /* Reduced shadow */
-            flex-grow: 1; /* Allow value to grow */
-            white-space: nowrap; /* Keep value on single line */
+            text-shadow: 0 0 4px rgba(255, 193, 7, 0.6);
+            flex-grow: 1;
+            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            font-family: 'Roboto', sans-serif;
         }
-        /* Specific colors for AI Result values */
         #aiActualResultDisplay .value .red-text { color: var(--red); }
         #aiActualResultDisplay .value .green-text { color: var(--green); }
         #aiActualResultDisplay .value .violet-text { color: var(--violet); }
-        #aiActualResultDisplay .value .orange-text { color: var(--orange); } /* For Big */
-        #aiActualResultDisplay .value .blue-text { color: var(--blue); } /* For Small */
+        #aiActualResultDisplay .value .orange-text { color: var(--orange); }
+        #aiActualResultDisplay .value .blue-text { color: var(--blue); }
 
-        /* AI Prediction Toggle Icon */
         #toggleActualResultBtn {
             background: none;
             border: none;
             color: var(--text-grey);
-            font-size: 0.9em; /* Adjusted size */
+            font-size: 0.9em;
             cursor: pointer;
             transition: color 0.2s ease, transform 0.2s ease;
             padding: 2px;
-            position: absolute; /* Absolute positioning relative to #aiPredictionSection */
+            position: absolute;
             top: 50%;
             right: 5px;
             transform: translateY(-50%);
-            z-index: 10; /* Ensure it's above text */
+            z-index: 10;
         }
         #toggleActualResultBtn:hover {
             color: var(--gold);
             transform: translateY(-50%) scale(1.1);
         }
 
-        .ai-toggle-container{display:flex;align-items:center;justify-content:space-between;background-color:var(--bg-dark);padding:6px 10px; /* Reduced padding */
-            border-radius:7px; /* Reduced rounding */
-            border:1px solid var(--bg-lighter)}.ai-toggle-label{font-weight:700;color:var(--text-grey);font-size:12px;}.switch{position:relative;display:inline-block;width:38px;height:20px;}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:var(--bg-light);transition:.4s;border-radius:20px}.slider:before{position:absolute;content:"";height:14px;width:14px;left:3px;bottom:3px;background-color:#fff;transition:.4s;border-radius:50%}input:checked+.slider{background-color:var(--ai-mode-color)}input:focus+.slider{box-shadow:0 0 1px var(--ai-mode-color)}input:checked+.slider:before{transform:translateX(18px)} /* Adjusted translate */
+        .ai-toggle-container{display:flex;align-items:center;justify-content:space-between;background-color:var(--bg-dark);padding:6px 10px;
+            border-radius:7px;
+            border:1px solid var(--bg-lighter)}.ai-toggle-label{font-weight:700;color:var(--text-grey);font-size:12px;}.switch{position:relative;display:inline-block;width:38px;height:20px;}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:var(--bg-light);transition:.4s;border-radius:20px}.slider:before{position:absolute;content:"";height:14px;width:14px;left:3px;bottom:3px;background-color:#fff;transition:.4s;border-radius:50%}input:checked+.slider{background-color:var(--ai-mode-color)}input:focus+.slider{box-shadow:0 0 1px var(--ai-mode-color)}input:checked+.slider:before{transform:translateX(18px)}
+        
+        #predictionReason {
+            font-family: 'Open Sans', Arial, sans-serif;
+        }
 
-        .color-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;} /* Reduced gap */
-        .color-buttons .btn-color{height:34px;font-size:13px;border-radius:7px;color:var(--text-light);box-shadow:0 1px 3px rgba(0,0,0,.4)} /* Reduced size/shadow */
+        .color-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;}
+        .color-buttons .btn-color{height:34px;font-size:13px;border-radius:7px;color:var(--text-light);box-shadow:0 1px 3px rgba(0,0,0,.4); font-family: 'Roboto', sans-serif;}
         .color-buttons .btn-color.green{background-color:var(--green)}.color-buttons .btn-color.violet{background-color:var(--violet)}.color-buttons .btn-color.red{background-color:var(--red)}
 
-        .number-buttons{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;justify-items:center} /* Reduced gap */
+        .number-buttons{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;justify-items:center}
         .number-buttons .ball{
             width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
             font-weight:700;font-size:16px;box-shadow:0 2px 5px rgba(0,0,0,.4);color:var(--text-light);
-            border:1px solid rgba(255,255,255,.1); /* Thinner border */
+            border:1px solid rgba(255,255,255,.1);
+            font-family: 'Roboto', sans-serif;
         }
-        .number-buttons .ball[data-number="0"]{background:linear-gradient(135deg,var(--violet) 50%,var(--red) 50%)}.number-buttons .ball[data-number="1"],.number-buttons .ball[data-number="3"],.number-buttons .ball[data-number="7"],.number-buttons .ball[data-number="9"]{background-color:var(--green)}.number-buttons .ball[data-number="2"],.number-buttons .ball[data-number="4"],.number-buttons .ball[data-number="6"],.number-buttons .ball[data-number="8"]{background-color:var(--red)}.number-buttons .ball[data-number="5"]{background:linear-gradient(135deg,var(--violet) 50%,var(--green) 50%)}.big-small{display:grid;grid-template-columns:repeat(2,1fr);gap:4px} /* Reduced gap */
-        .big-small .btn-big-small{height:34px;font-size:13px;border-radius:7px;color:var(--text-light);box-shadow:0 1px 3px rgba(0,0,0,.4)} /* Reduced size/shadow */
-        .big-small .btn-big-small.big{background-color:var(--orange)}.big-small .btn-big-small.small{background-color:var(--blue)}.glow{box-shadow:0 0 10px 4px var(--glow-color),0 0 6px rgba(0,0,0,.6)!important;transform:scale(1.03);font-weight:bolder!important;z-index:10} /* Reduced glow effect */
+        .number-buttons .ball[data-number="0"]{background:linear-gradient(135deg,var(--violet) 50%,var(--red) 50%)}.number-buttons .ball[data-number="1"],.number-buttons .ball[data-number="3"],.number-buttons .ball[data-number="7"],.number-buttons .ball[data-number="9"]{background-color:var(--green)}.number-buttons .ball[data-number="2"],.number-buttons .ball[data-number="4"],.number-buttons .ball[data-number="6"],.number-buttons .ball[data-number="8"]{background-color:var(--red)}.number-buttons .ball[data-number="5"]{background:linear-gradient(135deg,var(--violet) 50%,var(--green) 50%)}.big-small{display:grid;grid-template-columns:repeat(2,1fr);gap:4px}
+        .big-small .btn-big-small{height:34px;font-size:13px;border-radius:7px;color:var(--text-light);box-shadow:0 1px 3px rgba(0,0,0,.4); font-family: 'Roboto', sans-serif;}
+        .big-small .btn-big-small.big{background-color:var(--orange)}.big-small .btn-big-small.small{background-color:var(--blue)}.glow{box-shadow:0 0 10px 4px var(--glow-color),0 0 6px rgba(0,0,0,.6)!important;transform:scale(1.03);font-weight:bolder!important;z-index:10}
 
-        #aiModeIndicator{background-color:var(--ai-mode-color);color:var(--text-light);padding:6px;border-radius:7px;text-align:center;font-weight:700;font-size:12px;box-shadow:0 1px 5px rgba(0,0,0,.4);animation:pulse-glow 1.5s infinite alternate;display:none} /* Reduced size/shadow */
-        @keyframes pulse-glow{0%{box-shadow:0 0 3px var(--ai-mode-color)}to{box-shadow:0 0 10px var(--ai-mode-color),0 0 15px rgba(255,0,255,.25)}} /* Reduced glow effect */
+        #aiModeIndicator{background-color:var(--ai-mode-color);color:var(--text-light);padding:6px;border-radius:7px;text-align:center;font-weight:700;font-size:12px;box-shadow:0 1px 5px rgba(0,0,0,.4);animation:pulse-glow 1.5s infinite alternate;display:none; font-family: 'Roboto', sans-serif;}
+        @keyframes pulse-glow{0%{box-shadow:0 0 3px var(--ai-mode-color)}to{box-shadow:0 0 10px var(--ai-mode-color),0 0 15px rgba(255,0,255,.25)}}
 
-        .history-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;background:var(--bg-lighter);border-radius:8px;padding:3px} /* Reduced padding/gap */
-        .history-tabs button{padding:6px 0;background-color:transparent;color:var(--text-grey);font-size:12px;border-radius:6px;transition:all .3s ease} /* Reduced padding/font size */
-        .history-tabs button.active{background-color:var(--gold);color:var(--text-dark);box-shadow:0 1px 4px rgba(0,0,0,.3);font-weight:700} /* Reduced shadow */
+        .history-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;background:var(--bg-lighter);border-radius:8px;padding:3px}
+        .history-tabs button{padding:6px 0;background-color:transparent;color:var(--text-grey);font-size:12px;border-radius:6px;transition:all .3s ease; font-family: 'Open Sans', sans-serif;}
+        .history-tabs button.active{background-color:var(--gold);color:var(--text-dark);box-shadow:0 1px 4px rgba(0,0,0,.3);font-weight:700}
 
-        .history-view-content{display:none;background-color:var(--bg-light);padding:8px;border-radius:9px} /* Reduced padding/rounding */
+        .history-view-content{display:none;background-color:var(--bg-light);padding:8px;border-radius:9px}
         .history-view-content.active{display:block}
-        .game-history-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px} /* Reduced margin */
-        .clear-history-btn{background-color:var(--red);color:#fff;padding:4px 10px;border-radius:5px;font-size:11px} /* Reduced size/padding */
+        .game-history-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+        .clear-history-btn{background-color:var(--red);color:#fff;padding:4px 10px;border-radius:5px;font-size:11px; font-family: 'Open Sans', sans-serif;}
 
         .game-history-table,.my-history-table,.chart-table{
-            width:100%;border-collapse:separate;border-spacing:0 3px; /* Reduced spacing */
-            font-size:10px; /* Reduced font size for table content */
-            table-layout: fixed; /* Ensures fixed column widths */
+            width:100%;border-collapse:separate;border-spacing:0 3px;
+            font-size:10px;
+            table-layout: fixed;
+            font-family: 'Open Sans', sans-serif;
         }
-        .game-history-table td,.game-history-table th,.my-history-table td,.my-history-table th,.chart-table td,.chart-table th{padding:4px 3px} /* Reduced padding */
+        .game-history-table td,.game-history-table th,.my-history-table td,.my-history-table th,.chart-table td,.chart-table th{padding:4px 3px}
         .game-history-table th,.my-history-table th,.chart-table th{color:var(--text-grey);font-weight:400}
-        tbody tr{background-color:var(--bg-medium);border-radius:5px} /* Reduced rounding */
-        .game-history-table td,.my-history-table td,.chart-table td{color:var(--text-light)}
+        tbody tr{background-color:var(--bg-medium);border-radius:5px}
         .game-history-table td:first-child,.my-history-table td:first-child,.chart-table td:first-child{border-top-left-radius:5px;border-bottom-left-radius:5px}
         .game-history-table td:last-child,.my-history-table td:last-child,.chart-table td:last-child{border-top-right-radius:5px;border-bottom-right-radius:5px}
         .game-history-table td:nth-child(n+2),.game-history-table th:nth-child(n+2),.my-history-table td:nth-child(n+2),.my-history-table th:nth-child(n+2){text-align:center}
         
-        /* Specific column widths for tables to prevent horizontal scroll */
-        .game-history-table th:nth-child(1), .game-history-table td:nth-child(1) { width: 25%; } /* Period */
-        .game-history-table th:nth-child(2), .game-history-table td:nth-child(2) { width: 15%; } /* Number */
-        .game-history-table th:nth-child(3), .game-history-table td:nth-child(3) { width: 20%; } /* Big/Small */
-        .game-history-table th:nth-child(4), .game-history-table td:nth-child(4) { width: 15%; } /* Color */
+        .game-history-table th:nth-child(1), .game-history-table td:nth-child(1) { width: 25%; }
+        .game-history-table th:nth-child(2), .game-history-table td:nth-child(2) { width: 15%; }
+        .game-history-table th:nth-child(3), .game-history-table td:nth-child(3) { width: 20%; }
+        .game-history-table th:nth-child(4), .game-history-table td:nth-child(4) { width: 15%; }
         
-        .my-history-table th:nth-child(1), .my-history-table td:nth-child(1) { width: 22%; } /* Period */
-        .my-history-table th:nth-child(2), .my-history-table td:nth-child(2) { width: 12%; } /* Num (AI Predicted) */
-        .my-history-table th:nth-child(3), .my-history-table td:nth-child(3) { width: 15%; } /* B/S (AI Predicted) */
-        .my-history-table th:nth-child(4), .my-history-table td:nth-child(4) { width: 12%; } /* Col (AI Predicted) */
-        .my-history-table th:nth-child(5), .my-history-table td:nth-child(5) { width: 39%; } /* Status (Win/Loss buttons or text) */
-
+        .my-history-table th:nth-child(1), .my-history-table td:nth-child(1) { width: 22%; }
+        .my-history-table th:nth-child(2), .my-history-table td:nth-child(2) { width: 12%; }
+        .my-history-table th:nth-child(3), .my-history-table td:nth-child(3) { width: 15%; }
+        .my-history-table th:nth-child(4), .my-history-table td:nth-child(4) { width: 12%; }
+        .my-history-table th:nth-child(5), .my-history-table td:nth-child(5) { width: 39%; }
 
         .color-indicator{display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:middle;border:1px solid rgba(255,255,255,.05)}.color-indicator.red{background-color:var(--red)}.color-indicator.green{background-color:var(--green)}.color-indicator.violet{background-color:var(--violet)}.color-indicator.zero-color{background:linear-gradient(135deg,var(--violet) 50%,var(--red) 50%)}.color-indicator.five-color{background:linear-gradient(135deg,var(--violet) 50%,var(--green) 50%)}
         
-        .session-accuracy{font-size:12px;font-weight:700;color:var(--gold);margin-top:10px;text-align:center;padding:8px;background-color:var(--bg-medium);border-radius:7px;border:1px solid var(--gold-darker)} /* Reduced size/padding */
+        .session-accuracy{font-size:12px;font-weight:700;color:var(--gold);margin-top:10px;text-align:center;padding:8px;background-color:var(--bg-medium);border-radius:7px;border:1px solid var(--gold-darker); font-family: 'Open Sans', sans-serif;}
 
-        .status-buttons-container{display:flex;gap:3px;justify-content:center;align-items:center;height:100%} /* Reduced gap */
-        .status-button{padding:4px 6px;border-radius:4px;font-size:10px;font-weight:700;color:var(--text-light);cursor:pointer;flex:1} /* Reduced size/padding */
-        .status-button.Win{background-color:var(--green)} /* Changed from .win to .Win */
-        .status-button.Loss{background-color:var(--red)} /* Changed from .loss to .Loss */
-        .status-text{padding:4px 6px;border-radius:4px;font-size:10px;font-weight:700;text-align:center;color:var(--text-light);display:inline-block;width:100%;box-sizing:border-box} /* Reduced size/padding */
-        .status-text.Win{background-color:var(--green)} /* Changed from .W to .Win */
-        .status-text.Loss{background-color:var(--red)} /* Changed from .L to .Loss */
+        .status-buttons-container{display:flex;gap:3px;justify-content:center;align-items:center;height:100%}
+        .status-button{padding:4px 6px;border-radius:4px;font-size:10px;font-weight:700;color:var(--text-light);cursor:pointer;flex:1; font-family: 'Open Sans', sans-serif;}
+        .status-button.Win{background-color:var(--green)}
+        .status-button.Loss{background-color:var(--red)}
+        .status-text{padding:4px 6px;border-radius:4px;font-size:10px;font-weight:700;text-align:center;color:var(--text-light);display:inline-block;width:100%;box-sizing:border-box; font-family: 'Open Sans', sans-serif;}
+        .status-text.Win{background-color:var(--green)}
+        .status-text.Loss{background-color:var(--red)}
 
         .modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background-color:rgba(0,0,0,.8);backdrop-filter:blur(5px);justify-content:center;align-items:center;opacity:0;transition:opacity .3s ease;pointer-events:none}
-        .modal.show{opacity:1;pointer-events:auto; display:flex;} /* Ensure display flex for show */
-        .modal-content{background-color:var(--bg-medium);margin:auto;padding:15px;border:1px solid var(--gold);border-radius:10px;width:95%;max-width:350px;box-shadow:0 4px 15px rgba(0,0,0,.7);position:relative;color:var(--text-light);transform:scale(.95);transition:transform .3s ease} /* Reduced padding/max-width */
+        .modal.show{opacity:1;pointer-events:auto; display:flex;}
+        .modal-content{background-color:var(--bg-medium);margin:auto;padding:15px;border:1px solid var(--gold);border-radius:10px;width:95%;max-width:350px;box-shadow:0 4px 15px rgba(0,0,0,.7);position:relative;color:var(--text-light);transform:scale(.95);transition:transform .3s ease; font-family: 'Open Sans', sans-serif;}
         .modal.show .modal-content{transform:scale(1)}
-        .modal-content h2{color:var(--gold);font-size:18px;margin-top:0;text-align:center;border-bottom:1px solid var(--gold-darker);padding-bottom:8px} /* Reduced font/padding */
-        .close-button{color:var(--text-grey);font-size:24px;font-weight:700;position:absolute;top:5px;right:10px;cursor:pointer;transition:color .3s ease} /* Adjusted size/position */
+        .modal-content h2{color:var(--gold);font-size:18px;margin-top:0;text-align:center;border-bottom:1px solid var(--gold-darker);padding-bottom:8px}
+        .close-button{color:var(--text-grey);font-size:24px;font-weight:700;position:absolute;top:5px;right:10px;cursor:pointer;transition:color .3s ease}
         .close-button:hover{color:var(--gold)}
+        
+        #paymentInfo {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+        #paymentInfo h3 {
+            color: var(--gold);
+            margin: 5px 0;
+            word-break: break-all;
+        }
     </style>
 </head>
 <body class="login-theme">
     <div class="login-container" id="loginContainer">
-        <a href="https://imgbb.com/" target="_blank">
+        <a href="https://www.bdgin2.com/#/register?invitationCode=3783710836033" target="_blank">
             <img src="https://i.ibb.co/ymdKZh0t/h5setting-202401100608011fs2.png" alt="BDG GAME Logo" class="login-main-logo">
         </a>
         
         <div class="splash-overlay-text">Withdraw fast, safe and stable</div>
         
-        <h2 style="margin-top: 0;"></h2> 
+        <h2 style="margin-top: 0;"></h2>
         <input type="text" id="username" placeholder="Username" autocomplete="username">
         <div class="password-wrapper">
             <input type="password" id="password" placeholder="Password" autocomplete="current-password">
@@ -392,7 +383,7 @@
     <div class="game-container" id="gameContainer">
         <header>
             <div class="header-left"><i class="fas fa-chevron-left icon icon-arrow-left"></i></div>
-            <a href="https://imgbb.com/" target="_blank">
+            <a href="https://www.bdgin2.com/#/register?invitationCode=3783710836033" target="_blank">
                 <img src="https://i.ibb.co/ymdKZh0t/h5setting-202401100608011fs2.png" alt="BDG GAME" class="header-logo">
             </a>
             <div class="header-right">
@@ -437,7 +428,7 @@
             <div id="aiActualResultDisplay" class="actual-result-section hidden">
                 <span class="label">Actual Result:</span>
                 <div class="value" id="aiActualResultValue"></div>
-                <p style="font-size: 0.6em; color: var(--text-grey); margin-top: 3px;">Compare with AI Prediction to mark status.</p>
+                <p style="font-size: 0.6em; color: var(--text-grey); margin-top: 3px; font-family: 'Open Sans', Arial, sans-serif;">Compare with AI Prediction to mark status.</p>
             </div>
 
             <div class="ai-toggle-container">
@@ -498,6 +489,23 @@
             </div>
         </div>
     </div>
+    
+    <div id="depositModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Access Required</h2>
+            <p>To use this tool, you need to pay ₹1000.</p>
+            <div id="paymentInfo">
+                <p>Your unique access key is:</p>
+                <h3 id="accessKeyDisplay"></h3>
+                <p>Please pay ₹1000 to this UPI ID:</p>
+                <h3>roybdg@fam</h3>
+                <p style="margin-top: 10px;">After a successful payment, send a screenshot of the transaction along with your access key to this WhatsApp number for activation:</p>
+                <h3>+91 6290530153</h3>
+            </div>
+        </div>
+    </div>
+
     <div id="howToPlayModal" class="modal">
         <div class="modal-content"><span class="close-button">&times;</span><h2>How to Play</h2><p>This is a simulation game...</p></div>
     </div>
@@ -505,17 +513,16 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 
-    const users = [
-        { username: 'admin', password: 'password123', role: 'admin' },
-        { username: 'mukesh', password: 'Mukesh@123', role: 'normal' },
-        { username: 'user', password: 'userpass', role: 'normal' },
+    let users = [
+        { username: 'admin', password: 'password123', role: 'admin', active: true, accessKey: 'ad492d5c80' },
+        { username: 'mukesh', password: 'Mukesh@123', role: 'normal', active: true, accessKey: 'mu105c3b9f' },
     ];
 
     let timerInterval;
     let selectedGameTime = 60;
-    const historicalResults = []; // Stores {period, number, bigSmall, colorClass, userStatus, aiPredictedSize, aiPredictedColor, aiPredictedNumber}
-    const HISTORY_FOR_ANALYSIS = 20; // Number of past results AI considers for analysis
-    const DISPLAY_HISTORY_LIMIT = 10; // Number of results to display in history tables
+    const historicalResults = [];
+    const HISTORY_FOR_ANALYSIS = 20;
+    const DISPLAY_HISTORY_LIMIT = 10;
 
     const elements = {
         body: document.body,
@@ -542,12 +549,27 @@ document.addEventListener('DOMContentLoaded', function() {
         aiActualResultDisplay: document.getElementById('aiActualResultDisplay'),
         aiActualResultValue: document.getElementById('aiActualResultValue'),
         toggleActualResultBtn: document.getElementById('toggleActualResultBtn'),
-        gameOptions: document.querySelectorAll('.game-options .option')
+        gameOptions: document.querySelectorAll('.game-options .option'),
+        howToPlayModal: document.getElementById('howToPlayModal'),
+        howToPlayBtn: document.getElementById('howToPlayBtn'),
+        depositModal: document.getElementById('depositModal'),
+        accessKeyDisplay: document.getElementById('accessKeyDisplay')
     };
     
-    let currentUserRole = null; // To store 'admin' or 'normal'
+    let currentUserRole = null;
 
-    // --- Authentication & Role-based UI ---
+    function generateAccessKey(username) {
+        let hash = 0;
+        for (let i = 0; i < username.length; i++) {
+            hash = username.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        let color = (hash & 0x00FFFFFF).toString(16).toUpperCase();
+        while(color.length < 6) {
+            color = "0" + color;
+        }
+        return username.substring(0, 2) + color;
+    }
+
     elements.togglePassword.addEventListener('click', function () {
         const type = elements.passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
         elements.passwordInput.setAttribute('type', type);
@@ -557,84 +579,108 @@ document.addEventListener('DOMContentLoaded', function() {
     elements.usernameInput.addEventListener('input', () => elements.loginErrorMessage.style.display = 'none');
     elements.passwordInput.addEventListener('input', () => elements.loginErrorMessage.style.display = 'none');
 
+    // Login logic
     window.login = () => {
         const username = elements.usernameInput.value;
         const password = elements.passwordInput.value;
         const foundUser = users.find(user => user.username === username);
 
-        if (foundUser && foundUser.password === password) {
-            currentUserRole = foundUser.role; // Set the role
-            localStorage.setItem('currentUserRole', currentUserRole);
-            localStorage.setItem('isLoggedIn', 'true');
-
-            elements.body.classList.add('app-active'); // Adjust body alignment for app view
-            elements.loginContainer.style.display = 'none';
-            elements.gameContainer.style.display = 'flex'; // Use flex for game container
-
-            applyRoleBasedUI(); // Apply UI changes based on role
-            // Initial period set only on first load or after clear history
-            if (!elements.periodInput.value || historicalResults.length === 0) {
-                 setInitialPeriod(); // Set a new period only if not set or history is empty
-            }
-            startTimer(); // Start the game timer
-            updateAllViews(); // Ensure all views are updated on login
-        } else {
+        if (!foundUser) {
             elements.loginErrorMessage.textContent = 'Invalid username or password';
             elements.loginErrorMessage.style.display = 'block';
+            return;
         }
+        
+        if (foundUser.password !== password) {
+            elements.loginErrorMessage.textContent = 'Invalid username or password';
+            elements.loginErrorMessage.style.display = 'block';
+            return;
+        }
+
+        if (!foundUser.active) {
+            elements.accessKeyDisplay.textContent = foundUser.accessKey;
+            elements.depositModal.classList.add('show');
+            return;
+        }
+
+        currentUserRole = foundUser.role;
+        localStorage.setItem('currentUserRole', currentUserRole);
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('loggedInUser', username);
+
+        elements.body.classList.add('app-active');
+        elements.loginContainer.style.display = 'none';
+        elements.gameContainer.style.display = 'flex';
+
+        applyRoleBasedUI();
+        if (!elements.periodInput.value || historicalResults.length === 0) {
+             setInitialPeriod();
+        }
+        startTimer();
+        updateAllViews();
     };
 
     window.logout = () => {
         localStorage.removeItem('currentUserRole');
         localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('loggedInUser');
         currentUserRole = null;
 
-        elements.body.classList.remove('app-active'); // Revert body alignment for login view
+        elements.body.classList.remove('app-active');
         elements.loginContainer.style.display = 'block';
-        elements.gameContainer.style.display = 'none'; // Hide game container
+        elements.gameContainer.style.display = 'none';
 
         elements.usernameInput.value = '';
         elements.passwordInput.value = '';
         elements.loginErrorMessage.style.display = 'none';
-        clearInterval(timerInterval); // Stop the timer
-        clearAllHistory(false); // Clear all data (pass false to avoid confirmation on logout)
-        setInitialPeriod(); // Reset period input on logout
+        clearInterval(timerInterval);
+        clearAllHistory(false);
+        setInitialPeriod();
     };
 
+    // Corrected checkLoginStatus function to show popup on initial load
     function checkLoginStatus() {
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
         if (isLoggedIn) {
-            currentUserRole = localStorage.getItem('currentUserRole');
-            elements.body.classList.add('app-active'); // Adjust body alignment for app view
-            elements.loginContainer.style.display = 'none';
-            elements.gameContainer.style.display = 'flex'; // Use flex for game container
-            applyRoleBasedUI();
-            // Do not call setNextPeriod here directly; it's handled by startTimer's loop
-            startTimer(); // Start the game timer
-            updateAllViews(); // Update views based on any potentially loaded history
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            const foundUser = users.find(user => user.username === loggedInUser);
+            
+            if (foundUser && foundUser.active) {
+                currentUserRole = foundUser.role;
+                elements.body.classList.add('app-active');
+                elements.loginContainer.style.display = 'none';
+                elements.gameContainer.style.display = 'flex';
+                applyRoleBasedUI();
+                startTimer();
+                updateAllViews();
+            } else {
+                logout(); // Logs out inactive user
+                // Show the deposit popup for the inactive user
+                elements.accessKeyDisplay.textContent = foundUser ? foundUser.accessKey : generateAccessKey('new_user_temp');
+                elements.depositModal.classList.add('show');
+            }
         } else {
-            elements.body.classList.remove('app-active'); // Ensure body is centered for login view
+            // This is the key fix: Show popup immediately when no user is logged in
             elements.loginContainer.style.display = 'block';
-            elements.gameContainer.style.display = 'none'; // Hide game container
+            elements.gameContainer.style.display = 'none';
+            elements.accessKeyDisplay.textContent = generateAccessKey('new_user_temp');
+            elements.depositModal.classList.add('show');
         }
     }
 
     function applyRoleBasedUI() {
-        // Adjust visibility based on role
         if (currentUserRole === 'admin') {
-            elements.clearHistoryBtn.style.display = 'block'; // Admin can clear history
-        } else { // Normal user
-            elements.clearHistoryBtn.style.display = 'none'; // Normal users cannot clear history
+            elements.clearHistoryBtn.style.display = 'block';
+        } else {
+            elements.clearHistoryBtn.style.display = 'none';
         }
     }
-    // --- End Authentication & Role-based UI ---
 
-    // --- AI Prediction Logic ---
     function runAdvancedPredictionAnalysis() {
         if (historicalResults.length < 3) {
             elements.predictionReasonEl.innerHTML = "AI: <span class='highlight'>Gathering data...</span> Random prediction.";
             const predicted = { predictedSize: Math.random() < 0.5 ? 'Big' : 'Small', predictedColor: Math.random() < 0.5 ? 'Green' : 'Red' };
-            displayAIPrediction(predicted.predictedSize, predicted.predictedColor); // Display AI's prediction
+            displayAIPrediction(predicted.predictedSize, predicted.predictedColor);
             return predicted;
         }
 
@@ -643,7 +689,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const weights = { FREQUENCY: 1.0, TREND: 2.0, ALTERNATING: 1.5 };
         const recentHistory = historicalResults.slice(0, HISTORY_FOR_ANALYSIS);
 
-        // Frequency analysis
         const bigCount = recentHistory.filter(r => r.bigSmall === 'Big').length;
         const smallCount = recentHistory.filter(r => r.bigSmall === 'Small').length;
         if (bigCount > smallCount) {
@@ -654,52 +699,47 @@ document.addEventListener('DOMContentLoaded', function() {
             reasons.push(`Freq(S)+${weights.FREQUENCY}`);
         }
 
-        // Trend/Alternating analysis (last two results)
         const last = historicalResults[0].bigSmall;
         const secondLast = historicalResults[1].bigSmall;
-        if (last === secondLast) { // If last two are same, predict continuation
+        if (last === secondLast) {
             if (last === 'Big') bigScore += weights.TREND; else smallScore += weights.TREND;
             reasons.push(`Trend(${last[0]})+${weights.TREND}`);
-        } else { // If last two alternate, predict continuation of alternation
-            if (last === 'Small') bigScore += weights.ALTERNATING; else smallScore += weights.ALTERNATING; // Predict next in alternating pattern
+        } else {
+            if (last === 'Small') bigScore += weights.ALTERNATING; else smallScore += weights.ALTERNATING;
             reasons.push(`Alt(${last === 'Small' ? 'B' : 'S'})+${weights.ALTERNATING}`);
         }
 
         const predictedSize = bigScore > smallScore ? 'Big' : 'Small';
         if (bigScore === smallScore) reasons.push("Tiebreak");
 
-        // Color prediction (simple: predict the color that has appeared least recently)
         const lastGreenIndex = recentHistory.findIndex(r => r.colorClass === 'green' || r.number === 5);
         const lastRedIndex = recentHistory.findIndex(r => r.colorClass === 'red' || r.number === 0);
-        let predictedColor = 'Green'; // Default
-        if (lastRedIndex === -1 && lastGreenIndex === -1) { // No colors yet, random
+        let predictedColor = 'Green';
+        if (lastRedIndex === -1 && lastGreenIndex === -1) {
             predictedColor = Math.random() < 0.5 ? 'Green' : 'Red';
-        } else if (lastRedIndex === -1) { // Only green seen, predict red
+        } else if (lastRedIndex === -1) {
             predictedColor = 'Red';
-        } else if (lastGreenIndex === -1) { // Only red seen, predict green
+        } else if (lastGreenIndex === -1) {
             predictedColor = 'Green';
-        } else if (lastGreenIndex > lastRedIndex) { // Green more recent, predict red
+        } else if (lastGreenIndex > lastRedIndex) {
             predictedColor = 'Red';
-        } else { // Red more recent, predict green
+        } else {
             predictedColor = 'Green';
         }
         reasons.push(`ColorGap(${predictedColor[0]})`);
 
         elements.predictionReasonEl.innerHTML = `AI Analysis: ${reasons.join(' | ')}`;
-        displayAIPrediction(predictedSize, predictedColor); // Display AI's prediction
+        displayAIPrediction(predictedSize, predictedColor);
         return { predictedSize, predictedColor };
     }
 
-    // Function to display the AI's actual prediction to the user
     function displayAIPrediction(size, color) {
-        let sizeTextClass = size === 'Big' ? 'orange-text' : 'blue-text'; // Using orange for Big, blue for Small
+        let sizeTextClass = size === 'Big' ? 'orange-text' : 'blue-text';
         let colorTextClass = color === 'Green' ? 'green-text' : 'red-text';
-        
         elements.aiPredictionValue.innerHTML = 
             `<span class="${sizeTextClass}">${size}</span> | <span class="${colorTextClass}">${color}</span>`;
     }
 
-    // Function to display the AI's simulated actual result
     function displayAIActualResult(number, size, color) {
         let numberTextClass;
         if (number === 0 || number === 5) {
@@ -709,21 +749,16 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             numberTextClass = 'red-text';
         }
-
         let sizeTextClass = size === 'Big' ? 'orange-text' : 'blue-text';
         let colorTextClass = color === 'Green' ? 'green-text' : 'red-text';
-
         elements.aiActualResultValue.innerHTML = 
             `<span class="${numberTextClass}">${number}</span> | <span class="${sizeTextClass}">${size}</span> | <span class="${colorTextClass}">${color}</span>`;
-        
-        // Don't show by default, rely on toggle button
-        elements.aiActualResultDisplay.classList.add('hidden'); 
-        elements.toggleActualResultBtn.querySelector('i').className = 'fas fa-eye-slash'; // Set icon to "eye-slash" (hidden)
+        elements.aiActualResultDisplay.classList.add('hidden');
+        elements.toggleActualResultBtn.querySelector('i').className = 'fas fa-eye-slash';
     }
 
     function generateAndProcessResult() {
         let predictionResult;
-
         if (elements.aiReverseToggle.checked) {
             elements.aiModeIndicator.style.display = 'block';
             const lastResult = historicalResults[0];
@@ -732,50 +767,44 @@ document.addEventListener('DOMContentLoaded', function() {
             predictionResult = { predictedSize: predictedSize, predictedColor: Math.random() < 0.5 ? 'Green' : 'Red' };
         } else {
             elements.aiModeIndicator.style.display = 'none';
-            predictionResult = runAdvancedPredictionAnalysis(); // This function already calls displayAIPrediction
+            predictionResult = runAdvancedPredictionAnalysis();
         }
-
-        // --- Simulate the ACTUAL game outcome ---
         const actualNumber = Math.floor(Math.random() * 10);
         let actualColorClass = ([1, 3, 5, 7, 9].includes(actualNumber)) ? 'green' : 'red';
         if ([0, 5].includes(actualNumber)) actualColorClass = 'violet';
         const actualBigSmall = actualNumber >= 5 ? 'Big' : 'Small';
 
-        displayAIActualResult(actualNumber, actualBigSmall, actualColorClass); // Display the ACTUAL result to the hidden element
+        displayAIActualResult(actualNumber, actualBigSmall, actualColorClass);
 
         const newResult = {
             period: elements.periodInput.value,
-            number: actualNumber, // Actual number
-            bigSmall: actualBigSmall, // Actual big/small
-            colorClass: actualColorClass, // Actual color
-            // Store AI's prediction for comparison in "My History"
-            aiPredictedSize: predictionResult.predictedSize, 
+            number: actualNumber,
+            bigSmall: actualBigSmall,
+            colorClass: actualColorClass,
+            aiPredictedSize: predictionResult.predictedSize,
             aiPredictedColor: predictionResult.predictedColor,
-            aiPredictedNumber: null // Initialize, will be set below
+            aiPredictedNumber: null
         };
         
-        // This is where we ensure aiPredictedNumber is set based on the AI's predicted size/color
         let predictedNumberForMyHistory;
         let possibleNumbersForAI = [];
         if (predictionResult.predictedSize === 'Big') {
             possibleNumbersForAI = predictionResult.predictedColor === 'Green' ? [5, 7, 9] : [6, 8];
-        } else { // Small
+        } else {
             possibleNumbersForAI = predictionResult.predictedColor === 'Green' ? [1, 3] : [0, 2, 4];
         }
-        // If AI predicted both Green and Red for special numbers (0, 5) that have both colors
         if ((predictionResult.predictedColor === 'Green' && predictionResult.predictedSize === 'Big' && actualNumber === 5) ||
             (predictionResult.predictedColor === 'Red' && predictionResult.predictedSize === 'Small' && actualNumber === 0)) {
-            predictedNumberForMyHistory = actualNumber; // AI 'predicted' the exact special number
-        } else if (possibleNumbersForAI.length === 0) { // Fallback just in case, should not happen with current logic
-            predictedNumberForMyHistory = Math.floor(Math.random() * 10); // Random number if no specific logic applies
+            predictedNumberForMyHistory = actualNumber;
+        } else if (possibleNumbersForAI.length === 0) {
+            predictedNumberForMyHistory = Math.floor(Math.random() * 10);
         } else {
-            // Pick a random number from the possible numbers that match AI's size/color prediction
             predictedNumberForMyHistory = possibleNumbersForAI[Math.floor(Math.random() * possibleNumbersForAI.length)];
         }
-        newResult.aiPredictedNumber = predictedNumberForMyHistory; // Store the AI's specific predicted number
+        newResult.aiPredictedNumber = predictedNumberForMyHistory;
 
-        historicalResults.unshift(newResult); // Add to the beginning of the array
-        applyGlowEffects(newResult); // Apply glow based on ACTUAL result
+        historicalResults.unshift(newResult);
+        applyGlowEffects(newResult);
         updateAllViews();
     }
     
@@ -792,31 +821,24 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         updateDisplay();
 
-        // Check if the current period in the input field has already been processed.
         const currentPeriodValue = elements.periodInput.value;
         const periodAlreadyProcessed = historicalResults.some(r => r.period === currentPeriodValue);
 
         if (currentPeriodValue && !periodAlreadyProcessed) {
-            // This is a new, valid period number entered by the user, so generate prediction and result.
-            generateAndProcessResult(); // This will display AI Prediction and then Actual Result (hidden)
+            generateAndProcessResult();
         } else if (currentPeriodValue && periodAlreadyProcessed) {
-            // If the period number is in the input AND it's already in history,
-            // just display its existing prediction/result without regenerating.
             const existingResult = historicalResults.find(r => r.period === currentPeriodValue);
             if (existingResult) {
                 displayAIPrediction(existingResult.aiPredictedSize, existingResult.aiPredictedColor);
                 displayAIActualResult(existingResult.number, existingResult.bigSmall, existingResult.colorClass);
-                // Apply glow for the existing actual result
-                applyGlowEffects(existingResult); 
+                applyGlowEffects(existingResult);
             }
         } else {
-            // If period input is empty (e.g., first load without an initial period, or after clear history)
             elements.aiPredictionValue.innerHTML = "Enter Period Number to Start Prediction";
             elements.aiActualResultValue.innerHTML = "";
             elements.aiActualResultDisplay.classList.add('hidden');
             elements.toggleActualResultBtn.querySelector('i').className = 'fas fa-eye-slash';
             elements.predictionReasonEl.innerHTML = "AI analysis will appear here.";
-            // Clear glows if no prediction is active
             document.querySelectorAll(".glow").forEach(el=>el.classList.remove("glow"));
         }
 
@@ -825,26 +847,21 @@ document.addEventListener('DOMContentLoaded', function() {
             updateDisplay();
             if (timeRemaining <= 0) {
                 clearInterval(timerInterval);
-                // When timer hits 0, if the current period in the input had a result,
-                // we set a new period (increment). If it was empty or not yet processed, we keep it as is
-                // waiting for user input or generate initial if truly empty.
                 const currentPeriodAfterTimer = elements.periodInput.value;
                 const isCurrentPeriodLastInHistory = historicalResults.length > 0 && historicalResults[0].period === currentPeriodAfterTimer;
 
                 if (currentPeriodAfterTimer && isCurrentPeriodLastInHistory) {
-                    setNextPeriod(); // Only increment if the displayed period was just completed
+                    setNextPeriod();
                 } else if (!currentPeriodAfterTimer || historicalResults.length === 0) {
-                    setInitialPeriod(); // Ensure an initial period is present if user cleared it or it's genuinely empty
+                    setInitialPeriod();
                 }
                 
-                startTimer(); // Restart timer for the current/next period
+                startTimer();
             }
         }, 1000);
     }
     
     function setInitialPeriod() {
-        // Generate a new period number using the current date/time to make it somewhat unique
-        // For example, YYMMDDHHMM (last 10 digits of timestamp often too long)
         const now = new Date();
         const year = String(now.getFullYear()).slice(-2);
         const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -857,11 +874,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function setNextPeriod() {
         const currentPeriod = elements.periodInput.value;
-        const lastTwoDigits = parseInt(currentPeriod.slice(-2), 10); // Get last two digits as number
-        let newLastTwoDigits = (lastTwoDigits + 1).toString().padStart(2, '0'); // Increment and pad
+        const lastTwoDigits = parseInt(currentPeriod.slice(-2), 10);
+        let newLastTwoDigits = (lastTwoDigits + 1).toString().padStart(2, '0');
 
         let newPeriod;
-        if (newLastTwoDigits === '60') { // Handle minute rollover if period based on minutes
+        if (newLastTwoDigits === '60') {
             const currentHours = parseInt(currentPeriod.slice(-4, -2), 10);
             const newHours = (currentHours + 1).toString().padStart(2, '0');
             newPeriod = currentPeriod.slice(0, -4) + newHours + '00';
@@ -870,21 +887,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         elements.periodInput.value = newPeriod;
 
-        // Clear prediction/actual display for the new period
         elements.aiPredictionValue.innerHTML = "Waiting for analysis...";
         elements.aiActualResultValue.innerHTML = "";
-        elements.aiActualResultDisplay.classList.add('hidden'); 
-        elements.toggleActualResultBtn.querySelector('i').className = 'fas fa-eye-slash'; 
+        elements.aiActualResultDisplay.classList.add('hidden');
+        elements.toggleActualResultBtn.querySelector('i').className = 'fas fa-eye-slash';
         elements.predictionReasonEl.innerHTML = "AI analysis will appear here.";
-        document.querySelectorAll(".glow").forEach(el=>el.classList.remove("glow")); // Clear glows
+        document.querySelectorAll(".glow").forEach(el=>el.classList.remove("glow"));
     }
 
-    // Event listener for manual period input changes
     elements.periodInput.addEventListener('change', () => {
-        clearInterval(timerInterval); // Stop current timer
-        startTimer(); // Restart timer with logic to check for prediction
+        clearInterval(timerInterval);
+        startTimer();
     });
-
 
     function switchHistoryView(viewId) {
         document.querySelectorAll('.history-view-content').forEach(v => v.classList.remove('active'));
@@ -904,11 +918,9 @@ document.addEventListener('DOMContentLoaded', function() {
         elements.gameHistoryTableBody.innerHTML = '';
         elements.myHistoryTableBody.innerHTML = '';
         
-        // Slice to display only the last DISPLAY_HISTORY_LIMIT entries
         const displayHistory = historicalResults.slice(0, DISPLAY_HISTORY_LIMIT);
 
         displayHistory.forEach((result, index) => {
-            // Game History Table (shows actual results)
             const gameRow = elements.gameHistoryTableBody.insertRow();
             gameRow.insertCell(0).textContent = result.period;
             gameRow.insertCell(1).textContent = result.number;
@@ -921,7 +933,6 @@ document.addEventListener('DOMContentLoaded', function() {
             else colorIndicator.classList.add(result.colorClass);
             colorCellGame.appendChild(colorIndicator);
 
-            // My History Table (shows user's status and AI's prediction for that period)
             const myRow = elements.myHistoryTableBody.insertRow();
             myRow.insertCell(0).textContent = result.period;
             
@@ -935,20 +946,17 @@ document.addEventListener('DOMContentLoaded', function() {
             let predictedColorIndicator = document.createElement('span');
             predictedColorIndicator.className = 'color-indicator';
             let predColorClass;
-            // Determine predicted color class based on the predicted number or directly from aiPredictedColor
             if (result.aiPredictedNumber === 0) predColorClass = 'zero-color';
             else if (result.aiPredictedNumber === 5) predColorClass = 'five-color';
             else if ([1, 3, 7, 9].includes(result.aiPredictedNumber)) predColorClass = 'green';
             else if ([2, 4, 6, 8].includes(result.aiPredictedNumber)) predColorClass = 'red';
-            else if (result.aiPredictedColor) predColorClass = result.aiPredictedColor.toLowerCase(); // Fallback to direct predicted color
-            else predColorClass = 'gray'; // Fallback if number/color is not correctly set or special
+            else if (result.aiPredictedColor) predColorClass = result.aiPredictedColor.toLowerCase();
+            else predColorClass = 'gray';
             
             predictedColorIndicator.classList.add(predColorClass);
             predictedColCell.appendChild(predictedColorIndicator);
 
-
             const statusCell = myRow.insertCell(4);
-            // Pass the actual index from historicalResults for accurate updates
             updateStatusCell(statusCell, result.userStatus, historicalResults.indexOf(result), result.bigSmall, result.aiPredictedSize);
         });
     }
@@ -957,9 +965,8 @@ document.addEventListener('DOMContentLoaded', function() {
         cell.innerHTML = '';
         if (status === 'Pending') {
             const winBtn = document.createElement('button');
-            winBtn.className = 'status-button Win'; 
-            winBtn.textContent = 'Win'; // Full text "Win"
-            // Use data attributes to store necessary info for the click handler
+            winBtn.className = 'status-button Win';
+            winBtn.textContent = 'Win';
             winBtn.dataset.historyIndex = index;
             winBtn.dataset.actualSize = actualSize;
             winBtn.dataset.aiPredictedSize = aiPredictedSize;
@@ -971,8 +978,8 @@ document.addEventListener('DOMContentLoaded', function() {
             };
 
             const lossBtn = document.createElement('button');
-            lossBtn.className = 'status-button Loss'; 
-            lossBtn.textContent = 'Loss'; // Full text "Loss"
+            lossBtn.className = 'status-button Loss';
+            lossBtn.textContent = 'Loss';
             lossBtn.dataset.historyIndex = index;
             lossBtn.dataset.actualSize = actualSize;
             lossBtn.dataset.aiPredictedSize = aiPredictedSize;
@@ -989,8 +996,8 @@ document.addEventListener('DOMContentLoaded', function() {
             cell.appendChild(container);
         } else {
             const statusText = document.createElement('span');
-            statusText.className = `status-text ${status}`; // Will be 'Win' or 'Loss'
-            statusText.textContent = status; // Display "Win" or "Loss"
+            statusText.className = `status-text ${status}`;
+            statusText.textContent = status;
             cell.appendChild(statusText);
         }
     }
@@ -1004,53 +1011,48 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function clearAllHistory(confirmFirst = true) {
-        // Only admin can clear history
         if (currentUserRole !== 'admin') {
             alert("You do not have permission to clear history.");
             return;
         }
 
         if (!confirmFirst || confirm("Clear all history? This can't be undone.")) {
-            historicalResults.length = 0; // Clears the array
-            updateAllViews(); // Re-renders empty tables
+            historicalResults.length = 0;
+            updateAllViews();
             elements.predictionReasonEl.innerHTML = "AI analysis will appear here.";
-            elements.aiPredictionValue.innerHTML = "Waiting for analysis..."; // Clear AI prediction
-            elements.aiActualResultValue.innerHTML = ""; // Clear AI actual result
-            elements.aiActualResultDisplay.classList.add('hidden'); // Hide actual result display
-            elements.toggleActualResultBtn.querySelector('i').className = 'fas fa-eye-slash'; // Reset icon to eye-slash
+            elements.aiPredictionValue.innerHTML = "Waiting for analysis...";
+            elements.aiActualResultValue.innerHTML = "";
+            elements.aiActualResultDisplay.classList.add('hidden');
+            elements.toggleActualResultBtn.querySelector('i').className = 'fas fa-eye-slash';
             
-            setInitialPeriod(); // Set a new initial period after clearing
-            clearInterval(timerInterval); // Stop the current timer
-            startTimer(); // Restart timer for the new period
+            setInitialPeriod();
+            clearInterval(timerInterval);
+            startTimer();
         }
     }
 
-    // --- Toggle AI Actual Result Display ---
     elements.toggleActualResultBtn.addEventListener('click', function() {
         elements.aiActualResultDisplay.classList.toggle('hidden');
         if (elements.aiActualResultDisplay.classList.contains('hidden')) {
-            this.querySelector('i').className = 'fas fa-eye-slash'; // Change to eye-slash icon
+            this.querySelector('i').className = 'fas fa-eye-slash';
             this.title = "Show Actual Result";
         } else {
-            this.querySelector('i').className = 'fas fa-eye'; // Change to eye icon
+            this.querySelector('i').className = 'fas fa-eye';
             this.title = "Hide Actual Result";
         }
     });
 
-    // --- UI Update Helper Functions ---
     function updatePreviousResultsDisplay(){
         elements.previousResultsContainer.innerHTML="";
-        // Show up to 5 latest actual results
         historicalResults.slice(0,5).forEach(e=>{
             const t=document.createElement("span");
             t.className=`ball ${e.colorClass}`;
             t.textContent=e.number;
             elements.previousResultsContainer.appendChild(t);
         });
-        // Ensure no horizontal scroll is needed for these 5 balls
         elements.previousResultsContainer.style.flexWrap = 'nowrap';
         elements.previousResultsContainer.style.overflowX = 'auto';
-        elements.previousResultsContainer.style.justifyContent = 'flex-end'; // Align to right
+        elements.previousResultsContainer.style.justifyContent = 'flex-end';
     }
     function applyGlowEffects(e){
         document.querySelectorAll(".glow").forEach(el=>el.classList.remove("glow"));
@@ -1070,7 +1072,6 @@ document.addEventListener('DOMContentLoaded', function() {
             colorEl.classList.add("glow");
             colorEl.style.setProperty("--glow-color",`var(--${e.colorClass})`);
         }
-        // Handle 0 and 5 special colors for glow (if they exist)
         if(0===e.number){
             const redEl=document.querySelector(".color-buttons .btn-color.red");
             if(redEl){redEl.classList.add("glow");redEl.style.setProperty("--glow-color","var(--red)")}
@@ -1082,19 +1083,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     function updateChartData(){
         const counts={red:0,green:0,violet:0,big:0,small:0};
-        const relevantHistory=historicalResults.filter(r => r.number !== undefined).slice(0,100); // Only count actual results for chart
+        const relevantHistory=historicalResults.filter(r => r.number !== undefined).slice(0,100);
         relevantHistory.forEach(r=>{
-            // Note: For chart, numbers 0 and 5 are counted under both their base color AND violet.
-            // If you only want one, you'll need to adjust this logic.
-            // Current logic counts a '0' as both red and violet, and a '5' as both green and violet.
             if(r.colorClass === "red") counts.red++;
             if(r.colorClass === "green") counts.green++;
-            if(r.colorClass === "violet") counts.violet++; // This will count 0 and 5 if they were explicitly violet
-            
-            if(r.number === 0 && r.colorClass !== 'violet') counts.red++; // Double count red for 0 if not primary violet
-            if(r.number === 5 && r.colorClass !== 'violet') counts.green++; // Double count green for 5 if not primary violet
-
-
+            if(r.colorClass === "violet") counts.violet++;
+            if(r.number === 0 && r.colorClass !== 'violet') counts.red++;
+            if(r.number === 5 && r.colorClass !== 'violet') counts.green++;
             r.bigSmall==="Big"?counts.big++:counts.small++;
         });
         const total = relevantHistory.length;
@@ -1109,60 +1104,56 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     function updateSessionAccuracy(){
         const evaluatedResults=historicalResults.filter(r=>r.userStatus!=="Pending");
-        // Count how many times AI's PREDICTION (aiPredictedSize) matched the ACTUAL result (bigSmall)
-        const correctPredictions = evaluatedResults.filter(r => r.aiPredictedSize === r.bigSmall).length; 
+        const correctPredictions = evaluatedResults.filter(r => r.aiPredictedSize === r.bigSmall).length;
         const totalEvaluated = evaluatedResults.length;
         const accuracy = totalEvaluated > 0 ? (correctPredictions / totalEvaluated * 100).toFixed(0) : 0;
         document.querySelector("#chartView .session-accuracy").textContent=`AI Accuracy: ${accuracy}% (Matched:${correctPredictions} Total:${totalEvaluated})`;
     }
-    // --- End UI Update Helper Functions ---
 
-    // --- Event Listeners for new functionality ---
+    elements.howToPlayBtn.addEventListener('click', () => {
+        elements.howToPlayModal.classList.add('show');
+    });
 
-    // 1. Game Options (Timer Intervals)
+    elements.howToPlayModal.querySelector('.close-button').addEventListener('click', () => {
+        elements.howToPlayModal.classList.remove('show');
+    });
+
+    elements.howToPlayModal.addEventListener('click', (e) => {
+        if (e.target === elements.howToPlayModal) {
+            elements.howToPlayModal.classList.remove('show');
+        }
+    });
+
+    elements.clearHistoryBtn.addEventListener('click', () => clearAllHistory(true));
+    
+    elements.depositModal.querySelector('.close-button').addEventListener('click', () => {
+        elements.depositModal.classList.remove('show');
+    });
+    elements.depositModal.addEventListener('click', (e) => {
+        if (e.target === elements.depositModal) {
+            elements.depositModal.classList.remove('show');
+        }
+    });
+
+    // Event listeners for game-options buttons
     elements.gameOptions.forEach(option => {
         option.addEventListener('click', function() {
             document.querySelectorAll('.game-options .option').forEach(opt => opt.classList.remove('active'));
             this.classList.add('active');
             selectedGameTime = parseInt(this.dataset.time, 10);
             document.getElementById('wingoIntervalText').textContent = `WinGo ${this.textContent}`;
-            clearInterval(timerInterval); // Stop current timer
-            startTimer(); // Restart timer with new duration, but don't force new period prediction
+            clearInterval(timerInterval);
+            startTimer();
         });
     });
 
-    // 2. History Tabs
+    // Event listeners for history tabs
     elements.tabGameHistory.addEventListener('click', () => switchHistoryView('gameHistoryView'));
     elements.tabChart.addEventListener('click', () => switchHistoryView('chartView'));
     elements.tabMyHistory.addEventListener('click', () => switchHistoryView('myHistoryView'));
 
-    // 3. How to Play Modal
-    const howToPlayModal = document.getElementById('howToPlayModal');
-    const howToPlayBtn = document.getElementById('howToPlayBtn');
-    const closeModalBtn = howToPlayModal.querySelector('.close-button');
+    checkLoginStatus(); // Initial check on page load
 
-    howToPlayBtn.addEventListener('click', () => {
-        howToPlayModal.classList.add('show');
-    });
-
-    closeModalBtn.addEventListener('click', () => {
-        howToPlayModal.classList.remove('show');
-    });
-
-    // Close modal if clicked outside content
-    howToPlayModal.addEventListener('click', (e) => {
-        if (e.target === howToPlayModal) {
-            howToPlayModal.classList.remove('show');
-        }
-    });
-
-    // 4. Clear History Button (Admin only)
-    elements.clearHistoryBtn.addEventListener('click', () => clearAllHistory(true));
-
-    // Initial checks and setup when page loads
-    checkLoginStatus();
-
-    // Set initial period if not already set (e.g., on first load before login, or after clear history)
     if (!elements.periodInput.value) {
         setInitialPeriod();
     }
