@@ -1,0 +1,1921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KWGGAME</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #4b2b8d;
+            color: #ffffff;
+            font-family: 'Ubuntu', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        #login-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        #login-container {
+            background-color: #6b48ff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid #8c71e0;
+            width: 100%;
+            max-width: 320px;
+            text-align: center;
+        }
+        .login-logo {
+            width: 150px;
+            margin-bottom: 25px;
+        }
+        .login-form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .input-group {
+            position: relative;
+        }
+        .input-group .icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #d4a017;
+        }
+        .login-form input {
+            width: 100%;
+            padding: 12px 12px 12px 45px;
+            border-radius: 8px;
+            border: none;
+            background-color: #4b2b8d;
+            color: #ffffff;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .login-form input::placeholder {
+            color: #ccc;
+        }
+        #login-btn {
+            padding: 12px;
+            border-radius: 25px;
+            border: none;
+            background: linear-gradient(90deg, #ffd700, #f0c400);
+            color: #333;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        .support-section {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-top: 25px;
+        }
+        .support-link {
+            color: #fff;
+            text-decoration: none;
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .support-link i {
+            font-size: 20px;
+            color: #ffd700;
+        }
+        #game-container {
+            display: none;
+            width: 100%;
+            height: 100vh;
+        }
+        .container {
+            max-width: 340px;
+            margin: 0 auto;
+            background-color: #4b2b8d;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+            min-height: 100vh;
+            padding-bottom: 10px;
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 10px;
+        }
+        .top-bar-side {
+            flex: 1;
+            display: flex;
+            gap: 15px;
+        }
+        .top-bar-side:last-child {
+            justify-content: flex-end;
+        }
+        .logo-img {
+            flex-shrink: 0;
+            height: 28px;
+            width: auto;
+        }
+        .top-bar .icon {
+            font-size: 20px;
+            color: #ffffff;
+            cursor: pointer;
+        }
+        #admin-portal-btn {
+             display: none; /* Hidden by default */
+        }
+        .game-options {
+            display: flex;
+            justify-content: space-around;
+            padding: 6px;
+            background-color: #6b48ff;
+            margin-bottom: 10px;
+            border-radius: 0 0 8px 8px;
+            box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .game-option {
+            background-color: #8c71e0;
+            border-radius: 5px;
+            padding: 5px 2px;
+            text-align: center;
+            flex: 1;
+            margin: 0 1px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .game-option.active {
+            background-color: #ffd700;
+            color: #333;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .game-option .clock-icon {
+            font-size: 20px;
+            margin-bottom: 2px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .game-option.active .clock-icon {
+            color: #333;
+        }
+        .game-option span {
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .timer-section {
+            background-color: #d4a017;
+            padding: 6px;
+            margin: 0 6px 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            grid-template-rows: auto auto auto;
+            gap: 4px 8px;
+            align-items: center;
+        }
+        .how-to-play-btn {
+            grid-column: 1;
+            grid-row: 1;
+            justify-self: start;
+            background-color: #b78a16;
+            color: #ffffff;
+            padding: 3px 6px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            box-shadow: inset 0 -1px 1px rgba(0, 0, 0, 0.2);
+        }
+        .timer-label {
+            grid-column: 2;
+            grid-row: 1;
+            justify-self: end;
+            font-size: 10px;
+            color: #333;
+            white-space: nowrap;
+        }
+        #win-go-info {
+            grid-column: 1;
+            grid-row: 2;
+            justify-self: start;
+            font-size: 15px;
+            font-weight: bold;
+            color: #333;
+        }
+        #timer {
+            grid-column: 2;
+            grid-row: 2;
+            justify-self: end;
+            font-size: 24px;
+            font-weight: bold;
+            color: #1a0d2e;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        .prediction-balls {
+            grid-column: 1;
+            grid-row: 3;
+            justify-self: start;
+            display: flex;
+            gap: 2px;
+        }
+        .prediction-ball {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 12px;
+            color: #ffffff;
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .prediction-ball.ball-red { background-color: #ff4040; }
+        .prediction-ball.ball-green { background-color: #32cd32; }
+        .prediction-ball.ball-red-violet { background: linear-gradient(to bottom right, #ff4040 50%, #800080 50%); }
+        .prediction-ball.ball-green-violet { background: linear-gradient(to bottom right, #32cd32 50%, #800080 50%); }
+        #period-input {
+            grid-column: 2;
+            grid-row: 3;
+            justify-self: end;
+            font-size: 18px;
+            font-weight: bold;
+            color: #1a0d2e;
+            background-color: transparent;
+            border: none;
+            text-align: right;
+            width: 90%;
+            outline: none;
+            padding: 0;
+        }
+        .gemini-ai-section {
+            background-color: #6b48ff;
+            margin: 0 6px 8px;
+            border-radius: 8px;
+            padding: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease-in-out;
+        }
+        .gemini-ai-section.highlight-prediction {
+            border: 2px solid #ffd700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.7), inset 0 0 5px rgba(255, 215, 0, 0.5);
+        }
+        #ai-mode-indicator {
+            background-color: #800080;
+            color: #fff;
+            font-size: 8px;
+            padding: 1px 3px;
+            border-radius: 2px;
+            margin-bottom: 5px;
+            display: none;
+            animation: pulse 1s infinite alternate;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        @keyframes pulse {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0.7; transform: scale(1.05); }
+        }
+        .ai-prediction-display {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 3px 0;
+        }
+        .ai-prediction-line-1 {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            white-space: nowrap;
+            font-size: 13px;
+            margin-bottom: 2px;
+        }
+        .ai-prediction-label {
+            font-weight: bold;
+            color: #ffffff;
+        }
+        .ai-predicted-number-circle {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 15px;
+            color: #1a0d2e;
+            background-color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+        }
+        .ai-predicted-number-circle.ball-red { background-color: #ff4040; color: #fff; }
+        .ai-predicted-number-circle.ball-green { background-color: #32cd32; color: #fff; }
+        .ai-predicted-number-circle.ball-red-violet { background: linear-gradient(to bottom right, #ff4040 50%, #800080 50%); color: #fff; }
+        .ai-predicted-number-circle.ball-green-violet { background: linear-gradient(to bottom right, #32cd32 50%, #800080 50%); color: #fff; }
+        .ai-predicted-size, .ai-predicted-color {
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        .ai-prediction-reason {
+            width: 100%;
+            font-size: 9px;
+            color: #ccc;
+            padding: 0 5px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .ai-prediction-reason span.highlight {
+            color: #ffeb3b;
+            font-weight: bold;
+        }
+        .actual-result-section {
+            background-color: #6b48ff;
+            margin: 0 6px 8px;
+            border-radius: 8px;
+            padding: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            display: block;
+            position: relative;
+        }
+        .actual-result-display-values {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 0;
+            font-size: 15px;
+            font-weight: bold;
+            white-space: nowrap;
+            color: #ffd700;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        .actual-result-display-values .label {
+            color: #ffd700;
+            margin-right: 5px;
+        }
+        .color-green-text { color: #32cd32; }
+        .color-red-text { color: #ff4040; }
+        .color-violet-text { color: #800080; }
+        .color-orange-text { color: #ffa500; }
+        .color-blue-text { color: #00bfff; }
+        .color-selection {
+            display: flex;
+            justify-content: space-around;
+            margin: 0 6px 10px;
+            gap: 5px;
+        }
+        .color-btn {
+            flex: 1;
+            padding: 7px 0;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #ffffff;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            border: none;
+        }
+        .color-btn.green { background-color: #32cd32; }
+        .color-btn.violet { background-color: #800080; }
+        .color-btn.red { background-color: #ff4040; }
+        .number-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            margin: 0 6px 10px;
+        }
+        .number-ball {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 16px;
+            color: #ffffff;
+            cursor: pointer;
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .num-0 { background: linear-gradient(to bottom right, #ff4040 50%, #800080 50%); }
+        .num-5 { background: linear-gradient(to bottom right, #32cd32 50%, #800080 50%); }
+        .num-1, .num-3, .num-7, .num-9 { background-color: #32cd32; }
+        .num-2, .num-4, .num-6, .num-8 { background-color: #ff4040; }
+        .big-small-options {
+            display: flex;
+            justify-content: space-around;
+            margin: 0 6px 10px;
+            gap: 5px;
+        }
+        .action-btn {
+            background-color: #6b48ff;
+            padding: 5px 2px;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #ffffff;
+            text-align: center;
+            flex: 1;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            border: none;
+        }
+        .big-small-options .action-btn.big { background-color: #ffa500; }
+        .big-small-options .action-btn.small { background-color: #00bfff; }
+        .history-nav {
+            display: flex;
+            justify-content: space-around;
+            margin: 0 6px 10px;
+            gap: 5px;
+        }
+        .history-btn {
+            background-color: #6b48ff;
+            padding: 5px 2px;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #ffffff;
+            text-align: center;
+            flex: 1;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            border: none;
+            transition: background-color 0.2s ease;
+        }
+        .history-btn.active {
+            background-color: #ffd700;
+            color: #333;
+        }
+        .result-table {
+            margin: 0 6px;
+            background-color: #6b48ff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        /* START: NEW STYLES FOR CLEAR HISTORY */
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 10px;
+            background-color: #4b2b8d;
+            border-bottom: 1px solid #8c71e0;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        .clear-history-btn {
+            cursor: pointer;
+            font-size: 14px;
+            color: #ddd;
+            transition: color 0.2s ease;
+        }
+        .clear-history-btn:hover {
+            color: #ff4040;
+        }
+        /* END: NEW STYLES */
+
+        .table-header, .table-row {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1.2fr 1fr;
+            padding: 5px 6px;
+            align-items: center;
+            font-size: 10px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .table-header {
+            background-color: #8c71e0;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .table-row:last-child {
+            border-bottom: none;
+        }
+        .table-cell {
+            color: #ffffff;
+        }
+        .table-cell.number {
+            font-weight: bold;
+        }
+        .table-cell.color-indicator {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 1px;
+        }
+        .table-color-red { background-color: #ff4040; }
+        .table-color-green { background-color: #32cd32; }
+        .table-color-violet { background-color: #800080; }
+        @keyframes glow {
+            0% { box-shadow: 0 0 6px rgba(255, 215, 0, 0.7), 0 0 12px rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 0 12px rgba(255, 215, 0, 0.9), 0 0 24px rgba(255, 215, 0, 0.7); }
+            100% { box-shadow: 0 0 6px rgba(255, 215, 0, 0.7), 0 0 12px rgba(255, 215, 0, 0.5); }
+        }
+        .glowing {
+            animation: glow 1.5s ease-in-out infinite; /* Changed to infinite */
+        }
+        .chart-section {
+            margin: 0 6px 10px;
+            background-color: #6b48ff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            padding: 6px;
+            display: none;
+        }
+        .chart-statistics {
+            background-color: #8c71e0;
+            border-radius: 6px;
+            padding: 6px;
+            margin-bottom: 10px;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+            -webkit-overflow-scrolling: touch;
+        }
+        .stats-header {
+            font-size: 13px;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 6px;
+            text-align: left;
+        }
+        .stats-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 3px;
+        }
+        .stats-row:last-child {
+            margin-bottom: 0;
+        }
+        .stat-label {
+            font-size: 11px;
+            color: #ffffff;
+            width: 80px;
+            flex-shrink: 0;
+            text-align: left;
+            white-space: nowrap;
+        }
+        .numbers-display {
+            display: flex;
+            gap: 3px;
+            flex-grow: 1;
+            white-space: nowrap;
+        }
+        .stat-number-circle {
+            flex-shrink: 0;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            background-color: transparent;
+        }
+        .stat-number-circle.active-red { background-color: #ff4040; }
+        .stat-number-circle.active-green { background-color: #32cd32; }
+        .stat-number-circle.active-red-violet { background: linear-gradient(to bottom right, #ff4040 50%, #800080 50%); }
+        .stat-number-circle.active-green-violet { background: linear-gradient(to bottom right, #32cd32 50%, #800080 50%); }
+        .stats-data {
+            display: flex;
+            gap: 6px;
+            flex-grow: 1;
+            font-size: 11px;
+            color: #ffffff;
+            white-space: nowrap;
+            justify-content: space-around;
+            padding-left: 1px;
+            padding-right: 1px;
+        }
+        .stats-data > div {
+            flex-shrink: 0;
+            width: 18px;
+            text-align: center;
+        }
+        .chart-results-history {
+            background-color: #8c71e0;
+            border-radius: 6px;
+            padding: 6px;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+            -webkit-overflow-scrolling: touch;
+        }
+        .chart-results-header {
+            display: grid;
+            grid-template-columns: 1.5fr repeat(10, 1fr) 0.5fr;
+            font-weight: bold;
+            font-size: 10px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 4px;
+            text-align: center;
+            align-items: center;
+            min-width: 300px;
+            white-space: nowrap;
+        }
+        .chart-header-period { grid-column: 1; text-align: left;}
+        .chart-header-number { grid-column: 2 / span 10; }
+        .chart-header-bigsmall { grid-column: 12; }
+        .chart-history-row {
+            display: grid;
+            grid-template-columns: 1.5fr repeat(10, 1fr) 0.5fr;
+            font-size: 10px;
+            padding: 3px 0;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            min-width: 300px;
+            white-space: nowrap;
+        }
+        .chart-history-row:last-child {
+            border-bottom: none;
+        }
+        .chart-period-cell {
+            text-align: left;
+            padding-left: 4px;
+        }
+        .chart-number-circle {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 9px;
+            font-weight: bold;
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background-color: transparent;
+            grid-column: span 1;
+        }
+        .chart-number-circle.active-red { background-color: #ff4040; }
+        .chart-number-circle.active-green { background-color: #32cd32; }
+        .chart-number-circle.active-red-violet { background: linear-gradient(to bottom right, #ff4040 50%, #800080 50%); }
+        .chart-number-circle.active-green-violet { background: linear-gradient(to bottom right, #32cd32 50%, #800080 50%); }
+        .chart-bigsmall-circle {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 9px;
+            font-weight: bold;
+            color: #ffffff;
+            grid-column: 12;
+            justify-self: center;
+        }
+        .chart-bigsmall-circle.big { background-color: #FFC107; }
+        .chart-bigsmall-circle.small { background-color: #00bfff; }
+        .my-history-section {
+            margin: 0 6px 10px;
+            background-color: #6b48ff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            padding: 6px;
+            display: none;
+        }
+        .my-history-table {
+            background-color: #8c71e0;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        .my-history-table .table-header,
+        .my-history-table .table-row {
+            display: grid;
+            grid-template-columns: 1.5fr 0.8fr 1fr 1fr 1.5fr;
+            padding: 5px 6px;
+            align-items: center;
+            font-size: 10px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .my-history-table .table-header {
+            background-color: #8c71e0;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .my-history-table .table-row:last-child {
+            border-bottom: none;
+        }
+        .my-history-table .table-cell {
+            color: #ffffff;
+            white-space: nowrap;
+        }
+        .status-actions {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+        }
+        .status-icon {
+            font-size: 13px;
+            cursor: pointer;
+            padding: 1px;
+            border-radius: 3px;
+            color: #ffffff;
+            transition: background-color 0.2s ease;
+        }
+        .status-icon.win-mark {
+            color: #32cd32;
+        }
+        .status-icon.loss-mark {
+            color: #ff4040;
+        }
+        .status-marked {
+            font-weight: bold;
+            color: #ffeb3b;
+        }
+        .my-history-table .table-cell.number-display { font-weight: bold; }
+        .my-history-table .table-cell.bigsmall-display { font-weight: bold; }
+        .my-history-table .table-cell.color-display { font-weight: bold; }
+        .my-history-table .table-cell .color-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 1px;
+        }
+        .my-history-table .table-cell .color-indicator.table-color-red { background-color: #ff4040; }
+        .my-history-table .table-cell .color-indicator.table-color-green { background-color: #32cd32; }
+        .my-history-table .table-cell .color-indicator.table-color-violet { background-color: #800080; }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #6b48ff;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 380px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            position: relative;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .modal-content h3 {
+            color: #ffd700;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 5px;
+        }
+        .modal-content p, .modal-content ul {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #eee;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+        .modal-content ul {
+            padding-left: 20px;
+        }
+        .modal-content li {
+            margin-bottom: 5px;
+        }
+        .modal-content strong {
+            color: #ffffff;
+        }
+        [role="tooltip"] {
+            position: relative;
+        }
+        [role="tooltip"]::after {
+            content: attr(data-tooltip);
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 10;
+        }
+        [role="tooltip"]:hover::after {
+            display: block;
+        }
+        /* Admin Portal Styles */
+        .admin-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .admin-form input {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: none;
+            background-color: #4b2b8d;
+            color: #ffffff;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .admin-form button {
+            padding: 10px;
+            border-radius: 20px;
+            border: none;
+            background: linear-gradient(90deg, #ffd700, #f0c400);
+            color: #333;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .admin-table-container {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        .admin-table th, .admin-table td {
+            border: 1px solid #8c71e0;
+            padding: 6px;
+            text-align: left;
+        }
+        .admin-table th {
+            background-color: #8c71e0;
+        }
+        .admin-table .status-active {
+            color: #32cd32;
+            font-weight: bold;
+        }
+        .admin-table .status-expired {
+            color: #ff4040;
+            font-weight: bold;
+        }
+        .delete-user-btn {
+            color: #ff4040;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        .admin-history {
+            max-height: 150px;
+            overflow-y: auto;
+            background-color: #4b2b8d;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .admin-history p {
+            font-size: 11px;
+            color: #ccc;
+            margin: 0 0 5px;
+            border-bottom: 1px solid #6b48ff;
+            padding-bottom: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div id="login-screen">
+        <div id="login-container">
+            <img src="https://i.ibb.co/8D67pjDm/Screenshot-2025-08-15-225809.png" alt="KWGGAME Logo" class="login-logo">
+            <div class="login-form">
+                <div class="input-group">
+                    <i class="fas fa-user icon"></i>
+                    <input type="text" id="uid" placeholder="UID Login" aria-label="User ID">
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock icon"></i>
+                    <input type="password" id="password" placeholder="Password" aria-label="Password">
+                </div>
+                <button id="login-btn" role="button">Login</button>
+            </div>
+            <div class="support-section">
+                <a href="https://play.google.com/store" class="support-link" id="download-app-link" role="link" aria-label="Download App">
+                    <i class="fas fa-download"></i>
+                    <span>Download Now</span>
+                </a>
+                <a href="#" class="support-link" id="customer-support-link" role="link" aria-label="Customer Support">
+                    <i class="fas fa-headset"></i>
+                    <span>Support</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div id="game-container">
+        <div class="container">
+            <div class="top-bar">
+                <div class="top-bar-side"></div>
+                <img src="https://i.ibb.co/8D67pjDm/Screenshot-2025-08-15-225809.png" alt="KWGGAME Logo" class="logo-img">
+                <div class="top-bar-side">
+                    <i class="fas fa-user-shield icon" id="admin-portal-btn" title="Admin Portal" role="button" aria-label="Admin Portal"></i>
+                    <i class="fas fa-power-off icon" id="logout-btn" title="Logout" role="button" aria-label="Logout"></i>
+                </div>
+            </div>
+            <div class="game-options">
+                <div class="game-option active" data-duration="30" role="button" aria-label="Win Go 30 seconds">
+                    <i class="far fa-clock clock-icon"></i>
+                    <span>Win Go</span>
+                    <span>30s</span>
+                </div>
+                <div class="game-option" data-duration="60" role="button" aria-label="Win Go 1 minute">
+                    <i class="far fa-clock clock-icon"></i>
+                    <span>Win Go</span>
+                    <span>1Min</span>
+                </div>
+                <div class="game-option" data-duration="180" role="button" aria-label="Win Go 3 minutes">
+                    <i class="far fa-clock clock-icon"></i>
+                    <span>Win Go</span>
+                    <span>3Min</span>
+                </div>
+                <div class="game-option" data-duration="300" role="button" aria-label="Win Go 5 minutes">
+                    <i class="far fa-clock clock-icon"></i>
+                    <span>Win Go</span>
+                    <span>5Min</span>
+                </div>
+            </div>
+            <div class="timer-section">
+                <button class="how-to-play-btn" id="how-to-play-btn" role="button" aria-label="How to Play">How To Play</button>
+                <div class="timer-label">Time remaining</div>
+                <span class="win-go-info" id="win-go-info">Win Go 30s</span>
+                <div id="timer" aria-live="polite">00 : 00</div>
+                <div class="prediction-balls" id="prediction-balls"></div>
+                <input type="text" id="period-input" placeholder="Enter Period" maxlength="10" aria-label="Period Number">
+            </div>
+            <div class="gemini-ai-section">
+                <div class="ai-prediction-display">
+                    <div id="ai-mode-indicator" aria-hidden="true"></div>
+                    <div class="ai-prediction-line-1">
+                        <span class="ai-prediction-label">AI Prediction:</span>
+                        <div class="ai-predicted-number-circle" id="ai-predicted-number">?</div>
+                        <span class="ai-predicted-size" id="ai-predicted-size"></span> |
+                        <span class="ai-predicted-color" id="ai-predicted-color"></span>
+                        <span class="ai-confidence" id="ai-confidence"></span>
+                    </div>
+                    <div class="ai-prediction-reason" id="ai-prediction-reason">Waiting for analysis...</div>
+                </div>
+            </div>
+            <div class="actual-result-section" id="actual-result-section">
+                <div class="actual-result-display-values">
+                    <span class="label">Actual Result:</span>
+                    <span id="actual-number">?</span> | <span id="actual-bigsmall">?</span> | <span id="actual-color">?</span>
+                </div>
+            </div>
+            <div class="color-selection">
+                <button class="color-btn green" id="btn-green" role="tooltip" data-tooltip="Select Green">Green</button>
+                <button class="color-btn violet" id="btn-violet" role="tooltip" data-tooltip="Select Violet">Violet</button>
+                <button class="color-btn red" id="btn-red" role="tooltip" data-tooltip="Select Red">Red</button>
+            </div>
+            <div class="number-grid">
+                <div class="number-ball num-0" role="tooltip" data-tooltip="Select 0">0</div>
+                <div class="number-ball num-1" role="tooltip" data-tooltip="Select 1">1</div>
+                <div class="number-ball num-2" role="tooltip" data-tooltip="Select 2">2</div>
+                <div class="number-ball num-3" role="tooltip" data-tooltip="Select 3">3</div>
+                <div class="number-ball num-4" role="tooltip" data-tooltip="Select 4">4</div>
+                <div class="number-ball num-5" role="tooltip" data-tooltip="Select 5">5</div>
+                <div class="number-ball num-6" role="tooltip" data-tooltip="Select 6">6</div>
+                <div class="number-ball num-7" role="tooltip" data-tooltip="Select 7">7</div>
+                <div class="number-ball num-8" role="tooltip" data-tooltip="Select 8">8</div>
+                <div class="number-ball num-9" role="tooltip" data-tooltip="Select 9">9</div>
+            </div>
+            <div class="big-small-options">
+                <button class="action-btn big" id="btn-big" role="tooltip" data-tooltip="Select Big">Big</button>
+                <button class="action-btn small" id="btn-small" role="tooltip" data-tooltip="Select Small">Small</button>
+            </div>
+            <div class="history-nav">
+                <button class="history-btn active" data-section="game-history" role="button" aria-label="Show Game History">Game History</button>
+                <button class="history-btn" data-section="chart" role="button" aria-label="Show Chart">Chart</button>
+                <button class="history-btn" data-section="my-history" role="button" aria-label="Show My History">MyHistory</button>
+            </div>
+            <div class="result-table" id="game-history-table">
+                <!-- START: ADDED HEADER WITH CLEAR ICON -->
+                <div class="history-header">
+                    <span>Game History</span>
+                    <i class="fas fa-trash-alt clear-history-btn" id="clear-game-history-btn" title="Clear Game History"></i>
+                </div>
+                <!-- END: ADDED HEADER -->
+                <div class="table-header">
+                    <div class="table-cell">Period</div>
+                    <div class="table-cell">Number</div>
+                    <div class="table-cell">Big Small</div>
+                    <div class="table-cell">Color</div>
+                </div>
+                <div class="table-body" id="game-history-table-body"></div>
+            </div>
+            <div class="chart-section" id="chart-section" style="display: none;">
+                <div class="chart-statistics">
+                    <div class="stats-header">Statistic (last 100 Periods)</div>
+                    <div class="stats-row">
+                        <div class="stat-label">Winning Numbers</div>
+                        <div class="numbers-display" id="chart-winning-numbers"></div>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-label">Missing</div>
+                        <div class="stats-data" id="chart-missing"></div>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-label">Avg missing</div>
+                        <div class="stats-data" id="chart-avg-missing"></div>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-label">Frequency</div>
+                        <div class="stats-data" id="chart-frequency"></div>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-label">Max consecutive</div>
+                        <div class="stats-data" id="chart-max-consecutive"></div>
+                    </div>
+                     <div class="stats-row">
+                        <div class="stat-label">Period B/S</div>
+                        <div class="stats-data" id="chart-period-big-small"></div>
+                    </div>
+                </div>
+                <div class="chart-results-history">
+                    <div class="chart-results-header">
+                        <div class="chart-header-period">Period</div>
+                        <div class="chart-header-number">Number</div>
+                        <div class="chart-header-bigsmall">S</div>
+                    </div>
+                    <div class="chart-results-body" id="chart-results-body"></div>
+                </div>
+            </div>
+            <div class="my-history-section" id="my-history-section" style="display: none;">
+                <!-- START: ADDED HEADER WITH CLEAR ICON -->
+                 <div class="history-header">
+                    <span>My History</span>
+                    <i class="fas fa-trash-alt clear-history-btn" id="clear-my-history-btn" title="Clear My History Status"></i>
+                </div>
+                <!-- END: ADDED HEADER -->
+                <div class="my-history-table">
+                    <div class="table-header">
+                        <div class="table-cell">Period</div>
+                        <div class="table-cell">Number</div>
+                        <div class="table-cell">Size</div>
+                        <div class="table-cell">Color</div>
+                        <div class="table-cell">Status</div>
+                    </div>
+                    <div class="table-body" id="my-history-table-body"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="howToPlayModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" role="button" aria-label="Close">&times;</span>
+            <h2 style="color: #ffd700; text-align: center; margin-bottom: 20px;">Prediction Patterns and Logic for KWG Game</h2>
+            <h3>Trend Analysis Method:</h3>
+            <p>Players track recent round outcomes to identify short-term trends in colors (Red, Green, Violet) or Big/Small results.</p>
+        </div>
+    </div>
+    <div id="customerSupportModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" role="button" aria-label="Close">&times;</span>
+            <h2 style="color: #ffd700; text-align: center; margin-bottom: 20px;">Customer Support</h2>
+            <p style="text-align: center;"><strong>Email:</strong><br> vippredictking@zohomail.in</p>
+            <p style="text-align: center;"><strong>Whatsapp:</strong><br> 6290530153</p>
+        </div>
+    </div>
+    <!-- Admin Portal Modal -->
+    <div id="adminPortalModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" role="button" aria-label="Close">&times;</span>
+            <h2 style="color: #ffd700; text-align: center; margin-bottom: 20px;">Admin Portal</h2>
+
+            <h3>Create New User</h3>
+            <div class="admin-form">
+                <input type="text" id="new-uid" placeholder="New User UID" required>
+                <input type="text" id="new-password" placeholder="New Password" required>
+                <input type="datetime-local" id="new-expiry" required>
+                <button id="create-user-btn">Create User</button>
+            </div>
+
+            <h3>Active Console (User List)</h3>
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>UID</th>
+                            <th>Password</th>
+                            <th>Expiry</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-list-tbody">
+                        <!-- User rows will be injected here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>History</h3>
+            <div class="admin-history" id="admin-history-log">
+                <!-- History logs will be injected here -->
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const API_BASE_URL = 'https://api.kwggame.example.com';
+
+            function sanitizeInput(input) {
+                return input.replace(/[<>&'"]/g, '').trim();
+            }
+
+            // --- User Database ---
+            let users = {
+                'admin123': { password: 'adminpass', isAdmin: true, expiry: '9999-12-31T23:59' },
+                'user001': { password: 'pass1', expiry: '2025-12-31T23:59' },
+                'user002': { password: 'pass2', expiry: '2025-09-30T10:00' },
+                'user003': { password: 'pass3', expiry: '2024-01-01T00:00' } // Expired example
+            };
+
+            let adminHistoryLog = [];
+
+            // --- Element Selectors ---
+            const loginScreen = document.getElementById('login-screen');
+            const gameContainer = document.getElementById('game-container');
+            const loginBtn = document.getElementById('login-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            const uidInput = document.getElementById('uid');
+            const passwordInput = document.getElementById('password');
+            const customerSupportLink = document.getElementById('customer-support-link');
+            const customerSupportModal = document.getElementById('customerSupportModal');
+            const adminPortalBtn = document.getElementById('admin-portal-btn');
+            const adminPortalModal = document.getElementById('adminPortalModal');
+
+            const checkLoginState = () => {
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                const isAdmin = localStorage.getItem('isAdmin') === 'true';
+                if (isLoggedIn) {
+                    loginScreen.style.display = 'none';
+                    gameContainer.style.display = 'block';
+                    if(isAdmin) {
+                        adminPortalBtn.style.display = 'inline-block';
+                    } else {
+                        adminPortalBtn.style.display = 'none';
+                    }
+                } else {
+                    loginScreen.style.display = 'flex';
+                    gameContainer.style.display = 'none';
+                    adminPortalBtn.style.display = 'none';
+                }
+            };
+
+            loginBtn.addEventListener('click', async () => {
+                const uid = sanitizeInput(uidInput.value);
+                const password = sanitizeInput(passwordInput.value);
+                const user = users[uid];
+                
+                if (user && user.password === password) {
+                    const expiryDate = new Date(user.expiry);
+                    if (expiryDate > new Date()) {
+                        localStorage.setItem('isLoggedIn', 'true');
+                        
+                        if (user.isAdmin) {
+                             localStorage.setItem('isAdmin', 'true');
+                        } else {
+                             localStorage.removeItem('isAdmin');
+                        }
+
+                        checkLoginState();
+                    } else {
+                        alert('Your account has expired.');
+                    }
+                } else {
+                    alert('Invalid UID or Password');
+                }
+            });
+
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('isAdmin');
+                checkLoginState();
+            });
+            
+            // --- Modal Handling ---
+            function setupModal(link, modal) {
+                 link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    modal.style.display = 'block';
+                });
+                modal.querySelector('.close-button').addEventListener('click', () => {
+                    modal.style.display = 'none';
+                });
+            }
+
+            setupModal(customerSupportLink, customerSupportModal);
+            
+            // --- Admin Portal Logic ---
+            const createUserBtn = document.getElementById('create-user-btn');
+            const newUidInput = document.getElementById('new-uid');
+            const newPasswordInput = document.getElementById('new-password');
+            const newExpiryInput = document.getElementById('new-expiry');
+            const userListTbody = document.getElementById('user-list-tbody');
+            const adminHistoryLogContainer = document.getElementById('admin-history-log');
+
+            function addAdminHistory(log) {
+                const timestamp = new Date().toLocaleString();
+                const logEntry = `<p>[${timestamp}] ${log}</p>`;
+                adminHistoryLog.unshift(logEntry);
+                renderAdminHistory();
+            }
+            
+            function renderAdminHistory() {
+                adminHistoryLogContainer.innerHTML = adminHistoryLog.join('');
+            }
+
+            function renderUserList() {
+                userListTbody.innerHTML = '';
+                const now = new Date();
+                for (const uid in users) {
+                    const user = users[uid];
+                    const expiryDate = new Date(user.expiry);
+                    const isExpired = now > expiryDate;
+                    const statusClass = isExpired ? 'status-expired' : 'status-active';
+                    const statusText = isExpired ? 'Expired' : 'Active';
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${uid}</td>
+                        <td>${user.password}</td>
+                        <td>${new Date(user.expiry).toLocaleString()}</td>
+                        <td class="${statusClass}">${statusText}</td>
+                        <td>
+                            ${!user.isAdmin ? `<button class="delete-user-btn" data-uid="${uid}"><i class="fas fa-trash"></i></button>` : ''}
+                        </td>
+                    `;
+                    userListTbody.appendChild(row);
+                }
+            }
+
+            adminPortalBtn.addEventListener('click', () => {
+                renderUserList();
+                renderAdminHistory();
+                adminPortalModal.style.display = 'block';
+            });
+
+            adminPortalModal.querySelector('.close-button').addEventListener('click', () => {
+                adminPortalModal.style.display = 'none';
+            });
+
+            createUserBtn.addEventListener('click', () => {
+                const newUid = sanitizeInput(newUidInput.value);
+                const newPassword = sanitizeInput(newPasswordInput.value);
+                const newExpiry = newExpiryInput.value;
+
+                if (!newUid || !newPassword || !newExpiry) {
+                    alert('All fields are required.');
+                    return;
+                }
+                if (users[newUid]) {
+                    alert('UID already exists.');
+                    return;
+                }
+
+                users[newUid] = { password: newPassword, expiry: newExpiry, isAdmin: false };
+                addAdminHistory(`Created user: '${newUid}'`);
+                renderUserList();
+                
+                newUidInput.value = '';
+                newPasswordInput.value = '';
+                newExpiryInput.value = '';
+            });
+
+            userListTbody.addEventListener('click', (e) => {
+                const target = e.target.closest('.delete-user-btn');
+                if(target) {
+                    const uidToDelete = target.dataset.uid;
+                    if(confirm(`Are you sure you want to delete user '${uidToDelete}'?`)) {
+                        delete users[uidToDelete];
+                        addAdminHistory(`Deleted user: '${uidToDelete}'`);
+                        renderUserList();
+                    }
+                }
+            });
+
+            checkLoginState();
+
+            // --- Game Logic Variables ---
+            let currentPeriod = 0;
+            let timerInterval;
+            let selectedDuration = 30;
+            let remainingTime = 0;
+            let predictionHistory = [];
+            let roundOutcomes = [];
+            let nextPredictedNumber = null;
+            
+            // --- Game Element Selectors ---
+            const timerDisplay = document.getElementById('timer');
+            const periodInput = document.getElementById('period-input');
+            const predictionBallsContainer = document.getElementById('prediction-balls');
+            const gameHistoryTable = document.getElementById('game-history-table');
+            const gameHistoryTableBody = document.getElementById('game-history-table-body');
+            const winGoInfoDisplay = document.getElementById('win-go-info');
+            const chartSection = document.getElementById('chart-section');
+            const myHistorySection = document.getElementById('my-history-section');
+            const myHistoryTableBody = document.getElementById('my-history-table-body');
+            const aiPredictedNumberDisplay = document.getElementById('ai-predicted-number');
+            const aiPredictedSizeDisplay = document.getElementById('ai-predicted-size');
+            const aiPredictedColorDisplay = document.getElementById('ai-predicted-color');
+            const aiConfidenceDisplay = document.getElementById('ai-confidence');
+            const aiPredictionReasonDisplay = document.getElementById('ai-prediction-reason');
+            const aiModeIndicator = document.getElementById('ai-mode-indicator');
+            const aiPredictionSection = document.querySelector('.gemini-ai-section');
+            const actualNumberDisplay = document.getElementById('actual-number');
+            const actualBigSmallDisplay = document.getElementById('actual-bigsmall');
+            const actualColorDisplay = document.getElementById('actual-color');
+            const btnGreen = document.getElementById('btn-green');
+            const btnViolet = document.getElementById('btn-violet');
+            const btnRed = document.getElementById('btn-red');
+            const btnBig = document.getElementById('btn-big');
+            const btnSmall = document.getElementById('btn-small');
+            const chartWinningNumbersContainer = document.getElementById('chart-winning-numbers');
+            const chartMissingContainer = document.getElementById('chart-missing');
+            const chartAvgMissingContainer = document.getElementById('chart-avg-missing');
+            const chartFrequencyContainer = document.getElementById('chart-frequency');
+            const chartMaxConsecutiveContainer = document.getElementById('chart-max-consecutive');
+            const chartResultsBody = document.getElementById('chart-results-body');
+            const chartPeriodBigSmallContainer = document.getElementById('chart-period-big-small');
+            const howToPlayBtn = document.getElementById('how-to-play-btn');
+            const howToPlayModal = document.getElementById('howToPlayModal');
+            
+            setupModal(howToPlayBtn, howToPlayModal);
+
+            // START: NEW ADVANCED AI LOGIC
+            const WEIGHTS = {
+                TREND_FOLLOW: 1.8,
+                COUNTER_TREND_TRIGGER: 5,
+                COUNTER_TREND_SCORE: 2.5,
+                PATTERN_MATCH_3: 2.0,
+                PATTERN_MATCH_4: 3.0,
+                PERIOD_CYCLE: 1.2,
+                VIOLET_GAP_TRIGGER: 10,
+                VIOLET_GAP_SCORE: 3.5,
+                STRATEGY_SUCCESS_RATE_THRESHOLD: 0.4,
+                STRATEGY_FAILURE_PENALTY: 0.5,
+            };
+
+            let strategyPerformance = {
+                trend: { wins: 0, losses: 0 },
+                counterTrend: { wins: 0, losses: 0 },
+                pattern: { wins: 0, losses: 0 },
+                cycle: { wins: 0, losses: 0 }
+            };
+
+            function predictNextOutcomeAI() {
+                if (roundOutcomes.length < 10) {
+                    const number = Math.floor(Math.random() * 10);
+                    return { 
+                        number: number, 
+                        reason: "Insufficient data for advanced analysis.", 
+                        confidence: 55,
+                        size: getBigSmall(number),
+                        color: getNumberColorType(number)
+                    };
+                }
+
+                const history = roundOutcomes;
+                let scores = { Big: 0, Small: 0 };
+                let reasons = [];
+                
+                let adjustedWeights = { ...WEIGHTS };
+                for (const key in strategyPerformance) {
+                    const stats = strategyPerformance[key];
+                    const total = stats.wins + stats.losses;
+                    if (total > 10) {
+                        const successRate = stats.wins / total;
+                        if (successRate < WEIGHTS.STRATEGY_SUCCESS_RATE_THRESHOLD) {
+                             if(key === 'trend') adjustedWeights.TREND_FOLLOW *= WEIGHTS.STRATEGY_FAILURE_PENALTY;
+                             if(key === 'counterTrend') adjustedWeights.COUNTER_TREND_SCORE *= WEIGHTS.STRATEGY_FAILURE_PENALTY;
+                             if(key === 'pattern') {
+                                 adjustedWeights.PATTERN_MATCH_3 *= WEIGHTS.STRATEGY_FAILURE_PENALTY;
+                                 adjustedWeights.PATTERN_MATCH_4 *= WEIGHTS.STRATEGY_FAILURE_PENALTY;
+                             }
+                             if(key === 'cycle') adjustedWeights.PERIOD_CYCLE *= WEIGHTS.STRATEGY_FAILURE_PENALTY;
+                        }
+                    }
+                }
+
+                let bigStreak = 0, smallStreak = 0;
+                for(const outcome of history) {
+                    if(outcome.bigSmall === 'Big') { bigStreak++; smallStreak = 0; } else { smallStreak++; bigStreak = 0; }
+                    if(bigStreak > 1 || smallStreak > 1) break;
+                }
+                
+                let trendStrategyUsed = false, counterTrendStrategyUsed = false;
+
+                if (bigStreak >= WEIGHTS.COUNTER_TREND_TRIGGER) {
+                    scores.Small += adjustedWeights.COUNTER_TREND_SCORE;
+                    reasons.push(`Counter-Trend (B x${bigStreak})`);
+                    counterTrendStrategyUsed = true;
+                } else if (smallStreak >= WEIGHTS.COUNTER_TREND_TRIGGER) {
+                    scores.Big += adjustedWeights.COUNTER_TREND_SCORE;
+                    reasons.push(`Counter-Trend (S x${smallStreak})`);
+                    counterTrendStrategyUsed = true;
+                } else if (bigStreak >= 2) {
+                    scores.Big += adjustedWeights.TREND_FOLLOW;
+                    reasons.push(`Trend (B x${bigStreak})`);
+                    trendStrategyUsed = true;
+                } else if (smallStreak >= 2) {
+                    scores.Small += adjustedWeights.TREND_FOLLOW;
+                    reasons.push(`Trend (S x${smallStreak})`);
+                    trendStrategyUsed = true;
+                }
+
+                const bigSmallSequence = history.map(o => o.bigSmall.charAt(0)).slice(0, 10);
+                let patternStrategyUsed = false;
+                if(history.length > 5) {
+                    const pattern4 = bigSmallSequence.slice(1, 5).join('');
+                    const searchSequence4 = bigSmallSequence.slice(5).join('');
+                    if (searchSequence4.includes(pattern4)) {
+                        const predictedNext = bigSmallSequence[0];
+                        scores[predictedNext === 'B' ? 'Big' : 'Small'] += adjustedWeights.PATTERN_MATCH_4;
+                        reasons.push(`Pattern4 Match`);
+                        patternStrategyUsed = true;
+                    } else {
+                        const pattern3 = bigSmallSequence.slice(1, 4).join('');
+                        const searchSequence3 = bigSmallSequence.slice(4).join('');
+                        if (searchSequence3.includes(pattern3)) {
+                            const predictedNext = bigSmallSequence[0];
+                            scores[predictedNext === 'B' ? 'Big' : 'Small'] += adjustedWeights.PATTERN_MATCH_3;
+                            reasons.push(`Pattern3 Match`);
+                            patternStrategyUsed = true;
+                        }
+                    }
+                }
+                
+                const nextPeriodDigit = (history[0].period + 1) % 10;
+                const cycleOutcomes = history.filter(o => o.period % 10 === nextPeriodDigit);
+                let cycleStrategyUsed = false;
+                if (cycleOutcomes.length > 2) {
+                    const bigCount = cycleOutcomes.filter(o => o.bigSmall === 'Big').length;
+                    const smallCount = cycleOutcomes.length - bigCount;
+                    if (bigCount > smallCount) {
+                        scores.Big += adjustedWeights.PERIOD_CYCLE;
+                        reasons.push(`Cycle[${nextPeriodDigit}]->Big`);
+                        cycleStrategyUsed = true;
+                    } else if (smallCount > bigCount) {
+                        scores.Small += adjustedWeights.PERIOD_CYCLE;
+                        reasons.push(`Cycle[${nextPeriodDigit}]->Small`);
+                        cycleStrategyUsed = true;
+                    }
+                }
+
+                const predictedSize = scores.Big > scores.Small ? 'Big' : 'Small';
+
+                if (history.length > 0 && history[0].aiPrediction) {
+                    const lastPrediction = history[0].aiPrediction;
+                    const actualResult = history[0].bigSmall;
+                    if (lastPrediction.trendUsed) strategyPerformance.trend[lastPrediction.size === actualResult ? 'wins' : 'losses']++;
+                    if (lastPrediction.counterTrendUsed) strategyPerformance.counterTrend[lastPrediction.size === actualResult ? 'wins' : 'losses']++;
+                    if (lastPrediction.patternUsed) strategyPerformance.pattern[lastPrediction.size === actualResult ? 'wins' : 'losses']++;
+                    if (lastPrediction.cycleUsed) strategyPerformance.cycle[lastPrediction.size === actualResult ? 'wins' : 'losses']++;
+                }
+
+                let violetGap = 0;
+                for (const outcome of history) { if (outcome.number === 0 || outcome.number === 5) break; violetGap++; }
+
+                let predictedNumber;
+                if (violetGap >= WEIGHTS.VIOLET_GAP_TRIGGER && Math.random() < 0.6) {
+                    predictedNumber = Math.random() < 0.5 ? 0 : 5;
+                    reasons.unshift(`High Violet Gap (${violetGap})`);
+                } else {
+                    const targetNumbers = (predictedSize === 'Big') ? [5, 6, 7, 8, 9] : [0, 1, 2, 3, 4];
+                    predictedNumber = targetNumbers[Math.floor(Math.random() * targetNumbers.length)];
+                }
+
+                const confidence = Math.min(98, 60 + Math.abs(scores.Big - scores.Small) * 5);
+                
+                const finalPrediction = {
+                    number: predictedNumber,
+                    reason: reasons.length > 0 ? reasons.slice(0, 2).join(' | ') : "General Analysis",
+                    confidence: Math.floor(confidence),
+                    size: getBigSmall(predictedNumber),
+                    color: getNumberColorType(predictedNumber),
+                    trendUsed: trendStrategyUsed, counterTrendUsed: counterTrendStrategyUsed,
+                    patternUsed: patternStrategyUsed, cycleUsed: cycleStrategyUsed
+                };
+                
+                return finalPrediction;
+            }
+            // END: NEW ADVANCED AI LOGIC
+
+            function updateTimerDisplay() {
+                const minutes = Math.floor(remainingTime / 60).toString().padStart(2, '0');
+                const seconds = (remainingTime % 60).toString().padStart(2, '0');
+                timerDisplay.textContent = `${minutes} : ${seconds}`;
+            }
+
+            function getNumberColorType(number) {
+                if (number === 0) return 'red-violet';
+                if (number === 5) return 'green-violet';
+                if ([1, 3, 7, 9].includes(number)) return 'green';
+                if ([2, 4, 6, 8].includes(number)) return 'red';
+                return '';
+            }
+
+            function getActualColorName(number) {
+                if (number === 0 || (number % 2 === 0 && number !== 5)) return 'Red';
+                if (number === 5 || (number % 2 !== 0 && number !== 0)) return 'Green';
+            }
+
+            function getTableColorClass(number) {
+                if (number === 0 || number === 5) return 'table-color-violet';
+                if (number % 2 === 0) return 'table-color-red';
+                return 'table-color-green';
+            }
+
+            function getBigSmall(number) {
+                return (number >= 5) ? 'Big' : 'Small';
+            }
+
+            function updatePredictionBallsDisplay() {
+                predictionBallsContainer.innerHTML = '';
+                predictionHistory.forEach(num => {
+                    const ball = document.createElement('div');
+                    ball.classList.add('prediction-ball', `ball-${getNumberColorType(num)}`);
+                    ball.textContent = num;
+                    predictionBallsContainer.appendChild(ball);
+                });
+            }
+
+            function addNewResultToHistory(period, number) {
+                const resultBigSmall = getBigSmall(number);
+                const outcome = {
+                    period: period, number: number,
+                    color: getNumberColorType(number), actualColorName: getActualColorName(number),
+                    bigSmall: resultBigSmall, userStatus: null, aiPrediction: null
+                };
+                roundOutcomes.unshift(outcome);
+                if (roundOutcomes.length > 100) roundOutcomes.pop();
+
+                gameHistoryTableBody.innerHTML = '';
+                const gameHistoryToDisplay = roundOutcomes.slice(0, 10);
+                gameHistoryToDisplay.forEach(res => {
+                    const newRow = document.createElement('div');
+                    newRow.classList.add('table-row');
+                    newRow.innerHTML = `
+                        <div class="table-cell">${res.period}</div>
+                        <div class="table-cell number">${res.number}</div>
+                        <div class="table-cell">${res.bigSmall}</div>
+                        <div class="table-cell">
+                            <span class="table-color-indicator ${getTableColorClass(res.number)}"></span>${res.actualColorName}
+                        </div>
+                    `;
+                    gameHistoryTableBody.appendChild(newRow);
+                });
+
+                if (chartSection.style.display !== 'none') updateChartDisplay();
+                if (myHistorySection.style.display !== 'none') updateMyHistoryDisplay();
+
+                actualNumberDisplay.textContent = number;
+                actualBigSmallDisplay.textContent = resultBigSmall;
+                actualColorDisplay.textContent = getActualColorName(number);
+                actualNumberDisplay.className = `actual-result-number color-${getActualColorName(number).toLowerCase()}-text`;
+                actualBigSmallDisplay.className = `actual-result-bigsmall color-${resultBigSmall.toLowerCase()}-text`;
+                actualColorDisplay.className = `actual-result-color color-${getActualColorName(number).toLowerCase()}-text`;
+            }
+            
+            // --- UPDATED FUNCTION ---
+            function startPredictionGlow(predictedNumber) {
+                // Remove glow from previously glowing elements
+                document.querySelectorAll('.glowing').forEach(el => el.classList.remove('glowing'));
+                
+                // Add glow to the new prediction elements
+                if (predictedNumber === 0) {
+                    btnRed.classList.add('glowing');
+                    btnViolet.classList.add('glowing');
+                } else if (predictedNumber === 5) {
+                    btnGreen.classList.add('glowing');
+                    btnViolet.classList.add('glowing');
+                } else if ([1, 3, 7, 9].includes(predictedNumber)) {
+                    btnGreen.classList.add('glowing');
+                } else if ([2, 4, 6, 8].includes(predictedNumber)) {
+                    btnRed.classList.add('glowing');
+                }
+                const glowingNumberBall = document.querySelector(`.number-ball.num-${predictedNumber}`);
+                if (glowingNumberBall) glowingNumberBall.classList.add('glowing');
+                
+                const predictedBigSmall = getBigSmall(predictedNumber);
+                if (predictedBigSmall === 'Big') {
+                    btnBig.classList.add('glowing');
+                } else {
+                    btnSmall.classList.add('glowing');
+                }
+                
+                // The setTimeout has been removed. The glow will persist until this function is called again.
+            }
+
+
+            async function fetchActualResult(period) {
+                return Math.floor(Math.random() * 10);
+            }
+
+            function startTimer() {
+                clearInterval(timerInterval);
+                remainingTime = selectedDuration;
+                updateTimerDisplay();
+
+                const aiPredictionResult = predictNextOutcomeAI();
+                if(roundOutcomes.length > 0) {
+                    roundOutcomes[0].aiPrediction = aiPredictionResult;
+                }
+                
+                nextPredictedNumber = aiPredictionResult.number;
+
+                aiPredictedNumberDisplay.textContent = aiPredictionResult.number;
+                aiPredictedNumberDisplay.className = `ai-predicted-number-circle ball-${aiPredictionResult.color}`;
+                aiPredictedSizeDisplay.textContent = aiPredictionResult.size;
+                aiPredictedColorDisplay.textContent = getActualColorName(aiPredictionResult.number);
+                aiConfidenceDisplay.textContent = `(Conf: ${aiPredictionResult.confidence}%)`;
+                aiPredictionReasonDisplay.innerHTML = `AI Analysis: ${aiPredictionResult.reason}`;
+                aiPredictionSection.classList.add('highlight-prediction');
+                
+                // Call the glow function which will last for the whole round
+                startPredictionGlow(nextPredictedNumber);
+
+                timerInterval = setInterval(async () => {
+                    remainingTime--;
+                    updateTimerDisplay();
+                    if (remainingTime <= 0) {
+                        clearInterval(timerInterval);
+                        aiPredictionSection.classList.remove('highlight-prediction');
+                        const actualWinningNumber = await fetchActualResult(currentPeriod);
+                        
+                        addNewResultToHistory(currentPeriod, actualWinningNumber);
+                        
+                        predictionHistory.unshift(actualWinningNumber);
+                        if (predictionHistory.length > 5) predictionHistory.pop();
+                        updatePredictionBallsDisplay();
+
+                        currentPeriod++;
+                        periodInput.value = currentPeriod;
+                        startTimer();
+                    }
+                }, 1000);
+            }
+
+            function updateChartDisplay() {
+                const hardcodedStats = {
+                    missing: [6, 1, 2, 10, 15, 8, 3, 0, 17, 33],
+                    avgMissing: [6, 6, 6, 11, 10, 9, 8, 7, 10, 9],
+                    frequency: [13, 13, 12, 7, 8, 9, 10, 11, 8, 9],
+                    maxConsecutive: [2, 2, 1, 2, 2, 2, 2, 3, 1, 2]
+                };
+                chartMissingContainer.innerHTML = hardcodedStats.missing.map(v => `<div>${v}</div>`).join('');
+                chartAvgMissingContainer.innerHTML = hardcodedStats.avgMissing.map(v => `<div>${v}</div>`).join('');
+                chartFrequencyContainer.innerHTML = hardcodedStats.frequency.map(v => `<div>${v}</div>`).join('');
+                chartMaxConsecutiveContainer.innerHTML = hardcodedStats.maxConsecutive.map(v => `<div>${v}</div>`).join('');
+                chartWinningNumbersContainer.innerHTML = '';
+                for(let i=0; i<10; i++) {
+                    const circle = document.createElement('div');
+                    circle.classList.add('stat-number-circle', `num-${i}`);
+                    if (roundOutcomes[0] && roundOutcomes[0].number === i) {
+                        circle.classList.add(`active-${getNumberColorType(i)}`);
+                    }
+                    circle.textContent = i;
+                    chartWinningNumbersContainer.appendChild(circle);
+                }
+                chartResultsBody.innerHTML = '';
+                const chartHistoryToDisplay = roundOutcomes.slice(0, 10);
+                chartHistoryToDisplay.forEach(outcome => {
+                    const row = document.createElement('div');
+                    row.classList.add('chart-history-row');
+                    let circlesHtml = '';
+                    for (let i = 0; i < 10; i++) {
+                        const isActive = outcome.number === i;
+                        const activeClass = isActive ? `active-${getNumberColorType(i)}` : '';
+                        circlesHtml += `<div class="chart-number-circle ${activeClass}">${i}</div>`;
+                    }
+                    row.innerHTML = `
+                        <div class="chart-period-cell">${outcome.period}</div>
+                        ${circlesHtml}
+                        <div class="chart-bigsmall-circle ${outcome.bigSmall.toLowerCase()}">${outcome.bigSmall.charAt(0)}</div>
+                    `;
+                    chartResultsBody.appendChild(row);
+                });
+
+                chartPeriodBigSmallContainer.innerHTML = '';
+                const historyForBS = roundOutcomes.slice(0, 10).reverse();
+                historyForBS.forEach(outcome => {
+                    const periodElement = document.createElement('div');
+                    const lastDigit = outcome.period.toString().slice(-1);
+                    const sizeInitial = outcome.bigSmall.charAt(0);
+                    periodElement.textContent = `${lastDigit}-${sizeInitial}`;
+                    periodElement.style.color = outcome.bigSmall === 'Big' ? '#ffa500' : '#00bfff';
+                    chartPeriodBigSmallContainer.appendChild(periodElement);
+                });
+            }
+
+            function updateMyHistoryDisplay() {
+                myHistoryTableBody.innerHTML = '';
+                const myHistoryToDisplay = roundOutcomes.slice(0, 10);
+                myHistoryToDisplay.forEach(outcome => {
+                    const row = document.createElement('div');
+                    row.classList.add('table-row');
+                    row.dataset.period = outcome.period;
+                    let statusHtml = '';
+                    if (outcome.userStatus === 'Win') {
+                        statusHtml = '<span class="status-marked">Win</span> <i class="fas fa-check-circle status-icon win-mark"></i>';
+                    } else if (outcome.userStatus === 'Loss') {
+                        statusHtml = '<span class="status-marked">Loss</span> <i class="fas fa-times-circle status-icon loss-mark"></i>';
+                    } else {
+                        statusHtml = `
+                            <div class="status-actions">
+                                <i class="fas fa-check-circle status-icon win-mark" data-status="Win"></i>
+                                <i class="fas fa-times-circle status-icon loss-mark" data-status="Loss"></i>
+                            </div>`;
+                    }
+                    row.innerHTML = `
+                        <div class="table-cell">${outcome.period}</div>
+                        <div class="table-cell number-display">${outcome.number}</div>
+                        <div class="table-cell bigsmall-display">${outcome.bigSmall}</div>
+                        <div class="table-cell color-display">
+                            <span class="color-indicator ${getTableColorClass(outcome.number)}"></span>${getActualColorName(outcome.number)}
+                        </div>
+                        <div class="table-cell status-cell">${statusHtml}</div>`;
+                    myHistoryTableBody.appendChild(row);
+                });
+            }
+
+            myHistoryTableBody.addEventListener('click', (event) => {
+                const target = event.target;
+                if (target.classList.contains('status-icon')) {
+                    const periodToMark = target.closest('.table-row').dataset.period;
+                    const statusToSet = target.dataset.status;
+                    const outcomeToUpdate = roundOutcomes.find(o => o.period == periodToMark);
+                    if (outcomeToUpdate) {
+                        outcomeToUpdate.userStatus = statusToSet;
+                        updateMyHistoryDisplay();
+                    }
+                }
+            });
+
+            periodInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    const enteredPeriod = parseInt(sanitizeInput(periodInput.value));
+                    if (!isNaN(enteredPeriod) && enteredPeriod > 0) {
+                        clearInterval(timerInterval); // Stop any existing timer
+                        currentPeriod = enteredPeriod;
+                        predictionHistory = [];
+                        roundOutcomes = [];
+                        gameHistoryTableBody.innerHTML = '';
+                        updatePredictionBallsDisplay();
+                        myHistoryTableBody.innerHTML = '';
+                        chartResultsBody.innerHTML = '';
+                        
+                        ['ai-predicted-number', 'actual-number'].forEach(id => document.getElementById(id).textContent = '?');
+                        ['ai-predicted-size', 'ai-predicted-color', 'ai-confidence', 'actual-bigsmall', 'actual-color'].forEach(id => document.getElementById(id).textContent = '');
+                        aiPredictionReasonDisplay.textContent = 'Waiting for analysis...';
+                        
+                        // Add dummy history for the AI to work with the new period
+                        for(let i=1; i<=20; i++) {
+                           addNewResultToHistory(currentPeriod - i, Math.floor(Math.random() * 10));
+                        }
+                        roundOutcomes.reverse(); // Ensure correct order
+
+                        startTimer();
+                    } else {
+                        alert('Please enter a valid positive period number.');
+                        periodInput.value = '';
+                    }
+                }
+            });
+            
+            document.querySelectorAll('.game-option').forEach(button => {
+                button.addEventListener('click', function() {
+                    if (!this.classList.contains('active')) {
+                        document.querySelector('.game-option.active').classList.remove('active');
+                        this.classList.add('active');
+                        selectedDuration = parseInt(this.dataset.duration);
+                        winGoInfoDisplay.textContent = `Win Go ${this.querySelector('span:last-child').textContent}`;
+                        
+                        clearInterval(timerInterval);
+                        
+                        startTimer();
+                    }
+                });
+            });
+
+            document.querySelectorAll('.history-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    document.querySelector('.history-btn.active').classList.remove('active');
+                    this.classList.add('active');
+                    
+                    document.getElementById('game-history-table').style.display = 'none';
+                    chartSection.style.display = 'none';
+                    myHistorySection.style.display = 'none';
+
+                    const sectionId = this.dataset.section;
+                    if (sectionId === 'game-history') {
+                        document.getElementById('game-history-table').style.display = 'block';
+                    } else if (sectionId === 'chart') {
+                        chartSection.style.display = 'block';
+                        updateChartDisplay();
+                    } else if (sectionId === 'my-history') {
+                        myHistorySection.style.display = 'block';
+                        updateMyHistoryDisplay();
+                    }
+                });
+            });
+
+            document.getElementById('clear-game-history-btn').addEventListener('click', () => {
+                if (confirm('Are you sure you want to clear all game history? This cannot be undone.')) {
+                    roundOutcomes = [];
+                    predictionHistory = [];
+                    gameHistoryTableBody.innerHTML = '';
+                    predictionBallsContainer.innerHTML = '';
+                    chartResultsBody.innerHTML = '';
+                    updateChartDisplay(); 
+                }
+            });
+
+            document.getElementById('clear-my-history-btn').addEventListener('click', () => {
+                 if (confirm('Are you sure you want to clear your Win/Loss status from history?')) {
+                    roundOutcomes.forEach(outcome => outcome.userStatus = null);
+                    updateMyHistoryDisplay();
+                }
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target === howToPlayModal) howToPlayModal.style.display = 'none';
+                if (event.target === customerSupportModal) customerSupportModal.style.display = 'none';
+                if (event.target === adminPortalModal) adminPortalModal.style.display = 'none';
+            });
+            
+            // --- Initial Game Setup ---
+            currentPeriod = 20250821001;
+            for(let i=0; i<20; i++) {
+                addNewResultToHistory(currentPeriod + i, Math.floor(Math.random() * 10));
+            }
+            currentPeriod += 20;
+            periodInput.value = currentPeriod;
+
+            startTimer();
+        });
+    </script>
+</body>
+</html>
