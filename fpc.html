@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Fuel Price Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for touch-friendly elements and scrollable dropdowns */
+        select, input, button {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            touch-action: manipulation;
+        }
+        select {
+            background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+            background-repeat: no-repeat;
+            background-position-x: 98%;
+            background-position-y: 50%;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans min-h-screen flex flex-col">
+    <div class="container mx-auto px-4 py-6 flex-grow">
+        <h1 class="text-xl font-bold text-center mb-4">Fuel Price Calculator</h1>
+        <div class="bg-white p-4 rounded-lg shadow-md">
+            <!-- Country, State, City Selection -->
+            <div class="flex flex-col sm:flex-row sm:space-x-2 mb-4">
+                <div class="flex-1 mb-3 sm:mb-0">
+                    <label for="country" class="block text-xs font-medium text-gray-700">Country</label>
+                    <select id="country" class="mt-1 block w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" onchange="updateStates()">
+                        <option value="India">India</option>
+                    </select>
+                </div>
+                <div class="flex-1 mb-3 sm:mb-0">
+                    <label for="state" class="block text-xs font-medium text-gray-700">State/UT</label>
+                    <select id="state" class="mt-1 block w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 no-scrollbar" onchange="updateCities()">
+                        <option value="">Select State/UT</option>
+                    </select>
+                </div>
+                <div class="flex-1">
+                    <label for="city" class="block text-xs font-medium text-gray-700">City</label>
+                    <select id="city" class="mt-1 block w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 no-scrollbar" onchange="updateFuelPrice()">
+                        <option value="">Select City</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Fuel Type Selection -->
+            <div class="mb-4">
+                <label for="fuelType" class="block text-xs font-medium text-gray-700">Fuel Type</label>
+                <select id="fuelType" class="mt-1 block w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" onchange="updateFuelPrice()">
+                    <option value="Petrol">Petrol</option>
+                    <option value="Diesel">Diesel</option>
+                    <option value="CNG">CNG</option>
+                </select>
+            </div>
+            <!-- Fuel Price Display -->
+            <div class="mb-4">
+                <label for="fuelPrice" class="block text-xs font-medium text-gray-700">Fuel Price (₹/L or ₹/kg for CNG)</label>
+                <input id="fuelPrice" type="number" class="mt-1 block w-full p-2 text-sm border border-gray-300 rounded-md bg-gray-100" readonly value="0">
+            </div>
+            <!-- Fuel Quantity Input -->
+            <div class="mb-4">
+                <label for="quantity" class="block text-xs font-medium text-gray-700">Fuel Quantity (L or kg for CNG)</label>
+                <input id="quantity" type="number" step="0.01" class="mt-1 block w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="Enter fuel quantity">
+            </div>
+            <!-- Calculate Button -->
+            <button onclick="calculateFuelCost()" class="w-full bg-blue-500 text-white p-3 text-sm rounded-md hover:bg-blue-600 active:bg-blue-700">Calculate</button>
+            <!-- Result Display -->
+            <div id="result" class="mt-4 text-center text-sm font-semibold"></div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data for India states and union territories with cities and fuel prices
+        const locationData = {
+            India: {
+                "Andaman and Nicobar Islands": {
+                    cities: ["Port Blair"],
+                    fuelPrices: {
+                        "Port Blair": { Petrol: 84.10, Diesel: 79.74, CNG: 80.00 }
+                    }
+                },
+                "Chandigarh": {
+                    cities: ["Chandigarh"],
+                    fuelPrices: {
+                        "Chandigarh": { Petrol: 94.24, Diesel: 82.40, CNG: 76.00 }
+                    }
+                },
+                "Dadra and Nagar Haveli and Daman and Diu": {
+                    cities: ["Silvassa", "Daman", "Diu"],
+                    fuelPrices: {
+                        Silvassa: { Petrol: 94.43, Diesel: 87.76, CNG: 75.00 },
+                        Daman: { Petrol: 94.43, Diesel: 87.76, CNG: 75.00 },
+                        Diu: { Petrol: 94.43, Diesel: 87.76, CNG: 75.00 }
+                    }
+                },
+                "Delhi": {
+                    cities: ["Delhi", "New Delhi"],
+                    fuelPrices: {
+                        Delhi: { Petrol: 94.77, Diesel: 87.67, CNG: 75.00 },
+                        "New Delhi": { Petrol: 94.77, Diesel: 87.67, CNG: 75.00 }
+                    }
+                },
+                "Jammu and Kashmir": {
+                    cities: ["Srinagar", "Jammu"],
+                    fuelPrices: {
+                        Srinagar: { Petrol: 99.77, Diesel: 84.86, CNG: 78.00 },
+                        Jammu: { Petrol: 95.65, Diesel: 81.94, CNG: 78.00 }
+                    }
+                },
+                "Ladakh": {
+                    cities: ["Leh", "Kargil"],
+                    fuelPrices: {
+                        Leh: { Petrol: 99.77, Diesel: 84.86, CNG: 80.00 },
+                        Kargil: { Petrol: 99.77, Diesel: 84.86, CNG: 80.00 }
+                    }
+                },
+                "Lakshadweep": {
+                    cities: ["Kavaratti"],
+                    fuelPrices: {
+                        Kavaratti: { Petrol: 101.00, Diesel: 95.00, CNG: 82.00 }
+                    }
+                },
+                "Puducherry": {
+                    cities: ["Puducherry", "Karaikal", "Mahé", "Yanam"],
+                    fuelPrices: {
+                        Puducherry: { Petrol: 94.37, Diesel: 84.67, CNG: 77.00 },
+                        Karaikal: { Petrol: 94.37, Diesel: 84.67, CNG: 77.00 },
+                        Mahé: { Petrol: 94.37, Diesel: 84.67, CNG: 77.00 },
+                        Yanam: { Petrol: 94.37, Diesel: 84.67, CNG: 77.00 }
+                    }
+                },
+                "Andhra Pradesh": {
+                    cities: ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore", "Kurnool", "Tirupati", "Rajahmundry"],
+                    fuelPrices: {
+                        Visakhapatnam: { Petrol: 111.74, Diesel: 99.50, CNG: 85.00 },
+                        Vijayawada: { Petrol: 111.74, Diesel: 99.50, CNG: 85.00 },
+                        Guntur: { Petrol: 111.74, Diesel: 99.50, CNG: 85.00 },
+                        Nellore: { Petrol: 111.74, Diesel: 99.50, CNG: 85.00 },
+                        Kurnool: { Petrol: 111.74, Diesel: 99.50, CNG: 85.00 },
+                        Tirupati: { Petrol: 111.74, Diesel: 99.50, CNG: 85.00 },
+                        Rajahmundry: { Petrol: 111.74, Diesel: 99.50, CNG: 85.00 }
+                    }
+                },
+                "Arunachal Pradesh": {
+                    cities: ["Itanagar", "Naharlagun", "Pasighat"],
+                    fuelPrices: {
+                        Itanagar: { Petrol: 93.05, Diesel: 82.96, CNG: 76.00 },
+                        Naharlagun: { Petrol: 93.05, Diesel: 82.96, CNG: 76.00 },
+                        Pasighat: { Petrol: 93.05, Diesel: 82.96, CNG: 76.00 }
+                    }
+                },
+                "Assam": {
+                    cities: ["Guwahati", "Silchar", "Dibrugarh", "Jorhat", "Nagaon"],
+                    fuelPrices: {
+                        Guwahati: { Petrol: 97.18, Diesel: 89.40, CNG: 76.00 },
+                        Silchar: { Petrol: 97.18, Diesel: 89.40, CNG: 76.00 },
+                        Dibrugarh: { Petrol: 97.18, Diesel: 89.40, CNG: 76.00 },
+                        Jorhat: { Petrol: 97.18, Diesel: 89.40, CNG: 76.00 },
+                        Nagaon: { Petrol: 97.18, Diesel: 89.40, CNG: 76.00 }
+                    }
+                },
+                "Bihar": {
+                    cities: ["Patna", "Gaya", "Muzaffarpur", "Bhagalpur", "Darbhanga", "Purnia", "Saharsa", "Araria"],
+                    fuelPrices: {
+                        Patna: { Petrol: 105.90, Diesel: 92.65, CNG: 78.00 },
+                        Gaya: { Petrol: 105.90, Diesel: 92.65, CNG: 78.00 },
+                        Muzaffarpur: { Petrol: 105.90, Diesel: 92.65, CNG: 78.00 },
+                        Bhagalpur: { Petrol: 105.90, Diesel: 92.65, CNG: 78.00 },
+                        Darbhanga: { Petrol: 105.90, Diesel: 92.65, CNG: 78.00 },
+                        Purnia: { Petrol: 105.90, Diesel: 92.65, CNG: 78.00 },
+                        Saharsa: { Petrol: 105.90, Diesel: 92.65, CNG: 78.00 },
+                        Araria: { Petrol: 105.90, Diesel: 92.65, CNG: 78.00 }
+                    }
+                },
+                "Chhattisgarh": {
+                    cities: ["Raipur", "Bilaspur", "Durg", "Bhilai", "Korba"],
+                    fuelPrices: {
+                        Raipur: { Petrol: 100.59, Diesel: 93.53, CNG: 77.00 },
+                        Bilaspur: { Petrol: 100.59, Diesel: 93.53, CNG: 77.00 },
+                        Durg: { Petrol: 100.59, Diesel: 93.53, CNG: 77.00 },
+                        Bhilai: { Petrol: 100.59, Diesel: 93.53, CNG: 77.00 },
+                        Korba: { Petrol: 100.59, Diesel: 93.53, CNG: 77.00 }
+                    }
+                },
+                "Goa": {
+                    cities: ["Panaji", "Margao", "Vasco da Gama"],
+                    fuelPrices: {
+                        Panaji: { Petrol: 95.46, Diesel: 87.98, CNG: 75.00 },
+                        Margao: { Petrol: 95.46, Diesel: 87.98, CNG: 75.00 },
+                        "Vasco da Gama": { Petrol: 95.46, Diesel: 87.98, CNG: 75.00 }
+                    }
+                },
+                "Gujarat": {
+                    cities: ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Gandhinagar", "Jamnagar"],
+                    fuelPrices: {
+                        Ahmedabad: { Petrol: 96.42, Diesel: 89.00, CNG: 73.00 },
+                        Surat: { Petrol: 96.42, Diesel: 89.00, CNG: 73.00 },
+                        Vadodara: { Petrol: 96.42, Diesel: 89.00, CNG: 73.00 },
+                        Rajkot: { Petrol: 96.42, Diesel: 89.00, CNG: 73.00 },
+                        Gandhinagar: { Petrol: 96.42, Diesel: 89.00, CNG: 73.00 },
+                        Jamnagar: { Petrol: 96.42, Diesel: 89.00, CNG: 73.00 }
+                    }
+                },
+                "Haryana": {
+                    cities: ["Faridabad", "Gurugram", "Panipat", "Ambala", "Hisar", "Rohtak"],
+                    fuelPrices: {
+                        Faridabad: { Petrol: 97.53, Diesel: 90.00, CNG: 78.00 },
+                        Gurugram: { Petrol: 97.53, Diesel: 90.00, CNG: 78.00 },
+                        Panipat: { Petrol: 97.53, Diesel: 90.00, CNG: 78.00 },
+                        Ambala: { Petrol: 97.53, Diesel: 90.00, CNG: 78.00 },
+                        Hisar: { Petrol: 97.53, Diesel: 90.00, CNG: 78.00 },
+                        Rohtak: { Petrol: 97.53, Diesel: 90.00, CNG: 78.00 }
+                    }
+                },
+                "Himachal Pradesh": {
+                    cities: ["Shimla", "Manali", "Solan", "Dharamshala", "Mandi"],
+                    fuelPrices: {
+                        Shimla: { Petrol: 95.65, Diesel: 88.00, CNG: 80.00 },
+                        Manali: { Petrol: 95.65, Diesel: 88.00, CNG: 80.00 },
+                        Solan: { Petrol: 95.65, Diesel: 88.00, CNG: 80.00 },
+                        Dharamshala: { Petrol: 95.65, Diesel: 88.00, CNG: 80.00 },
+                        Mandi: { Petrol: 95.65, Diesel: 88.00, CNG: 80.00 }
+                    }
+                },
+                "Jharkhand": {
+                    cities: ["Ranchi", "Jamshedpur", "Dhanbad", "Bokaro Steel City", "Hazaribagh"],
+                    fuelPrices: {
+                        Ranchi: { Petrol: 98.79, Diesel: 93.55, CNG: 77.00 },
+                        Jamshedpur: { Petrol: 98.79, Diesel: 93.55, CNG: 77.00 },
+                        Dhanbad: { Petrol: 98.79, Diesel: 93.55, CNG: 77.00 },
+                        "Bokaro Steel City": { Petrol: 98.79, Diesel: 93.55, CNG: 77.00 },
+                        Hazaribagh: { Petrol: 98.79, Diesel: 93.55, CNG: 77.00 }
+                    }
+                },
+                "Karnataka": {
+                    cities: ["Bengaluru", "Mysuru", "Hubballi-Dharwad", "Mangaluru", "Belagavi"],
+                    fuelPrices: {
+                        Bengaluru: { Petrol: 102.92, Diesel: 95.00, CNG: 82.00 },
+                        Mysuru: { Petrol: 102.92, Diesel: 95.00, CNG: 82.00 },
+                        "Hubballi-Dharwad": { Petrol: 102.92, Diesel: 95.00, CNG: 82.00 },
+                        Mangaluru: { Petrol: 102.92, Diesel: 95.00, CNG: 82.00 },
+                        Belagavi: { Petrol: 102.92, Diesel: 95.00, CNG: 82.00 }
+                    }
+                },
+                "Kerala": {
+                    cities: ["Thiruvananthapuram", "Kochi", "Kozhikode", "Thrissur", "Kollam"],
+                    fuelPrices: {
+                        Thiruvananthapuram: { Petrol: 108.58, Diesel: 97.00, CNG: 83.00 },
+                        Kochi: { Petrol: 108.58, Diesel: 97.00, CNG: 83.00 },
+                        Kozhikode: { Petrol: 108.58, Diesel: 97.00, CNG: 83.00 },
+                        Thrissur: { Petrol: 108.58, Diesel: 97.00, CNG: 83.00 },
+                        Kollam: { Petrol: 108.58, Diesel: 97.00, CNG: 83.00 }
+                    }
+                },
+                "Madhya Pradesh": {
+                    cities: ["Indore", "Bhopal", "Jabalpur", "Gwalior", "Ujjain", "Sagar"],
+                    fuelPrices: {
+                        Indore: { Petrol: 104.88, Diesel: 93.16, CNG: 78.00 },
+                        Bhopal: { Petrol: 104.88, Diesel: 93.16, CNG: 78.00 },
+                        Jabalpur: { Petrol: 104.88, Diesel: 93.16, CNG: 78.00 },
+                        Gwalior: { Petrol: 104.88, Diesel: 93.16, CNG: 78.00 },
+                        Ujjain: { Petrol: 104.88, Diesel: 93.16, CNG: 78.00 },
+                        Sagar: { Petrol: 104.88, Diesel: 93.16, CNG: 78.00 }
+                    }
+                },
+                "Maharashtra": {
+                    cities: ["Mumbai", "Pune", "Nagpur", "Nashik", "Aurangabad"],
+                    fuelPrices: {
+                        Mumbai: { Petrol: 103.50, Diesel: 95.00, CNG: 80.00 },
+                        Pune: { Petrol: 103.50, Diesel: 95.00, CNG: 80.00 },
+                        Nagpur: { Petrol: 103.50, Diesel: 95.00, CNG: 80.00 },
+                        Nashik: { Petrol: 103.50, Diesel: 95.00, CNG: 80.00 },
+                        Aurangabad: { Petrol: 103.50, Diesel: 95.00, CNG: 80.00 }
+                    }
+                },
+                "Manipur": {
+                    cities: ["Imphal"],
+                    fuelPrices: {
+                        Imphal: { Petrol: 99.09, Diesel: 85.22, CNG: 76.00 }
+                    }
+                },
+                "Meghalaya": {
+                    cities: ["Shillong", "Tura"],
+                    fuelPrices: {
+                        Shillong: { Petrol: 96.33, Diesel: 84.72, CNG: 76.00 },
+                        Tura: { Petrol: 96.33, Diesel: 84.72, CNG: 76.00 }
+                    }
+                },
+                "Mizoram": {
+                    cities: ["Aizawl", "Lunglei"],
+                    fuelPrices: {
+                        Aizawl: { Petrol: 93.93, Diesel: 82.80, CNG: 76.00 },
+                        Lunglei: { Petrol: 93.93, Diesel: 82.80, CNG: 76.00 }
+                    }
+                },
+                "Nagaland": {
+                    cities: ["Kohima", "Dimapur"],
+                    fuelPrices: {
+                        Kohima: { Petrol: 97.55, Diesel: 85.44, CNG: 76.00 },
+                        Dimapur: { Petrol: 97.55, Diesel: 85.44, CNG: 76.00 }
+                    }
+                },
+                "Odisha": {
+                    cities: ["Bhubaneswar", "Cuttack", "Rourkela", "Berhampur"],
+                    fuelPrices: {
+                        Bhubaneswar: { Petrol: 100.92, Diesel: 92.50, CNG: 77.00 },
+                        Cuttack: { Petrol: 100.92, Diesel: 92.50, CNG: 77.00 },
+                        Rourkela: { Petrol: 100.92, Diesel: 92.50, CNG: 77.00 },
+                        Berhampur: { Petrol: 100.92, Diesel: 92.50, CNG: 77.00 }
+                    }
+                },
+                "Punjab": {
+                    cities: ["Ludhiana", "Amritsar", "Jalandhar", "Patiala", "Bathinda"],
+                    fuelPrices: {
+                        Ludhiana: { Petrol: 96.42, Diesel: 86.67, CNG: 76.00 },
+                        Amritsar: { Petrol: 96.42, Diesel: 86.67, CNG: 76.00 },
+                        Jalandhar: { Petrol: 96.42, Diesel: 86.67, CNG: 76.00 },
+                        Patiala: { Petrol: 96.42, Diesel: 86.67, CNG: 76.00 },
+                        Bathinda: { Petrol: 96.42, Diesel: 86.67, CNG: 76.00 }
+                    }
+                },
+                "Rajasthan": {
+                    cities: ["Jaipur", "Jodhpur", "Udaipur", "Kota", "Ajmer"],
+                    fuelPrices: {
+                        Jaipur: { Petrol: 104.88, Diesel: 90.36, CNG: 78.00 },
+                        Jodhpur: { Petrol: 104.88, Diesel: 90.36, CNG: 78.00 },
+                        Udaipur: { Petrol: 104.88, Diesel: 90.36, CNG: 78.00 },
+                        Kota: { Petrol: 104.88, Diesel: 90.36, CNG: 78.00 },
+                        Ajmer: { Petrol: 104.88, Diesel: 90.36, CNG: 78.00 }
+                    }
+                },
+                "Sikkim": {
+                    cities: ["Gangtok"],
+                    fuelPrices: {
+                        Gangtok: { Petrol: 100.00, Diesel: 88.00, CNG: 76.00 }
+                    }
+                },
+                "Tamil Nadu": {
+                    cities: ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem"],
+                    fuelPrices: {
+                        Chennai: { Petrol: 100.80, Diesel: 92.00, CNG: 79.00 },
+                        Coimbatore: { Petrol: 100.80, Diesel: 92.00, CNG: 79.00 },
+                        Madurai: { Petrol: 100.80, Diesel: 92.00, CNG: 79.00 },
+                        Tiruchirappalli: { Petrol: 100.80, Diesel: 92.00, CNG: 79.00 },
+                        Salem: { Petrol: 100.80, Diesel: 92.00, CNG: 79.00 }
+                    }
+                },
+                "Telangana": {
+                    cities: ["Hyderabad", "Warangal", "Karimnagar", "Nizamabad"],
+                    fuelPrices: {
+                        Hyderabad: { Petrol: 107.41, Diesel: 95.65, CNG: 82.00 },
+                        Warangal: { Petrol: 107.41, Diesel: 95.65, CNG: 82.00 },
+                        Karimnagar: { Petrol: 107.41, Diesel: 95.65, CNG: 82.00 },
+                        Nizamabad: { Petrol: 107.41, Diesel: 95.65, CNG: 82.00 }
+                    }
+                },
+                "Tripura": {
+                    cities: ["Agartala"],
+                    fuelPrices: {
+                        Agartala: { Petrol: 97.47, Diesel: 86.50, CNG: 76.00 }
+                    }
+                },
+                "Uttar Pradesh": {
+                    cities: ["Lucknow", "Kanpur", "Ghaziabad", "Agra", "Varanasi", "Prayagraj"],
+                    fuelPrices: {
+                        Lucknow: { Petrol: 94.65, Diesel: 87.76, CNG: 77.00 },
+                        Kanpur: { Petrol: 94.65, Diesel: 87.76, CNG: 77.00 },
+                        Ghaziabad: { Petrol: 94.65, Diesel: 87.76, CNG: 77.00 },
+                        Agra: { Petrol: 94.65, Diesel: 87.76, CNG: 77.00 },
+                        Varanasi: { Petrol: 94.65, Diesel: 87.76, CNG: 77.00 },
+                        Prayagraj: { Petrol: 94.65, Diesel: 87.76, CNG: 77.00 }
+                    }
+                },
+                "Uttarakhand": {
+                    cities: ["Dehradun", "Haridwar", "Haldwani", "Rishikesh", "Nainital"],
+                    fuelPrices: {
+                        Dehradun: { Petrol: 93.48, Diesel: 88.37, CNG: 77.00 },
+                        Haridwar: { Petrol: 93.48, Diesel: 88.37, CNG: 77.00 },
+                        Haldwani: { Petrol: 93.48, Diesel: 88.37, CNG: 77.00 },
+                        Rishikesh: { Petrol: 93.48, Diesel: 88.37, CNG: 77.00 },
+                        Nainital: { Petrol: 93.48, Diesel: 88.37, CNG: 77.00 }
+                    }
+                },
+                "West Bengal": {
+                    cities: ["Kolkata", "Howrah", "Durgapur", "Siliguri", "Asansol"],
+                    fuelPrices: {
+                        Kolkata: { Petrol: 105.41, Diesel: 92.02, CNG: 77.00 },
+                        Howrah: { Petrol: 105.41, Diesel: 92.02, CNG: 77.00 },
+                        Durgapur: { Petrol: 105.41, Diesel: 92.02, CNG: 77.00 },
+                        Siliguri: { Petrol: 105.41, Diesel: 92.02, CNG: 77.00 },
+                        Asansol: { Petrol: 105.41, Diesel: 92.02, CNG: 77.00 }
+                    }
+                }
+            }
+        };
+
+        // Populate states dropdown
+        function updateStates() {
+            const country = document.getElementById('country').value;
+            const stateSelect = document.getElementById('state');
+            const citySelect = document.getElementById('city');
+            stateSelect.innerHTML = '<option value="">Select State/UT</option>';
+            citySelect.innerHTML = '<option value="">Select City</option>';
+            document.getElementById('fuelPrice').value = 0;
+            document.getElementById('result').innerHTML = '';
+
+            if (country && locationData[country]) {
+                Object.keys(locationData[country]).sort().forEach(state => {
+                    const option = document.createElement('option');
+                    option.value = state;
+                    option.textContent = state;
+                    stateSelect.appendChild(option);
+                });
+            }
+        }
+
+        // Populate cities dropdown
+        function updateCities() {
+            const country = document.getElementById('country').value;
+            const state = document.getElementById('state').value;
+            const citySelect = document.getElementById('city');
+            citySelect.innerHTML = '<option value="">Select City</option>';
+            document.getElementById('fuelPrice').value = 0;
+            document.getElementById('result').innerHTML = '';
+
+            if (country && state && locationData[country][state]) {
+                locationData[country][state].cities.sort().forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city;
+                    option.textContent = city;
+                    citySelect.appendChild(option);
+                });
+            }
+        }
+
+        // Update fuel price based on selection
+        function updateFuelPrice() {
+            const country = document.getElementById('country').value;
+            const state = document.getElementById('state').value;
+            const city = document.getElementById('city').value;
+            const fuelType = document.getElementById('fuelType').value;
+            const fuelPriceInput = document.getElementById('fuelPrice');
+            document.getElementById('result').innerHTML = '';
+
+            if (country && state && city && fuelType && locationData[country][state].fuelPrices[city]) {
+                const price = locationData[country][state].fuelPrices[city][fuelType];
+                fuelPriceInput.value = price.toFixed(2);
+            } else {
+                fuelPriceInput.value = 0;
+            }
+        }
+
+        // Calculate fuel cost
+        function calculateFuelCost() {
+            const quantity = parseFloat(document.getElementById('quantity').value);
+            const fuelPrice = parseFloat(document.getElementById('fuelPrice').value);
+            const resultDiv = document.getElementById('result');
+            const fuelType = document.getElementById('fuelType').value;
+            const unit = fuelType === 'CNG' ? 'kg' : 'liters';
+
+            if (isNaN(quantity) || isNaN(fuelPrice) || quantity <= 0 || fuelPrice <= 0) {
+                resultDiv.innerHTML = `<span class="text-red-500 text-xs">Please enter a valid fuel quantity and select a valid location/fuel type.</span>`;
+                return;
+            }
+
+            const cost = quantity * fuelPrice;
+
+            resultDiv.innerHTML = `Fuel Quantity: ${quantity.toFixed(2)} ${unit}<br>Total Cost: ₹${cost.toFixed(2)}`;
+        }
+
+        // Initialize states on page load
+        updateStates();
+    </script>
+</body>
+</html>
