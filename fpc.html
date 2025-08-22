@@ -6,7 +6,6 @@
     <title>Fuel Price Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom styles for touch-friendly elements and scrollable dropdowns */
         select, input, button {
             -webkit-appearance: none;
             -moz-appearance: none;
@@ -62,15 +61,27 @@
                     <option value="CNG">CNG</option>
                 </select>
             </div>
-            <!-- Fuel Price Display -->
+            <!-- Checkbox for Calculation Mode -->
             <div class="mb-4">
+                <label class="inline-flex items-center">
+                    <input type="checkbox" id="calcMode" class="form-checkbox h-4 w-4 text-blue-600" onchange="toggleInputs()">
+                    <span class="ml-2 text-xs font-medium text-gray-700">Calculate Fuel Quantity</span>
+                </label>
+            </div>
+            <!-- Fuel Price Input -->
+            <div class="mb-4" id="fuelPriceDiv">
                 <label for="fuelPrice" class="block text-xs font-medium text-gray-700">Fuel Price (₹/L or ₹/kg for CNG)</label>
-                <input id="fuelPrice" type="number" class="mt-1 block w-full p-2 text-sm border border-gray-300 rounded-md bg-gray-100" readonly value="0">
+                <input id="fuelPrice" type="number" step="0.01" class="mt-1 block w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="Enter fuel price or use default" value="0" oninput="trackCustomPrice()">
             </div>
             <!-- Fuel Quantity Input -->
-            <div class="mb-4">
+            <div class="mb-4" id="quantityDiv">
                 <label for="quantity" class="block text-xs font-medium text-gray-700">Fuel Quantity (L or kg for CNG)</label>
                 <input id="quantity" type="number" step="0.01" class="mt-1 block w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="Enter fuel quantity">
+            </div>
+            <!-- Total Cost Input (visible only in Fuel Quantity mode) -->
+            <div class="mb-4 hidden" id="totalCostDiv">
+                <label for="totalCost" class="block text-xs font-medium text-gray-700">Total Cost (₹)</label>
+                <input id="totalCost" type="number" step="0.01" class="mt-1 block w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="Enter total cost">
             </div>
             <!-- Calculate Button -->
             <button onclick="calculateFuelCost()" class="w-full bg-blue-500 text-white p-3 text-sm rounded-md hover:bg-blue-600 active:bg-blue-700">Calculate</button>
@@ -404,6 +415,40 @@
             }
         };
 
+        let isCustomPrice = false;
+
+        // Toggle input visibility based on calculation mode
+        function toggleInputs() {
+            const calcMode = document.getElementById('calcMode').checked;
+            const fuelPriceDiv = document.getElementById('fuelPriceDiv');
+            const quantityDiv = document.getElementById('quantityDiv');
+            const totalCostDiv = document.getElementById('totalCostDiv');
+            const fuelPriceInput = document.getElementById('fuelPrice');
+            const quantityInput = document.getElementById('quantity');
+
+            if (calcMode) {
+                quantityDiv.classList.add('hidden');
+                fuelPriceDiv.classList.remove('hidden');
+                totalCostDiv.classList.remove('hidden');
+                quantityInput.value = '';
+                updateFuelPrice();
+                isCustomPrice = false;
+            } else {
+                quantityDiv.classList.remove('hidden');
+                fuelPriceDiv.classList.remove('hidden');
+                totalCostDiv.classList.add('hidden');
+                updateFuelPrice();
+                isCustomPrice = false;
+            }
+            document.getElementById('result').innerHTML = '';
+        }
+
+        // Track if user types a custom price
+        function trackCustomPrice() {
+            isCustomPrice = true;
+            document.getElementById('result').innerHTML = '';
+        }
+
         // Populate states dropdown
         function updateStates() {
             const country = document.getElementById('country').value;
@@ -413,6 +458,7 @@
             citySelect.innerHTML = '<option value="">Select City</option>';
             document.getElementById('fuelPrice').value = 0;
             document.getElementById('result').innerHTML = '';
+            isCustomPrice = false;
 
             if (country && locationData[country]) {
                 Object.keys(locationData[country]).sort().forEach(state => {
@@ -432,6 +478,7 @@
             citySelect.innerHTML = '<option value="">Select City</option>';
             document.getElementById('fuelPrice').value = 0;
             document.getElementById('result').innerHTML = '';
+            isCustomPrice = false;
 
             if (country && state && locationData[country][state]) {
                 locationData[country][state].cities.sort().forEach(city => {
@@ -451,6 +498,7 @@
             const fuelType = document.getElementById('fuelType').value;
             const fuelPriceInput = document.getElementById('fuelPrice');
             document.getElementById('result').innerHTML = '';
+            isCustomPrice = false;
 
             if (country && state && city && fuelType && locationData[country][state].fuelPrices[city]) {
                 const price = locationData[country][state].fuelPrices[city][fuelType];
@@ -460,22 +508,54 @@
             }
         }
 
-        // Calculate fuel cost
+        // Calculate fuel cost or quantity
         function calculateFuelCost() {
+            const calcMode = document.getElementById('calcMode').checked;
             const quantity = parseFloat(document.getElementById('quantity').value);
-            const fuelPrice = parseFloat(document.getElementById('fuelPrice').value);
+            const fuelPriceInput = parseFloat(document.getElementById('fuelPrice').value);
+            const totalCost = parseFloat(document.getElementById('totalCost').value);
             const resultDiv = document.getElementById('result');
             const fuelType = document.getElementById('fuelType').value;
             const unit = fuelType === 'CNG' ? 'kg' : 'liters';
+            const country = document.getElementById('country').value;
+            const state = document.getElementById('state').value;
+            const city = document.getElementById('city').value;
 
-            if (isNaN(quantity) || isNaN(fuelPrice) || quantity <= 0 || fuelPrice <= 0) {
-                resultDiv.innerHTML = `<span class="text-red-500 text-xs">Please enter a valid fuel quantity and select a valid location/fuel type.</span>`;
-                return;
+            if (calcMode) {
+                // Fuel Quantity mode: calculate fuel quantity from total cost and fuel price
+                if (isNaN(totalCost) || totalCost <= 0) {
+                    resultDiv.innerHTML = `<span class="text-red-500 text-xs">Please enter a valid total cost.</span>`;
+                    return;
+                }
+                if (isNaN(fuelPriceInput) || fuelPriceInput <= 0) {
+                    resultDiv.innerHTML = `<span class="text-red-500 text-xs">Please enter a valid fuel price or select a valid location/fuel type.</span>`;
+                    return;
+                }
+                const calculatedFuelQuantity = totalCost / fuelPriceInput;
+                resultDiv.innerHTML = `Fuel Quantity: ${calculatedFuelQuantity.toFixed(2)} ${unit}<br>Total Cost: ₹${totalCost.toFixed(2)}`;
+            } else {
+                // Total Cost mode: calculate total cost from fuel quantity and fuel price
+                if (isNaN(quantity) || quantity <= 0) {
+                    resultDiv.innerHTML = `<span class="text-red-500 text-xs">Please enter a valid fuel quantity.</span>`;
+                    return;
+                }
+                if (isNaN(fuelPriceInput) || fuelPriceInput <= 0) {
+                    resultDiv.innerHTML = `<span class="text-red-500 text-xs">Please enter a valid fuel price or select a valid location/fuel type.</span>`;
+                    return;
+                }
+                const cost = quantity * fuelPriceInput;
+                let output;
+                const defaultPrice = country && state && city && fuelType && locationData[country][state].fuelPrices[city]
+                    ? locationData[country][state].fuelPrices[city][fuelType]
+                    : null;
+
+                if (!isCustomPrice && defaultPrice && fuelPriceInput.toFixed(2) === defaultPrice.toFixed(2)) {
+                    output = `Fuel Price: ₹${fuelPriceInput.toFixed(2)} per ${unit}<br>Fuel Quantity: ${quantity.toFixed(2)} ${unit}<br>Total Cost: ₹${cost.toFixed(2)}`;
+                } else {
+                    output = `Total Cost: ₹${cost.toFixed(2)}`;
+                }
+                resultDiv.innerHTML = output;
             }
-
-            const cost = quantity * fuelPrice;
-
-            resultDiv.innerHTML = `Fuel Quantity: ${quantity.toFixed(2)} ${unit}<br>Total Cost: ₹${cost.toFixed(2)}`;
         }
 
         // Initialize states on page load
