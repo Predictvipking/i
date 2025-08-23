@@ -22,7 +22,7 @@
         /* Login Screen */
         #login-screen { display: flex; align-items: center; justify-content: center; height: 100vh; background: linear-gradient(135deg, #0F0C29, #302B63, #24243E); }
         .login-card { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 20px; backdrop-filter: blur(8px); box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.3); text-align: center; width: 90%; max-width: 380px; }
-        .login-main-logo { width: 180px; height: auto; margin: 0 auto 20px auto; display: block; } /* Centered Logo */
+        .login-main-logo { width: 180px; height: auto; margin: 0 auto 20px auto; display: block; }
         .login-card .splash-overlay-text { margin-bottom: 20px; font-size: 0.9rem; color: #A5B4FC; }
         .login-card input { width: 100%; padding: 10px; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 6px; color: #E0E7FF; margin-bottom: 10px; box-sizing: border-box; }
         .login-card input:focus { outline: none; border-color: #FF00FF; box-shadow: 0 0 10px rgba(255, 0, 255, 0.5); }
@@ -40,7 +40,7 @@
         .app-header .header-left, .app-header .header-right { display: flex; align-items: center; gap: 12px; }
         .app-header-icon { font-size: 1.1rem; color: #A5B4FC; transition: color 0.2s; cursor: pointer; }
         .app-header-icon:hover { color: #E0E7FF; }
-        .app-header-logo-img { height: 28px; width: auto; filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5)); }
+        .app-header-logo-img { height: 32px; width: auto; filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.6)); }
         .logout-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .logout-btn i { font-size: 1rem; color: #A5B4FC; transition: color 0.2s; }
         .logout-btn:hover i { color: #FF5555; }
@@ -74,7 +74,9 @@
         /* History Section */
         .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .history-header h2 { font-size: 1.1rem; font-weight: 700; color: #FFD700; }
-        .clear-btn { background: #FF5555; color: #E0E7FF; font-weight: 600; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; border: none; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        /* --- UPDATED: Clear Button --- */
+        .clear-btn { background: rgba(255, 85, 85, 0.2); color: #FF5555; border: 1px solid rgba(255, 85, 85, 0.3); width: 30px; height: 30px; border-radius: 8px; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+        .clear-btn:hover { background: #FF5555; color: #0F0C29; }
         .history-tabs { display: flex; gap: 4px; background: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 4px; margin-bottom: 8px; }
         .history-tabs button { flex: 1; padding: 6px 0; font-size: 0.75rem; font-weight: 600; color: #A5B4FC; background: transparent; border: none; cursor: pointer; border-radius: 6px; display: flex; align-items: center; justify-content: center; gap: 5px; }
         .history-tabs button.active { background: #FFD700; color: #0F0C29; }
@@ -107,7 +109,7 @@
         .chart-bs { font-size: 0.8rem; font-weight: bold; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-left: 5px; }
         .chart-bs.big { background-color: #FFAA00; color: #0F0C29; } .chart-bs.small { background-color: #00D4FF; color: #0F0C29; }
 
-        /* --- NEW: Settings Modal --- */
+        /* Settings Modal */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 100; display: flex; align-items: center; justify-content: center; }
         .modal-content { background: rgba(30, 27, 63, 0.9); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 20px; width: 90%; max-width: 350px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
@@ -160,7 +162,7 @@
                     <div class="stat-item"><div class="stat-label">Wins</div><div id="chart-total-wins" class="stat-value win">0</div></div><div class="stat-item"><div class="stat-label">Losses</div><div id="chart-total-losses" class="stat-value loss">0</div></div><div class="stat-item"><div class="stat-label">Partial</div><div id="chart-total-partial" class="stat-value partial">0</div></div><div class="stat-item"><div class="stat-label">Accuracy</div><div id="chart-accuracy" class="stat-value accuracy">0%</div></div><div class="stat-item"><div class="stat-label">Revenue</div><div id="chart-revenue" class="stat-value revenue">0</div></div>
                 </div>
 
-                <div class="history-header"><h2>History</h2><button id="clear-button" class="clear-btn"><i class="fas fa-trash-alt"></i> Clear</button></div>
+                <div class="history-header"><h2>History</h2><button id="clear-button" class="clear-btn" aria-label="Clear History"><i class="fas fa-trash-alt"></i></button></div>
                 <div class="history-tabs"><button id="tab-btn-game-history"><i class="fas fa-history"></i>Game History</button><button id="tab-btn-chart"><i class="fas fa-chart-line"></i>Chart</button><button id="tab-btn-my-history" class="active"><i class="fas fa-user-clock"></i>My History</button></div>
 
                 <div id="tab-content-game-history" class="hidden">
@@ -206,260 +208,8 @@
     const initialStateTemplate = { history: [], predictions: [], currentPeriod: null, isReversePattern: false, stats: { totalWins: 0, totalLosses: 0, totalPartial: 0, revenue: 0 }, currentPage: { gameHistory: 1, chart: 1, myHistory: 1 } };
     let state = {};
 
-    function saveState() { try { localStorage.setItem('predictorStateV19_0', JSON.stringify(state)); } catch (e) { console.warn('localStorage save failed:', e); } }
-    function loadState() { let savedState; try { savedState = localStorage.getItem('predictorStateV19_0'); } catch (e) { console.warn('localStorage read failed:', e); } const parsedState = savedState ? JSON.parse(savedState) : {}; const modes = ['wingo-30s', 'wingo-1m', 'wingo-3m', 'wingo-5m', 'trx-1m', 'trx-3m', 'trx-5m', 'trx-10m']; modes.forEach(mode => { const template = JSON.parse(JSON.stringify(initialStateTemplate)); state[mode] = { ...template, ...(parsedState[mode] || {}) }; state[mode].currentPage = { ...template.currentPage, ...(parsedState[mode]?.currentPage || {}) }; }); }
-    function handleLogin() { if (elements.accessKeyInput.value.trim() === ACCESS_KEY) { localStorage.setItem('isLoggedIn', 'true'); showApp(); } else { elements.errorMessage.style.display = 'block'; } }
-    function handleLogout() { localStorage.removeItem('isLoggedIn'); clearInterval(masterInterval); elements.appContainer.classList.add('hidden'); elements.loginScreen.classList.remove('hidden'); }
-    function showApp() { elements.loginScreen.classList.add('hidden'); elements.appContainer.classList.remove('hidden'); loadState(); selectGameType('wingo'); }
-    function selectGameType(gameType) { clearInterval(masterInterval); currentMode = null; currentGameType = gameType; elements.tabWingo.classList.toggle('active', gameType === 'wingo'); elements.tabTrx.classList.toggle('active', gameType === 'trx'); elements.wingoIntervals.classList.toggle('hidden', gameType !== 'wingo'); elements.trxIntervals.classList.toggle('hidden', gameType !== 'trx'); masterClock.debounce = {}; selectMode(gameType === 'wingo' ? 'wingo-1m' : 'trx-1m'); }
-    function selectMode(mode) { if (currentMode === mode) return; clearInterval(masterInterval); currentMode = mode; document.querySelectorAll('.mode-toggle button').forEach(btn => btn.classList.remove('active')); document.getElementById(`btn-${mode}`)?.classList.add('active'); selectHistoryTab('gameHistory'); gameLoop(true); masterInterval = setInterval(masterClock, 1000); }
-    function selectHistoryTab(tabName) { Object.values(elements.historyTabContents).forEach(c => c.classList.add('hidden')); Object.values(elements.historyTabButtons).forEach(b => b.classList.remove('active')); elements.historyTabContents[tabName].classList.remove('hidden'); elements.historyTabButtons[tabName].classList.add('active'); }
-    function getResultFromNumber(num) { const result = { number: num, bigSmall: num >= 5 ? 'Big' : 'Small', color: '' }; if (num === 0) result.color = 'Red+Violet'; else if (num === 5) result.color = 'Green+Violet'; else if ([1, 3, 7, 9].includes(num)) result.color = 'Green'; else result.color = 'Red'; return result; }
-    function renderResultInHTML(result) { if (!result) return '<span>-</span>'; const { number, bigSmall } = result; let numberHtml = ''; if (number === 0) numberHtml = `<span class="color-red color-violet">${number}</span>, `; else if (number === 5) numberHtml = `<span class="color-green color-violet">${number}</span>, `; else if ([1, 3, 7, 9].includes(number)) numberHtml = `<span class="color-green">${number}</span>, `; else numberHtml = `<span class="color-red">${number}</span>, `; const bigSmallHtml = `<span class="${bigSmall === 'Big' ? 'color-big' : 'color-small'}">${bigSmall}</span>`; return `${numberHtml}${bigSmallHtml}`; }
-    function renderNumberInHTML(num) { if (num === undefined || num === null) return '<span>-</span>'; if (num === 0) return `<span class="color-red color-violet">${num}</span>`; if (num === 5) return `<span class="color-green color-violet">${num}</span>`; if ([1, 3, 7, 9].includes(num)) return `<span class="color-green">${num}</span>`; return `<span class="color-red">${num}</span>`; }
-    function renderSizeInHTML(bs) { if (!bs) return '<span>-</span>'; return `<span class="${bs === 'Big' ? 'color-big' : 'color-small'}">${bs}</span>`; }
-    function renderColorInHTML(color) { if (!color) return '<span>-</span>'; if (color === 'Red+Violet') return `<span class="color-red">R</span>+<span class="color-violet">V</span>`; if (color === 'Green+Violet') return `<span class="color-green">G</span>+<span class="color-violet">V</span>`; if (color === 'Green') return `<span class="color-green">Green</span>`; return `<span class="color-red">Red</span>`; }
-    function renderAll() { if (!currentMode) return; const activeState = state[currentMode]; elements.period.textContent = activeState.currentPeriod || '...'; const latestPred = activeState.predictions.slice(-1)[0]; elements.predictionText.innerHTML = latestPred ? renderResultInHTML(latestPred.prediction) : '<span>...</span>'; elements.insightText.textContent = latestPred?.strategy || '...'; elements.reversePatternSwitch.classList.toggle('active', activeState.isReversePattern); elements.chartTotalWins.textContent = activeState.stats.totalWins; elements.chartTotalLosses.textContent = activeState.stats.totalLosses; elements.chartTotalPartial.textContent = activeState.stats.totalPartial; const totalGames = activeState.stats.totalWins + activeState.stats.totalLosses + activeState.stats.totalPartial; elements.chartAccuracy.textContent = totalGames > 0 ? `${Math.round((activeState.stats.totalWins / totalGames) * 100)}%` : '0%'; elements.chartRevenue.textContent = activeState.stats.revenue.toFixed(2); elements.chartRevenue.classList.toggle('negative', activeState.stats.revenue < 0); renderGameHistoryTable(); renderMyHistoryTable(); renderChart(); }
-    function renderGameHistoryTable() { const activeState = state[currentMode]; const page = activeState.currentPage.gameHistory; const data = activeState.history.slice().reverse(); const totalPages = Math.max(1, Math.ceil(data.length / ITEMS_PER_PAGE)); const pageData = data.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE); elements.gameHistoryTable.innerHTML = pageData.map(h => `<tr><td>${h.period}</td><td>${renderNumberInHTML(h.number)}</td><td>${renderSizeInHTML(h.bigSmall)}</td><td>${renderColorInHTML(h.color)}</td></tr>`).join(''); elements.pagination.gameHistory.info.textContent = `Page ${page}/${totalPages}`; elements.pagination.gameHistory.prev.disabled = (page === 1); elements.pagination.gameHistory.next.disabled = (page >= totalPages); }
-    function renderMyHistoryTable() { const activeState = state[currentMode]; const page = activeState.currentPage.myHistory; const data = activeState.predictions.slice().reverse(); const totalPages = Math.max(1, Math.ceil(data.length / ITEMS_PER_PAGE)); const pageData = data.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE); elements.myHistoryTable.innerHTML = pageData.map(pred => { const result = activeState.history.find(h => h.period === pred.period); return `<tr><td>${pred.period}</td><td>${renderResultInHTML(pred.prediction)}</td><td>${result ? renderResultInHTML(result) : 'Pending'}</td><td><span class="status-pill status-${pred.status.toLowerCase()}">${pred.status}</span></td></tr>`; }).join(''); elements.pagination.myHistory.info.textContent = `Page ${page}/${totalPages}`; elements.pagination.myHistory.prev.disabled = (page === 1); elements.pagination.myHistory.next.disabled = (page >= totalPages); }
-    function calculateChartStats(history) { const stats = { freq: Array(10).fill(0), missing: Array(10).fill(0), avgMissing: Array(10).fill(0), maxCons: Array(10).fill(0) }; const lastSeen = Array(10).fill(-1); const consAbsence = Array(10).fill(0); const missIntervals = Array.from({ length: 10 }, () => []); history.forEach((entry, index) => { stats.freq[entry.number]++; for (let i = 0; i < 10; i++) { if (i === entry.number) { if(lastSeen[i] !== -1) missIntervals[i].push(index - lastSeen[i]); lastSeen[i] = index; stats.maxCons[i] = Math.max(stats.maxCons[i], consAbsence[i]); consAbsence[i] = 0; } else { consAbsence[i]++; } } }); for (let i = 0; i < 10; i++) { stats.missing[i] = lastSeen[i] === -1 ? history.length : history.length - 1 - lastSeen[i]; stats.maxCons[i] = Math.max(stats.maxCons[i], consAbsence[i]); if (missIntervals[i].length > 0) { stats.avgMissing[i] = Math.round(missIntervals[i].reduce((a, b) => a + b, 0) / missIntervals[i].length); } else { stats.avgMissing[i] = history.length; } } return stats; }
-    function renderChart() { const activeState = state[currentMode]; const history = activeState.history.slice(-100); const stats = calculateChartStats(history); const numberHeaders = [...Array(10).keys()].map(i => { let colorClass = ''; if (i === 0) colorClass = 'stat-header-violet'; else if (i === 5) colorClass = 'stat-header-green-violet'; else if ([1, 3, 7, 9].includes(i)) colorClass = 'stat-header-green'; else colorClass = 'stat-header-red'; return `<td><span class="stat-header ${colorClass}">${i}</span></td>`; }).join(''); elements.chartStatsContainer.innerHTML = `<table class="chart-stats-table"><tbody><tr><td class="stat-label">Winning Numbers</td>${numberHeaders}</tr><tr><td class="stat-label">Missing</td>${stats.missing.map(v => `<td>${v}</td>`).join('')}</tr><tr><td class="stat-label">Avg missing</td>${stats.avgMissing.map(v => `<td>${v}</td>`).join('')}</tr><tr><td class="stat-label">Frequency</td>${stats.freq.map(v => `<td>${v}</td>`).join('')}</tr><tr><td class="stat-label">Max consecutive</td>${stats.maxCons.map(v => `<td>${v}</td>`).join('')}</tr></tbody></table>`; const page = activeState.currentPage.chart; const data = activeState.history.slice().reverse(); const totalPages = Math.max(1, Math.ceil(data.length / ITEMS_PER_PAGE)); const pageData = data.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE); elements.chartVisualRows.innerHTML = pageData.map(entry => { const numbersHtml = [...Array(10).keys()].map(i => { let classes = 'chart-number-item'; if (i === entry.number) { classes += ' highlight'; if (i === 0) classes += ' violet'; else if (i === 5) classes += ' green-violet'; else if ([1, 3, 7, 9].includes(i)) classes += ' green'; else classes += ' red'; } return `<div class="${classes}" data-point-id="chart-${entry.period}-${i}">${i}</div>`; }).join(''); return `<div class="chart-row"><div class="chart-period">${entry.period}</div><div class="chart-numbers">${numbersHtml}</div><div class="chart-bs ${entry.bigSmall.toLowerCase()}">${entry.bigSmall.charAt(0)}</div></div>`; }).join(''); elements.pagination.chart.info.textContent = `Page ${page}/${totalPages}`; elements.pagination.chart.prev.disabled = (page === 1); elements.pagination.chart.next.disabled = (page >= totalPages); setTimeout(() => drawChartLines(pageData), 50); }
-    function drawChartLines(data) { elements.chartSvgOverlay.innerHTML = ''; if (data.length < 2) return; const containerRect = elements.chartTableContainer.getBoundingClientRect(); let pathData = ''; for (let i = 0; i < data.length - 1; i++) { const currentEl = document.querySelector(`[data-point-id="chart-${data[i].period}-${data[i].number}"]`); const nextEl = document.querySelector(`[data-point-id="chart-${data[i+1].period}-${data[i+1].number}"]`); if (currentEl && nextEl) { const currentRect = currentEl.getBoundingClientRect(); const nextRect = nextEl.getBoundingClientRect(); const x1 = currentRect.left + currentRect.width / 2 - containerRect.left; const y1 = currentRect.top + currentRect.height / 2 - containerRect.top + elements.chartTableContainer.scrollTop; const x2 = nextRect.left + nextRect.width / 2 - containerRect.left; const y2 = nextRect.top + nextRect.height / 2 - containerRect.top + elements.chartTableContainer.scrollTop; if (i === 0) pathData += `M ${x1} ${y1} `; pathData += `L ${x2} ${y2} `; } } if (pathData) { const path = document.createElementNS('http://www.w3.org/2000/svg', 'path'); path.setAttribute('d', pathData); elements.chartSvgOverlay.appendChild(path); } }
-    
-    const predictionStrategies = [ { name: "Trend Analysis", execute: (h) => { const last = h[h.length-1]; let cStreak = 0; for(let i=h.length-1; i>=0; i--) { if (h[i].color.includes(last.color.replace('+Violet',''))) cStreak++; else break; } return { color: cStreak >= 2 ? last.color.replace('+Violet','') : (last.color.includes('Red') ? 'Green' : 'Red'), bigSmall: last.bigSmall === 'Big' ? 'Small' : 'Big' }; }}, { name: "Advance AI Algorithm", execute: (h) => { const recent = h.slice(-12); const freq = { Red: 0, Green: 0, Big: 0, Small: 0 }; recent.forEach(r => { if(r.color.includes('Red')) freq.Red++; else freq.Green++; if(r.bigSmall === 'Big') freq.Big++; else freq.Small++; }); return { color: freq.Red > freq.Green ? 'Green' : 'Red', bigSmall: freq.Big > freq.Small ? 'Small' : 'Big' }; }}, { name: "Hybrid Logic", execute: (h) => { const r1 = predictionStrategies[0].execute(h); const r2 = predictionStrategies[1].execute(h); return { color: Math.random() > 0.5 ? r1.color : r2.color, bigSmall: Math.random() > 0.5 ? r1.bigSmall : r2.bigSmall }; }}, { name: "Quantum Calculation", execute: (h) => { const p = h.slice(-4).map(r => r.bigSmall[0]).join(''); if(p === 'BSBS') return { color: 'Green', bigSmall: 'Small' }; if(p === 'SBSB') return { color: 'Red', bigSmall: 'Big' }; return predictionStrategies[1].execute(h); }}, { name: "AI Advance Pattern", execute: (h) => { const p = h.slice(-4).map(r => r.color.includes('Red')?'R':'G').join(''); if(p === 'RGRG') return { color: 'R', bigSmall: 'Small' }; if(p === 'GRGR') return { color: 'G', bigSmall: 'Big'}; return predictionStrategies[0].execute(h);}} ];
-    async function runPredictionEngine(history) { if (history.length < 4) { const r = getResultFromNumber(Math.floor(Math.random() * 10)); return { prediction: r, strategy: "Initializing..." }; } const selectedStrategy = predictionStrategies[Math.floor(Math.random() * predictionStrategies.length)]; let { color, bigSmall } = selectedStrategy.execute(history); if (state[currentMode].isReversePattern) { color = color === 'Red' ? 'Green' : 'Red'; bigSmall = bigSmall === 'Big' ? 'Small' : 'Big'; } const matchingNumbers = [0,1,2,3,4,5,6,7,8,9].filter(i => { const res = getResultFromNumber(i); return res.bigSmall === bigSmall && res.color.includes(color); }); const predictedNumber = matchingNumbers.length > 0 ? matchingNumbers[Math.floor(Math.random() * matchingNumbers.length)] : Math.floor(Math.random() * 10); return { prediction: getResultFromNumber(predictedNumber), strategy: selectedStrategy.name + (state[currentMode].isReversePattern ? ' (Reversed)' : '') }; }
-    function updateStats(actualResult) { if (!currentMode || !actualResult) return; const activeState = state[currentMode]; const p = activeState.predictions.find(pred => pred.period === actualResult.period); if (!p || p.status !== 'Pending') return; const predBaseColor = p.prediction.color.replace('+Violet', ''); const actualBaseColor = actualResult.color.replace('+Violet', ''); const colorMatch = predBaseColor === actualBaseColor; const sizeMatch = p.prediction.bigSmall === actualResult.bigSmall; let revenueChange = -1; if (colorMatch && sizeMatch) { p.status = 'Win'; revenueChange = 1; } else if (colorMatch || sizeMatch) { p.status = 'Partial'; revenueChange = -0.5; } else { p.status = 'Loss'; } if (p.status === 'Win') activeState.stats.totalWins++; else if (p.status === 'Partial') activeState.stats.totalPartial++; else activeState.stats.totalLosses++; activeState.stats.revenue += revenueChange; }
-    async function gameLoop(isInitialRun = false) { if (!currentMode) return; const activeState = state[currentMode]; const lastPeriodInState = activeState.currentPeriod; const newCurrentPeriod = (currentGameType === 'wingo') ? generateWingoPeriodNumber(currentMode) : generateTrxPeriodNumber(currentMode); if (!isInitialRun && lastPeriodInState && lastPeriodInState !== newCurrentPeriod) { const simulatedResult = getResultFromNumber(Math.floor(Math.random() * 10)); simulatedResult.period = lastPeriodInState; if (!activeState.history.some(h => h.period === simulatedResult.period)) { activeState.history.push(simulatedResult); if (activeState.history.length > MAX_HISTORY_ENTRIES) activeState.history.shift(); } updateStats(simulatedResult); } activeState.currentPeriod = newCurrentPeriod; if (!activeState.predictions.some(p => p.period === newCurrentPeriod)) { const { prediction, strategy } = await runPredictionEngine(activeState.history); activeState.predictions.push({ period: newCurrentPeriod, prediction, strategy, status: 'Pending' }); if (activeState.predictions.length > MAX_HISTORY_ENTRIES) activeState.predictions.shift(); } saveState(); renderAll(); }
-    masterClock.debounce = {};
-    function masterClock() { if (!currentMode) return; const durationMap = { 'wingo-30s': 30, 'wingo-1m': 60, 'wingo-3m': 180, 'wingo-5m': 300, 'trx-1m': 60, 'trx-3m': 180, 'trx-5m': 300, 'trx-10m': 600 }; const duration = durationMap[currentMode]; const now = new Date(); let secondsSinceReferencePoint; if (currentGameType === 'wingo') { const istOffsetMs = 330 * 60 * 1000; const istTime = new Date(now.getTime() + (istOffsetMs + now.getTimezoneOffset() * 60 * 1000)); const startOfDayIST = new Date(istTime); startOfDayIST.setHours(5, 30, 0, 0); if (istTime < startOfDayIST) startOfDayIST.setDate(startOfDayIST.getDate() - 1); secondsSinceReferencePoint = Math.floor((istTime.getTime() - startOfDayIST.getTime()) / 1000); } else { secondsSinceReferencePoint = now.getUTCHours() * 3600 + now.getUTCMinutes() * 60 + now.getUTCSeconds(); } const remainingTime = duration - (secondsSinceReferencePoint % duration); elements.timer.textContent = `${String(Math.floor(remainingTime / 60)).padStart(2, '0')}:${String(remainingTime % 60).padStart(2, '0')}`; if (remainingTime === duration || remainingTime === 1) { const debounceKey = currentMode + 'Trigger'; const nowMs = now.getTime(); if (!masterClock.debounce[debounceKey] || (nowMs - masterClock.debounce[debounceKey] > 1500)) { gameLoop(); masterClock.debounce[debounceKey] = nowMs; } } }
-    function generateWingoPeriodNumber(mode) { const now = new Date(); const istOffsetMinutes = 330; const istTime = new Date(now.getTime() + (istOffsetMinutes * 60 * 1000) + (now.getTimezoneOffset() * 60 * 1000)); const dateStr = `${istTime.getFullYear()}${String(istTime.getMonth() + 1).padStart(2, '0')}${String(istTime.getDate()).padStart(2, '0')}`; let elapsedSecondsSinceStart = (istTime.getHours() * 3600 + istTime.getMinutes() * 60 + istTime.getSeconds()) - (5 * 3600 + 30 * 60); if (elapsedSecondsSinceStart < 0) elapsedSecondsSinceStart += 24 * 3600; const durationMap = {'wingo-30s': 30, 'wingo-1m': 60, 'wingo-3m': 180, 'wingo-5m': 300}; const suffixMap = {'wingo-30s': '000', 'wingo-1m': '1000', 'wingo-3m': '3000', 'wingo-5m': '5000'}; const periodDuration = durationMap[mode] || 60; const periodCounter = Math.floor(elapsedSecondsSinceStart / periodDuration) + 1; return dateStr + (suffixMap[mode] || '1000') + String(periodCounter).padStart(4, '0'); }
-    function generateTrxPeriodNumber(mode) { const now = new Date(); const dateStr = `${now.getUTCFullYear()}${String(now.getUTCMonth() + 1).padStart(2, '0')}${String(now.getUTCDate()).padStart(2, '0')}`; const totalMinutesToday = (now.getUTCHours() * 60) + now.getUTCMinutes(); const durationMap = {'trx-1m': 1, 'trx-3m': 3, 'trx-5m': 5, 'trx-10m': 10}; const baseMap = {'trx-1m': 10001, 'trx-3m': 20001, 'trx-5m': 30001, 'trx-10m': 40001}; const periodCounter = Math.floor(totalMinutesToday / (durationMap[mode]||1)) + (baseMap[mode]||10001); return `${dateStr}1030${String(periodCounter).padStart(5, '0')}`; }
-    document.addEventListener('DOMContentLoaded', () => {
-        elements.loginButton.addEventListener('click', handleLogin); elements.accessKeyInput.addEventListener('keyup', e => { if (e.key === 'Enter') handleLogin(); });
-        elements.togglePasswordIcon.addEventListener('click', function() { const isPass = elements.accessKeyInput.type === 'password'; elements.accessKeyInput.type = isPass ? 'text' : 'password'; this.classList.toggle('fa-eye'); this.classList.toggle('fa-eye-slash'); });
-        elements.logoutButton.addEventListener('click', handleLogout); elements.tabWingo.addEventListener('click', () => selectGameType('wingo')); elements.tabTrx.addEventListener('click', () => selectGameType('trx'));
-        document.querySelectorAll('.mode-toggle button').forEach(btn => btn.addEventListener('click', () => selectMode(btn.id.replace('btn-', ''))));
-        elements.clearButton.addEventListener('click', () => { if (currentMode && confirm("Clear all history and stats for this mode?")) { state[currentMode] = JSON.parse(JSON.stringify(initialStateTemplate)); renderAll(); } });
-        Object.keys(elements.historyTabButtons).forEach(key => { elements.historyTabButtons[key].addEventListener('click', () => selectHistoryTab(key)); });
-        Object.keys(elements.pagination).forEach(type => { elements.pagination[type].prev.addEventListener('click', () => { if (currentMode && state[currentMode].currentPage[type] > 1) { state[currentMode].currentPage[type]--; renderAll(); } }); elements.pagination[type].next.addEventListener('click', () => { if (currentMode) { const data = (type === 'myHistory') ? state[currentMode].predictions : state[currentMode].history; const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE); if (state[currentMode].currentPage[type] < totalPages) { state[currentMode].currentPage[type]++; renderAll(); } } }); });
-        elements.settingsIcon.addEventListener('click', () => elements.settingsModal.classList.remove('hidden'));
-        elements.closeModalBtn.addEventListener('click', () => elements.settingsModal.classList.add('hidden'));
-        elements.settingsModal.addEventListener('click', (e) => { if(e.target === elements.settingsModal) elements.settingsModal.classList.add('hidden'); });
-        elements.reversePatternSwitch.addEventListener('click', async () => { if (currentMode) { state[currentMode].isReversePattern = !state[currentMode].isReversePattern; const { prediction, strategy } = await runPredictionEngine(state[currentMode].history); const latestPred = state[currentMode].predictions.slice(-1)[0]; if(latestPred) { latestPred.prediction = prediction; latestPred.strategy = strategy; } renderAll(); } });
-        if (localStorage.getItem('isLoggedIn') === 'true') { showApp(); } else { elements.loginScreen.classList.remove('hidden'); elements.appContainer.classList.add('hidden'); }
-    });
-</script>
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDG GAME Predictor - Gemini AI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
-    <style>
-        /* Base Styling */
-        body, html { font-family: 'Exo 2', sans-serif; background: #0F0C29; color: #E0E7FF; margin: 0; padding: 0; overflow: hidden; height: 100%; }
-        ::-webkit-scrollbar { display: none; }
-        .table-container, #main-content { scrollbar-width: none; -ms-overflow-style: none; overflow-y: auto; }
-        .hidden { display: none !important; }
-
-        /* Theme Colors */
-        .color-red { color: #FF5555; } .color-green { color: #00FF7F; } .color-violet { color: #D81BFF; } .color-big { color: #FFAA00; } .color-small { color: #00D4FF; }
-        .status-win { background: rgba(0, 255, 127, 0.2); color: #00FF7F; } .status-loss { background: rgba(255, 85, 85, 0.2); color: #FF5555; } .status-partial { background: rgba(255, 170, 0, 0.2); color: #FFAA00; }
-
-        /* Login Screen */
-        #login-screen { display: flex; align-items: center; justify-content: center; height: 100vh; background: linear-gradient(135deg, #0F0C29, #302B63, #24243E); }
-        .login-card { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 20px; backdrop-filter: blur(8px); box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.3); text-align: center; width: 90%; max-width: 380px; }
-        .login-main-logo { width: 180px; height: auto; margin: 0 auto 20px auto; display: block; } /* Centered Logo */
-        .login-card .splash-overlay-text { margin-bottom: 20px; font-size: 0.9rem; color: #A5B4FC; }
-        .login-card input { width: 100%; padding: 10px; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 6px; color: #E0E7FF; margin-bottom: 10px; box-sizing: border-box; }
-        .login-card input:focus { outline: none; border-color: #FF00FF; box-shadow: 0 0 10px rgba(255, 0, 255, 0.5); }
-        .password-wrapper { position: relative; display: flex; align-items: center; margin-bottom: 10px; }
-        .password-wrapper input { padding-right: 35px; margin-bottom: 0; }
-        #toggle-password-icon { position: absolute; right: 10px; cursor: pointer; color: #A5B4FC; }
-        .login-card button { width: 100%; padding: 10px; background: #FF00FF; color: #0F0C29; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
-        .login-card button:hover { box-shadow: 0 0 15px rgba(255, 0, 255, 0.6); }
-        .error-message { color: #FF5555; font-size: 0.8rem; margin-top: 5px; margin-bottom: 10px; display: none; }
-
-        /* App Container */
-        #app-container { display: flex; justify-content: center; height: 100vh; background: linear-gradient(45deg, #0F0C29, #302B63, #24243E); padding: 8px; box-sizing: border-box; }
-        #main-content { width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 8px; padding-right: 2px; }
-        .app-header { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; }
-        .app-header .header-left, .app-header .header-right { display: flex; align-items: center; gap: 12px; }
-        .app-header-icon { font-size: 1.1rem; color: #A5B4FC; transition: color 0.2s; cursor: pointer; }
-        .app-header-icon:hover { color: #E0E7FF; }
-        .app-header-logo-img { height: 28px; width: auto; filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5)); }
-        .logout-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .logout-btn i { font-size: 1rem; color: #A5B4FC; transition: color 0.2s; }
-        .logout-btn:hover i { color: #FF5555; }
-
-        /* Game Mode Selector */
-        #game-mode-selector { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 4px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); }
-        #game-mode-tabs { display: flex; justify-content: space-around; background: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 2px; margin-bottom: 4px; }
-        #game-mode-tabs button { flex: 1; padding: 6px 0; font-size: 0.8rem; font-weight: 600; color: #A5B4FC; background: transparent; border: none; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; border-radius: 6px; }
-        #game-mode-tabs button.active { background: #FFD700; color: #0F0C29; }
-        #interval-selector-container { text-align: center; }
-        .mode-toggle { display: inline-flex; border-radius: 9999px; background: rgba(0, 0, 0, 0.2); padding: 2px; gap: 4px; }
-        .mode-toggle button { padding: 5px 10px; font-size: 0.7rem; font-weight: 500; border-radius: 9999px; color: #A5B4FC; background: transparent; border: none; cursor: pointer; }
-        .mode-toggle button.active { background: #FFD700; color: #0F0C29; }
-
-        /* Main Card */
-        .main-card { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); }
-        .info-grid { display: grid; grid-template-columns: 1fr; gap: 5px; padding-bottom: 5px; }
-        .info-line { display: flex; justify-content: space-between; align-items: center; padding: 5px 8px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; }
-        .info-label { font-size: 0.8rem; color: #A5B4FC; display: flex; align-items: center; }
-        .info-value { font-size: 1rem; font-weight: 600; color: #E0E7FF; }
-        #timer { color: #FF5555; font-weight: 700; }
-        #prediction-text { color: #FF00FF; text-shadow: 0 0 2px rgba(255, 0, 255, 0.5); font-weight: 700; }
-        #insight-text { font-size: 0.75rem; color: #00D4FF; font-weight: 500; }
-        .chart-stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-top: 10px; }
-        .stat-item { background: rgba(255, 255, 255, 0.05); padding: 8px 4px; border-radius: 8px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.1); }
-        .stat-label { font-size: 0.65rem; color: #A5B4FC; margin-bottom: 2px; }
-        .stat-value { font-size: 0.9rem; font-weight: 700; }
-        .stat-value.win { color: #00FF7F; } .stat-value.loss { color: #FF5555; } .stat-value.partial { color: #FFAA00; }
-        .stat-value.accuracy { color: #FF00FF; } .stat-value.revenue { color: #FFD700; } .stat-value.revenue.negative { color: #FF5555; }
-
-        /* History Section */
-        .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .history-header h2 { font-size: 1.1rem; font-weight: 700; color: #FFD700; }
-        .clear-btn { background: #FF5555; color: #E0E7FF; font-weight: 600; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; border: none; cursor: pointer; display: flex; align-items: center; gap: 5px; }
-        .history-tabs { display: flex; gap: 4px; background: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 4px; margin-bottom: 8px; }
-        .history-tabs button { flex: 1; padding: 6px 0; font-size: 0.75rem; font-weight: 600; color: #A5B4FC; background: transparent; border: none; cursor: pointer; border-radius: 6px; display: flex; align-items: center; justify-content: center; gap: 5px; }
-        .history-tabs button.active { background: #FFD700; color: #0F0C29; }
-        .table-container { flex-grow: 1; max-height: calc(100vh - 500px); background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.75rem; table-layout: fixed; }
-        th, td { padding: 6px 4px; text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-        #game-history-table th:first-child, #game-history-table td:first-child { width: 50%; text-align: left; padding-left: 8px; white-space: nowrap; }
-        th { background: rgba(25, 22, 50, 0.95); text-transform: uppercase; font-size: 0.65rem; color: #A5B4FC; position: sticky; top: 0; z-index: 10; }
-        .status-pill { padding: 3px 6px; border-radius: 9999px; font-size: 0.65rem; font-weight: 600; display: inline-block; text-align: center; min-width: 50px; }
-        .pagination-controls { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: rgba(0, 0, 0, 0.2); border-radius: 8px; margin-top: 8px; }
-        .pagination-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: #A5B4FC; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; }
-        .pagination-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-        .page-info { font-size: 0.8rem; color: #E0E7FF; }
-        
-        /* Accurate Chart Styles */
-        #chart-content-wrapper { position: relative; }
-        #chart-svg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
-        #chart-svg-overlay path { stroke: #FF5555; stroke-width: 1.5; fill: none; stroke-dasharray: 3,3; }
-        .chart-stats-table { width: 100%; table-layout: fixed; margin-bottom: 10px; }
-        .chart-stats-table td { padding: 4px 1px; text-align: center; border: none; font-size: 0.8rem; color: #E0E7FF; }
-        .chart-stats-table .stat-label { width: 35%; text-align: left; padding-left: 8px; color: #A5B4FC; font-weight: 600; font-size: 0.75rem; }
-        .stat-header { font-size: 0.8rem; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; color: white; font-weight: bold; }
-        .stat-header-red { background: #FF5555; } .stat-header-green { background: #00FF7F; } .stat-header-violet { background-image: linear-gradient(to bottom right, #FF5555 49%, #D81BFF 51%); } .stat-header-green-violet { background-image: linear-gradient(to bottom right, #00FF7F 49%, #D81BFF 51%); }
-        .chart-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 5px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-        .chart-period { font-size: 0.7rem; width: 35%; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .chart-numbers { display: flex; justify-content: space-around; align-items: center; flex-grow: 1; }
-        .chart-number-item { font-size: 0.8rem; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid #555; color: #777; }
-        .chart-number-item.highlight { border: none; color: white; font-weight: bold; }
-        .chart-number-item.highlight.red { background-color: #FF5555; } .chart-number-item.highlight.green { background-color: #00FF7F; } .chart-number-item.highlight.violet { background-image: linear-gradient(to bottom right, #FF5555 49%, #D81BFF 51%); } .chart-number-item.highlight.green-violet { background-image: linear-gradient(to bottom right, #00FF7F 49%, #D81BFF 51%); }
-        .chart-bs { font-size: 0.8rem; font-weight: bold; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-left: 5px; }
-        .chart-bs.big { background-color: #FFAA00; color: #0F0C29; } .chart-bs.small { background-color: #00D4FF; color: #0F0C29; }
-
-        /* --- NEW: Settings Modal --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 100; display: flex; align-items: center; justify-content: center; }
-        .modal-content { background: rgba(30, 27, 63, 0.9); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 20px; width: 90%; max-width: 350px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .modal-header h2 { margin: 0; font-size: 1.2rem; color: #FFD700; }
-        .close-btn { background: none; border: none; font-size: 1.5rem; color: #A5B4FC; cursor: pointer; }
-        .toggle-switch-container { display: flex; align-items: center; justify-content: space-between; padding: 12px 8px; background: rgba(0, 0, 0, 0.2); border-radius: 8px; }
-        .toggle-switch-label { font-size: 0.9rem; font-weight: 600; color: #A5B4FC; }
-        .toggle-switch { position: relative; display: inline-block; width: 50px; height: 28px; cursor: pointer; }
-        .toggle-switch-handle { position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; background-color: #E0E7FF; border-radius: 50%; transition: transform 0.3s ease; }
-        .toggle-switch-bg { position: absolute; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.2); border-radius: 14px; transition: background-color 0.3s ease; }
-        .toggle-switch.active .toggle-switch-bg { background-color: #FF00FF; }
-        .toggle-switch.active .toggle-switch-handle { transform: translateX(22px); }
-    </style>
-</head>
-<body>
-
-    <div id="login-screen">
-        <div class="login-card">
-            <a href="#"><img src="https://i.ibb.co/ymdKZh0t/h5setting-202401100608011fs2.png" alt="BDG GAME Logo" class="login-main-logo"></a>
-            <div class="splash-overlay-text">Withdraw fast, safe and stable</div>
-            <div class="password-wrapper"><input type="password" id="access-key-input" placeholder="Access Key" autocomplete="current-password"><i class="fas fa-eye" id="toggle-password-icon"></i></div>
-            <p id="error-message" class="error-message" role="alert">Invalid Access Key!</p><button id="login-button">Connect</button>
-        </div>
-    </div>
-
-    <div id="app-container" class="hidden">
-        <main id="main-content">
-            <header class="app-header">
-                <div class="header-left"></div>
-                <a href="#"><img src="https://i.ibb.co/ymdKZh0t/h5setting-202401100608011fs2.png" alt="BDG GAME" class="app-header-logo-img"></a>
-                <div class="header-right"><i id="settings-icon" class="fas fa-cog app-header-icon"></i><button id="logout-button" class="logout-btn" aria-label="Logout"><i class="fas fa-power-off"></i></button></div>
-            </header>
-
-            <div id="game-mode-selector">
-                <div id="game-mode-tabs"><button id="tab-wingo">Wingo</button><button id="tab-trx">TRX Wingo</button></div>
-                <div id="interval-selector-container">
-                    <div id="wingo-intervals" class="mode-toggle hidden"><button id="btn-wingo-30s">30s</button><button id="btn-wingo-1m">1m</button><button id="btn-wingo-3m">3m</button><button id="btn-wingo-5m">5m</button></div>
-                    <div id="trx-intervals" class="mode-toggle hidden"><button id="btn-trx-1m">1m</button><button id="btn-trx-3m">3m</button><button id="btn-trx-5m">5m</button><button id="btn-trx-10m">10m</button></div>
-                </div>
-            </div>
-
-            <div class="main-card">
-                <div class="info-grid">
-                    <div class="info-line"><span class="info-label">Period</span><p id="period" class="info-value"></p></div>
-                    <div class="info-line"><span class="info-label">Timer</span><p id="timer" class="info-value"></p></div>
-                    <div class="info-line"><span class="info-label">AI Result</span><p id="prediction-text" class="info-value"></p></div>
-                    <div class="info-line"><span class="info-label">Insight</span><p id="insight-text" class="info-value"></p></div>
-                </div>
-                <div class="chart-stats-grid">
-                    <div class="stat-item"><div class="stat-label">Wins</div><div id="chart-total-wins" class="stat-value win">0</div></div><div class="stat-item"><div class="stat-label">Losses</div><div id="chart-total-losses" class="stat-value loss">0</div></div><div class="stat-item"><div class="stat-label">Partial</div><div id="chart-total-partial" class="stat-value partial">0</div></div><div class="stat-item"><div class="stat-label">Accuracy</div><div id="chart-accuracy" class="stat-value accuracy">0%</div></div><div class="stat-item"><div class="stat-label">Revenue</div><div id="chart-revenue" class="stat-value revenue">0</div></div>
-                </div>
-
-                <div class="history-header"><h2>History</h2><button id="clear-button" class="clear-btn"><i class="fas fa-trash-alt"></i> Clear</button></div>
-                <div class="history-tabs"><button id="tab-btn-game-history"><i class="fas fa-history"></i>Game History</button><button id="tab-btn-chart"><i class="fas fa-chart-line"></i>Chart</button><button id="tab-btn-my-history" class="active"><i class="fas fa-user-clock"></i>My History</button></div>
-
-                <div id="tab-content-game-history" class="hidden">
-                    <div class="table-container"><table><thead><tr><th>Period</th><th>Number</th><th>Size</th><th>Color</th></tr></thead><tbody id="game-history-table"></tbody></table></div>
-                    <div class="pagination-controls"><button id="prev-btn-game-history" class="pagination-btn">Prev</button><span id="page-info-game-history" class="page-info"></span><button id="next-btn-game-history" class="pagination-btn">Next</button></div>
-                </div>
-                <div id="tab-content-chart" class="hidden">
-                    <div id="chart-stats-container"></div>
-                    <div class="table-container" id="chart-table-container"><div id="chart-content-wrapper"><svg id="chart-svg-overlay" width="100%" height="100%"></svg><div id="chart-visual-rows"></div></div></div>
-                    <div class="pagination-controls"><button id="prev-btn-chart" class="pagination-btn">Prev</button><span id="page-info-chart" class="page-info"></span><button id="next-btn-chart" class="pagination-btn">Next</button></div>
-                </div>
-                <div id="tab-content-my-history">
-                    <div class="table-container">
-                        <table><thead><tr><th style="width:35%">Period</th><th style="width:25%">AI Prediction</th><th style="width:23%">Actual Result</th><th style="width:17%">Status</th></tr></thead><tbody id="my-history-table"></tbody></table>
-                    </div>
-                     <div class="pagination-controls"><button id="prev-btn-my-history" class="pagination-btn">Prev</button><span id="page-info-my-history" class="page-info"></span><button id="next-btn-my-history" class="pagination-btn">Next</button></div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Settings Modal -->
-    <div id="settings-modal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Settings</h2>
-                <button id="close-settings-btn" class="close-btn">&times;</button>
-            </div>
-            <div class="toggle-switch-container">
-                <span class="toggle-switch-label">Reverse Pattern</span>
-                <div id="reverse-pattern-switch" class="toggle-switch">
-                    <div class="toggle-switch-bg"></div>
-                    <div class="toggle-switch-handle"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-<script>
-    const elements = { loginScreen: document.getElementById('login-screen'), appContainer: document.getElementById('app-container'), accessKeyInput: document.getElementById('access-key-input'), togglePasswordIcon: document.getElementById('toggle-password-icon'), loginButton: document.getElementById('login-button'), errorMessage: document.getElementById('error-message'), logoutButton: document.getElementById('logout-button'), settingsIcon: document.getElementById('settings-icon'), settingsModal: document.getElementById('settings-modal'), closeModalBtn: document.getElementById('close-settings-btn'), reversePatternSwitch: document.getElementById('reverse-pattern-switch'), tabWingo: document.getElementById('tab-wingo'), tabTrx: document.getElementById('tab-trx'), wingoIntervals: document.getElementById('wingo-intervals'), trxIntervals: document.getElementById('trx-intervals'), period: document.getElementById('period'), timer: document.getElementById('timer'), predictionText: document.getElementById('prediction-text'), insightText: document.getElementById('insight-text'), chartTotalWins: document.getElementById('chart-total-wins'), chartTotalLosses: document.getElementById('chart-total-losses'), chartTotalPartial: document.getElementById('chart-total-partial'), chartAccuracy: document.getElementById('chart-accuracy'), chartRevenue: document.getElementById('chart-revenue'), clearButton: document.getElementById('clear-button'), historyTabButtons: { gameHistory: document.getElementById('tab-btn-game-history'), chart: document.getElementById('tab-btn-chart'), myHistory: document.getElementById('tab-btn-my-history') }, historyTabContents: { gameHistory: document.getElementById('tab-content-game-history'), chart: document.getElementById('tab-content-chart'), myHistory: document.getElementById('tab-content-my-history') }, gameHistoryTable: document.getElementById('game-history-table'), myHistoryTable: document.getElementById('my-history-table'), chartStatsContainer: document.getElementById('chart-stats-container'), chartVisualRows: document.getElementById('chart-visual-rows'), chartSvgOverlay: document.getElementById('chart-svg-overlay'), chartTableContainer: document.getElementById('chart-table-container'), pagination: { gameHistory: { prev: document.getElementById('prev-btn-game-history'), next: document.getElementById('next-btn-game-history'), info: document.getElementById('page-info-game-history') }, chart: { prev: document.getElementById('prev-btn-chart'), next: document.getElementById('next-btn-chart'), info: document.getElementById('page-info-chart') }, myHistory: { prev: document.getElementById('prev-btn-my-history'), next: document.getElementById('next-btn-my-history'), info: document.getElementById('page-info-my-history') }} };
-    const ACCESS_KEY = "Kingvip@1990$"; const ITEMS_PER_PAGE = 10; const MAX_HISTORY_ENTRIES = 200;
-    let masterInterval; let currentMode = null; let currentGameType = 'wingo';
-    const initialStateTemplate = { history: [], predictions: [], currentPeriod: null, isReversePattern: false, stats: { totalWins: 0, totalLosses: 0, totalPartial: 0, revenue: 0 }, currentPage: { gameHistory: 1, chart: 1, myHistory: 1 } };
-    let state = {};
-
-    function saveState() { try { localStorage.setItem('predictorStateV19_0', JSON.stringify(state)); } catch (e) { console.warn('localStorage save failed:', e); } }
-    function loadState() { let savedState; try { savedState = localStorage.getItem('predictorStateV19_0'); } catch (e) { console.warn('localStorage read failed:', e); } const parsedState = savedState ? JSON.parse(savedState) : {}; const modes = ['wingo-30s', 'wingo-1m', 'wingo-3m', 'wingo-5m', 'trx-1m', 'trx-3m', 'trx-5m', 'trx-10m']; modes.forEach(mode => { const template = JSON.parse(JSON.stringify(initialStateTemplate)); state[mode] = { ...template, ...(parsedState[mode] || {}) }; state[mode].currentPage = { ...template.currentPage, ...(parsedState[mode]?.currentPage || {}) }; }); }
+    function saveState() { try { localStorage.setItem('predictorStateV19_2', JSON.stringify(state)); } catch (e) { console.warn('localStorage save failed:', e); } }
+    function loadState() { let savedState; try { savedState = localStorage.getItem('predictorStateV19_2'); } catch (e) { console.warn('localStorage read failed:', e); } const parsedState = savedState ? JSON.parse(savedState) : {}; const modes = ['wingo-30s', 'wingo-1m', 'wingo-3m', 'wingo-5m', 'trx-1m', 'trx-3m', 'trx-5m', 'trx-10m']; modes.forEach(mode => { const template = JSON.parse(JSON.stringify(initialStateTemplate)); state[mode] = { ...template, ...(parsedState[mode] || {}) }; state[mode].currentPage = { ...template.currentPage, ...(parsedState[mode]?.currentPage || {}) }; }); }
     function handleLogin() { if (elements.accessKeyInput.value.trim() === ACCESS_KEY) { localStorage.setItem('isLoggedIn', 'true'); showApp(); } else { elements.errorMessage.style.display = 'block'; } }
     function handleLogout() { localStorage.removeItem('isLoggedIn'); clearInterval(masterInterval); elements.appContainer.classList.add('hidden'); elements.loginScreen.classList.remove('hidden'); }
     function showApp() { elements.loginScreen.classList.add('hidden'); elements.appContainer.classList.remove('hidden'); loadState(); selectGameType('wingo'); }
