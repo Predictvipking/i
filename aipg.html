@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI PREDICT ENGINE v6.0</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Ubuntu:wght@400;500;700&display=swap');
+
+        :root {
+            --primary: #00aaff; --primary-light: #60c5ff; --secondary: #10b981;
+            --warning: #facc15; --red-color: #ef4444; --green-color: #10b981;
+            --violet-color: #a855f7; --blue-color: #3b82f6; --yellow-color: #facc15;
+            --dark-bg: #0f172a; --dark-panel: #1e293b; --light: #e2e8f0;
+            --quantum-glow: #a855f7;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: var(--dark-bg);
+            min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 8px; color: var(--light);
+            font-family: 'Ubuntu', sans-serif;
+        }
+        .container {
+            width: 100%; max-width: 400px; background-color: var(--dark-panel); border-radius: 20px; padding: 20px; border: 2px solid var(--primary); box-shadow: 0 0 25px rgba(0, 170, 255, 0.25);
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Header */
+        .game-header { text-align: center; margin-bottom: 20px; }
+        .game-name { font-family: 'Orbitron', sans-serif; font-size: 24px; font-weight: 700; background: linear-gradient(90deg, var(--light), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 10px rgba(0, 170, 255, 0.4); }
+        .game-about { font-size: 12px; color: var(--primary-light); opacity: 0.9; }
+
+        /* Controls */
+        .controls-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px; }
+        .game-type-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .game-type { padding: 8px; text-align: center; font-family: 'Orbitron', sans-serif; font-size: 12px; cursor: pointer; background: transparent; border: 1px solid var(--primary); color: var(--primary-light); border-radius: 8px; transition: all 0.2s ease; }
+        .game-type.selected { background: var(--primary); color: white; box-shadow: 0 0 10px rgba(0, 170, 255, 0.5); }
+        .period-timer-wrapper { display: flex; gap: 8px; }
+        .input-group { flex: 1; }
+        #periodInput { width: 100%; padding: 10px; background: rgba(15, 23, 42, 0.9); border: 1px solid var(--primary); border-radius: 8px; color: white; font-size: 14px; text-align: center; font-family: 'Ubuntu', sans-serif; }
+        .timer-display { padding: 10px 12px; background: rgba(15, 23, 42, 0.9); border-radius: 8px; border: 1px solid var(--primary); font-family: 'Orbitron', sans-serif; display: flex; align-items: center; gap: 8px; }
+        #timer { color: var(--warning); font-weight: bold; font-size: 16px; }
+        #currentTrendDisplay { text-align: center; font-size: 14px; color: var(--green-color); background: rgba(16, 185, 129, 0.1); padding: 8px; border-radius: 8px; font-family: 'Orbitron', sans-serif; border: 1px solid var(--green-color); }
+        #errorMessage { font-size: 12px; color: var(--red-color); text-align: center; height: 18px; }
+
+        /* Prediction Core */
+        .prediction-core { background: var(--dark-bg); padding: 20px; border-radius: 15px; border: 2px solid var(--primary); box-shadow: 0 0 15px rgba(0, 170, 255, 0.3); text-align: center; }
+        #prediction-output {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 34px; /* Slightly smaller to fit */
+            font-weight: 800;
+            margin: 15px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px; /* Adjusted gap */
+            white-space: nowrap; /* Ensures it stays on a single line */
+        }
+        #prediction-output .separator {
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 400;
+        }
+        #prediction-output .result-small { color: var(--blue-color); }
+        #prediction-output .result-big { color: var(--yellow-color); }
+        #prediction-output .color-text-green { color: var(--green-color); }
+        #prediction-output .color-text-violet { color: var(--violet-color); }
+        #prediction-output .color-text-red { color: var(--red-color); }
+        .number-0, .history-table .number-0 { background: linear-gradient(90deg, var(--red-color) 50%, var(--violet-color) 50%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold; }
+        .number-5, .history-table .number-5 { background: linear-gradient(90deg, var(--green-color) 50%, var(--violet-color) 50%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold; }
+        .number-green, .history-table .number-green { color: var(--green-color); }
+        .number-red, .history-table .number-red { color: var(--red-color); }
+
+        .confidence-meter { width: 100%; height: 10px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; overflow: hidden; margin: 10px 0 5px; }
+        #confidence-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #10b981, #60c5ff); transition: width 1s ease-out; }
+        #confidence-text { font-size: 12px; color: var(--light); margin-bottom: 15px; }
+
+        .mode-selector { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 20px; font-family: 'Orbitron', sans-serif; font-size: 12px; }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #3f4d61; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; top: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--quantum-glow); box-shadow: 0 0 10px var(--quantum-glow); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        .btn-predict { width: 100%; padding: 12px; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; letter-spacing: 1px; font-family: 'Orbitron', sans-serif; background: linear-gradient(45deg, var(--primary), var(--primary-light)); color: white; box-shadow: 0 0 15px rgba(0, 170, 255, 0.5); }
+        .btn-predict:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-predict i { margin-right: 10px; }
+
+        /* History */
+        .history-container { margin-top: 20px; }
+        .history-title { font-family: 'Orbitron', sans-serif; text-align: center; margin-bottom: 10px; font-size: 18px; color: var(--primary-light); }
+        .history-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .history-table th, .history-table td { padding: 8px 5px; text-align: center; border-bottom: 1px solid rgba(0, 170, 255, 0.2); }
+        .history-table th { color: var(--primary-light); font-size: 13px; }
+        .color-tag { padding: 4px 10px; border-radius: 12px; color: white; font-weight: bold; font-size: 11px; }
+        .color-red { background-color: var(--red-color); }
+        .color-green { background-color: var(--green-color); }
+        .color-violet { background-color: var(--violet-color); }
+        .status-win { color: var(--green-color); font-weight: bold; }
+        .status-loss { color: var(--red-color); font-weight: bold; }
+        
+        .history-buttons { display: flex; justify-content: center; gap: 5px; }
+        .history-buttons button { border: none; color: white; cursor: pointer; border-radius: 5px; width: 30px; height: 22px; display: flex; justify-content: center; align-items: center; font-size: 12px; font-weight: bold; font-family: 'Ubuntu', sans-serif; }
+        .btn-win-hist { background-color: var(--green-color); }
+        .btn-loss-hist { background-color: var(--red-color); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="game-header">
+            <h1 class="game-name">AI PREDICT ENGINE V6.0</h1>
+            <p class="game-about">Live Timer & Auto-Chain Prediction</p>
+        </div>
+        <div class="controls-container">
+            <div class="game-type-container">
+                <div class="game-type" data-type="30s">WINGO 30s</div>
+                <div class="game-type selected" data-type="1m">WINGO 1m</div>
+                <div class="game-type" data-type="5m">WINGO 5m</div>
+            </div>
+            <div class="period-timer-wrapper">
+                <div class="input-group">
+                    <input type="text" id="periodInput" placeholder="STARTING PERIOD" inputmode="numeric">
+                </div>
+                <div class="timer-display">
+                    <i class="fas fa-clock"></i>
+                    <span id="timer">00:00</span>
+                </div>
+            </div>
+            <div id="currentTrendDisplay" class="current-trend-display">Current Trend: Awaiting Analysis...</div>
+        </div>
+
+        <div class="prediction-core">
+            <div id="prediction-output">--</div>
+            <div class="confidence-meter"><div id="confidence-bar"></div></div>
+            <p id="confidence-text">Confidence: 0%</p>
+            <div class="mode-selector">
+                <span>Normal Mode</span>
+                <label class="switch">
+                    <input type="checkbox" id="quantumToggle">
+                    <span class="slider"></span>
+                </label>
+                <span>Quantum Mode</span>
+            </div>
+            <button class="btn btn-predict" id="predictBtn"><i class="fas fa-play"></i> PREDICT</button>
+        </div>
+
+        <div class="history-container">
+            <h3 class="history-title">Prediction Log</h3>
+            <table class="history-table">
+                <thead><tr><th>Period</th><th>Number</th><th>Result</th><th>Color</th><th>Status</th></tr></thead>
+                <tbody id="historyTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        const aiTrends = [ "Calculation", "Algorithm", "AI Advance Pattern", "Dragon Trend", "Hybrid Feature", "Reverse Trigger", "Single Trend", "Double Trend", "Triple Trend" ];
+        const durationMap = { '30s': 30, '1m': 60, '5m': 300 };
+        const dom = {};
+        let predictionHistory = [];
+        let timerInterval = null;
+        let selectedDuration = 60;
+        let isAnalyzing = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const ids = ['periodInput', 'errorMessage', 'predictBtn', 'quantumToggle', 'prediction-output', 'confidence-bar', 'confidence-text', 'historyTableBody', 'timer', 'currentTrendDisplay'];
+            ids.forEach(id => dom[id] = document.getElementById(id));
+            dom.gameTypes = document.querySelectorAll('.game-type');
+            setupEventListeners();
+            loadInitialState();
+        });
+
+        function setupEventListeners() {
+            dom.gameTypes.forEach(type => {
+                type.addEventListener('click', function() {
+                    dom.gameTypes.forEach(t => t.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedDuration = durationMap[this.dataset.type] || 60;
+                    stopTimer();
+                    dom.timer.textContent = formatTime(selectedDuration);
+                });
+            });
+            dom.predictBtn.addEventListener('click', handlePrediction);
+            dom.periodInput.addEventListener('input', (e) => { e.target.value = e.target.value.replace(/[^0-9]/g, ''); clearError(); });
+            dom.historyTableBody.addEventListener('click', handleHistoryButtonClick);
+        }
+        
+        function loadInitialState() {
+            predictionHistory = [];
+            renderHistory();
+        }
+
+        function getNumberClass(number) {
+            if (number === 0) return 'number-0';
+            if (number === 5) return 'number-5';
+            if ([1, 3, 7, 9].includes(number)) return 'number-green';
+            if ([2, 4, 6, 8].includes(number)) return 'number-red';
+            return '';
+        }
+
+        function handlePrediction() {
+            if (isAnalyzing) return;
+            const period = dom.periodInput.value.trim();
+            if (!period || period.length < 5) { return displayError("Please enter a valid Period number."); }
+            if (predictionHistory.find(p => p.period === period)) { return displayError("Prediction for this period already exists."); }
+            
+            clearError();
+            isAnalyzing = true;
+            setPredictButtonState(true, true);
+            
+            const isQuantum = dom.quantumToggle.checked;
+            const analysisTime = isQuantum ? 1200 : 800;
+            
+            setTimeout(() => {
+                try {
+                    const selectedTrend = aiTrends[Math.floor(Math.random() * aiTrends.length)];
+                    const confidence = isQuantum ? Math.floor(95 + Math.random() * 5) : Math.floor(88 + Math.random() * 10);
+                    const result = Math.random() > 0.5 ? 'BIG' : 'SMALL';
+                    const randColor = Math.random();
+                    const color = randColor < 0.45 ? 'GREEN' : randColor < 0.9 ? 'RED' : 'VIOLET';
+                    const number = Math.floor(Math.random() * 10);
+
+                    dom['prediction-output'].innerHTML = `
+                        <span class="result-${result.toLowerCase()}">${result}</span>
+                        <span class="separator">|</span>
+                        <span class="color-text-${color.toLowerCase()}">${color}</span>
+                        <span class="separator">|</span>
+                        <span class="${getNumberClass(number)}">${number}</span>`;
+                        
+                    dom.currentTrendDisplay.textContent = `Current Trend: ${selectedTrend}`;
+                    dom['confidence-bar'].style.width = `${confidence}%`;
+                    dom['confidence-text'].textContent = `Confidence: ${confidence}%`;
+
+                    addToHistory({ period, number, result, color, status: 'Pending' });
+                    startTimer();
+                } catch (error) {
+                    displayError("A system error occurred.");
+                } finally {
+                    isAnalyzing = false;
+                    setPredictButtonState(false, false);
+                }
+            }, analysisTime);
+        }
+        
+        function setPredictButtonState(isDisabled, isProcessing) {
+            dom.predictBtn.disabled = isDisabled;
+            dom.predictBtn.innerHTML = isProcessing
+                ? '<i class="fas fa-spinner fa-spin"></i> Analyzing...'
+                : '<i class="fas fa-play"></i> PREDICT';
+        }
+
+        function addToHistory(item) {
+            predictionHistory.unshift(item);
+            if (predictionHistory.length > 50) predictionHistory.pop();
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const displayCount = 5;
+            if (predictionHistory.length === 0) {
+                dom.historyTableBody.innerHTML = `<tr><td colspan="5" style="opacity:0.7;">No prediction log.</td></tr>`;
+                return;
+            }
+            let tableHTML = '';
+            predictionHistory.slice(0, displayCount).forEach(item => {
+                const statusCellHTML = item.status === 'Pending'
+                    ? `<div class="history-buttons">
+                           <button class="btn-win-hist" data-period="${item.period}" title="Win">W</button>
+                           <button class="btn-loss-hist" data-period="${item.period}" title="Loss">L</button>
+                       </div>`
+                    : `<span class="status-${item.status.toLowerCase()}">${item.status}</span>`;
+                
+                tableHTML += `
+                    <tr>
+                        <td>#${item.period}</td>
+                        <td><span class="${getNumberClass(item.number)}">${item.number}</span></td>
+                        <td>${item.result}</td>
+                        <td><span class="color-tag color-${item.color.toLowerCase()}">${item.color}</span></td>
+                        <td>${statusCellHTML}</td>
+                    </tr>
+                `;
+            });
+            dom.historyTableBody.innerHTML = tableHTML;
+        }
+        
+        function handleHistoryButtonClick(event) {
+            const button = event.target.closest('button');
+            if (!button) return;
+
+            const period = button.dataset.period;
+            const newStatus = button.classList.contains('btn-win-hist') ? 'Win' : 'Loss';
+
+            const predictionIndex = predictionHistory.findIndex(p => p.period === period);
+            if (predictionIndex > -1) {
+                predictionHistory[predictionIndex].status = newStatus;
+                renderHistory();
+
+                if (predictionIndex === 0) {
+                    const nextPeriod = parseInt(period, 10) + 1;
+                    dom.periodInput.value = nextPeriod.toString();
+                    setTimeout(() => handlePrediction(), 400);
+                }
+            }
+        }
+
+        const formatTime = (seconds) => {
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        };
+
+        function startTimer() {
+            stopTimer();
+            let countdown = selectedDuration;
+            dom.timer.textContent = formatTime(countdown);
+            timerInterval = setInterval(() => {
+                countdown--;
+                if (countdown < 0) {
+                    stopTimer();
+                    const latestPrediction = predictionHistory[0];
+                    if (latestPrediction && latestPrediction.status === 'Pending') {
+                        latestPrediction.status = 'Loss';
+                        renderHistory();
+                    }
+                } else {
+                    dom.timer.textContent = formatTime(countdown);
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            dom.timer.textContent = "00:00";
+        }
+
+        function displayError(msg) { dom.errorMessage.textContent = msg; }
+        function clearError() { dom.errorMessage.textContent = ''; }
+    </script>
+</body>
+</html>
