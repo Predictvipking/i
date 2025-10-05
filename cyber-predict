@@ -1,0 +1,1032 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Cybertech Predictor — Final Version (Compact Radio AI Strength & Icon Buttons)</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+  /* --- Theme Variables --- */
+  :root {
+    /* Dark Theme (Default) */
+    --bg: #061021;
+    --card: rgba(255, 255, 255, 0.04);
+    --accent1: #00e6ff;
+    --accent2: #9b5cff;
+    --muted: #9fb3c8;
+    --text: #e6f2fb;
+    --input-bg: rgba(0, 0, 0, 0.18);
+    --input-border: rgba(255, 255, 255, 0.04);
+    
+    /* Custom Colors */
+    --win: #16a34a; /* Green */
+    --loss: #ef4444; /* Red */
+    --violet: #a855f7; /* Violet */
+    --big-color: #f6c84c; /* Yellow (Gold) */
+    --small-color: #3b82f6; /* Blue */
+    
+    --neon-shadow: 0 8px 30px rgba(0, 230, 255, 0.06), 0 0 12px rgba(155, 92, 255, 0.06);
+    --chip-bg: rgba(255, 255, 255, 0.03);
+    --chip-border: rgba(255, 255, 255, 0.04);
+  }
+
+  [data-theme="light"] {
+    /* Light Theme */
+    --bg: #f8f8f8;
+    --card: #ffffff;
+    --accent1: #007bff;
+    --accent2: #6f42c1;
+    --muted: #6c757d;
+    --text: #212529;
+    --input-bg: #e9ecef;
+    --input-border: #ced4da;
+    --win: #198754;
+    --loss: #dc3545;
+    --violet: #6f42c1;
+    --big-color: #d97706;
+    --small-color: #1d4ed8;
+    --neon-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    --chip-bg: #e2e6ea;
+    --chip-border: #ced4da;
+  }
+
+  /* --- Base Styles --- */
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 18px;
+    transition: background 0.3s, color 0.3s;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-osx-font-smoothing:grayscale;
+  }
+
+  /* --- Layout & Header --- */
+  .wrap{
+    max-width: 600px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  header{
+    grid-column: 1/-1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo{
+    width: 48px; height: 48px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    display: flex; align-items: center; justify-content: center; font-weight: 800;
+    color: #001; font-size: 16px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+  h1{margin:0; font-size: 18px; letter-spacing: 0.2px}
+  p.lead{margin:0; color: var(--muted); font-size: 13px}
+
+  /* Theme Switch Button */
+  #themeSwitch {
+    background: var(--card);
+    border: 1px solid var(--input-border);
+    color: var(--muted);
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* --- Main Panel & Controls --- */
+  .panel{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    box-shadow: var(--neon-shadow);
+    padding: 14px; border-radius: 12px;
+    display: flex; flex-direction: column; gap: 14px;
+    transition: background 0.3s, border 0.3s, box-shadow 0.3s;
+  }
+  [data-theme="light"] .panel {
+    background: var(--card);
+    border: 1px solid #dee2e6;
+    box-shadow: var(--neon-shadow);
+  }
+
+  .section{margin-bottom:14px}
+  label.small{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+
+  /* Combined Period/Predict Row */
+  .period-predict-row {
+      display: grid;
+      grid-template-columns: 1fr auto; 
+      gap: 10px;
+      align-items: end;
+  }
+  .period-input-wrapper {
+      flex: 1;
+  }
+
+  input[type="number"]{
+    width:100%;padding:10px;border-radius:10px;border:1px solid var(--input-border);
+    background: var(--input-bg); color: var(--text); font-size:14px;
+    outline:none; transition: background 0.3s, border 0.3s, color 0.3s;
+  }
+  
+  .modes{display:flex;gap:8px;margin-top:8px}
+  .modeBtn{
+    padding: 8px 12px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer;
+    background: transparent; color: var(--muted); border: 1px solid var(--input-border);
+    transition: all .18s ease;
+  }
+  .modeBtn.active{
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    color: var(--bg);
+    box-shadow: 0 6px 18px rgba(0, 230, 255, 0.06);
+  }
+  
+  /* AI Strength Radio Buttons (New Style) */
+  .ai-strength-wrapper {
+      margin-top: 10px; 
+      display: flex;
+      flex-direction: column;
+  }
+  .radio-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap; /* Allow wrapping on small screens */
+  }
+  .radio-label {
+      display: flex;
+      align-items: center;
+      padding: 6px 10px; /* Compact padding */
+      border-radius: 10px;
+      cursor: pointer;
+      background: var(--chip-bg);
+      border: 1px solid var(--chip-border);
+      font-size: 12px; /* Compact font size */
+      font-weight: 700;
+      color: var(--muted);
+      transition: all 0.2s;
+      flex: 1 1 auto; /* Allow flexible width */
+      justify-content: center;
+  }
+  .radio-label input[type="radio"] {
+      /* Hide the default radio button */
+      opacity: 0;
+      width: 0;
+      height: 0;
+  }
+  .radio-custom {
+      height: 14px;
+      width: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--muted);
+      margin-right: 6px; /* Smaller margin */
+      transition: all 0.2s;
+      flex-shrink: 0;
+  }
+  /* Style for CHECKED state */
+  .radio-label input:checked ~ .radio-custom {
+      border-color: var(--accent1);
+      background-color: var(--accent1);
+      box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px rgba(0, 230, 255, 0.3);
+  }
+  /* Style for the active label (the container) */
+  .radio-label.selected {
+      color: var(--text);
+      background: var(--input-bg);
+      border-color: var(--accent1);
+  }
+
+
+  /* Buttons */
+  .btn{
+    padding: 10px 12px; border-radius: 10px; border: none; cursor: pointer;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    color: var(--bg); font-weight: 700; transition: transform .12s;
+    width: 100%;
+  }
+  .btn.secondary{
+    background: transparent; border: 1px solid var(--input-border);
+    color: var(--muted);
+  }
+
+  /* Icon Button Row Styling */
+  .action-icon-row{
+    display:flex;
+    gap: 8px;
+    margin-top:10px;
+    flex-wrap:wrap;
+  }
+  .icon-btn{
+    flex: 1; 
+    padding: 10px 8px; 
+    border-radius: 10px; 
+    border: 1px solid var(--input-border); 
+    background: var(--chip-bg); 
+    color: var(--muted); 
+    font-size: 14px; 
+    font-weight: 700; 
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .icon-btn i {
+      margin-right: 4px;
+      font-size: 16px;
+  }
+  .icon-btn:hover {
+      background: var(--card);
+      border-color: var(--accent1);
+      color: var(--text);
+  }
+
+  /* Win/Loss Colors for Icon Buttons */
+  #markWin i { color: var(--win); }
+  #markLoss i { color: var(--loss); }
+  #clearAll i { color: var(--muted); } 
+
+
+  /* --- Result Card Styling --- */
+  .result-card{
+    display:flex; gap: 14px; align-items: center; padding: 12px; border-radius: 12px;
+    background: var(--card); border: 1px solid var(--input-border);
+  }
+  .res-element-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+  }
+  .res-num { font-size: 32px; letter-spacing: 1px; }
+  .res-meta { font-size: 14px; margin-top: -4px; }
+  .res-red { background: var(--loss); color: #fff; }
+  .res-violet { background: var(--violet); color: #001; }
+  .res-green { background: var(--win); color: #001; }
+  .res-big { background: var(--big-color); color: #001; }
+  .res-small { background: var(--small-color); color: #fff; }
+  .muted{color:var(--muted)}
+
+  /* --- Stats Styling --- */
+  .stats-row{display:flex;gap:10px;margin-top:0}
+  .stat-card{
+    flex:1;padding:8px;border-radius:8px;
+    background: var(--card); border:1px solid var(--input-border);
+    text-align:center;box-shadow:var(--neon-shadow);
+  }
+  .stat-title{font-size:11px;color:var(--muted);margin-bottom:4px}
+  .stat-value{font-size:16px;font-weight:900}
+  .stat-win-color { color: var(--win); }
+  .stat-loss-color { color: var(--loss); }
+
+  /* --- Prediction History Compact Style --- */
+  .history-card{
+    background: var(--card);
+    padding: 10px;
+    border-radius: 12px;
+    overflow: auto;
+    border: 1px solid var(--input-border);
+  }
+  .history-line{
+    display: flex;
+    align-items: center;
+    gap: 6px; 
+    padding: 4px 0; 
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.02);
+  }
+  [data-theme="light"] .history-line {
+    border-bottom: 1px dashed #e9ecef;
+  }
+  .history-period{
+    min-width: 110px;
+    font-size: 11px;
+    font-weight: 900;
+    flex-shrink: 0;
+    text-align: left;
+    color: var(--muted);
+  }
+  .chips-row{
+    display: flex;
+    gap: 4px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    flex-grow: 1;
+    padding: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .chip {
+    min-width: 20px;
+    height: 20px;
+    border-radius: 999px; 
+    background: var(--chip-bg);
+    border: 1px solid var(--chip-border);
+    font-weight: 700;
+    color: var(--muted);
+    font-size: 10px;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  /* Chip Color Coding based on Number */
+  .chip.chip-red { background: var(--loss); color: #fff; border:none }
+  .chip.chip-green { background: var(--win); color: var(--bg); border:none }
+  .chip.chip-violet { background: var(--violet); color: var(--bg); border:none }
+  .chip.chip-big { background: var(--big-color); color: var(--bg); border:none }
+  .chip.chip-small { background: var(--small-color); color: #fff; border:none }
+  
+  /* Split Color Chips (0 and 5) */
+  .chip.chip-split-0 { 
+    background: linear-gradient(90deg, var(--loss) 50%, var(--violet) 50%);
+    color: #fff;
+    border: none;
+  }
+  .chip.chip-split-5 { 
+    background: linear-gradient(90deg, var(--win) 50%, var(--violet) 50%);
+    color: var(--bg);
+    border: none;
+  }
+
+  /* Win Highlight (Zig-Zag/Active Look) */
+  .chip.win-highlight {
+    box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--win); 
+    border: 1px solid var(--win);
+    transform: scale(1.05);
+    animation: pulse-win 1s infinite alternate;
+  }
+  [data-theme="light"] .chip.win-highlight {
+    box-shadow: 0 0 0 2px var(--card), 0 0 0 4px var(--win);
+  }
+  @keyframes pulse-win {
+    from { opacity: 1; }
+    to { opacity: 0.9; }
+  }
+
+  /* Loss Highlight (Subtle Red Border on Predicted Chip) */
+  .chip.loss-highlight {
+    box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--loss); 
+    border: 1px solid var(--loss);
+    transform: scale(1.05);
+  }
+  [data-theme="light"] .chip.loss-highlight {
+    box-shadow: 0 0 0 2px var(--card), 0 0 0 4px var(--loss);
+  }
+
+  
+  /* History Status Badge */
+  .status-badge {
+    min-width: 25px;
+    height: 18px;
+    font-size: 10px;
+    font-weight: 900;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .status-badge.win { background: var(--win); color: var(--bg); }
+  .status-badge.loss { background: var(--loss); color: #fff; }
+
+  /* --- Helper Styles --- */
+  .num-green{color:var(--win);font-weight:900}
+  .num-red{color:var(--loss);font-weight:900}
+  .num-split-0{background-image: linear-gradient(90deg, var(--loss) 50%, var(--violet) 50%)}
+  .num-split-5{background-image: linear-gradient(90deg, var(--win) 50%, var(--violet) 50%)}
+  .num-split-0, .num-split-5{font-weight:900; background-clip:text; -webkit-background-clip:text; color:transparent}
+  
+  /* --- Mobile Optimization --- */
+  @media (max-width: 640px) {
+    body { padding: 8px; }
+    h1 { font-size: 14px; }
+    .lead { font-size: 11px; }
+    .panel { padding: 10px; gap: 10px; }
+    .res-element-box { width: 50px; height: 50px; }
+    .res-num { font-size: 24px; }
+    .res-meta { font-size: 12px; margin-top: 0; }
+    .history-period { min-width: 80px; }
+    /* Mobile-specific changes for controls */
+    .period-predict-row { 
+        grid-template-columns: 1fr 90px; 
+    }
+    .radio-group {
+        gap: 6px; 
+    }
+    .radio-label {
+        padding: 6px 8px; /* Extra compact */
+        font-size: 11px; /* Even smaller font */
+    }
+    .radio-custom {
+        height: 12px;
+        width: 12px;
+    }
+    .action-icon-row > .icon-btn {
+        flex: 1 1 0; 
+    }
+  }
+
+  footer{grid-column:1/-1;margin-top:10px;color:var(--muted);font-size:11px;text-align:center}
+</style>
+
+</head>
+<body data-theme="dark">
+  <div class="wrap">
+    <header>
+      <div class="header-left">
+        <div class="logo">CP</div> 
+        <div>
+          <h1>Cybertech Predictor</h1>
+          <p class="lead">AI-powered pattern analysis for Size, Color, and Number.</p>
+        </div>
+      </div>
+      <button id="themeSwitch" title="Toggle Light/Dark Mode">
+        <i class="fa-solid fa-sun" style="display: none;"></i>
+        <i class="fa-solid fa-moon"></i>
+      </button>
+    </header>
+
+    <div class="panel">
+      
+      <div class="section">
+        
+        <div class="period-predict-row">
+            <div class="period-input-wrapper">
+                <label class="small"><i class="fa-solid fa-clock"></i> Period Number</label>
+                <input id="periodInput" type="number" placeholder="e.g. 202509121234" />
+            </div>
+            <div>
+                <button id="predictBtn" class="btn" style="height: 44px; margin-top: 17px;"><i class="fa-solid fa-shuffle"></i> Predict</button>
+            </div>
+        </div>
+        
+        <div class="modes" style="margin-top:8px">
+          <button id="btnSN" class="modeBtn active" data-mode="size-number">Size + Number</button>
+          <button id="btnSC" class="modeBtn" data-mode="size-color">Size + Color</button>
+        </div>
+
+        <div class="ai-strength-wrapper">
+            <label class="small"><i class="fa-solid fa-brain"></i> AI Strength</label>
+            <div class="radio-group" id="aiStrengthRadioGroup">
+                <label class="radio-label" data-value="0.0" id="label00">
+                    <input type="radio" name="aiStrength" value="0.0">
+                    <span class="radio-custom"></span>
+                    0.0 (Det.)
+                </label>
+
+                <label class="radio-label selected" data-value="0.5" id="label05">
+                    <input type="radio" name="aiStrength" value="0.5" checked>
+                    <span class="radio-custom"></span>
+                    0.5 (Bal.)
+                </label>
+
+                <label class="radio-label" data-value="0.95" id="label095">
+                    <input type="radio" name="aiStrength" value="0.95">
+                    <span class="radio-custom"></span>
+                    0.95 (V. Str.)
+                </label>
+            </div>
+        </div>
+      </div>
+      
+      <div class="section">
+        <div class="result-card" aria-live="polite">
+          <div id="predictedElementBox" class="res-element-box">
+            <div id="displayNumber" class="res-num">—</div>
+            <div id="displaySize" class="res-meta">—</div>
+          </div>
+          <div style="flex:1">
+            <div id="displayTitle">No prediction yet</div>
+            <div id="displaySub" class="muted">Enter a period number and click Predict.</div>
+            <div id="displayColor" style="margin-top:6px"></div>
+          </div>
+        </div>
+        
+        <div class="action-icon-row">
+            <button id="markWin" class="icon-btn" title="Mark Prediction as Win">
+                <i class="fa-solid fa-circle-check"></i> Win
+            </button>
+            <button id="markLoss" class="icon-btn" title="Mark Prediction as Loss">
+                <i class="fa-solid fa-circle-xmark"></i> Loss
+            </button>
+            <button id="clearAll" class="icon-btn" title="Clear All History">
+                <i class="fa-solid fa-trash"></i> Clear All
+            </button>
+        </div>
+      </div>
+
+      <div class="stats-row" id="statsRow">
+        <div class="stat-card">
+          <div class="stat-title"><i class="fa-solid fa-trophy"></i> Win</div>
+          <div class="stat-value stat-win-color" id="statWin">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title"><i class="fa-solid fa-skull-crossbones"></i> Loss</div>
+          <div class="stat-value stat-loss-color" id="statLoss">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title"><i class="fa-solid fa-bullseye"></i> Accuracy</div>
+          <div class="stat-value" id="statAcc">0%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title"><i class="fa-solid fa-arrow-right-arrow-left"></i> Reverse</div>
+          <div class="stat-value" id="statRev">0%</div>
+        </div>
+      </div>
+
+      <div class="section" style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+        <h3 style="margin: 0"><i class="fa-solid fa-list-check"></i> Prediction History (Compact)</h3>
+        <div class="history-card" style="max-height: 280px; flex: 1;">
+          <div id="historyLinesContainer"></div>
+        </div>
+      </div>
+    </div>
+
+    <footer><i class="fa-solid fa-server"></i> Built-in local storage • <i class="fa-solid fa-forward"></i> Auto-next period</footer>
+  </div>
+
+<script>
+/* -----------------
+   State & storage
+   ----------------- */
+const STORAGE_KEY = 'cybertech_minimal_history_v7'; // Updated storage key for new format
+let state = {
+  history: [], 
+  mode: 'size-number',
+  aiStrength: '0.5' 
+};
+const maxHistoryShown = 500;
+
+/* DOM refs */
+const periodInput = document.getElementById('periodInput');
+const predictedElementBox = document.getElementById('predictedElementBox');
+const displayNumber = document.getElementById('displayNumber');
+const displaySize = document.getElementById('displaySize');
+const displayTitle = document.getElementById('displayTitle');
+const displaySub = document.getElementById('displaySub');
+const displayColor = document.getElementById('displayColor');
+const historyLinesContainer = document.getElementById('historyLinesContainer');
+const btnSN = document.getElementById('btnSN');
+const btnSC = document.getElementById('btnSC');
+const markWin = document.getElementById('markWin');
+const markLoss = document.getElementById('markLoss');
+const clearAll = document.getElementById('clearAll');
+const aiStrengthRadioGroup = document.getElementById('aiStrengthRadioGroup'); // New ref
+const statWin = document.getElementById('statWin');
+const statLoss = document.getElementById('statLoss');
+const statAcc = document.getElementById('statAcc');
+const statRev = document.getElementById('statRev');
+const themeSwitch = document.getElementById('themeSwitch');
+const predictBtn = document.getElementById('predictBtn');
+
+
+/* -----------------
+   Helpers
+   ----------------- */
+function saveState(){ 
+  const data = {
+    history: state.history.slice(0,maxHistoryShown),
+    aiStrength: state.aiStrength,
+    mode: state.mode
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); 
+}
+
+function loadState(){ 
+  const raw = localStorage.getItem(STORAGE_KEY); 
+  const data = raw ? JSON.parse(raw) : { history: [], aiStrength: '0.5', mode: 'size-number' };
+  state.history = data.history || [];
+  state.aiStrength = data.aiStrength || '0.5';
+  state.mode = data.mode || 'size-number';
+
+  // Apply loaded state to UI elements
+  // Update: Set the checked radio button based on loaded state
+  const radio = document.querySelector(`input[name="aiStrength"][value="${state.aiStrength}"]`);
+  if (radio) {
+      radio.checked = true;
+      // Update custom label styling
+      document.querySelectorAll('.radio-label').forEach(label => label.classList.remove('selected'));
+      radio.closest('.radio-label').classList.add('selected');
+  }
+
+  if (state.mode === 'size-color') {
+    btnSC.classList.add('active');
+    btnSN.classList.remove('active');
+  } else {
+    btnSN.classList.add('active');
+    btnSC.classList.remove('active');
+  }
+}
+
+function baseNumberFromPeriod(period){
+  // Core logic to get a deterministic base number from the period
+  const full = Math.floor(Math.abs(Number(period) || 0));
+  const last4 = full % 10000;
+  const squared = (last4 * last4);
+  const mixed = (squared + (last4 * 3));
+  return Math.floor(mixed % 10);
+}
+function calcSizeFromNum(n){ return (n > 7 || n < 3) ? 'Big' : 'Small'; }
+function calcColorFromNum(n){ if (n <= 3) return 'Red'; if (n <= 6) return 'Green'; return 'Violet'; }
+
+
+function analyzePatterns(){
+  const confirmed = state.history.filter(h => h.status !== 'Pending'); 
+  const recent = confirmed.slice(0, 10);
+  const recentWins = confirmed.filter(h => h.status === 'Win').slice(0, 8); 
+
+  // 1. Opposite Bias Logic (based on Size of ALL recent confirmed results)
+  const sizeCount = { Big:0, Small:0 };
+  recent.forEach(r => { if (r.size) sizeCount[r.size] = (sizeCount[r.size]||0)+1; });
+  const total = recent.length || 1; 
+  
+  const analysis = {
+      sizeOppositeBias: { 
+          Big: 1 - sizeCount.Big / total, 
+          Small: 1 - sizeCount.Small / total 
+      },
+      streakRecommendation: null,
+      streakStrength: 0 
+  };
+
+  // 2. Immediate Streak Check (e.g., 9-9 or 4-4)
+  if (recentWins.length >= 2) {
+      const lastWin = recentWins[0].number;
+      const secondLastWin = recentWins[1].number;
+      
+      if (lastWin === secondLastWin) {
+          analysis.streakRecommendation = lastWin;
+          analysis.streakStrength = 1.0; 
+      }
+  }
+
+  // 3. Dominant Number Check 
+  const numberCounts = {};
+  recentWins.forEach(h => {
+      numberCounts[h.number] = (numberCounts[h.number] || 0) + 1;
+  });
+  
+  let maxCount = 0;
+  let dominantNumber = -1;
+  for (const num in numberCounts) {
+      if (numberCounts[num] > maxCount) {
+          maxCount = numberCounts[num];
+          dominantNumber = parseInt(num);
+      }
+  }
+
+  if (recentWins.length >= 4 && maxCount / recentWins.length >= 0.5) {
+      if (analysis.streakStrength < 1.0) { 
+         analysis.streakRecommendation = dominantNumber;
+         analysis.streakStrength = maxCount / recentWins.length; 
+      }
+  }
+
+  return analysis;
+}
+
+
+function biasedNumberPick(base, analysis, strength){
+    const weights = new Array(10).fill(1); 
+
+    for (let d = 0; d <= 9; d++){
+        // 1. Opposite Bias (Pattern analysis)
+        const size = calcSizeFromNum(d);
+        weights[d] += (analysis.sizeOppositeBias[size] || 0.5) * 2 * strength;
+
+        // 2. Base Period Proximity (Deterministic link)
+        const dist = Math.abs(d - base);
+        weights[d] += Math.max(0, 3 - dist) * (0.12 * (1 - strength)); 
+
+        // 3. Streak/Pattern Logic
+        if (analysis.streakRecommendation !== null && d === analysis.streakRecommendation) {
+             weights[d] += 4.0 * analysis.streakStrength; 
+        }
+
+        if (weights[d] < 0.01) weights[d] = 0.01;
+    }
+    
+    // Weighted random selection
+    const sum = weights.reduce((a,b)=>a+b,0);
+    const r = Math.random() * sum;
+    let a = 0;
+    for (let i=0;i<10;i++){
+        a += weights[i];
+        if (r <= a) return i;
+    }
+    return base; 
+}
+
+
+function makePrediction(period){
+  const mode = state.mode;
+  const aiStrength = parseFloat(state.aiStrength); 
+  const periodToUse = periodInput.value.trim(); 
+
+  if (!periodToUse || isNaN(Number(periodToUse))) {
+    console.error("Invalid period number for prediction.");
+    return;
+  }
+
+  const base = baseNumberFromPeriod(periodToUse);
+  const analysis = analyzePatterns(); 
+  const finalNum = biasedNumberPick(base, analysis, aiStrength);
+  const size = calcSizeFromNum(finalNum);
+  const color = calcColorFromNum(finalNum);
+
+  const entry = {
+    ts: Date.now(),
+    period: String(periodToUse),
+    number: finalNum,
+    size,
+    color,
+    mode,
+    status: 'Pending',
+  };
+  state.history.unshift(entry);
+  if (state.history.length > maxHistoryShown) state.history.pop();
+  saveState();
+  renderAll();
+  animateNewResult();
+  return entry;
+}
+
+/* --- Get Chip Class based on Number --- */
+function getChipClass(n) {
+    if (n === 0) return 'chip-split-0';
+    if (n === 5) return 'chip-split-5';
+    if ([1, 3, 7, 9].includes(n)) return 'chip-green';
+    if ([2, 4, 6, 8].includes(n)) return 'chip-red';
+    return '';
+}
+
+/* -----------------
+   UI helpers
+   ----------------- */
+function numberToHTML(n){
+  if (n === 0) return `<span class="num-split-0">${n}</span>`;
+  if (n === 5) return `<span class="num-split-5">${n}</span>`;
+  if ([1,3,7,9].includes(n)) return `<span class="num-green">${n}</span>`;
+  if ([2,4,6,8].includes(n)) return `<span class="num-red">${n}</span>`;
+  return `${n}`;
+}
+
+function renderAll(){
+  renderLastPrediction();
+  renderPredictionHistoryLines();
+  updateStats();
+}
+
+/* last prediction card */
+function renderLastPrediction(){
+  const last = state.history[0];
+  if (!last){
+    predictedElementBox.className = 'res-element-box';
+    displayNumber.textContent = '—';
+    displaySize.textContent = '—';
+    displayTitle.textContent = 'No prediction yet';
+    displaySub.textContent = 'Enter period and click Predict';
+    displayColor.innerHTML = '';
+    return;
+  }
+  
+  predictedElementBox.className = 'res-element-box'; // Reset classes
+  displayTitle.textContent = `Predicted for period ${last.period}`;
+  displaySub.textContent = `${last.mode === 'size-number' ? 'Size + Number' : 'Size + Color'} • Status: ${last.status}`;
+  
+  if (last.mode === 'size-number'){
+    displayNumber.innerHTML = numberToHTML(last.number);
+    displaySize.textContent = last.size;
+    predictedElementBox.classList.add(last.size === 'Big' ? 'res-big' : 'res-small');
+    displayColor.innerHTML = '';
+  } else {
+    displayNumber.textContent = last.color.substring(0, 1);
+    displaySize.textContent = last.size;
+    predictedElementBox.classList.add('res-' + last.color.toLowerCase());
+    displayColor.innerHTML = `<div style="font-weight:700; font-size:14px; color:var(--text);">${last.color} / ${last.size}</div>`;
+  }
+}
+
+/* Prediction history lines: chip pattern (Win/Loss Highlight) */
+function renderPredictionHistoryLines(){
+  historyLinesContainer.innerHTML = '';
+  const show = Math.min(state.history.length, 100); 
+  for (let idx=0; idx<show; idx++){
+    const h = state.history[idx];
+    const line = document.createElement('div');
+    line.className = 'history-line';
+
+    // Period (FULL period number)
+    const periodDiv = document.createElement('div');
+    periodDiv.className = 'history-period';
+    periodDiv.innerHTML = h.period;
+    
+    // Chips Row
+    const chipsWrap = document.createElement('div');
+    chipsWrap.className = 'chips-row';
+
+    // Create chips 0..9
+    for (let n=0;n<=9;n++){
+      const chip = document.createElement('div');
+      chip.className = 'chip ' + getChipClass(n); // Apply base number color
+      chip.innerText = n;
+      
+      let isPredicted = (h.mode === 'size-number' && n === h.number) || 
+                        (h.mode === 'size-color' && calcColorFromNum(n) === h.color && calcSizeFromNum(n) === h.size);
+
+      if (isPredicted){
+        if (h.status === 'Win'){
+             // Highlight chip for WIN 
+             chip.classList.add('win-highlight');
+        } else if (h.status === 'Lost') {
+             // Highlight chip for LOSS 
+             chip.classList.add('loss-highlight');
+        } else {
+             // Pending: Highlight with predicted size color/size
+             chip.classList.remove(getChipClass(n));
+             chip.classList.add(h.size === 'Big' ? 'chip-big' : 'chip-small');
+        }
+      }
+      
+      chipsWrap.appendChild(chip);
+    }
+
+    line.appendChild(periodDiv);
+    line.appendChild(chipsWrap);
+    
+    // Add simple WIN/LOSS badge if confirmed
+    if (h.status !== 'Pending'){
+        const statusBadge = document.createElement('div');
+        statusBadge.className = 'status-badge ' + (h.status === 'Win' ? 'win' : 'loss');
+        statusBadge.innerText = h.status === 'Win' ? 'W' : 'L';
+        line.appendChild(statusBadge);
+    }
+
+    historyLinesContainer.appendChild(line);
+  }
+}
+
+/* Mark functions */
+function markLatestAs(newStatus){
+  if (!state.history.length) return;
+  const latest = state.history[0];
+  if (latest.status !== 'Pending') return alert('This prediction is already confirmed.');
+  
+  latest.status = newStatus === 'Win' ? 'Win' : 'Lost';
+  saveState();
+  renderAll();
+
+  // Auto-next period logic: increments the period number
+  let cur = latest.period;
+  let next;
+  if (!isNaN(Number(cur))) {
+    try {
+      // Use BigInt for large period numbers
+      const currentPeriodBig = BigInt(cur);
+      next = (currentPeriodBig + 1n).toString();
+    } catch (e) {
+      next = String(Number(cur) + 1);
+    }
+  }
+  else {
+    next = String(Date.now());
+  }
+  
+  // Update the input value immediately, then call makePrediction
+  periodInput.value = next; 
+
+  setTimeout(() => {
+    makePrediction(next); 
+  }, 180);
+}
+
+/* Clear all */
+function clearAllData(){
+  if (!confirm('Clear all prediction history?')) return;
+  state.history = [];
+  saveState();
+  renderAll();
+  periodInput.value = '';
+}
+
+/* Animations & UI niceties */
+function animateNewResult(){
+  predictedElementBox.classList.add('glow-anim');
+  setTimeout(() => {
+    predictedElementBox.classList.remove('glow-anim');
+  }, 1000);
+}
+
+/* Stats update */
+function updateStats(){
+  const confirmed = state.history.filter(h => h.status === 'Win' || h.status === 'Lost');
+  const wins = confirmed.filter(h => h.status === 'Win').length;
+  const losses = confirmed.filter(h => h.status === 'Lost').length;
+  const total = wins + losses;
+  const acc = total ? Math.round((wins / total) * 100) : 0;
+  const rev = total ? Math.round((losses / total) * 100) : 0;
+
+  statWin.textContent = wins;
+  statLoss.textContent = losses;
+  statAcc.textContent = acc + '%';
+  statRev.textContent = rev + '%';
+  
+  statAcc.className = 'stat-value ' + (acc >= 50 ? 'stat-win-color' : 'stat-loss-color');
+  statRev.className = 'stat-value ' + (rev >= 50 ? 'stat-loss-color' : 'stat-win-color');
+}
+
+/* Light/Dark Mode Toggle */
+function toggleTheme() {
+    const body = document.body;
+    const isDark = body.getAttribute('data-theme') === 'dark';
+    const sunIcon = document.querySelector('#themeSwitch .fa-sun');
+    const moonIcon = document.querySelector('#themeSwitch .fa-moon');
+
+    if (isDark) {
+        body.setAttribute('data-theme', 'light');
+        localStorage.setItem('theme', 'light');
+        sunIcon.style.display = 'inline-block';
+        moonIcon.style.display = 'none';
+    } else {
+        body.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+        sunIcon.style.display = 'none';
+        moonIcon.style.display = 'inline-block';
+    }
+}
+
+/* Events wiring */
+btnSN.addEventListener('click', () => { state.mode = 'size-number'; saveState(); btnSN.classList.add('active'); btnSC.classList.remove('active'); renderLastPrediction(); });
+btnSC.addEventListener('click', () => { state.mode = 'size-color'; saveState(); btnSC.classList.add('active'); btnSN.classList.remove('active'); renderLastPrediction(); });
+
+// New: Event listener for AI Strength Radio buttons
+aiStrengthRadioGroup.addEventListener('change', (e) => {
+    if (e.target.name === 'aiStrength') {
+        state.aiStrength = e.target.value;
+        saveState();
+        
+        // Update custom styling
+        document.querySelectorAll('.radio-label').forEach(label => label.classList.remove('selected'));
+        e.target.closest('.radio-label').classList.add('selected');
+    }
+});
+
+predictBtn.addEventListener('click', () => {
+  const p = periodInput.value.trim();
+  if (!p || isNaN(Number(p))) return alert('Enter a valid period number');
+  makePrediction(p);
+});
+
+markWin.addEventListener('click', () => markLatestAs('Win'));
+markLoss.addEventListener('click', () => markLatestAs('Lost'));
+clearAll.addEventListener('click', clearAllData);
+themeSwitch.addEventListener('click', toggleTheme);
+
+/* on load */
+(function init(){
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  document.body.setAttribute('data-theme', savedTheme);
+  const sunIcon = document.querySelector('#themeSwitch .fa-sun');
+  const moonIcon = document.querySelector('#themeSwitch .fa-moon');
+  if (savedTheme === 'light') {
+    sunIcon.style.display = 'inline-block';
+    moonIcon.style.display = 'none';
+  } else {
+    sunIcon.style.display = 'none';
+    moonIcon.style.display = 'inline-block';
+  }
+
+  loadState();
+  renderAll();
+  
+  // Set initial period to next sequential number if history exists
+  if (state.history.length && !isNaN(Number(state.history[0].period))){
+    try {
+      const nextPeriod = (BigInt(state.history[0].period) + 1n).toString();
+      periodInput.value = nextPeriod;
+    } catch(e) {
+      periodInput.value = String(Number(state.history[0].period) + 1);
+    }
+  }
+})();
+</script>
+
+</body>
+</html>
