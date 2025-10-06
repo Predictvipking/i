@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Cybertech Predictor — Final Version (Compact Radio AI Strength & Icon Buttons)</title>
+<title>Cybertech Predictor — Final Version (Patterns Applied)</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -483,7 +483,7 @@
         </div>
 
         <div class="ai-strength-wrapper">
-            <label class="small"><i class="fa-solid fa-brain"></i> AI Strength</label>
+            <label class="small"><i class="fa-solid fa-brain"></i> AI Strength (Confidence Level)</label>
             <div class="radio-group" id="aiStrengthRadioGroup">
                 <label class="radio-label" data-value="0.0" id="label00">
                     <input type="radio" name="aiStrength" value="0.0">
@@ -566,7 +566,7 @@
 /* -----------------
    State & storage
    ----------------- */
-const STORAGE_KEY = 'cybertech_minimal_history_v7'; // Updated storage key for new format
+const STORAGE_KEY = 'cybertech_minimal_history_v8_patterns'; // Updated storage key for new format
 let state = {
   history: [], 
   mode: 'size-number',
@@ -644,47 +644,81 @@ function baseNumberFromPeriod(period){
   return Math.floor(mixed % 10);
 }
 function calcSizeFromNum(n){ return (n > 7 || n < 3) ? 'Big' : 'Small'; }
-function calcColorFromNum(n){ if (n <= 3) return 'Red'; if (n <= 6) return 'Green'; return 'Violet'; }
+function calcColorFromNum(n){ 
+  if (n === 0) return 'Red/Violet'; // Split
+  if (n === 5) return 'Green/Violet'; // Split
+  if ([1, 3, 7, 9].includes(n)) return 'Green'; 
+  if ([2, 4, 6, 8].includes(n)) return 'Red'; 
+  return 'Violet'; // Should not happen
+}
 
 
 function analyzePatterns(){
   const confirmed = state.history.filter(h => h.status !== 'Pending'); 
-  const recent = confirmed.slice(0, 10);
-  const recentWins = confirmed.filter(h => h.status === 'Win').slice(0, 8); 
+  const recent = confirmed.slice(0, 12); // Use last 12 results for better pattern detection
+  const recentWins = confirmed.filter(h => h.status === 'Win').slice(0, 10); // Use last 10 wins
 
-  // 1. Opposite Bias Logic (based on Size of ALL recent confirmed results)
-  const sizeCount = { Big:0, Small:0 };
-  recent.forEach(r => { if (r.size) sizeCount[r.size] = (sizeCount[r.size]||0)+1; });
-  const total = recent.length || 1; 
-  
   const analysis = {
       sizeOppositeBias: { 
-          Big: 1 - sizeCount.Big / total, 
-          Small: 1 - sizeCount.Small / total 
+          Big: 0.5, 
+          Small: 0.5 
       },
       streakRecommendation: null,
-      streakStrength: 0 
+      streakStrength: 0,
+      dominantColor: null,
+      colorStrength: 0
   };
 
-  // 2. Immediate Streak Check (e.g., 9-9 or 4-4)
+  const total = recent.length || 1; 
+
+  // 1. Opposite Size Bias (PDF Zigzag/Alternate Logic)
+  const sizeCount = { Big:0, Small:0 };
+  recent.forEach(r => { 
+      // Only count non-split numbers for size prediction to maintain clarity
+      if (r.size === 'Big') sizeCount.Big++;
+      if (r.size === 'Small') sizeCount.Small++;
+  });
+  
+  // Calculate bias towards the less frequent size
+  if (total > 0) {
+      const pBig = sizeCount.Big / total;
+      const pSmall = sizeCount.Small / total;
+      
+      // Bias is higher for the opposite (less frequent) size
+      analysis.sizeOppositeBias.Big = 1 - pBig;
+      analysis.sizeOppositeBias.Small = 1 - pSmall;
+  }
+  
+  
+  // 2. Immediate Number Streak Check (PDF Dragon/Number Tricks)
   if (recentWins.length >= 2) {
       const lastWin = recentWins[0].number;
       const secondLastWin = recentWins[1].number;
       
+      // If the last two wins were the exact same number, strongly recommend it.
       if (lastWin === secondLastWin) {
           analysis.streakRecommendation = lastWin;
           analysis.streakStrength = 1.0; 
       }
   }
 
-  // 3. Dominant Number Check 
+  // 3. Dominant Number/Color Check (PDF Frequent Numbers/Colors)
   const numberCounts = {};
+  const colorCounts = { Red: 0, Green: 0, Violet: 0 };
+  
   recentWins.forEach(h => {
+      // Count winning numbers
       numberCounts[h.number] = (numberCounts[h.number] || 0) + 1;
+      
+      // Count winning colors (simplified for main colors)
+      if (h.color.includes('Red')) colorCounts.Red++;
+      if (h.color.includes('Green')) colorCounts.Green++;
+      if (h.color.includes('Violet')) colorCounts.Violet++;
   });
   
   let maxCount = 0;
   let dominantNumber = -1;
+  
   for (const num in numberCounts) {
       if (numberCounts[num] > maxCount) {
           maxCount = numberCounts[num];
@@ -692,10 +726,31 @@ function analyzePatterns(){
       }
   }
 
-  if (recentWins.length >= 4 && maxCount / recentWins.length >= 0.5) {
+  // If a number is highly dominant (e.g., more than 40% of recent wins), recommend it (if no streak).
+  if (recentWins.length >= 4 && maxCount / recentWins.length >= 0.4) {
       if (analysis.streakStrength < 1.0) { 
          analysis.streakRecommendation = dominantNumber;
          analysis.streakStrength = maxCount / recentWins.length; 
+      }
+  }
+  
+  // Identify Dominant Color
+  const totalColors = colorCounts.Red + colorCounts.Green + colorCounts.Violet;
+  if (totalColors > 0) {
+      const colors = ['Red', 'Green', 'Violet'];
+      let maxColorCount = 0;
+      let dominantColor = null;
+      
+      for(const color of colors){
+          if(colorCounts[color] > maxColorCount){
+              maxColorCount = colorCounts[color];
+              dominantColor = color;
+          }
+      }
+      
+      if (maxColorCount / totalColors >= 0.4) { // 40% threshold for dominance
+          analysis.dominantColor = dominantColor;
+          analysis.colorStrength = maxColorCount / totalColors;
       }
   }
 
@@ -704,23 +759,40 @@ function analyzePatterns(){
 
 
 function biasedNumberPick(base, analysis, strength){
+    // Base Weights (Neutral)
     const weights = new Array(10).fill(1); 
 
     for (let d = 0; d <= 9; d++){
-        // 1. Opposite Bias (Pattern analysis)
         const size = calcSizeFromNum(d);
-        weights[d] += (analysis.sizeOppositeBias[size] || 0.5) * 2 * strength;
+        const color = calcColorFromNum(d);
 
-        // 2. Base Period Proximity (Deterministic link)
+        // 1. Opposite Size Bias (Pattern analysis for Big/Small) - Uses Zigzag/Opposite logic
+        // If overall history is biased towards BIG, we slightly favor SMALL, and vice-versa
+        // Weight is added proportional to sizeOppositeBias and AI Strength
+        const sizeWeight = size === 'Big' ? analysis.sizeOppositeBias.Big : analysis.sizeOppositeBias.Small;
+        weights[d] += (sizeWeight - 0.5) * 4 * strength; // Scale the bias (0.5 means no bias)
+
+
+        // 2. Base Period Proximity (Deterministic link) - Uses Period Number Trick logic
+        // This is favored when AI strength is LOW (more deterministic)
         const dist = Math.abs(d - base);
-        weights[d] += Math.max(0, 3 - dist) * (0.12 * (1 - strength)); 
+        // Numbers closer to base get higher weight; (3 - dist) gives 3 for base, 2 for +/-1, 1 for +/-2
+        weights[d] += Math.max(0, 3 - dist) * (0.2 * (1 - strength)); 
 
-        // 3. Streak/Pattern Logic
+
+        // 3. Streak/Dominant Number Logic - Uses Dragon/Frequent Number logic
         if (analysis.streakRecommendation !== null && d === analysis.streakRecommendation) {
+             // Add a strong fixed boost if the number is on a hot streak/dominant run
              weights[d] += 4.0 * analysis.streakStrength; 
         }
+        
+        // 4. Dominant Color Logic (Subtle boost for numbers matching the dominant color)
+        if (analysis.dominantColor && color.includes(analysis.dominantColor)){
+             weights[d] += 2.0 * analysis.colorStrength * strength;
+        }
 
-        if (weights[d] < 0.01) weights[d] = 0.01;
+        // Ensure no weight drops below a minimum to prevent 0 probability
+        if (weights[d] < 0.05) weights[d] = 0.05;
     }
     
     // Weighted random selection
@@ -731,7 +803,7 @@ function biasedNumberPick(base, analysis, strength){
         a += weights[i];
         if (r <= a) return i;
     }
-    return base; 
+    return base; // Fallback to base number
 }
 
 
@@ -817,9 +889,12 @@ function renderLastPrediction(){
     predictedElementBox.classList.add(last.size === 'Big' ? 'res-big' : 'res-small');
     displayColor.innerHTML = '';
   } else {
-    displayNumber.textContent = last.color.substring(0, 1);
+    // For Size + Color mode, the display is based on the predicted color/size
+    const colorClass = last.color.includes('Red') ? 'res-red' : (last.color.includes('Green') ? 'res-green' : 'res-violet');
+    
+    displayNumber.textContent = last.color.includes('/') ? 'S' : last.color.substring(0, 1);
     displaySize.textContent = last.size;
-    predictedElementBox.classList.add('res-' + last.color.toLowerCase());
+    predictedElementBox.classList.add(colorClass);
     displayColor.innerHTML = `<div style="font-weight:700; font-size:14px; color:var(--text);">${last.color} / ${last.size}</div>`;
   }
 }
@@ -848,8 +923,22 @@ function renderPredictionHistoryLines(){
       chip.className = 'chip ' + getChipClass(n); // Apply base number color
       chip.innerText = n;
       
-      let isPredicted = (h.mode === 'size-number' && n === h.number) || 
-                        (h.mode === 'size-color' && calcColorFromNum(n) === h.color && calcSizeFromNum(n) === h.size);
+      let isPredicted = false;
+      
+      // Check for Size + Number mode match
+      if (h.mode === 'size-number' && n === h.number) {
+          isPredicted = true;
+      } 
+      // Check for Size + Color mode match
+      else if (h.mode === 'size-color') {
+          const chipColor = calcColorFromNum(n);
+          const chipSize = calcSizeFromNum(n);
+          
+          // Check if the chip's number matches the predicted color AND size
+          if (chipColor.includes(h.color.split('/')[0] || h.color) && chipSize === h.size) {
+              isPredicted = true;
+          }
+      }
 
       if (isPredicted){
         if (h.status === 'Win'){
@@ -861,7 +950,18 @@ function renderPredictionHistoryLines(){
         } else {
              // Pending: Highlight with predicted size color/size
              chip.classList.remove(getChipClass(n));
-             chip.classList.add(h.size === 'Big' ? 'chip-big' : 'chip-small');
+             
+             // Use predicted size/color for pending highlight
+             if (h.mode === 'size-number'){
+                chip.classList.add(h.size === 'Big' ? 'chip-big' : 'chip-small');
+             } else {
+                // For size+color, use the predicted color for the chip background (if not split)
+                if (h.color.includes('Red')) chip.classList.add('chip-red');
+                else if (h.color.includes('Green')) chip.classList.add('chip-green');
+                else if (h.color.includes('Violet')) chip.classList.add('chip-violet');
+                else if (h.color.includes('Red/Violet')) chip.classList.add('chip-split-0');
+                else if (h.color.includes('Green/Violet')) chip.classList.add('chip-split-5');
+             }
         }
       }
       
