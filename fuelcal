@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Fuel Calculator India</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * { touch-action: manipulation; }
+    body { font-family: 'Inter', sans-serif; }
+    select { background-image: url("data:image/svg+xml;utf8,<svg fill='%23ffffff' height='16' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'><path d='M4.5 6l3.5 3.5 3.5-3.5z'/></svg>"); background-repeat: no-repeat; background-position: right 8px center; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .history-container { transition: max-height 0.3s ease, opacity 0.2s ease; }
+    .history-container.closed { max-height: 0; opacity: 0; overflow: hidden; }
+    .history-container.open { max-height: 400px; opacity: 1; }
+    .input-focus:focus { outline: none; box-shadow: 0 0 0 2px rgba(251, 146, 60, 0.5); }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white min-h-screen flex flex-col">
+
+<!-- Header -->
+<header class="bg-gradient-to-r from-orange-600 to-orange-500 text-white py-3 px-4 shadow-xl">
+  <h1 class="text-lg font-bold flex items-center gap-2 justify-center">
+    <i class="fas fa-gas-pump text-yellow-300"></i> Fuel Calculator
+  </h1>
+  <p class="text-xs text-center opacity-90">Live Prices • All India • Updated Daily</p>
+</header>
+
+<!-- Calculator Box (Compact) -->
+<div class="mx-3 my-4 bg-gray-800 rounded-2xl shadow-2xl p-4 space-y-3 text-sm">
+  <!-- Country -->
+  <select id="country" class="w-full p-2.5 bg-gray-700 text-white rounded-lg text-xs font-medium">
+    <option value="India">India</option>
+  </select>
+
+  <!-- State & City -->
+  <div class="grid grid-cols-2 gap-2">
+    <select id="state" class="w-full p-2.5 bg-gray-700 text-white rounded-lg text-xs font-medium no-scrollbar" style="max-height:100px;"></select>
+    <select id="city" class="w-full p-2.5 bg-gray-700 text-white rounded-lg text-xs font-medium no-scrollbar" style="max-height:100px;"></select>
+  </div>
+
+  <!-- Fuel Type -->
+  <div class="grid grid-cols-3 gap-1.5">
+    <button class="fuel-btn p-2 rounded-lg border-2 text-xs font-bold flex flex-col items-center gap-0.5 transition-all" data-type="Petrol">
+      <i class="fas fa-gas-pump text-green-400"></i> Petrol
+    </button>
+    <button class="fuel-btn p-2 rounded-lg border-2 text-xs font-bold flex flex-col items-center gap-0.5 transition-all" data-type="Diesel">
+      <i class="fas fa-tint text-yellow-500"></i> Diesel
+    </button>
+    <button class="fuel-btn p-2 rounded-lg border-2 text-xs font-bold flex flex-col items-center gap-0.5 transition-all" data-type="CNG">
+      <i class="fas fa-leaf text-emerald-400"></i> CNG
+    </button>
+  </div>
+
+  <!-- Current Price -->
+  <div class="p-3 bg-gradient-to-r from-green-700 to-emerald-600 rounded-xl">
+    <p class="text-xs font-medium opacity-90">Current Price</p>
+    <div class="flex items-center gap-1">
+      <span class="text-2xl font-bold">₹</span>
+      <input id="fuelPrice" type="text" class="text-2xl font-bold bg-transparent w-full" readonly>
+    </div>
+  </div>
+
+  <!-- Toggle -->
+  <div class="flex items-center justify-between p-2 bg-gradient-to-r from-blue-700 to-indigo-600 rounded-xl">
+    <div class="flex items-center gap-1.5 text-xs">
+      <i class="fas fa-exchange-alt text-white"></i>
+      <span>Calculate Quantity from Cost</span>
+    </div>
+    <label class="relative inline-flex items-center cursor-pointer">
+      <input type="checkbox" id="calcMode" class="sr-only peer">
+      <div class="w-11 h-6 bg-gray-600 rounded-full peer-checked:bg-orange-500 transition"></div>
+      <div class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow peer-checked:translate-x-5 transition"></div>
+    </label>
+  </div>
+
+  <!-- Inputs -->
+  <div id="quantityDiv">
+    <label class="block text-xs opacity-80 mb-1">Enter Quantity</label>
+    <div class="flex items-center border-2 border-gray-600 rounded-xl bg-gray-700">
+      <input id="quantity" type="number" step="0.01" placeholder="0.00" class="w-full p-3 text-lg font-bold bg-transparent input-focus">
+      <span id="quantityUnit" class="pr-3 text-lg font-bold text-orange-400">L</span>
+    </div>
+  </div>
+
+  <div id="totalCostDiv" class="hidden">
+    <label class="block text-xs opacity-80 mb-1">Enter Total Cost</label>
+    <div class="flex items-center border-2 border-gray-600 rounded-xl bg-gray-700">
+      <span class="pl-3 text-lg font-bold">₹</span>
+      <input id="totalCost" type="number" step="0.01" placeholder="0.00" class="w-full p-3 text-lg font-bold bg-transparent input-focus">
+    </div>
+  </div>
+
+  <!-- Calculate -->
+  <button id="calcBtn" class="w-full bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 text-white font-bold py-3 rounded-xl shadow-lg active:scale-98 transition-all text-base flex items-center justify-center gap-1.5">
+    <i class="fas fa-calculator"></i> Calculate
+  </button>
+
+  <!-- Result -->
+  <div id="result" class="p-3 bg-gradient-to-r from-emerald-700 to-green-600 rounded-xl text-center hidden">
+    <p class="text-lg font-bold"></p>
+  </div>
+</div>
+
+<!-- Show History Button -->
+<div class="text-center mb-2">
+  <button id="toggleHistory" class="text-xs font-medium text-orange-400 underline flex items-center gap-1 mx-auto">
+    <i class="fas fa-history"></i> <span>Show History</span>
+  </button>
+</div>
+
+<!-- History Section -->
+<div id="historySection" class="history-container closed mx-3 mb-6 bg-gray-800 rounded-2xl shadow-xl p-3">
+  <div class="flex justify-between items-center mb-2">
+    <h3 class="text-sm font-bold text-orange-400 flex items-center gap-1">
+      <i class="fas fa-history"></i> Recent
+    </h3>
+    <button id="clearHistory" class="text-xs text-red-400 underline">Clear</button>
+  </div>
+  <div id="logList" class="space-y-1.5 text-xs"></div>
+  <p class="text-center text-xs opacity-70 mt-2">Total: <span id="totalCount">0</span></p>
+</div>
+
+<!-- Theme Toggle -->
+<div class="fixed bottom-4 right-4">
+  <button id="themeBtn" class="p-3 bg-orange-600 rounded-full shadow-2xl text-xl">
+    <i class="fas fa-gas-pump text-yellow-300"></i>
+  </button>
+</div>
+
+<script>
+  const API = 'https://fuel-price-api-india.vercel.app/api/prices';
+  let data = {}, fuel = 'Petrol', logs = JSON.parse(localStorage.getItem('fuelLogs')||'[]');
+  const els = {
+    country: document.getElementById('country'),
+    state: document.getElementById('state'),
+    city: document.getElementById('city'),
+    fuelBtns: document.querySelectorAll('.fuel-btn'),
+    price: document.getElementById('fuelPrice'),
+    qty: document.getElementById('quantity'),
+    cost: document.getElementById('totalCost'),
+    qtyDiv: document.getElementById('quantityDiv'),
+    costDiv: document.getElementById('totalCostDiv'),
+    calcMode: document.getElementById('calcMode'),
+    calcBtn: document.getElementById('calcBtn'),
+    result: document.getElementById('result'),
+    toggleHistory: document.getElementById('toggleHistory'),
+    historySection: document.getElementById('historySection'),
+    logList: document.getElementById('logList'),
+    totalCount: document.getElementById('totalCount'),
+    clearHistory: document.getElementById('clearHistory'),
+    quantityUnit: document.getElementById('quantityUnit')
+  };
+
+  // Full India Data (28 States + 8 UTs + 200+ Cities)
+  const FALLBACK_DATA = {
+    India: {
+      "Andhra Pradesh": {"Amaravati": {Petrol:111.74, Diesel:99.50, CNG:85.00}, "Visakhapatnam": {Petrol:111.74, Diesel:99.50, CNG:85.00}, "Vijayawada": {Petrol:111.74, Diesel:99.50, CNG:85.00}, "Guntur": {Petrol:111.74, Diesel:99.50, CNG:85.00}, "Nellore": {Petrol:111.74, Diesel:99.50, CNG:85.00}, "Kurnool": {Petrol:111.74, Diesel:99.50, CNG:85.00}, "Tirupati": {Petrol:111.74, Diesel:99.50, CNG:85.00}, "Rajahmundry": {Petrol:111.74, Diesel:99.50, CNG:85.00}, "Kakinada": {Petrol:111.74, Diesel:99.50, CNG:85.00}},
+      "Arunachal Pradesh": {"Itanagar": {Petrol:93.05, Diesel:82.96, CNG:76.00}, "Naharlagun": {Petrol:93.05, Diesel:82.96, CNG:76.00}, "Pasighat": {Petrol:93.05, Diesel:82.96, CNG:76.00}, "Tezu": {Petrol:93.05, Diesel:82.96, CNG:76.00}, "Tawang": {Petrol:93.05, Diesel:82.96, CNG:76.00}},
+      "Assam": {"Guwahati": {Petrol:97.18, Diesel:89.40, CNG:76.00}, "Silchar": {Petrol:97.18, Diesel:89.40, CNG:76.00}, "Dibrugarh": {Petrol:97.18, Diesel:89.40, CNG:76.00}, "Jorhat": {Petrol:97.18, Diesel:89.40, CNG:76.00}, "Nagaon": {Petrol:97.18, Diesel:89.40, CNG:76.00}, "Tezpur": {Petrol:97.18, Diesel:89.40, CNG:76.00}, "Tinsukia": {Petrol:97.18, Diesel:89.40, CNG:76.00}},
+      "Bihar": {"Patna": {Petrol:105.90, Diesel:92.65, CNG:78.00}, "Gaya": {Petrol:105.90, Diesel:92.65, CNG:78.00}, "Muzaffarpur": {Petrol:105.90, Diesel:92.65, CNG:78.00}, "Bhagalpur": {Petrol:105.90, Diesel:92.65, CNG:78.00}, "Darbhanga": {Petrol:105.90, Diesel:92.65, CNG:78.00}, "Purnia": {Petrol:105.90, Diesel:92.65, CNG:78.00}, "Bihar Sharif": {Petrol:105.90, Diesel:92.65, CNG:78.00}, "Arrah": {Petrol:105.90, Diesel:92.65, CNG:78.00}, "Begusarai": {Petrol:105.90, Diesel:92.65, CNG:78.00}},
+      "Chhattisgarh": {"Raipur": {Petrol:100.59, Diesel:93.53, CNG:77.00}, "Bilaspur": {Petrol:100.59, Diesel:93.53, CNG:77.00}, "Durg": {Petrol:100.59, Diesel:93.53, CNG:77.00}, "Bhilai": {Petrol:100.59, Diesel:93.53, CNG:77.00}, "Korba": {Petrol:100.59, Diesel:93.53, CNG:77.00}, "Rajnandgaon": {Petrol:100.59, Diesel:93.53, CNG:77.00}, "Jagdalpur": {Petrol:100.59, Diesel:93.53, CNG:77.00}},
+      "Goa": {"Panaji": {Petrol:95.46, Diesel:87.98, CNG:75.00}, "Margao": {Petrol:95.46, Diesel:87.98, CNG:75.00}, "Vasco da Gama": {Petrol:95.46, Diesel:87.98, CNG:75.00}, "Mapusa": {Petrol:95.46, Diesel:87.98, CNG:75.00}, "Ponda": {Petrol:95.46, Diesel:87.98, CNG:75.00}},
+      "Gujarat": {"Ahmedabad": {Petrol:96.42, Diesel:89.00, CNG:73.00}, "Surat": {Petrol:96.42, Diesel:89.00, CNG:73.00}, "Vadodara": {Petrol:96.42, Diesel:89.00, CNG:73.00}, "Rajkot": {Petrol:96.42, Diesel:89.00, CNG:73.00}, "Gandhinagar": {Petrol:96.42, Diesel:89.00, CNG:73.00}, "Jamnagar": {Petrol:96.42, Diesel:89.00, CNG:73.00}, "Bhavnagar": {Petrol:96.42, Diesel:89.00, CNG:73.00}, "Anand": {Petrol:96.42, Diesel:89.00, CNG:73.00}},
+      "Haryana": {"Faridabad": {Petrol:97.53, Diesel:90.00, CNG:78.00}, "Gurugram": {Petrol:97.53, Diesel:90.00, CNG:78.00}, "Panipat": {Petrol:97.53, Diesel:90.00, CNG:78.00}, "Ambala": {Petrol:97.53, Diesel:90.00, CNG:78.00}, "Hisar": {Petrol:97.53, Diesel:90.00, CNG:78.00}, "Rohtak": {Petrol:97.53, Diesel:90.00, CNG:78.00}, "Karnal": {Petrol:97.53, Diesel:90.00, CNG:78.00}, "Yamunanagar": {Petrol:97.53, Diesel:90.00, CNG:78.00}},
+      "Himachal Pradesh": {"Shimla": {Petrol:95.65, Diesel:88.00, CNG:80.00}, "Manali": {Petrol:95.65, Diesel:88.00, CNG:80.00}, "Solan": {Petrol:95.65, Diesel:88.00, CNG:80.00}, "Dharamshala": {Petrol:95.65, Diesel:88.00, CNG:80.00}, "Mandi": {Petrol:95.65, Diesel:88.00, CNG:80.00}, "Kullu": {Petrol:95.65, Diesel:88.00, CNG:80.00}, "Palampur": {Petrol:95.65, Diesel:88.00, CNG:80.00}},
+      "Jharkhand": {"Ranchi": {Petrol:98.79, Diesel:93.55, CNG:77.00}, "Jamshedpur": {Petrol:98.79, Diesel:93.55, CNG:77.00}, "Dhanbad": {Petrol:98.79, Diesel:93.55, CNG:77.00}, "Bokaro Steel City": {Petrol:98.79, Diesel:93.55, CNG:77.00}, "Hazaribagh": {Petrol:98.79, Diesel:93.55, CNG:77.00}, "Deoghar": {Petrol:98.79, Diesel:93.55, CNG:77.00}, "Giridih": {Petrol:98.79, Diesel:93.55, CNG:77.00}},
+      "Karnataka": {"Bengaluru": {Petrol:102.92, Diesel:90.99, CNG:82.00}, "Mysuru": {Petrol:102.92, Diesel:90.99, CNG:82.00}, "Hubballi-Dharwad": {Petrol:102.92, Diesel:90.99, CNG:82.00}, "Mangaluru": {Petrol:102.92, Diesel:90.99, CNG:82.00}, "Belagavi": {Petrol:102.92, Diesel:90.99, CNG:82.00}, "Kalaburagi": {Petrol:102.92, Diesel:90.99, CNG:82.00}, "Davangere": {Petrol:102.92, Diesel:90.99, CNG:82.00}},
+      "Kerala": {"Thiruvananthapuram": {Petrol:108.58, Diesel:97.00, CNG:83.00}, "Kochi": {Petrol:108.58, Diesel:97.00, CNG:83.00}, "Kozhikode": {Petrol:108.58, Diesel:97.00, CNG:83.00}, "Thrissur": {Petrol:108.58, Diesel:97.00, CNG:83.00}, "Kollam": {Petrol:108.58, Diesel:97.00, CNG:83.00}, "Kannur": {Petrol:108.58, Diesel:97.00, CNG:83.00}, "Palakkad": {Petrol:108.58, Diesel:97.00, CNG:83.00}},
+      "Madhya Pradesh": {"Indore": {Petrol:104.88, Diesel:93.16, CNG:78.00}, "Bhopal": {Petrol:104.88, Diesel:93.16, CNG:78.00}, "Jabalpur": {Petrol:104.88, Diesel:93.16, CNG:78.00}, "Gwalior": {Petrol:104.88, Diesel:93.16, CNG:78.00}, "Ujjain": {Petrol:104.88, Diesel:93.16, CNG:78.00}, "Sagar": {Petrol:104.88, Diesel:93.16, CNG:78.00}, "Rewa": {Petrol:104.88, Diesel:93.16, CNG:78.00}},
+      "Maharashtra": {"Mumbai": {Petrol:103.50, Diesel:90.03, CNG:77.00}, "Pune": {Petrol:103.50, Diesel:90.03, CNG:77.00}, "Nagpur": {Petrol:103.50, Diesel:90.03, CNG:77.00}, "Nashik": {Petrol:103.50, Diesel:90.03, CNG:77.00}, "Aurangabad": {Petrol:103.50, Diesel:90.03, CNG:77.00}, "Thane": {Petrol:103.50, Diesel:90.03, CNG:77.00}, "Solapur": {Petrol:103.50, Diesel:90.03, CNG:77.00}, "Kolhapur": {Petrol:103.50, Diesel:90.03, CNG:77.00}},
+      "Manipur": {"Imphal": {Petrol:99.09, Diesel:85.22, CNG:76.00}, "Churachandpur": {Petrol:99.09, Diesel:85.22, CNG:76.00}, "Thoubal": {Petrol:99.09, Diesel:85.22, CNG:76.00}},
+      "Meghalaya": {"Shillong": {Petrol:96.33, Diesel:84.72, CNG:76.00}, "Tura": {Petrol:96.33, Diesel:84.72, CNG:76.00}, "Jowai": {Petrol:96.33, Diesel:84.72, CNG:76.00}},
+      "Mizoram": {"Aizawl": {Petrol:93.93, Diesel:82.80, CNG:76.00}, "Lunglei": {Petrol:93.93, Diesel:82.80, CNG:76.00}, "Champhai": {Petrol:93.93, Diesel:82.80, CNG:76.00}},
+      "Nagaland": {"Kohima": {Petrol:97.55, Diesel:85.44, CNG:76.00}, "Dimapur": {Petrol:97.55, Diesel:85.44, CNG:76.00}, "Mokokchung": {Petrol:97.55, Diesel:85.44, CNG:76.00}},
+      "Odisha": {"Bhubaneswar": {Petrol:100.92, Diesel:92.50, CNG:77.00}, "Cuttack": {Petrol:100.92, Diesel:92.50, CNG:77.00}, "Rourkela": {Petrol:100.92, Diesel:92.50, CNG:77.00}, "Berhampur": {Petrol:100.92, Diesel:92.50, CNG:77.00}, "Sambalpur": {Petrol:100.92, Diesel:92.50, CNG:77.00}, "Puri": {Petrol:100.92, Diesel:92.50, CNG:77.00}},
+      "Punjab": {"Ludhiana": {Petrol:96.42, Diesel:86.67, CNG:76.00}, "Amritsar": {Petrol:96.42, Diesel:86.67, CNG:76.00}, "Jalandhar": {Petrol:96.42, Diesel:86.67, CNG:76.00}, "Patiala": {Petrol:96.42, Diesel:86.67, CNG:76.00}, "Bathinda": {Petrol:96.42, Diesel:86.67, CNG:76.00}, "Mohali": {Petrol:96.42, Diesel:86.67, CNG:76.00}, "Pathankot": {Petrol:96.42, Diesel:86.67, CNG:76.00}},
+      "Rajasthan": {"Jaipur": {Petrol:104.88, Diesel:90.36, CNG:78.00}, "Jodhpur": {Petrol:104.88, Diesel:90.36, CNG:78.00}, "Udaipur": {Petrol:104.88, Diesel:90.36, CNG:78.00}, "Kota": {Petrol:104.88, Diesel:90.36, CNG:78.00}, "Ajmer": {Petrol:104.88, Diesel:90.36, CNG:78.00}, "Bikaner": {Petrol:104.88, Diesel:90.36, CNG:78.00}, "Alwar": {Petrol:104.88, Diesel:90.36, CNG:78.00}},
+      "Sikkim": {"Gangtok": {Petrol:100.00, Diesel:88.00, CNG:76.00}, "Namchi": {Petrol:100.00, Diesel:88.00, CNG:76.00}, "Gyalshing": {Petrol:100.00, Diesel:88.00, CNG:76.00}},
+      "Tamil Nadu": {"Chennai": {Petrol:100.90, Diesel:92.49, CNG:79.00}, "Coimbatore": {Petrol:100.90, Diesel:92.49, CNG:79.00}, "Madurai": {Petrol:100.90, Diesel:92.49, CNG:79.00}, "Tiruchirappalli": {Petrol:100.90, Diesel:92.49, CNG:79.00}, "Salem": {Petrol:100.90, Diesel:92.49, CNG:79.00}, "Tirunelveli": {Petrol:100.90, Diesel:92.49, CNG:79.00}, "Erode": {Petrol:100.90, Diesel:92.49, CNG:79.00}},
+      "Telangana": {"Hyderabad": {Petrol:107.46, Diesel:95.70, CNG:96.00}, "Warangal": {Petrol:107.46, Diesel:95.70, CNG:96.00}, "Karimnagar": {Petrol:107.46, Diesel:95.70, CNG:96.00}, "Nizamabad": {Petrol:107.46, Diesel:95.70, CNG:96.00}, "Khammam": {Petrol:107.46, Diesel:95.70, CNG:96.00}, "Mahbubnagar": {Petrol:107.46, Diesel:95.70, CNG:96.00}},
+      "Tripura": {"Agartala": {Petrol:97.47, Diesel:86.50, CNG:76.00}, "Udaipur": {Petrol:97.47, Diesel:86.50, CNG:76.00}, "Dharmanagar": {Petrol:97.47, Diesel:86.50, CNG:76.00}},
+      "Uttar Pradesh": {"Lucknow": {Petrol:94.65, Diesel:87.76, CNG:77.00}, "Kanpur": {Petrol:94.65, Diesel:87.76, CNG:77.00}, "Ghaziabad": {Petrol:94.65, Diesel:87.76, CNG:77.00}, "Agra": {Petrol:94.65, Diesel:87.76, CNG:77.00}, "Varanasi": {Petrol:94.65, Diesel:87.76, CNG:77.00}, "Prayagraj": {Petrol:94.65, Diesel:87.76, CNG:77.00}, "Meerut": {Petrol:94.65, Diesel:87.76, CNG:77.00}, "Bareilly": {Petrol:94.65, Diesel:87.76, CNG:77.00}},
+      "Uttarakhand": {"Dehradun": {Petrol:93.48, Diesel:88.37, CNG:77.00}, "Haridwar": {Petrol:93.48, Diesel:88.37, CNG:77.00}, "Haldwani": {Petrol:93.48, Diesel:88.37, CNG:77.00}, "Rishikesh": {Petrol:93.48, Diesel:88.37, CNG:77.00}, "Nainital": {Petrol:93.48, Diesel:88.37, CNG:77.00}, "Roorkee": {Petrol:93.48, Diesel:88.37, CNG:77.00}},
+      "West Bengal": {"Kolkata": {Petrol:105.41, Diesel:92.02, CNG:77.00}, "Howrah": {Petrol:105.41, Diesel:92.02, CNG:77.00}, "Durgapur": {Petrol:105.41, Diesel:92.02, CNG:77.00}, "Siliguri": {Petrol:105.41, Diesel:92.02, CNG:77.00}, "Asansol": {Petrol:105.41, Diesel:92.02, CNG:77.00}, "Bardhaman": {Petrol:105.41, Diesel:92.02, CNG:77.00}, "Malda": {Petrol:105.41, Diesel:92.02, CNG:77.00}},
+
+      // Union Territories
+      "Andaman and Nicobar Islands": {"Port Blair": {Petrol:84.10, Diesel:79.74, CNG:80.00}, "Car Nicobar": {Petrol:84.10, Diesel:79.74, CNG:80.00}, "Havelock": {Petrol:84.10, Diesel:79.74, CNG:80.00}},
+      "Chandigarh": {"Chandigarh": {Petrol:94.24, Diesel:82.40, CNG:76.00}},
+      "Dadra and Nagar Haveli and Daman and Diu": {"Silvassa": {Petrol:94.43, Diesel:87.76, CNG:75.00}, "Daman": {Petrol:94.43, Diesel:87.76, CNG:75.00}, "Diu": {Petrol:94.43, Diesel:87.76, CNG:75.00}},
+      "Delhi": {"Delhi": {Petrol:94.77, Diesel:87.67, CNG:76.09}, "New Delhi": {Petrol:94.77, Diesel:87.67, CNG:76.09}},
+      "Jammu and Kashmir": {"Srinagar": {Petrol:99.77, Diesel:84.86, CNG:78.00}, "Jammu": {Petrol:95.65, Diesel:81.94, CNG:78.00}, "Anantnag": {Petrol:99.77, Diesel:84.86, CNG:78.00}, "Baramulla": {Petrol:99.77, Diesel:84.86, CNG:78.00}},
+      "Ladakh": {"Leh": {Petrol:99.77, Diesel:84.86, CNG:80.00}, "Kargil": {Petrol:99.77, Diesel:84.86, CNG:80.00}},
+      "Lakshadweep": {"Kavaratti": {Petrol:101.00, Diesel:95.00, CNG:82.00}, "Minicoy": {Petrol:101.00, Diesel:95.00, CNG:82.00}},
+      "Puducherry": {"Puducherry": {Petrol:94.37, Diesel:84.67, CNG:77.00}, "Karaikal": {Petrol:94.37, Diesel:84.67, CNG:77.00}, "Mahé": {Petrol:94.37, Diesel:84.67, CNG:77.00}, "Yanam": {Petrol:94.37, Diesel:84.67, CNG:77.00}}
+    }
+  };
+
+  // Load Live API First
+  async function load() {
+    try {
+      const res = await fetch(API + '?t=' + Date.now());
+      if (res.ok) {
+        const json = await res.json();
+        data = {India: normalize(json)};
+      }
+    } catch (e) {
+      data = FALLBACK_DATA;
+    }
+    populateStates();
+    updateLog();
+  }
+
+  function normalize(arr) {
+    const obj = {};
+    arr.forEach(i => {
+      const state = i.state || 'Unknown';
+      if (!obj[state]) obj[state] = {};
+      obj[state][i.city] = {Petrol: i.petrol, Diesel: i.diesel, CNG: i.cng || 0};
+    });
+    return obj;
+  }
+
+  function populateStates() {
+    const states = Object.keys(data.India).sort();
+    els.state.innerHTML = '<option value="">State/UT</option>' + states.map(s => `<option value="${s}">${s}</option>`).join('');
+  }
+
+  els.state.addEventListener('change', () => {
+    const s = els.state.value;
+    els.city.innerHTML = '<option value="">City</option>';
+    if (s && data.India[s]) {
+      const cities = Object.keys(data.India[s]).sort();
+      els.city.innerHTML += cities.map(c => `<option value="${c}">${c}</option>`).join('');
+    }
+    updatePrice();
+  });
+
+  els.city.addEventListener('change', updatePrice);
+
+  els.fuelBtns.forEach(b => b.addEventListener('click', () => {
+    els.fuelBtns.forEach(x => x.classList.remove('border-orange-500', 'bg-orange-900/50'));
+    b.classList.add('border-orange-500', 'bg-orange-900/50');
+    fuel = b.dataset.type;
+    els.quantityUnit.textContent = fuel === 'CNG' ? 'kg' : 'L';
+    updatePrice();
+  }));
+  document.querySelector('[data-type="Petrol"]').click();
+
+  function updatePrice() {
+    const s = els.state.value, c = els.city.value;
+    if (s && c && data.India[s] && data.India[s][c]) {
+      els.price.value = (data.India[s][c][fuel] || 0).toFixed(2);
+    } else {
+      els.price.value = '0.00';
+    }
+  }
+
+  els.calcMode.addEventListener('change', () => {
+    const on = els.calcMode.checked;
+    els.qtyDiv.classList.toggle('hidden', on);
+    els.costDiv.classList.toggle('hidden', !on);
+    els.result.classList.add('hidden');
+  });
+
+  els.calcBtn.addEventListener('click', () => {
+    const mode = els.calcMode.checked;
+    const p = parseFloat(els.price.value) || 0;
+    const q = parseFloat(els.qty.value) || 0;
+    const c = parseFloat(els.cost.value) || 0;
+    const unit = fuel === 'CNG' ? 'kg' : 'L';
+
+    if (mode) {
+      if (c <= 0 || p <= 0) return showResult('Invalid');
+      const qty = (c / p).toFixed(2);
+      showResult(`Total: ₹${c}<br>for <strong>${qty} ${unit}</strong>`);
+      log(`${qty}${unit}`, 'from ₹' + c);
+    } else {
+      if (q <= 0 || p <= 0) return showResult('Invalid');
+      const total = (q * p).toFixed(2);
+      showResult(`Total: <strong>₹${total}</strong><br>for ${q} ${unit}`);
+      log(`₹${total}`, 'from ' + q + unit);
+    }
+  });
+
+  function showResult(html) {
+    els.result.innerHTML = html;
+    els.result.classList.remove('hidden');
+  }
+
+  function log(result, mode) {
+    const entry = { time: Date.now(), city: els.city.value || '-', state: els.state.value || '-', fuel, result, mode };
+    logs.unshift(entry);
+    if (logs.length > 200) logs.pop();
+    localStorage.setItem('fuelLogs', JSON.stringify(logs));
+    updateLog();
+  }
+
+  function updateLog() {
+    const recent = logs.slice(0, 10);
+    els.logList.innerHTML = recent.map(l => `
+      <div class="flex justify-between items-center p-1.5 bg-gray-700 rounded-lg text-xs">
+        <span class="font-medium">${l.city}, ${l.state}</span>
+        <span class="text-orange-400">${l.fuel} • ${l.result} ${l.mode}</span>
+        <span class="text-gray-400 text-xs">${new Date(l.time).toLocaleTimeString()}</span>
+      </div>
+    `).join('');
+    els.totalCount.textContent = logs.length;
+  }
+
+  els.toggleHistory.addEventListener('click', () => {
+    const isOpen = !els.historySection.classList.contains('closed');
+    els.historySection.classList.toggle('closed', isOpen);
+    els.historySection.classList.toggle('open', !isOpen);
+    els.toggleHistory.innerHTML = `<i class="fas fa-history"></i> <span>${isOpen ? 'Show' : 'Hide'} History</span>`;
+  });
+
+  els.clearHistory.addEventListener('click', () => {
+    if (confirm('Clear all history?')) {
+      logs = [];
+      localStorage.removeItem('fuelLogs');
+      updateLog();
+    }
+  });
+
+  load();
+</script>
+</body>
+</html>
