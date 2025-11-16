@@ -1,0 +1,1141 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1" />
+<title>VIP KING AI — DECISION FOCUS TERMINAL (V8.1)</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+  /* [BASE CSS - Enhanced Dark Theme Variables] */
+  :root{
+    --bg: #0a0a1a; /* Deep Blue Grey */
+    --card: #1c1c2e; /* Slightly lighter card background */
+    --text-light: #ffffff; 
+    --text-muted: #a0a0c0; 
+    --accent: #00FFFF; /* Bright Cyan */
+    --accent-2: #FF00FF; /* Vibrant Magenta */
+    --ok: #00ff80; /* Bright Green */
+    --bad: #ff4d4d; /* Bright Red */
+    --color-R: #ff4d4d; 
+    --color-G: #00ff80; 
+    --color-V: #aa00ff; /* Purple */
+    --size-B: #ffd700; /* Gold */
+    --size-S: #4d94ff; /* Lighter Blue */
+    --risk-low: var(--ok); 
+    --risk-medium: #ffa500; /* Orange */
+    --risk-high: var(--bad); 
+    --bet-suggest-bg: #2a1a3a; /* Darker Purple tint */
+    --radius: 12px; 
+    --safe: 15px; 
+    --focus-num: 54px; 
+    --focus-padding: 15px 20px; 
+    --trend-up: var(--color-G); 
+    --trend-down: var(--color-R); 
+    --action-btn-bg: linear-gradient(90deg, var(--accent), var(--accent-2)); 
+    --input-bg: #2e2e4e;
+    --border-color: #3f3f6f;
+    --skip-bg: #333333; 
+    --skip-color: #fce300; 
+    --last-pred-bg: #1f1f3a; 
+    
+    /* NEW: Define header height for calculation */
+    --header-height: 85px; 
+  }
+  *{box-sizing:border-box}
+  html,body{
+    height:100%;
+    margin:0;
+    padding:0;
+    background:var(--bg);
+    font-family:'Poppins', sans-serif;
+    color:var(--text-light);
+    -webkit-font-smoothing:antialiased;
+    font-size:14px;
+    /* Prevent main body scroll */
+    overflow: hidden; 
+  }
+  
+  /* --- APPLICATION LAYOUT (FIXED HEADER & SCROLLABLE CONTENT) --- */
+  .app{
+    max-width:450px; 
+    height: 100vh; /* Use full viewport height */
+    margin:0 auto;
+    padding:0; /* Remove padding from .app to handle split layout */
+    display:flex;
+    flex-direction:column;
+    overflow: hidden; /* Important: prevents .app from scrolling */
+  }
+  
+  .header{
+    padding:var(--safe);
+    padding-bottom: 10px;
+    flex-shrink: 0; /* Header doesn't shrink */
+    height: var(--header-height); /* Set a fixed height */
+    background: var(--bg);
+    z-index: 100; /* Ensure header stays on top */
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .scrollable-content {
+      flex-grow: 1; /* Takes up remaining vertical space */
+      overflow-y: auto; /* This section is the only one that scrolls */
+      padding: 0 var(--safe); /* Apply horizontal padding here */
+      padding-bottom: var(--safe); /* Apply bottom padding here */
+      display: flex; /* Maintain flex for internal gap */
+      flex-direction: column;
+      gap: 15px;
+  }
+  
+  /* --- INVISIBLE SCROLLING (Hiding the Scrollbar) --- */
+  /* For Webkit browsers (Chrome, Safari) */
+  .scrollable-content::-webkit-scrollbar {
+      display: none;
+  }
+  /* For IE, Edge */
+  .scrollable-content {
+      -ms-overflow-style: none;  /* IE and Edge */
+  }
+  /* For Firefox */
+  .scrollable-content {
+      scrollbar-width: none;  /* Firefox */
+  }
+
+  /* --- EXISTING STYLES BELOW (No change needed for functionality) --- */
+
+  .brand {display: flex; align-items: center; gap: 10px;}
+  .logo {font-size: 28px; font-weight: 900; color: var(--accent); border: 3px solid var(--accent); border-radius: 8px; padding: 0 6px; line-height: 1.0; background: rgba(0,255,255,0.1);}
+  .h-title {font-size: 18px; font-weight: 800; line-height: 1.2; color: var(--text-light);}
+  .h-sub {font-size: 11px; color: var(--text-muted); font-weight: 500;}
+  .card{border-radius:var(--radius);padding:15px;background:var(--card); box-shadow:0 8px 25px rgba(0,0,0,0.5);} 
+  .result-status-bar{font-size:12px;padding:10px 15px; border-radius: var(--radius); display: flex; align-items: center; gap: 8px; background: var(--input-bg); border-left: 5px solid var(--border-color);}
+  .win-loss-tag {font-weight: 800; padding: 3px 6px; border-radius: 6px; font-size: 10px; margin-left: 6px;}
+  .tag-W {background: var(--ok); color: var(--bg); box-shadow: 0 0 8px rgba(0,255,128,0.5);}
+  .tag-L {background: var(--bad); color: white; box-shadow: 0 0 8px rgba(255,77,77,0.5);}
+  .tag-I {background: var(--text-muted); color: white;}
+  .icon-small {width: 18px; height: 18px; min-width: 18px; margin-right: 4px;}
+  .interval-btns {display: flex; gap: 8px;}
+  .interval-btn {flex-grow: 1; padding: 10px 15px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-light); border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s;}
+  .interval-btn.active {background: var(--accent); color: var(--bg); border-color: var(--accent); box-shadow: 0 0 10px var(--accent);}
+
+  /* --- Prediction Focus Box (COMPACT) --- */
+  .focus-chip{
+    padding: var(--focus-padding); 
+    background: var(--input-bg); 
+    border: 1px solid var(--border-color); 
+    border-radius: 16px; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s;
+  }
+  .focus-chip.high-conf {
+      border: 3px solid var(--ok);
+      box-shadow: 0 0 20px rgba(0, 255, 128, 0.5);
+  }
+  .focus-chip.mega-conf {
+      border: 4px solid var(--accent-2);
+      box-shadow: 0 0 25px rgba(255, 0, 255, 0.8); 
+  }
+  .focus-chip.skip-state {
+      background: var(--skip-bg);
+      border: 3px dashed var(--skip-color);
+  }
+  .focus-left { 
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+  }
+  .focus-num-container {
+      display: flex; 
+      align-items: center; 
+      gap: 8px; 
+  }
+  .focus-num{
+      font-size: var(--focus-num); 
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: -3px; 
+      text-shadow: 0 0 10px rgba(255,255,255,0.4);
+      -webkit-text-fill-color: initial; 
+      color: var(--text-light); 
+  }
+  .focus-num.gradient-text {
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent; 
+      text-shadow: none; 
+  }
+
+  .focus-label{font-size: 12px; color: var(--text-muted); letter-spacing: 1px; font-weight: 700; opacity: 0.9;}
+  .conf-text{font-size: 13px; font-weight: 600;}
+  .conf-text.high-conf{color: var(--ok); font-weight: 900;}
+  .conf-text.mega-conf{color: var(--accent-2); font-weight: 900;}
+  .conf-text.skip-state {color: var(--skip-color); font-weight: 900;}
+  .trend-arrow-container svg {width: 28px; height: 28px; min-width: 28px; margin-right: 5px;}
+
+  /* --- Breakdown Grid (REFINED) --- */
+  .prediction-details {padding: 15px;}
+  .pred-grid{display:grid;grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px;}
+  .pred-item{
+      padding: 12px 5px; 
+      border-radius:10px;
+      background:var(--input-bg);
+      border:1px solid var(--border-color);
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); 
+      text-align: center;
+  }
+  .pred-item-title{font-size:11px;color:var(--text-muted); margin-bottom: 3px; font-weight: 500;} 
+  .pred-number{font-size:22px;font-weight:900; line-height: 1.0; text-shadow: 0 0 8px rgba(255,255,255,0.2);} 
+  .pred-prob{font-size:11px;color:var(--text-muted);margin-top:3px; font-weight: 500;} 
+
+  /* --- Compact Input Styles (New Layout) --- */
+  .control-group {display: flex; flex-direction: column; gap: 12px;}
+  .input-row {display: flex; align-items: flex-end; gap: 8px;}
+  .input-label-group {display: flex; flex-direction: column; gap: 4px; align-items: flex-start; flex-shrink: 0;}
+  .input-label-group label {font-weight: 600; font-size: 11px; color: var(--text-muted);}
+  .text-input, .result-input {
+    border: 1px solid var(--border-color);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    text-align: center;
+    background: var(--input-bg);
+    color: var(--text-light);
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+  }
+  .text-input:focus, .result-input:focus {border-color: var(--accent); box-shadow: 0 0 5px var(--accent);}
+  
+  /* Period Input */
+  #periodNumberInput {flex-grow: 1; padding: 10px 8px; font-size: 16px; font-weight: 700; height: 42px; min-width: 120px; text-align: left; padding-left: 12px;}
+  
+  /* Result Input */
+  .result-input {padding: 10px 8px; font-size: 20px; font-weight: 900; max-width: 60px; height: 42px; border: 2px solid var(--accent-2);}
+  
+  /* Generate Button */
+  #actionButton {
+    padding: 9px 12px; font-size: 14px; min-width: 110px; height: 42px; border-radius: 8px; flex-shrink: 0; 
+    background: var(--action-btn-bg); 
+    color: var(--bg); border: none; cursor: pointer; transition: all 0.2s;
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  }
+  #actionButton:hover {opacity: 0.9; transform: translateY(-2px);}
+  
+  /* Last Prediction Display */
+  .last-pred-display {
+      background: var(--last-pred-bg); 
+      padding: 6px 10px; 
+      border-radius: 8px;
+      font-size: 12px;
+      color: var(--text-light);
+      font-weight: 600;
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+  }
+  .last-pred-display .num {
+      font-size: 18px;
+      font-weight: 900;
+      line-height: 1.0;
+  }
+
+  /* --- History Table Styles --- */
+  .history-card {padding: 15px 0 0;}
+  .history-header {display: flex; justify-content: space-between; align-items: center; padding: 0 15px 10px; cursor: pointer; font-weight: 700;}
+  .history-header-left {display: flex; align-items: center; gap: 10px;}
+  .history-content {max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out; padding: 0 15px;}
+  .history-content.show {max-height: 600px; padding: 0 15px 15px;} 
+  .history-table {width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; font-family: 'Roboto', sans-serif;}
+  .history-table th, .history-table td {padding: 6px 4px; text-align: center; border-bottom: 1px solid var(--border-color);}
+  .history-table th {font-weight: 700; color: var(--text-light); background: var(--input-bg);}
+  .history-table td:first-child {font-weight: 600;}
+  .history-table .result-details-text {font-weight: 700;}
+  .history-table .result-details-text .num {font-size: 13px; margin-right: 3px;}
+  .svg-btn {background: none; border: none; cursor: pointer; padding: 0;}
+
+  /* General Utility */
+  .control-title {font-weight: 800; font-size: 15px; color: var(--accent); margin-bottom: 10px; margin-top: 15px; display: flex; align-items: center;}
+  .bet-suggestion-card {
+    border: 2px solid;
+    font-weight: 700;
+    padding: 12px 15px;
+  }
+  .bet-suggestion-card.low-risk {background: #1a3a1a; border-color: var(--risk-low); color: var(--risk-low);}
+  .bet-suggestion-card.medium-risk {background: #3a3a1a; border-color: var(--risk-medium); color: var(--risk-medium);}
+  .bet-suggestion-card.high-risk {background: #3a1a1a; border-color: var(--risk-high); color: var(--risk-high);}
+  .bet-suggestion-card.skip-state {background: #3a3a1a; border-color: var(--skip-color); color: var(--skip-color);} 
+  .bet-suggestion-card strong {font-size: 14px; font-weight: 900;}
+  
+  /* Enhanced Top Candidates Display */
+  #topCandidates {
+      padding: 12px 0;
+      border-top: 1px solid var(--border-color); 
+      margin-top: 12px;
+  }
+  .candidate-list {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-light);
+  }
+  .candidate-item {
+      padding: 6px 10px;
+      border-radius: 6px;
+      background: #2e2e4e; 
+      border: 1px solid var(--border-color);
+      display: inline-block;
+      min-width: 60px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  }
+  .candidate-item .num {
+      font-weight: 900;
+      font-size: 16px;
+      margin-right: 4px;
+  }
+  .strategy-info {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 10px;
+      text-align: center;
+      font-weight: 500;
+  }
+  .color-label {
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+  <div class="app" role="application" aria-label="VIP KING Stylish Dashboard">
+    
+    <div class="header">
+      <div class="brand">
+        <div class="logo">V8.1</div>
+        <div>
+          <div class="h-title">DECISION FOCUS TERMINAL</div>
+          <div class="h-sub">Advanced Pattern Recognition & Skip Logic</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="scrollable-content">
+        
+      <div class="card game-selector-card">
+          <div class="control-title" style="margin-top: 0;">
+              <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="var(--accent)"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M8 12h8M12 8v8" stroke-width="2"/></svg>
+              GAME INTERVAL
+          </div>
+          <div class="interval-btns" id="intervalSelector">
+              <button class="interval-btn" data-interval="30s">30 SEC</button>
+              <button class="interval-btn active" data-interval="1m">1 MIN</button>
+              <button class="interval-btn" data-interval="3m">3 MIN</button>
+          </div>
+      </div>
+  
+      <div class="result-status-bar" id="lastMeta">
+        </div>
+      
+      <div class="card focus-chip" id="focusBox">
+          <div class="focus-left">
+              <div class="focus-label">HIGH-CONFIDENCE PREDICTION</div>
+              <div class="conf-text" id="confText">Confidence: —</div>
+          </div>
+          <div class="focus-num-container">
+               <div class="focus-num" id="focusNumber">—</div>
+               <div class="trend-arrow-container" id="trendArrowContainer">
+                  </div>
+          </div>
+      </div>
+  
+      <div class="bet-suggestion-card skip-state" id="betSuggestionCard">
+          <span>SUGGESTED ACTION:</span>
+          <strong id="betSuggestionText">Enter Data & Predict...</strong>
+          <div class="color-label" id="suggestionColorSize"></div>
+      </div>
+  
+      <div class="card prediction-details" id="predictionCard">
+          
+          <div class="control-title">
+              <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="var(--accent)"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              DATA INPUT & GENERATION
+          </div>
+  
+          <div class="control-group">
+              <div class="input-row">
+                  <div class="input-label-group" style="flex-grow: 1;">
+                      <label for="periodNumberInput">NEXT PERIOD (Full ID) *REQUIRED*</label>
+                      <input type="text" id="periodNumberInput" class="text-input" placeholder="e.g., 202411160100" value="">
+                  </div>
+                  <button id="actionButton" title="Check Result, Record Status, and Predict Next Period" disabled>
+                      GENERATE
+                  </button>
+              </div>
+              
+              <div class="input-row" style="justify-content: flex-end;">
+                   <div class="input-label-group" style="align-items: flex-start; margin-right: auto; min-width: 140px;">
+                      <label>LAST PREDICTED NUMBER</label>
+                      <div class="last-pred-display">
+                          <span id="prevPredictedNumDisplay" class="num">—</span>
+                          <span style="color: var(--text-muted);">(for period <span id="prevPeriodDisplay" style="font-weight: 700; color: var(--accent-2);">—</span>)</span>
+                      </div>
+                  </div>
+                  <div class="input-label-group">
+                      <label for="resultNumberInput">PREV RESULT (0-9)</label>
+                      <input type="number" id="resultNumberInput" class="result-input" placeholder="0-9" min="0" max="9">
+                  </div>
+              </div>
+          </div>
+        
+        
+          <div class="control-title">
+              <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="var(--accent-2)"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              BREAKDOWN & STRATEGY
+          </div>
+  
+          <div class="pred-grid">
+              <div class="pred-item" id="predColorCard">
+                  <div class="pred-item-title">Predicted Color</div>
+                  <div class="pred-number" id="predColor">—</div>
+                  <div class="pred-prob" id="predColorProb">Prob: —</div>
+              </div>
+  
+              <div class="pred-item" id="predSizeCard">
+                  <div class="pred-item-title">Predicted Size</div>
+                  <div class="pred-number" id="predSize">—</div>
+                  <div class="pred-prob" id="predSizeProb">Prob: —</div>
+              </div>
+  
+              <div class="pred-item" id="predNumberCard">
+                  <div class="pred-item-title">Top 2nd Number</div>
+                  <div class="pred-number" id="predNumberSecond">—</div>
+                  <div class="pred-prob" id="predNumberSecondProb">Prob: —</div>
+              </div>
+          </div>
+  
+          <div id="topCandidates">
+              <div class="candidate-list" id="candidateList">
+                  <span style="font-size: 13px; color: var(--text-muted);">Awaiting Prediction Data...</span>
+              </div>
+              <div class="strategy-info">Strategy: <strong id="strategyText">—</strong></div>
+          </div>
+        
+      </div>
+      
+      <div class="card history-card">
+          <div class="history-header" id="historyHeader">
+              <div class="history-header-left">
+                  <span>
+                    <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="var(--text-light)"><path d="M10 13l2 2 6-6M19 10a7 7 0 10-14 0 7 7 0 0014 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    PREDICTION HISTORY
+                  </span>
+                  <button id="clearHistoryBtn" class="svg-btn" title="Clear History">
+                      <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" style="margin-right:0;"><path d="M3 6h18" stroke-width="2" stroke-linecap="round"/><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke-width="2" stroke-linecap="round"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" stroke-width="2" stroke-linecap="round"/></svg>
+                  </button>
+              </div>
+              <span id="historyToggleIcon">▲</span>
+          </div>
+          <div class="history-content show" id="historyContent">
+              <table class="history-table">
+                  <thead>
+                      <tr>
+                          <th>Period No.</th>
+                          <th>Prediction</th>
+                          <th>Status</th>
+                          <th>Actual Result</th>
+                          <th>Strategy</th>
+                      </tr>
+                  </thead>
+                  <tbody id="historyTableBody">
+                      <tr><td colspan="5" style="color: var(--text-muted);">No history recorded yet.</td></tr>
+                  </tbody>
+              </table>
+          </div>
+      </div>
+    </div> </div> <script>
+let history = [];
+const MAX_HISTORY = 600;
+const HIGH_CONFIDENCE_THRESHOLD = 90; 
+const MEGA_WIN_THRESHOLD = 95;
+const STRICT_SKIP_THRESHOLD = 70; 
+let currentInterval = '1m'; 
+let lastPrediction = null; 
+
+// Color and Size definitions
+const COLOR_R = '#ff4d4d'; 
+const COLOR_G = '#00ff80'; 
+const COLOR_V = '#aa00ff';
+const SIZE_B = '#ffd700'; 
+const SIZE_S = '#4d94ff'; 
+
+// UI Elements (for caching)
+const focusNumberEl = document.getElementById('focusNumber'); 
+const trendArrowContainer = document.getElementById('trendArrowContainer');
+const periodNumberInput = document.getElementById('periodNumberInput'); 
+const resultNumberInput = document.getElementById('resultNumberInput'); 
+const prevPeriodDisplay = document.getElementById('prevPeriodDisplay'); 
+const prevPredictedNumDisplay = document.getElementById('prevPredictedNumDisplay'); 
+const historyTableBody = document.getElementById('historyTableBody');
+const lastMetaEl = document.getElementById('lastMeta');
+const focusBoxEl = document.getElementById('focusBox');
+const confTextEl = document.getElementById('confText');
+const predColorEl = document.getElementById('predColor');
+const predColorProbEl = document.getElementById('predColorProb');
+const predSizeEl = document.getElementById('predSize');
+const predSizeProbEl = document.getElementById('predSizeProb');
+const predNumberSecondEl = document.getElementById('predNumberSecond');
+const predNumberSecondProbEl = document.getElementById('predNumberSecondProb');
+const candidateListEl = document.getElementById('candidateList'); 
+const strategyTextEl = document.getElementById('strategyText'); 
+const intervalSelector = document.getElementById('intervalSelector');
+const historyContent = document.getElementById('historyContent');
+const historyToggleIcon = document.getElementById('historyToggleIcon');
+const betSuggestionCard = document.getElementById('betSuggestionCard'); 
+const betSuggestionText = document.getElementById('betSuggestionText'); 
+const actionButton = document.getElementById('actionButton'); 
+const suggestionColorSizeEl = document.getElementById('suggestionColorSize'); 
+
+
+// Utility Functions 
+function now(){ return Date.now(); }
+function randInt(n){ return Math.floor(Math.random()*n); }
+function tagWeight(tag){ if(tag==='W') return 1.6; if(tag==='L') return 0.6; if(tag==='I') return 1.2; return 1.0; }
+function normalize(arr){ const s=arr.reduce((a,b)=>a+b,0); if(s===0) return arr.map(()=>0); return arr.map(x=>x/s); }
+
+function numberToColorFromParity(n){ 
+    if (n === 0) return 'Red / Violet'; 
+    if (n === 5) return 'Green / Violet'; 
+    if ([1, 3, 7, 9].includes(n)) return 'Green'; 
+    if ([2, 4, 6, 8].includes(n)) return 'Red'; 
+    return 'Unknown'; 
+}
+function numberToSize(n){ 
+    return n >= 5 ? 'Big' : 'Small' ; 
+}
+function getNumberHexColor(n){
+    if (n === '—' || n === null || n === 'E') return 'var(--text-light)';
+    const num = parseInt(n);
+    if (num === 0) return `linear-gradient(to right, ${COLOR_V} 50%, ${COLOR_R} 50%)`;
+    if (num === 5) return `linear-gradient(to right, ${COLOR_V} 50%, ${COLOR_G} 50%)`;
+    if ([1, 3, 7, 9].includes(num)) return COLOR_G; 
+    if ([2, 4, 6, 8].includes(num)) return COLOR_R; 
+    return 'var(--text-light)';
+}
+
+function getSizeHexColor(size){
+    return size === 'Big' ? SIZE_B : SIZE_S;
+}
+// --- Core Prediction Logic (Same as V8.0) ---
+function computeWeightedNumberCounts(){ const counts=Array(10).fill(0); for(const h of history) counts[h.resultNum]+=tagWeight(h.tag); return counts; }
+function computeWeightedTransitionSecondOrder(){ 
+    const trans = Array.from({length:10},()=>Array.from({length:10},()=>Array(10).fill(0)));
+    for(let i=0; i<history.length-2; i++){ 
+        const prevPrev = history[i+2].resultNum;
+        const prev = history[i+1].resultNum;
+        const next = history[i].resultNum;
+        trans[prevPrev][prev][next] += tagWeight(history[i].tag);
+    }
+    return trans; 
+}
+function computeWeightedTransition(){ 
+    const trans=Array.from({length:10},()=>Array(10).fill(0)); 
+    for(let i=0;i<history.length-1;i++){ 
+        const prev=history[i+1].resultNum; 
+        const next=history[i].resultNum; 
+        trans[prev][next]+=tagWeight(history[i].tag);
+    } 
+    return trans; 
+}
+function computeRecencyWeighted(){ const counts=Array(10).fill(0); const decay=0.12; for(let i=0;i<history.length;i++){ counts[history[i].resultNum]+=Math.exp(-i*decay)*tagWeight(history[i].tag);} return counts;}
+function findSuffixMatches(maxLen=8){ const res=[]; const seq=history.map(h=>h.resultNum); if(seq.length<3) return res; const maxL=Math.min(maxLen,seq.length-1); for(let L=maxL;L>=1;L--){ const suf=seq.slice(0,L).join(','); const counts=Array(10).fill(0); let occ=0; for(let i=L;i<seq.length-1;i++){ const cand=seq.slice(i,i+L).join(','); if(cand===suf){ occ++; counts[seq[i+L]]+=tagWeight(history[i+L].tag);} } if(occ>0){ const total=counts.reduce((a,b)=>a+b,0); const probs=counts.map(c=>total>0?c/total:0); res.push({length:L,occurrences:occ,counts,probs,top:probs.map((p,i)=>({n:i,p})).sort((a,b)=>b.p-a.p)[0]}); break; } } return res; }
+function computeStreakBoost(){ const boost=Array(10).fill(0); if(!history.length) return boost; let v=history[0].resultNum,len=1; for(let i=1;i<history.length;i++){ if(history[i].resultNum===history[i-1].resultNum) len++; else break;} if(len>=2){ const factor=Math.min(0.22+(len-2)*0.08,0.6); const tag=history[0].tag; const tagF=(tag==='W'?1.1:tag==='L'?0.8:1.0); boost[v]=factor*tagF;} return boost; }
+function detectPeriod(){ if(history.length<10) return {period:null,score:0}; let best={period:null,score:0}; const maxP=Math.min(15,Math.floor(history.length/2)); for(let p=2;p<=maxP;p++){ let matches=0,total=0; for(let i=0;i+p<history.length;i++){ total++; if(history[i].resultNum===history[i+p].resultNum) matches++; } const score=total>0?matches/total:0; if(score>best.score) best={period:p,score}; } return best.score>=0.60?best:{period:null,score:best.score}; }
+function chooseStrategy(matches,periodInfo,streakLen, isSOM){ 
+    if (isSOM) return "AI SOM"; 
+    if(matches.length>0 && matches[0].length>=3) return "AI Pattern"; 
+    if(periodInfo.period) return "Cycle"; 
+    if(streakLen>=3) return "Trend"; 
+    return "Recency/Global"; 
+}
+
+function predictNext(){
+  // Handle insufficient data
+  if (history.length < 1) { 
+    const rn = randInt(10);
+    const defaultColor = numberToColorFromParity(rn);
+    const defaultSize = numberToSize(rn);
+    return { 
+        number: rn, numberProb: 50, numberSecond: (rn+1)%10, numberSecondProb: 15, 
+        color: defaultColor, colorProb: 50, 
+        size: defaultSize, sizeProb: 50, 
+        candidatesNumbers: [{n:rn, p:50}, {n:(rn+1)%10, p:15}, {n:(rn+2)%10, p:10}], 
+        confidence: 50, strategy: 'RND Start', betSuggestion: 'MINIMUM BET', riskLevel: 'low-risk' 
+    };
+  }
+  
+  if (history.length < 10){ 
+      const last = history[0].resultNum;
+      const rn1 = randInt(10);
+      const rn2 = (last + 5) % 10;
+      return { 
+          number: rn1, 
+          numberProb: 40, 
+          numberSecond: rn2, 
+          numberSecondProb: 15, 
+          color: numberToColorFromParity(rn1), 
+          size: numberToSize(rn1), 
+          candidatesNumbers: [{n:rn1, p:40}, {n:rn2, p:15}, {n:last, p:10}], 
+          confidence: 10, strategy: 'Collecting Data', betSuggestion: 'MINIMUM BET', riskLevel: 'low-risk' 
+      };
+    }
+  
+  try{
+    // --- Full Prediction Logic Starts Here (Unchanged core math logic) ---
+    let w_som = 0.38;
+    const w_global = 0.12, w_recency = 0.25, w_seq = 0.17, w_streak = 0.08; 
+    let somProb = Array(10).fill(0);
+    let isSOMUsed = false;
+    
+    if (history.length >= 2) {
+        const transSOM = computeWeightedTransitionSecondOrder();
+        const lastNum = history[0].resultNum;
+        const prevLastNum = history[1].resultNum;
+        let rawSOM = transSOM[prevLastNum][lastNum].slice();
+
+        if (rawSOM.reduce((a,b)=>a+b,0) === 0) {
+            const trans = computeWeightedTransition(); 
+            rawSOM = trans[lastNum].slice(); 
+            w_som = 0.30;
+            isSOMUsed = false;
+        } else {
+            isSOMUsed = true;
+        }
+        somProb = normalize(rawSOM);
+    } else {
+        const trans = computeWeightedTransition(); 
+        somProb = normalize(trans[history[0].resultNum].slice());
+        w_som = 0.20;
+    }
+
+    const globalCounts = computeWeightedNumberCounts();
+    const globalProb = normalize(globalCounts);
+    const recencyProb = normalize(computeRecencyWeighted());
+    const matches = findSuffixMatches(8);
+    const seqProb = Array(10).fill(0);
+    if (matches.length > 0) matches[0].probs.forEach((p,i)=>seqProb[i]=p);
+    const streakBoost = computeStreakBoost();
+
+    const blended = [];
+    for (let n=0;n<10;n++) blended.push(w_som*somProb[n] + w_global*globalProb[n] + w_recency*recencyProb[n] + w_seq*seqProb[n] + w_streak*streakBoost[n]);
+    let norm = normalize(blended);
+
+    const periodInfo = detectPeriod();
+    if (periodInfo.period && history.length > periodInfo.period) {
+      const cand = history[periodInfo.period].resultNum;
+      norm[cand] += periodInfo.score * 0.35; 
+      norm = normalize(norm);
+    }
+
+    const nums = norm.map((p,i)=>({n:i,p})).sort((a,b)=>b.p-a.p);
+    const top = nums[0], second = nums[1] || {n:'—', p:0};
+    const topGap = top.p - (second.p || 0);
+    const entropy = -norm.reduce((acc,p)=> p>0 ? acc + p*Math.log2(p) : acc, 0);
+    const peakedness = 1 - (entropy / Math.log2(10));
+
+    let colorCounts = { Red: 0, Green: 0, Violet: 0 };
+    let bigProb = 0, smallProb = 0;
+    
+    for (let i = 0; i < 10; i++) {
+        const p = norm[i];
+        if (i === 0) { colorCounts.Violet += p * 0.5; colorCounts.Red += p * 0.5; } 
+        else if (i === 5) { colorCounts.Violet += p * 0.5; colorCounts.Green += p * 0.5; } 
+        else if ([1, 3, 7, 9].includes(i)) { colorCounts.Green += p; } 
+        else if ([2, 4, 6, 8].includes(i)) { colorCounts.Red += p; }
+
+        if (numberToSize(i) === 'Big') bigProb += p; else smallProb += p;
+    }
+    
+    const maxColorProb = Math.max(colorCounts.Red, colorCounts.Green, colorCounts.Violet);
+    
+    let candidateNumber = top.n;
+    const predictedColor = numberToColorFromParity(candidateNumber); 
+    const predictedSize = numberToSize(candidateNumber);
+    const predictedSizeProb = Math.round(Math.max(bigProb,smallProb)*1000)/10;
+    const predictedColorProb = Math.round(maxColorProb*1000)/10;
+
+    const seqStrength = (matches.length>0) ? matches[0].occurrences / (history.length) : 0;
+    const periodScore = periodInfo.period ? periodInfo.score : 0;
+    
+    let confidence = Math.round(Math.min(100, Math.max(8, (0.55*topGap + 0.20*peakedness + 0.10*seqStrength + 0.15*periodScore) * 100)));
+
+    const streakLen = (function(){ let s=1; for(let i=1;i<history.length;i++){ if(history[i].resultNum===history[i-1].resultNum) s++; else break; } return s; })();
+    const chosenStrategy = chooseStrategy(matches, periodInfo, streakLen, isSOMUsed);
+
+    let betSuggestion = 'LOW BET (Avoid Risk)';
+    let riskLevel = 'medium-risk';
+    let finalNumber = candidateNumber; // variable to store potentially masked number
+
+    // STRICT SKIP LOGIC
+    if (confidence < STRICT_SKIP_THRESHOLD) { 
+        betSuggestion = 'STRICT SKIP (Confidence Too Low)';
+        riskLevel = 'skip-state'; 
+        finalNumber = '—'; // Hide the prediction number
+    } 
+    // END NEW LOGIC
+    else if (confidence >= MEGA_WIN_THRESHOLD) {
+        betSuggestion = `MEGA BET on ${candidateNumber} (Risk: HIGH)`;
+        riskLevel = 'high-risk';
+    } else if (confidence >= HIGH_CONFIDENCE_THRESHOLD) {
+        betSuggestion = `FLAT BET on ${candidateNumber} (Risk: MEDIUM)`;
+        riskLevel = 'medium-risk';
+    } else if (confidence >= STRICT_SKIP_THRESHOLD) { // Lowest acceptable bet level
+        betSuggestion = `MINIMUM BET on ${candidateNumber} (Risk: LOW)`;
+        riskLevel = 'low-risk';
+    } else {
+        betSuggestion = 'SKIP (Pattern Unstable)';
+        riskLevel = 'medium-risk'; 
+    }
+
+    // Capture the period ID that the prediction is being made FOR (current value of the input field)
+    const predictedPeriodId = periodNumberInput.value; 
+    
+    // Store the actual predicted number for history, even if masked
+    const actualPredictedNum = candidateNumber; 
+
+    return {
+      number: finalNumber, 
+      actualPredictedNum: actualPredictedNum, // Store the unmasked number for later use
+      numberProb: Math.round((nums.find(x=>x.n===candidateNumber)?.p||0)*1000)/10,
+      numberSecond: second.n,
+      numberSecondProb: Math.round(second.p*1000)/10,
+      color: predictedColor,
+      colorProb: predictedColorProb,
+      size: predictedSize,
+      sizeProb: predictedSizeProb,
+      candidatesNumbers: nums.slice(0,3).map(x=>({n:x.n,p:Math.round(x.p*1000)/10})), 
+      confidence,
+      strategy: chosenStrategy,
+      betSuggestion, 
+      riskLevel,
+      period: predictedPeriodId 
+    };
+
+  } catch (err){
+    console.error("Prediction error in main logic:", err);
+    return {number:'E', actualPredictedNum:'E', numberProb:0, numberSecond:'—', numberSecondProb:0, color:'—', colorProb: 0, size:'—', sizeProb:0, candidatesNumbers:[], confidence:12, strategy:'Error', betSuggestion: 'SYSTEM ERROR! SKIP.', riskLevel: 'high-risk', period: periodNumberInput.value};
+  }
+}
+// --- END Core Prediction Logic ---
+
+
+function getTrendArrowSVG(number) {
+    if (number === 'E' || number === '—' || number === null) return '';
+    const num = parseInt(number);
+    let colorVar, svgPath;
+    if (num >= 5) {
+        colorVar = 'var(--trend-up)';
+        svgPath = `<path d="M12 19V5M5 12l7-7 7 7" stroke="${colorVar}" stroke-linecap="round" stroke-linejoin="round"/>`;
+    } else if (num >= 0 && num <= 4) {
+        colorVar = 'var(--trend-down)';
+        svgPath = `<path d="M12 5v14M5 12l7 7 7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+    } else {
+        return '';
+    }
+    return `<svg viewBox="0 0 24 24" fill="none" stroke-width="2">${svgPath}</svg>`;
+}
+
+function renderMainState(){
+    
+    // Period to display for "Prev Period" (period for which result is requested)
+    const periodForInput = lastPrediction ? lastPrediction.period : periodNumberInput.value.trim();
+    const periodForInputShort = periodForInput && periodForInput.length >= 5 ? periodForInput.slice(-5) : '—'; 
+    prevPeriodDisplay.textContent = periodForInputShort;
+
+    // Display the number that was predicted for the period above
+    const predictedNumForInput = lastPrediction ? lastPrediction.actualPredictedNum : '—';
+    prevPredictedNumDisplay.textContent = predictedNumForInput;
+    prevPredictedNumDisplay.style.color = getNumberHexColor(predictedNumForInput).startsWith('linear-gradient') ? 'var(--text-light)' : getNumberHexColor(predictedNumForInput);
+
+
+    if (!history.length){
+        lastMetaEl.innerHTML = `<svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 6V12L16 14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> LAST PERIOD: — | RESULT: —`;
+        lastMetaEl.style.borderLeft = '5px solid var(--accent-2)';
+    } else {
+        const h = history[0];
+        let statusIcon, border;
+
+        if (h.tag === 'W') {
+            statusIcon = `<svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="var(--ok)"><path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 4L12 14.01l-3-3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+            border = '5px solid var(--ok)';
+        } else if (h.tag === 'L') {
+            statusIcon = `<svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="var(--bad)"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M15 9l-6 6M9 9l6 6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+            border = '5px solid var(--bad)';
+        } else {
+            statusIcon = `<svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 6V12L16 14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+            border = '5px solid var(--accent-2)';
+        }
+
+        const resultDisplay = h.resultNum !== null ? `${h.resultNum} · ${h.resultColor.toUpperCase().replace(' / VIOLET', ' V/M')} · ${h.resultSize.toUpperCase().charAt(0)}` : '—';
+        lastMetaEl.innerHTML = `${statusIcon} LAST PERIOD: ${h.period.slice(-5)} | RESULT: ${resultDisplay} · <span class="win-loss-tag tag-${h.tag}">${h.tag==='W'?'WIN':h.tag==='L'?'LOSS':'SKIPPED'}</span>`;
+        lastMetaEl.style.borderLeft = border;
+    }
+}
+
+function applyPrediction(p){
+  lastPrediction = p;
+  
+  // 1. Update Focus Number (FIXED: Handling Gradient Numbers)
+  focusNumberEl.textContent = p.number;
+  focusNumberEl.classList.remove('gradient-text'); // Reset class
+  focusNumberEl.style.background = 'none'; // Reset background style
+  focusNumberEl.style.color = 'var(--text-light)'; // Default color (for non-mixed)
+
+  if (p.number === 'E' || p.number === '—' || p.number === null) {
+     focusNumberEl.style.color = 'var(--skip-color)'; // Skip color for masked number
+  } else {
+    const hex = getNumberHexColor(p.number);
+    if (hex.startsWith('linear-gradient')) {
+        focusNumberEl.classList.add('gradient-text');
+        focusNumberEl.style.background = hex;
+        focusNumberEl.style.color = 'transparent'; 
+    } else {
+        focusNumberEl.style.color = hex;
+    }
+  }
+  
+  // Disable GENERATE button if period is blank
+  actionButton.disabled = !periodNumberInput.value.trim();
+
+
+  // 2. Update Confidence and Focus Box Style
+  trendArrowContainer.innerHTML = getTrendArrowSVG(p.number);
+  confTextEl.textContent = p.confidence + '% Confidence';
+  focusBoxEl.className = 'card focus-chip'; // Reset classes
+  confTextEl.className = 'conf-text';
+  
+  if (p.riskLevel === 'skip-state') { // NEW: Handle skip style
+      focusBoxEl.classList.add('skip-state');
+      confTextEl.classList.add('skip-state');
+  } else if (p.confidence >= MEGA_WIN_THRESHOLD) {
+      focusBoxEl.classList.add('mega-conf');
+      confTextEl.classList.add('mega-conf');
+  } else if (p.confidence >= HIGH_CONFIDENCE_THRESHOLD) {
+      focusBoxEl.classList.add('high-conf');
+      confTextEl.classList.add('high-conf');
+  } 
+
+  // 3. Update Breakdown Cards (Color, Size, Second Number)
+  const predColorCard = document.getElementById('predColorCard');
+  const predSizeCard = document.getElementById('predSizeCard');
+  const predNumberCard = document.getElementById('predNumberCard');
+  
+  // Color Card
+  let actualColor = COLOR_G; 
+  if(p.color.includes('Red')) actualColor = COLOR_R;
+  if(p.color.includes('Violet')) actualColor = COLOR_V;
+  
+  const colorText = p.color.includes('/') ? 'VIO/MIX' : p.color.toUpperCase();
+
+  predColorCard.style.color = actualColor;
+  predColorEl.textContent = colorText;
+  predColorProbEl.textContent = `Prob: ${p.colorProb}%`; 
+
+  // Size Card
+  const actualSize = getSizeHexColor(p.size);
+  predSizeCard.style.color = actualSize;
+  predSizeEl.textContent = p.size.toUpperCase();
+  predSizeProbEl.textContent = `Prob: ${p.sizeProb}%`;
+
+  // Second Number Card
+  const secondNumColor = p.numberSecond === '—' ? 'var(--text-light)' : getNumberHexColor(p.numberSecond);
+  // Ensure linear gradient doesn't break number color display (we use white/light text for gradients here)
+  predNumberSecondEl.style.color = secondNumColor.startsWith('linear-gradient') ? 'var(--text-light)' : secondNumColor;
+  predNumberSecondEl.textContent = p.numberSecond;
+  predNumberSecondProbEl.textContent = `Prob: ${p.numberSecondProb}%`;
+
+  // 4. Update Top Candidates & Strategy (ENHANCED DISPLAY)
+  strategyTextEl.textContent = p.strategy;
+  
+  let candidatesHTML = '';
+  if (p.riskLevel !== 'skip-state' && p.candidatesNumbers && p.candidatesNumbers.length > 0) {
+      candidatesHTML = p.candidatesNumbers.map(c => {
+          const hex = getNumberHexColor(c.n);
+          // For candidates, keep it simple: solid color or default white for mixed
+          const textColor = hex.startsWith('linear-gradient') ? 'var(--text-light)' : hex; 
+          return `<span class="candidate-item" style="color: ${textColor};"><span class="num">${c.n}</span> (${c.p}%)</span>`;
+      }).join('');
+  } else {
+      candidatesHTML = `<span style="font-size: 13px; color: var(--skip-color);">Prediction Masked.</span>`;
+  }
+  candidateListEl.innerHTML = candidatesHTML;
+  
+  // 5. Update Bet Suggestion and Risk
+  betSuggestionText.textContent = p.betSuggestion;
+  betSuggestionCard.className = `bet-suggestion-card ${p.riskLevel}`;
+  
+  // Update color/size suggestion for the top number
+  if (p.riskLevel !== 'skip-state' && p.number !== '—') {
+      const topColor = numberToColorFromParity(p.number).toUpperCase().replace(' / VIOLET', ' V/M');
+      const topSize = numberToSize(p.number).toUpperCase();
+      suggestionColorSizeEl.innerHTML = `Bet on: <span style="color: ${actualColor}">${topColor}</span> + <span style="color: ${actualSize}">${topSize}</span>`;
+  } else {
+      suggestionColorSizeEl.textContent = "WAIT FOR STABLE PATTERN";
+  }
+  
+  // 6. Update Input Alignment Display
+  renderMainState(); 
+}
+
+
+function incrementPeriod(period) {
+    if (!period || typeof period !== 'string' || !period.match(/^\d+$/)) {
+        return null;
+    }
+    const numPart = period.match(/\d+$/)[0];
+    const basePart = period.slice(0, period.length - numPart.length);
+    
+    let num = parseInt(numPart, 10);
+    const length = numPart.length;
+
+    num += 1;
+    
+    let nextNumPart = num.toString();
+    if (nextNumPart.length > length) {
+        nextNumPart = nextNumPart.slice(-length).padStart(length, '0');
+    } else {
+        nextNumPart = nextNumPart.padStart(length, '0');
+    }
+    
+    return basePart + nextNumPart;
+}
+
+
+function recordOutcome(n, period, tag, predictedNum, strategy){
+  const color = numberToColorFromParity(n);
+  const size = numberToSize(n);
+  
+  history.unshift({
+      resultNum: n,
+      resultColor: color,
+      resultSize: size,
+      tag: tag, // W, L, or I (Ignored/Skipped)
+      period: period,
+      t: now(),
+      predictedNum: predictedNum,
+      predictedColor: numberToColorFromParity(predictedNum), 
+      predictedSize: numberToSize(predictedNum),
+      strategy: strategy,
+  });
+  if (history.length > MAX_HISTORY) history.pop();
+}
+
+function generateNextCycle() {
+    const currentPeriodID = periodNumberInput.value.trim();
+    
+    if (currentPeriodID.length < 5 || !currentPeriodID.match(/^\d+$/)) {
+        alert("অনুগ্রহ করে একটি সম্পূর্ণ Period ID (যেমন: 202411160100) দিন।");
+        return;
+    }
+    
+    const resultNumInputVal = resultNumberInput.value.trim();
+
+    // --- CASE 1: Recording Previous Result & Generating Next Prediction (Standard Loop) ---
+    if (lastPrediction && lastPrediction.period.trim() !== '' && resultNumInputVal !== '') {
+        let resultNum = parseInt(resultNumInputVal);
+        
+        if (isNaN(resultNum) || resultNum < 0 || resultNum > 9) {
+            alert(`অনুগ্রহ করে শেষ হওয়া পিরিয়ডের (${lastPrediction.period.slice(-5)}) জন্য একটি সঠিক ফলাফল (0-9) লিখুন।`);
+            return;
+        }
+
+        // 1. Determine Status (Win/Loss/Skip)
+        const predictedNumber = lastPrediction.actualPredictedNum; // Use actualPredictedNum for check
+        let systemTag = 'I'; 
+
+        if (predictedNumber !== '—' && predictedNumber !== 'E') {
+             systemTag = (resultNum === predictedNumber) ? 'W' : 'L';
+        }
+        
+        // 2. Record History: The period being recorded is the one the last prediction was FOR
+        const periodToRecord = lastPrediction.period;
+
+        recordOutcome(resultNum, periodToRecord, systemTag, lastPrediction.actualPredictedNum, lastPrediction.strategy);
+
+        // 3. Calculate the NEXT Period ID
+        const nextPeriodID = incrementPeriod(currentPeriodID);
+        
+        // 4. Run Prediction for the new NEXT PERIOD
+        const nextPrediction = predictNext();
+        nextPrediction.period = nextPeriodID; // Set the new period ID for the prediction
+
+        // 5. Update UI for next cycle
+        periodNumberInput.value = nextPeriodID; // Set input field to the new Period ID
+        resultNumberInput.value = ''; // Clear the input field for the next result
+        applyPrediction(nextPrediction);
+        renderHistory();
+        // Focus back to result input for quick entry
+        resultNumberInput.focus(); 
+        return;
+
+    } 
+    
+    // --- CASE 2: First Prediction / Only Period ID Entered (Initial Start) ---
+    else {
+        
+        if (history.length > 0 && resultNumInputVal === '') {
+            alert("যদি এটি প্রথম পিরিয়ড না হয়, তাহলে ফলাফল (0-9) দিয়ে আবার চেষ্টা করুন।");
+            return;
+        }
+        
+        // This runs the initial prediction or re-runs if no result was entered.
+        const p = predictNext();
+        p.period = currentPeriodID; 
+
+        // Update UI (Keep input field the same, ready for next result)
+        periodNumberInput.value = currentPeriodID; 
+        resultNumberInput.value = ''; 
+        applyPrediction(p);
+        renderHistory(); 
+        resultNumberInput.focus(); 
+        return;
+    }
+}
+
+
+function renderHistory(){
+    historyTableBody.innerHTML = ''; 
+    
+    if (history.length === 0) {
+        historyTableBody.innerHTML = '<tr><td colspan="5" style="color: var(--text-muted);">No history recorded yet.</td></tr>';
+        return;
+    }
+
+    const displayHistory = history.slice(0, 10); 
+
+    displayHistory.forEach(h => {
+        const row = historyTableBody.insertRow();
+        
+        const statusText = h.tag === 'W' ? 'W' : h.tag === 'L' ? 'L' : 'I';
+        
+        // Show the actual predicted number, even if it was masked in the UI
+        const predNum = h.predictedNum !== '—' ? h.predictedNum : '—'; 
+        
+        const predText = predNum !== '—' ? 
+            `<span class="result-details-text"><span class="num" style="color: ${getNumberHexColor(predNum).startsWith('linear-gradient') ? 'var(--text-light)' : getNumberHexColor(predNum)};">${predNum}</span> · ${h.predictedColor.charAt(0)} · ${h.predictedSize.charAt(0)}</span>` : 
+            '—';
+            
+        const resultText = h.resultNum !== null ? 
+            `<span class="result-details-text"><span class="num">${h.resultNum}</span> · ${h.resultColor.charAt(0)} · ${h.resultSize.charAt(0)}</span>` : 
+            '—';
+        
+        // --- period.slice(-5) APPLIED ---
+        const periodDisplay = h.period && h.period.length >= 5 ? h.period.slice(-5) : h.period;
+
+        row.innerHTML = `
+            <td>${periodDisplay}</td>
+            <td>${predText}</td>
+            <td class="tag-${h.tag}" style="font-weight: 800;">${statusText}</td>
+            <td>${resultText}</td>
+            <td>${h.strategy}</td>
+        `;
+        
+        // Highlight Win/Loss rows
+        if(h.tag === 'W') row.style.backgroundColor = 'rgba(0, 255, 128, 0.05)';
+        if(h.tag === 'L') row.style.backgroundColor = 'rgba(255, 77, 77, 0.05)';
+    });
+}
+
+function handleIntervalChange(event){
+    const btn = event.target.closest('.interval-btn');
+    if (!btn || btn.classList.contains('active')) return;
+
+    document.querySelectorAll('.interval-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentInterval = btn.dataset.interval;
+    
+    handleClearHistory(true); 
+    init(); 
+}
+
+
+function handleClearHistory(silent = false){
+    if(!silent && !confirm('আপনি কি নিশ্চিত যে আপনি শুধুমাত্র History (ইতিহাস) মুছতে চান?')) return;
+    history = [];
+    
+    // Reset period input to blank
+    periodNumberInput.value = '';
+    
+    // Initial prediction after clear (to reset UI)
+    const initialPrediction = predictNext();
+    initialPrediction.period = ''; // Set period to blank for the first run
+    lastPrediction = initialPrediction;
+
+    applyPrediction(lastPrediction); 
+    renderHistory();
+    resultNumberInput.value = '';
+    
+    // Enable button initially if it was disabled due to no data
+    actionButton.disabled = true; 
+}
+
+
+/* ---------- Event Listeners ---------- */
+
+actionButton.addEventListener('click', generateNextCycle);
+intervalSelector.addEventListener('click', handleIntervalChange);
+document.getElementById('historyHeader').addEventListener('click', (e)=>{
+    if (e.target.closest('#clearHistoryBtn')) return;
+    const isShown = historyContent.classList.toggle('show');
+    historyToggleIcon.textContent = isShown ? '▲' : '▼';
+});
+document.getElementById('clearHistoryBtn').addEventListener('click', handleClearHistory);
+
+// Enable/Disable button based on Period Input
+periodNumberInput.addEventListener('input', function() {
+    // Button is enabled only if the Period ID is not empty
+    actionButton.disabled = !this.value.trim();
+    // Update display instantly
+    renderMainState();
+});
+
+// *** NEW: Enter Key Listener for both Period and Result Input ***
+document.addEventListener('keydown', function(event) {
+    // Check if the focused element is one of the input fields
+    const activeEl = document.activeElement;
+    if (event.key === 'Enter' && (activeEl === periodNumberInput || activeEl === resultNumberInput)) {
+        event.preventDefault(); // Prevent default form submission or newline
+        if (!actionButton.disabled) {
+            generateNextCycle();
+        }
+    }
+});
+
+
+/* init - Sets the initial prediction state (which is empty) */
+function init(){
+  periodNumberInput.value = ''; 
+  
+  // Initial prediction on load (dummy prediction as no data exists)
+  const initialPrediction = predictNext();
+  initialPrediction.period = ''; 
+  lastPrediction = initialPrediction;
+  
+  applyPrediction(lastPrediction);
+  renderHistory();
+  resultNumberInput.value = '';
+  actionButton.disabled = true; 
+}
+
+(function(){
+  init();
+})();
+</script>
+</body>
+</html>
