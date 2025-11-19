@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cash & Billing Collector (With Sheets)</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        // --- Icons ---
+        const IconWrapper = ({ children, className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                {children}
+            </svg>
+        );
+
+        const Banknote = ({ className }) => <IconWrapper className={className}><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></IconWrapper>;
+        const Smartphone = ({ className }) => <IconWrapper className={className}><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></IconWrapper>;
+        const History = ({ className }) => <IconWrapper className={className}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12"/><path d="M3 3v9h9"/><path d="M12 7v5l3 3"/></IconWrapper>;
+        const Trash2 = ({ className }) => <IconWrapper className={className}><path d="M3 6h18"/><path d="M19 6v14c0 1-2 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></IconWrapper>;
+        const PlusCircle = ({ className }) => <IconWrapper className={className}><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></IconWrapper>;
+        const Save = ({ className }) => <IconWrapper className={className}><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></IconWrapper>;
+        const Copy = ({ className }) => <IconWrapper className={className}><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></IconWrapper>;
+        const TrendingUp = ({ className }) => <IconWrapper className={className}><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></IconWrapper>;
+        const Wallet = ({ className }) => <IconWrapper className={className}><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></IconWrapper>;
+        const CreditCard = ({ className }) => <IconWrapper className={className}><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></IconWrapper>;
+        const FileText = ({ className }) => <IconWrapper className={className}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></IconWrapper>;
+        const Check = ({ className }) => <IconWrapper className={className}><polyline points="20 6 9 17 4 12"/></IconWrapper>;
+        const Stethoscope = ({ className }) => <IconWrapper className={className}><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v6"/><path d="M16 15v6"/><circle cx="12" cy="9" r="1"/><path d="M12 10v11"/></IconWrapper>;
+        const GraduationCap = ({ className }) => <IconWrapper className={className}><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></IconWrapper>;
+        const Plus = ({ className }) => <IconWrapper className={className}><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></IconWrapper>;
+        const X = ({ className }) => <IconWrapper className={className}><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></IconWrapper>;
+        const Settings = ({ className }) => <IconWrapper className={className}><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></IconWrapper>;
+        const Link2 = ({ className }) => <IconWrapper className={className}><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></IconWrapper>;
+
+        // --- Components ---
+
+        const Card = ({ children, className = "" }) => (
+            <div className={`bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden ${className}`}>
+                {children}
+            </div>
+        );
+
+        const Badge = ({ children, type }) => {
+            const styles = {
+                cash: "bg-green-100 text-green-800 border-green-200",
+                online: "bg-blue-100 text-blue-800 border-blue-200",
+                batch: "bg-slate-100 text-slate-700 border-slate-200",
+                ip: "bg-purple-100 text-purple-800 border-purple-200",
+                mixed: "bg-indigo-100 text-indigo-800 border-indigo-200"
+            };
+            return (
+                <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${styles[type] || styles.batch}`}>
+                    {children}
+                </span>
+            );
+        };
+
+        const InputGroup = ({ label, children }) => (
+            <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-medium text-slate-700">{label}</label>
+                {children}
+            </div>
+        );
+
+        const get12HourTime = () => {
+            return new Date().toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+        };
+
+        // --- Main Application ---
+
+        function CashCollectionApp() {
+            // --- State ---
+            const [activeTab, setActiveTab] = useState('student'); 
+            const [showSettings, setShowSettings] = useState(false);
+            // Updated Default URL with User Provided Link
+            const [sheetUrl, setSheetUrl] = useState(() => localStorage.getItem('sheet_webapp_url') || 'https://script.google.com/macros/s/AKfycbw0jexkbLLXt7nibiwrUmkPIzd3w9TtPc0YtfxqlmL9fM03tuCfmwcX07ZbMqOGU-6l/exec');
+            const [isSyncing, setIsSyncing] = useState(false);
+
+            // Data
+            const [studentTxns, setStudentTxns] = useState(() => {
+                try { return JSON.parse(localStorage.getItem('student_transactions')) || []; } catch (e) { return []; }
+            });
+            const [medicalTxns, setMedicalTxns] = useState(() => {
+                try { return JSON.parse(localStorage.getItem('medical_transactions')) || []; } catch (e) { return []; }
+            });
+
+            // Form State
+            const [name, setName] = useState(''); 
+            const [identifier, setIdentifier] = useState(''); 
+            const [paymentMode, setPaymentMode] = useState('cash'); 
+            const [remarks, setRemarks] = useState(''); 
+            
+            // Cash State
+            const initialDenominations = { 500: '', 200: '', 100: '', 50: '', 20: '', 10: '', 5: '', 1: '' };
+            const [denominations, setDenominations] = useState(initialDenominations);
+            
+            // Student Online State
+            const [onlineAmount, setOnlineAmount] = useState('');
+            const [txnId, setTxnId] = useState('');
+            const [txnDate, setTxnDate] = useState(new Date().toISOString().slice(0, 16));
+            const [receiverUpi, setReceiverUpi] = useState('');
+
+            // Medical Online State (Multi-row)
+            const [medicalOnlineRows, setMedicalOnlineRows] = useState([
+                { id: Date.now(), time: get12HourTime(), patient: '', utr: '', amount: '' }
+            ]);
+
+            const [copied, setCopied] = useState(false);
+
+            // --- Effects ---
+            useEffect(() => { localStorage.setItem('student_transactions', JSON.stringify(studentTxns)); }, [studentTxns]);
+            useEffect(() => { localStorage.setItem('medical_transactions', JSON.stringify(medicalTxns)); }, [medicalTxns]);
+            useEffect(() => { localStorage.setItem('sheet_webapp_url', sheetUrl); }, [sheetUrl]);
+
+            // Reset form when tab changes
+            useEffect(() => {
+                setName('');
+                setIdentifier(activeTab === 'student' ? 'B2025' : '');
+                setPaymentMode('cash');
+                setRemarks('');
+                setDenominations(initialDenominations);
+                setOnlineAmount('');
+                setTxnId('');
+                setReceiverUpi('');
+                setMedicalOnlineRows([{ id: Date.now(), time: get12HourTime(), patient: '', utr: '', amount: '' }]);
+            }, [activeTab]);
+
+            // --- Calculations ---
+            const currentList = activeTab === 'student' ? studentTxns : medicalTxns;
+            
+            const currentCashTotal = useMemo(() => {
+                return Object.entries(denominations).reduce((total, [denom, count]) => {
+                return total + (Number(denom) * (Number(count) || 0));
+                }, 0);
+            }, [denominations]);
+
+            const currentMedicalOnlineTotal = useMemo(() => {
+                return medicalOnlineRows.reduce((sum, row) => sum + (Number(row.amount) || 0), 0);
+            }, [medicalOnlineRows]);
+
+            const medicalGrandTotal = currentCashTotal + currentMedicalOnlineTotal;
+
+            const stats = useMemo(() => {
+                return currentList.reduce((acc, t) => {
+                    if (t.cashAmount) acc.cash += t.cashAmount;
+                    if (t.onlineAmount) acc.online += t.onlineAmount;
+                    if (t.mode === 'cash' && !t.cashAmount) acc.cash += t.amount;
+                    if (t.mode === 'online' && !t.onlineAmount) acc.online += t.amount;
+                    acc.total += t.amount;
+                    if (t.details && t.details.denominations) {
+                        Object.entries(t.details.denominations).forEach(([denom, count]) => {
+                            acc.notes[denom] = (acc.notes[denom] || 0) + Number(count);
+                        });
+                    }
+                    return acc;
+                }, { total: 0, cash: 0, online: 0, notes: {} });
+            }, [currentList]);
+
+            const formatCurrency = (num) => new Intl.NumberFormat('en-IN', { 
+                style: 'currency', 
+                currency: 'INR', 
+                minimumFractionDigits: 2 
+            }).format(num);
+
+            // --- Sync to Sheet Logic ---
+            const syncToGoogleSheet = async (transaction) => {
+                if (!sheetUrl) return;
+                
+                setIsSyncing(true);
+                try {
+                    // Prepare data for sheet (flattened)
+                    const payload = {
+                        timestamp: new Date(transaction.timestamp).toLocaleString(),
+                        name: transaction.name,
+                        identifier: transaction.identifier,
+                        mode: transaction.mode,
+                        amount: transaction.amount,
+                        remarks: transaction.remarks,
+                        details: transaction.details
+                    };
+
+                    // Use no-cors to avoid CORS errors with Google Scripts
+                    await fetch(sheetUrl, {
+                        method: 'POST',
+                        mode: 'no-cors', 
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    // Since no-cors returns opaque response, we assume success if no network error
+                    console.log("Sent to sheet");
+                } catch (error) {
+                    console.error("Sheet sync failed", error);
+                    alert("Failed to sync with Google Sheet. Check URL.");
+                } finally {
+                    setIsSyncing(false);
+                }
+            };
+
+            // --- Handlers ---
+            const handleDenomChange = (denom, value) => {
+                if (value && (!/^\d+$/.test(value) || parseInt(value) < 0)) return;
+                setDenominations(prev => ({ ...prev, [denom]: value }));
+            };
+
+            const addMedicalRow = () => {
+                setMedicalOnlineRows([...medicalOnlineRows, { 
+                    id: Date.now(), 
+                    time: get12HourTime(), 
+                    patient: '', 
+                    utr: '', 
+                    amount: '' 
+                }]);
+            };
+
+            const removeMedicalRow = (rowId) => {
+                if (medicalOnlineRows.length === 1) {
+                     setMedicalOnlineRows([{ id: Date.now(), time: get12HourTime(), patient: '', utr: '', amount: '' }]);
+                } else {
+                    setMedicalOnlineRows(medicalOnlineRows.filter(r => r.id !== rowId));
+                }
+            };
+
+            const updateMedicalRow = (rowId, field, value) => {
+                setMedicalOnlineRows(medicalOnlineRows.map(row => 
+                    row.id === rowId ? { ...row, [field]: value } : row
+                ));
+            };
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                
+                if (!name.trim()) {
+                    alert(`Please enter ${activeTab === 'student' ? 'Student' : 'Employee'} Name`);
+                    return;
+                }
+
+                let amount = 0;
+                let details = {};
+                let mode = 'cash';
+                let cashVal = 0;
+                let onlineVal = 0;
+
+                if (activeTab === 'student') {
+                    if (paymentMode === 'cash') {
+                        amount = currentCashTotal;
+                        details = { denominations: { ...denominations } };
+                        mode = 'cash';
+                    } else {
+                        amount = Number(onlineAmount);
+                        details = { txnId, txnDate, receiverUpi };
+                        mode = 'online';
+                    }
+                } else {
+                    cashVal = currentCashTotal;
+                    onlineVal = currentMedicalOnlineTotal;
+                    amount = cashVal + onlineVal;
+                    const validOnlineRows = medicalOnlineRows.filter(r => r.amount && Number(r.amount) > 0);
+                    details = { 
+                        denominations: cashVal > 0 ? { ...denominations } : {},
+                        rows: validOnlineRows 
+                    };
+                    if (cashVal > 0 && onlineVal > 0) mode = 'mixed';
+                    else if (onlineVal > 0) mode = 'online';
+                    else mode = 'cash';
+                }
+
+                if (amount <= 0) {
+                    alert("Total amount must be greater than 0");
+                    return;
+                }
+
+                const newTransaction = {
+                    id: Date.now(),
+                    timestamp: new Date().toISOString(),
+                    name,
+                    identifier,
+                    mode,
+                    amount,
+                    cashAmount: activeTab === 'medical' ? cashVal : (mode === 'cash' ? amount : 0),
+                    onlineAmount: activeTab === 'medical' ? onlineVal : (mode === 'online' ? amount : 0),
+                    remarks,
+                    details
+                };
+
+                // Save locally
+                if (activeTab === 'student') {
+                    setStudentTxns([newTransaction, ...studentTxns]);
+                    setIdentifier('B2025'); 
+                } else {
+                    setMedicalTxns([newTransaction, ...medicalTxns]);
+                }
+
+                // Sync to Sheet
+                if (sheetUrl) {
+                    syncToGoogleSheet(newTransaction);
+                }
+                
+                // Reset
+                if (activeTab === 'medical') {
+                    setDenominations(initialDenominations);
+                    setMedicalOnlineRows([{ id: Date.now(), time: get12HourTime(), patient: '', utr: '', amount: '' }]);
+                } else if (paymentMode === 'cash') {
+                    setDenominations(initialDenominations);
+                } else {
+                    setOnlineAmount('');
+                    setTxnId('');
+                }
+                setRemarks('');
+            };
+
+            const handleDelete = (id) => {
+                if (confirm('Delete this record?')) {
+                    if (activeTab === 'student') {
+                        setStudentTxns(studentTxns.filter(t => t.id !== id));
+                    } else {
+                        setMedicalTxns(medicalTxns.filter(t => t.id !== id));
+                    }
+                }
+            };
+
+            const handleCopyReport = () => {
+                navigator.clipboard.writeText(reportText);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            };
+
+            const reportText = useMemo(() => {
+                const todayStr = new Date().toDateString();
+                const todayTxns = currentList.filter(t => new Date(t.timestamp).toDateString() === todayStr);
+
+                if (todayTxns.length === 0) return "No transactions recorded today.";
+
+                let text = "";
+                if (activeTab === 'student') {
+                    text += `- Received Student Fee payments today (${new Date().toLocaleDateString('en-IN')}):\n`;
+                    const grouped = {};
+                    todayTxns.forEach(t => {
+                        const n = t.name.trim();
+                        if (!grouped[n]) grouped[n] = { txns: [], total: 0, batch: t.identifier };
+                        grouped[n].txns.push(t);
+                        grouped[n].total += t.amount;
+                    });
+                    Object.keys(grouped).forEach(n => {
+                        const group = grouped[n];
+                        const cashAmt = group.txns.filter(t => t.mode === 'cash').reduce((a,b)=>a+b.amount,0);
+                        const onlineAmt = group.txns.filter(t => t.mode === 'online').reduce((a,b)=>a+b.amount,0);
+                        let line = `     * ${n} (${group.batch}): `;
+                        let parts = [];
+                        if (onlineAmt) parts.push(`${formatCurrency(onlineAmt)} (online)`);
+                        if (cashAmt) parts.push(`${formatCurrency(cashAmt)} (cash)`);
+                        line += parts.join(' + ');
+                        if (parts.length > 1) line += ` = ${formatCurrency(group.total)}`;
+                        const rems = group.txns.filter(t=>t.remarks).map(t=>t.remarks).join(', ');
+                        if(rems) line += ` (${rems})`;
+                        text += line + '\n';
+                    });
+                } else {
+                    text += `- Medical IP Collection Report (${new Date().toLocaleDateString('en-IN')}):\n`;
+                    todayTxns.forEach(t => {
+                        text += `\n=========================================`;
+                        text += `\nSubmitted by: ${t.name} (ID: ${t.identifier || 'N/A'})`;
+                        text += `\nTOTAL SUBMITTED: ${formatCurrency(t.amount)}`;
+                        if (t.cashAmount > 0) text += `\n  [CASH]: ${formatCurrency(t.cashAmount)}`;
+                        if (t.onlineAmount > 0) {
+                            text += `\n  [ONLINE]: ${formatCurrency(t.onlineAmount)}`;
+                            if (t.details.rows && t.details.rows.length > 0) {
+                                t.details.rows.forEach(row => {
+                                    text += `\n     - ${row.time} | ${row.patient} | UTR:${row.utr || '-'} | ${formatCurrency(Number(row.amount))}`;
+                                });
+                            }
+                        }
+                        if (t.remarks) text += `\n  [NOTE]: ${t.remarks}`;
+                    });
+                }
+                const totalCash = stats.cash; 
+                const totalOnline = stats.online;
+                text += `\n\n=========================================`;
+                text += `\nGRAND TOTAL: ${formatCurrency(totalCash + totalOnline)}`;
+                text += `\n(Cash: ${formatCurrency(totalCash)} + Online: ${formatCurrency(totalOnline)})`;
+                return text;
+            }, [currentList, activeTab, stats]);
+
+            return (
+                <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20 relative">
+                    
+                    {/* Header */}
+                    <header className="bg-indigo-900 text-white shadow-lg sticky top-0 z-20">
+                        <div className="max-w-5xl mx-auto px-4 py-3">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-white/20 p-2 rounded-lg">
+                                        <Wallet className="w-6 h-6 text-white" />
+                                    </div>
+                                    <div>
+                                        <h1 className="text-xl font-bold leading-tight">Accounts Manager</h1>
+                                        <p className="text-indigo-200 text-xs">Shift Collection Tracker</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <button 
+                                        onClick={() => setShowSettings(!showSettings)}
+                                        className={`p-2 rounded-lg transition-colors ${showSettings ? 'bg-indigo-700 text-white' : 'text-indigo-200 hover:bg-indigo-800'}`}
+                                        title="Settings"
+                                    >
+                                        <Settings className="w-5 h-5" />
+                                    </button>
+                                    <div className="text-right hidden sm:block">
+                                        <div className="text-indigo-200 text-xs uppercase tracking-wider font-semibold">Session Total</div>
+                                        <div className="text-2xl font-bold">{formatCurrency(stats.total)}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Settings Panel */}
+                            {showSettings && (
+                                <div className="mb-4 bg-indigo-800 p-4 rounded-lg animate-fadeIn">
+                                    <label className="block text-xs text-indigo-200 mb-1 uppercase font-bold">Google Apps Script Web App URL</label>
+                                    <div className="flex gap-2">
+                                        <input 
+                                            type="text" 
+                                            placeholder="https://script.google.com/macros/s/..." 
+                                            value={sheetUrl}
+                                            onChange={(e) => setSheetUrl(e.target.value)}
+                                            className="flex-1 px-3 py-2 rounded text-sm text-slate-900 outline-none focus:ring-2 focus:ring-indigo-400"
+                                        />
+                                    </div>
+                                    <p className="text-xs text-indigo-300 mt-2">
+                                        * Paste your Web App URL here to auto-save entries to Google Sheets.
+                                    </p>
+                                </div>
+                            )}
+
+                            {/* Tab Switcher */}
+                            <div className="flex gap-2">
+                                <button 
+                                    onClick={() => setActiveTab('student')}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-t-lg font-bold text-sm transition-colors ${
+                                        activeTab === 'student' 
+                                        ? 'bg-slate-50 text-indigo-900' 
+                                        : 'bg-indigo-800 text-indigo-300 hover:bg-indigo-700'
+                                    }`}
+                                >
+                                    <GraduationCap className="w-4 h-4" /> Student Fees
+                                </button>
+                                <button 
+                                    onClick={() => setActiveTab('medical')}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-t-lg font-bold text-sm transition-colors ${
+                                        activeTab === 'medical' 
+                                        ? 'bg-slate-50 text-indigo-900' 
+                                        : 'bg-indigo-800 text-indigo-300 hover:bg-indigo-700'
+                                    }`}
+                                >
+                                    <Stethoscope className="w-4 h-4" /> Medical IP Billing
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className="max-w-5xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        
+                        {/* LEFT: Form & List */}
+                        <div className="lg:col-span-7 space-y-6">
+                            
+                            <Card className="p-0 relative">
+                                {isSyncing && (
+                                    <div className="absolute top-0 left-0 right-0 h-1 bg-indigo-100 overflow-hidden">
+                                        <div className="h-full bg-indigo-500 animate-pulse w-full"></div>
+                                    </div>
+                                )}
+                                <div className="bg-slate-100 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                                    <h2 className="font-semibold flex items-center gap-2 text-indigo-900">
+                                        <PlusCircle className="w-5 h-5" />
+                                        {activeTab === 'student' ? 'Student Entry' : 'Submit Collection'}
+                                    </h2>
+                                    {sheetUrl && <span className="text-xs flex items-center gap-1 text-green-600 bg-green-100 px-2 py-1 rounded-full border border-green-200 font-medium"><Link2 className="w-3 h-3" /> Sheet Connected</span>}
+                                </div>
+
+                                <form onSubmit={handleSubmit} className="p-6 space-y-6">
+                                    {/* Identity Fields */}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        {activeTab === 'student' ? (
+                                            <>
+                                                <InputGroup label="Batch">
+                                                    <select value={identifier} onChange={(e) => setIdentifier(e.target.value)} className="w-full p-2.5 border border-slate-300 rounded-lg bg-white outline-none focus:ring-2 focus:ring-indigo-500">
+                                                        <option value="B2023">Batch 2023</option>
+                                                        <option value="B2024">Batch 2024</option>
+                                                        <option value="B2025">Batch 2025</option>
+                                                        <option value="Other">Other</option>
+                                                    </select>
+                                                </InputGroup>
+                                                <InputGroup label="Student Name">
+                                                    <input type="text" placeholder="e.g. Rahul Kumar" value={name} onChange={(e) => setName(e.target.value)} className="w-full p-2.5 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"/>
+                                                </InputGroup>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <InputGroup label="Employee ID">
+                                                    <input type="text" placeholder="e.g. EMP-101" value={identifier} onChange={(e) => setIdentifier(e.target.value)} className="w-full p-2.5 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"/>
+                                                </InputGroup>
+                                                <InputGroup label="Employee Name">
+                                                    <input type="text" placeholder="e.g. Staff Name" value={name} onChange={(e) => setName(e.target.value)} className="w-full p-2.5 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"/>
+                                                </InputGroup>
+                                            </>
+                                        )}
+                                    </div>
+
+                                    {/* STUDENT MODE TOGGLE */}
+                                    {activeTab === 'student' && (
+                                        <div className="flex p-1 bg-slate-100 rounded-lg">
+                                            <button type="button" onClick={() => setPaymentMode('cash')} className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-md text-sm font-medium transition-all ${paymentMode === 'cash' ? 'bg-white text-indigo-700 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700'}`}>
+                                                <Banknote className="w-4 h-4" /> Cash
+                                            </button>
+                                            <button type="button" onClick={() => setPaymentMode('online')} className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-md text-sm font-medium transition-all ${paymentMode === 'online' ? 'bg-white text-blue-700 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700'}`}>
+                                                <Smartphone className="w-4 h-4" /> Online / UPI
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    {/* CASH SECTION */}
+                                    {(activeTab === 'medical' || paymentMode === 'cash') && (
+                                        <div className="animate-fadeIn">
+                                            <div className="flex items-center justify-between mb-3">
+                                                <label className="text-sm font-semibold text-slate-700">{activeTab === 'medical' ? "Cash Collection" : "Denomination Breakdown"}</label>
+                                                {activeTab === 'medical' && <span className="text-xs font-bold text-green-700 bg-green-100 px-2 py-0.5 rounded">Total: {formatCurrency(currentCashTotal)}</span>}
+                                            </div>
+                                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                                {[500, 200, 100, 50, 20, 10, 5, 1].map((denom) => (
+                                                    <div key={denom} className="flex items-center bg-white rounded-lg border border-slate-200 overflow-hidden">
+                                                        <div className="bg-slate-100 px-2 py-2 text-xs font-bold text-slate-600 min-w-[3rem] text-center border-r border-slate-200">₹{denom}</div>
+                                                        <input type="number" min="0" placeholder="0" value={denominations[denom]} onChange={(e) => handleDenomChange(denom, e.target.value)} className="w-full p-2 text-center outline-none text-slate-800 font-medium text-sm"/>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            {activeTab === 'student' && (
+                                                <div className="mt-4 flex items-center justify-between bg-indigo-50 p-4 rounded-lg border border-indigo-100">
+                                                    <span className="text-indigo-900 font-medium">Total Cash</span>
+                                                    <span className="text-2xl font-bold text-indigo-700">{formatCurrency(currentCashTotal)}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* MEDICAL ONLINE (MULTI) */}
+                                    {activeTab === 'medical' && (
+                                        <div className="animate-fadeIn space-y-3 border-t border-slate-200 pt-4">
+                                            <div className="flex justify-between items-center px-1">
+                                                <label className="text-sm font-semibold text-slate-700">Online Transactions</label>
+                                                <span className="text-xs font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded">Total: {formatCurrency(currentMedicalOnlineTotal)}</span>
+                                            </div>
+                                            <div className="space-y-2">
+                                                {medicalOnlineRows.map((row) => (
+                                                    <div key={row.id} className="flex flex-col sm:flex-row gap-2 items-start sm:items-center bg-blue-50 p-3 rounded-lg border border-blue-100">
+                                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
+                                                            <input type="text" placeholder="Time" value={row.time} onChange={(e) => updateMedicalRow(row.id, 'time', e.target.value)} className="w-full p-2 text-xs border rounded outline-none focus:border-blue-400"/>
+                                                            <input type="text" placeholder="Patient Name" value={row.patient} onChange={(e) => updateMedicalRow(row.id, 'patient', e.target.value)} className="w-full p-2 text-xs border rounded outline-none focus:border-blue-400"/>
+                                                            <input type="text" placeholder="UTR / Ref" value={row.utr} onChange={(e) => updateMedicalRow(row.id, 'utr', e.target.value)} className="w-full p-2 text-xs border rounded outline-none focus:border-blue-400"/>
+                                                            <div className="relative">
+                                                                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-xs">₹</span>
+                                                                <input type="number" placeholder="Amt" value={row.amount} onChange={(e) => updateMedicalRow(row.id, 'amount', e.target.value)} className="w-full pl-5 p-2 text-xs border rounded outline-none focus:border-blue-400 font-semibold text-blue-700"/>
+                                                            </div>
+                                                        </div>
+                                                        <button type="button" onClick={() => removeMedicalRow(row.id)} className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-full self-end sm:self-center"><X className="w-4 h-4" /></button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <button type="button" onClick={addMedicalRow} className="w-full py-2 border-2 border-dashed border-blue-200 text-blue-600 rounded-lg hover:bg-blue-50 flex items-center justify-center gap-2 text-sm font-semibold transition-colors"><Plus className="w-4 h-4" /> Add Online Entry</button>
+                                        </div>
+                                    )}
+
+                                    {/* STUDENT ONLINE (SINGLE) */}
+                                    {activeTab === 'student' && paymentMode === 'online' && (
+                                        <div className="space-y-4 animate-fadeIn bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                                            <InputGroup label="Amount Received"><div className="relative"><span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">₹</span><input type="number" placeholder="0.00" value={onlineAmount} onChange={(e) => setOnlineAmount(e.target.value)} className="w-full pl-7 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"/></div></InputGroup>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                <InputGroup label="Transaction ID / UTR"><input type="text" placeholder="e.g. 3245XXXXXXX" value={txnId} onChange={(e) => setTxnId(e.target.value)} className="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"/></InputGroup>
+                                                <InputGroup label="Date & Time"><input type="datetime-local" value={txnDate} onChange={(e) => setTxnDate(e.target.value)} className="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"/></InputGroup>
+                                            </div>
+                                            <InputGroup label="Receiver UPI ID (Optional)"><input type="text" placeholder="e.g. hospital@upi" value={receiverUpi} onChange={(e) => setReceiverUpi(e.target.value)} className="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"/></InputGroup>
+                                        </div>
+                                    )}
+
+                                    {activeTab === 'medical' && (
+                                        <div className="flex items-center justify-between bg-indigo-900 text-white p-4 rounded-lg shadow-sm">
+                                            <div className="flex flex-col"><span className="text-xs text-indigo-300 uppercase tracking-wider font-bold">Total to Submit</span><span className="text-xs text-indigo-200">Cash + Online</span></div>
+                                            <div className="text-2xl font-bold">{formatCurrency(medicalGrandTotal)}</div>
+                                        </div>
+                                    )}
+
+                                    <InputGroup label="Remarks / Details"><input type="text" placeholder={activeTab === 'student' ? "Pending fee, etc." : "Shift details, Room No, etc."} value={remarks} onChange={(e) => setRemarks(e.target.value)} className="w-full p-2.5 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"/></InputGroup>
+
+                                    <button type="submit" className={`w-full py-3 rounded-lg font-bold text-white shadow-md transition-transform active:scale-95 flex items-center justify-center gap-2 ${activeTab === 'medical' || paymentMode === 'cash' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-blue-600 hover:bg-blue-700'}`}>
+                                        <Save className="w-5 h-5" /> {sheetUrl ? 'Save & Sync Sheet' : 'Save Record'}
+                                    </button>
+                                </form>
+                            </Card>
+
+                            {/* List */}
+                            <div className="space-y-4">
+                                <h3 className="font-bold text-lg text-slate-700 flex items-center gap-2"><History className="w-5 h-5" /> Recent {activeTab === 'student' ? 'Student' : 'Medical'} Entries</h3>
+                                {currentList.length === 0 ? <div className="text-center py-12 bg-white rounded-xl border border-dashed border-slate-300 text-slate-400"><p>No entries found for {activeTab}.</p></div> : currentList.map((t) => (
+                                    <Card key={t.id} className="hover:shadow-md transition-shadow">
+                                        <div className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                            <div className="flex-1 w-full">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <span className="font-bold text-slate-800 text-lg">{t.name}</span>
+                                                    {t.identifier && <Badge type={activeTab === 'student' ? 'batch' : 'ip'}>{t.identifier}</Badge>}
+                                                    <Badge type={t.mode}>{t.mode.toUpperCase()}</Badge>
+                                                </div>
+                                                <div className="text-sm text-slate-500 space-y-1">
+                                                    <div>{new Date(t.timestamp).toLocaleString()}</div>
+                                                    {t.remarks && <div className="text-orange-600 bg-orange-50 px-2 py-0.5 rounded inline-block font-medium text-xs border border-orange-100">{t.remarks}</div>}
+                                                    {(t.cashAmount > 0 || (t.mode === 'cash' && t.amount > 0)) && <div className="mt-1"><span className="text-xs font-bold text-green-700">Cash: {formatCurrency(t.cashAmount || t.amount)}</span></div>}
+                                                    {(t.onlineAmount > 0 || (t.mode === 'online' && t.amount > 0)) && <div className="mt-1"><span className="text-xs font-bold text-blue-700">Online: {formatCurrency(t.onlineAmount || t.amount)}</span></div>}
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 pt-3 sm:pt-0">
+                                                <div className={`font-bold text-xl text-indigo-600`}>{formatCurrency(t.amount)}</div>
+                                                <button onClick={() => handleDelete(t.id)} className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"><Trash2 className="w-5 h-5" /></button>
+                                            </div>
+                                        </div>
+                                    </Card>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* RIGHT: Report & Stats */}
+                        <div className="lg:col-span-5 space-y-6">
+                            <Card className="border-l-4 border-l-indigo-500">
+                                <div className="p-4 border-b border-slate-100 flex justify-between items-center">
+                                    <h3 className="font-bold text-slate-700 flex items-center gap-2"><FileText className="w-5 h-5 text-indigo-600" /> Daily Report</h3>
+                                    <button onClick={handleCopyReport} className={`flex items-center gap-1 px-3 py-1.5 rounded text-xs font-bold transition-colors ${copied ? 'bg-green-600 text-white' : 'bg-slate-800 text-white hover:bg-slate-700'}`}>{copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />} {copied ? 'Copied!' : 'Copy'}</button>
+                                </div>
+                                <div className="p-4 bg-slate-50"><textarea readOnly value={reportText} className="w-full h-64 text-xs font-mono p-3 border border-slate-200 rounded-lg bg-white text-slate-700 outline-none resize-none" /></div>
+                            </Card>
+
+                            <Card className="bg-slate-800 text-white border-slate-700">
+                                <div className="p-6">
+                                    <h3 className="text-slate-300 text-sm font-medium uppercase tracking-wide mb-4 flex items-center gap-2"><TrendingUp className="w-4 h-4" /> {activeTab === 'student' ? 'Student' : 'Shift'} Total</h3>
+                                    <div className="space-y-6">
+                                        <div><div className="text-3xl font-bold">{formatCurrency(stats.total)}</div><div className="text-slate-400 text-sm">Total Collected</div></div>
+                                        <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-700">
+                                            <div><div className="flex items-center gap-2 text-green-400 mb-1"><Banknote className="w-4 h-4" /> Cash</div><div className="text-xl font-semibold">{formatCurrency(stats.cash)}</div></div>
+                                            <div><div className="flex items-center gap-2 text-blue-400 mb-1"><CreditCard className="w-4 h-4" /> Online</div><div className="text-xl font-semibold">{formatCurrency(stats.online)}</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Card>
+
+                            <Card className="border-t-4 border-t-green-500">
+                                <div className="p-4 border-b border-slate-100"><h3 className="font-bold text-slate-700">Total Notes ({activeTab})</h3><p className="text-xs text-slate-500">Physical cash inventory for this tab</p></div>
+                                <div className="divide-y divide-slate-100">
+                                    {[500, 200, 100, 50, 20, 10, 5, 1].map(denom => {
+                                        const count = stats.notes[denom] || 0;
+                                        if (count === 0) return null;
+                                        return (
+                                            <div key={denom} className="flex justify-between items-center px-4 py-2.5 hover:bg-slate-50">
+                                                <div className="flex items-center gap-3"><span className="bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded">₹{denom}</span><span className="text-sm text-slate-600">x {count}</span></div>
+                                                <span className="font-medium text-slate-800">₹{denom * count}</span>
+                                            </div>
+                                        );
+                                    })}
+                                    {Object.keys(stats.notes).length === 0 && <div className="p-6 text-center text-slate-400 text-sm">No cash collected yet.</div>}
+                                </div>
+                            </Card>
+                        </div>
+                    </main>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<CashCollectionApp />);
+    </script>
+</body>
+</html>
