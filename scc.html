@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Cash Collector</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Custom Styles for fadeIn animation -->
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        // --- Icons (Lucide Replacements for Browser) ---
+        const IconWrapper = ({ children, className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                {children}
+            </svg>
+        );
+
+        const Banknote = ({ className }) => <IconWrapper className={className}><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></IconWrapper>;
+        const Smartphone = ({ className }) => <IconWrapper className={className}><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></IconWrapper>;
+        const History = ({ className }) => <IconWrapper className={className}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12"/><path d="M3 3v9h9"/><path d="M12 7v5l3 3"/></IconWrapper>;
+        const Trash2 = ({ className }) => <IconWrapper className={className}><path d="M3 6h18"/><path d="M19 6v14c0 1-2 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></IconWrapper>;
+        const PlusCircle = ({ className }) => <IconWrapper className={className}><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></IconWrapper>;
+        const Save = ({ className }) => <IconWrapper className={className}><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></IconWrapper>;
+        const Copy = ({ className }) => <IconWrapper className={className}><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></IconWrapper>;
+        const TrendingUp = ({ className }) => <IconWrapper className={className}><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></IconWrapper>;
+        const Wallet = ({ className }) => <IconWrapper className={className}><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></IconWrapper>;
+        const CreditCard = ({ className }) => <IconWrapper className={className}><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></IconWrapper>;
+        const FileText = ({ className }) => <IconWrapper className={className}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></IconWrapper>;
+        const Check = ({ className }) => <IconWrapper className={className}><polyline points="20 6 9 17 4 12"/></IconWrapper>;
+
+        // --- Components ---
+
+        const Card = ({ children, className = "" }) => (
+            <div className={`bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden ${className}`}>
+                {children}
+            </div>
+        );
+
+        const Badge = ({ children, type }) => {
+            const styles = {
+                cash: "bg-green-100 text-green-800 border-green-200",
+                online: "bg-blue-100 text-blue-800 border-blue-200",
+                batch: "bg-slate-100 text-slate-700 border-slate-200"
+            };
+            return (
+                <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${styles[type] || styles.batch}`}>
+                    {children}
+                </span>
+            );
+        };
+
+        const InputGroup = ({ label, children }) => (
+            <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-medium text-slate-700">{label}</label>
+                {children}
+            </div>
+        );
+
+        // --- Main Application ---
+
+        function CashCollectionApp() {
+            // --- State ---
+            
+            // Core Data
+            const [transactions, setTransactions] = useState(() => {
+                try {
+                const saved = localStorage.getItem('student_transactions');
+                return saved ? JSON.parse(saved) : [];
+                } catch (e) {
+                return [];
+                }
+            });
+
+            // Form State
+            const [studentName, setStudentName] = useState('');
+            const [batch, setBatch] = useState('B2025');
+            const [paymentMode, setPaymentMode] = useState('cash'); // 'cash' or 'online'
+            const [remarks, setRemarks] = useState(''); // New Remarks field
+            
+            // Cash Specific State
+            const initialDenominations = { 500: '', 200: '', 100: '', 50: '', 20: '', 10: '', 5: '', 1: '' };
+            const [denominations, setDenominations] = useState(initialDenominations);
+            
+            // Online Specific State
+            const [onlineAmount, setOnlineAmount] = useState('');
+            const [txnId, setTxnId] = useState('');
+            const [txnDate, setTxnDate] = useState(new Date().toISOString().slice(0, 16));
+            const [receiverUpi, setReceiverUpi] = useState('');
+
+            // UI State
+            const [copied, setCopied] = useState(false);
+
+            // --- Effects ---
+
+            useEffect(() => {
+                localStorage.setItem('student_transactions', JSON.stringify(transactions));
+            }, [transactions]);
+
+            // --- Calculations ---
+
+            const currentCashTotal = useMemo(() => {
+                return Object.entries(denominations).reduce((total, [denom, count]) => {
+                return total + (Number(denom) * (Number(count) || 0));
+                }, 0);
+            }, [denominations]);
+
+            const stats = useMemo(() => {
+                return transactions.reduce((acc, t) => {
+                acc.total += t.amount;
+                if (t.mode === 'cash') {
+                    acc.cash += t.amount;
+                    Object.entries(t.details.denominations || {}).forEach(([denom, count]) => {
+                    acc.notes[denom] = (acc.notes[denom] || 0) + Number(count);
+                    });
+                } else {
+                    acc.online += t.amount;
+                }
+                return acc;
+                }, { total: 0, cash: 0, online: 0, notes: {} });
+            }, [transactions]);
+
+            const formatCurrency = (num) => {
+                return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                maximumFractionDigits: 0
+                }).format(num);
+            };
+
+            // --- Report Generation Logic ---
+            const reportText = useMemo(() => {
+                // 1. Filter for Today's transactions
+                const todayStr = new Date().toDateString();
+                const todayTxns = transactions.filter(t => new Date(t.timestamp).toDateString() === todayStr);
+
+                if (todayTxns.length === 0) return "No transactions recorded today.";
+
+                // 2. Group by Student Name
+                const grouped = {};
+                todayTxns.forEach(t => {
+                    const name = t.studentName.trim();
+                    // Create group if not exists
+                    if (!grouped[name]) {
+                        grouped[name] = { 
+                            txns: [], 
+                            total: 0, 
+                            batch: t.batch 
+                        };
+                    }
+                    grouped[name].txns.push(t);
+                    grouped[name].total += t.amount;
+                });
+
+                // 3. Build the Text
+                let text = `- Received student fee payments today (${new Date().toLocaleDateString('en-IN')}):\n`;
+
+                Object.keys(grouped).forEach(name => {
+                    const group = grouped[name];
+                    const parts = [];
+                    const remarksList = [];
+                    let cashAmt = 0;
+                    let onlineAmt = 0;
+
+                    // Aggregate amounts by mode
+                    group.txns.forEach(t => {
+                        if (t.mode === 'cash') cashAmt += t.amount;
+                        else onlineAmt += t.amount;
+                        
+                        if (t.remarks) remarksList.push(t.remarks);
+                    });
+
+                    if (onlineAmt > 0) parts.push(`${formatCurrency(onlineAmt)} (online)`);
+                    if (cashAmt > 0) parts.push(`${formatCurrency(cashAmt)} (cash)`);
+
+                    // Formatting the line
+                    let line = `     * ${name}`;
+                    // Only show batch if it's different from the header context (optional logic)
+                    if (group.batch !== 'B2025') line += ` (${group.batch})`; 
+                    
+                    line += `: ${parts.join(' + ')}`;
+                    
+                    // Add total if split payment
+                    if (parts.length > 1) {
+                        line += ` = ${formatCurrency(group.total)}`;
+                    }
+
+                    // Add remarks (pending info)
+                    if (remarksList.length > 0) {
+                        line += ` (${remarksList.join(', ')})`;
+                    }
+
+                    text += line + '\n';
+                });
+
+                // 4. Totals Footer
+                const totalCash = todayTxns.filter(t => t.mode === 'cash').reduce((a,b) => a + b.amount, 0);
+                const totalOnline = todayTxns.filter(t => t.mode === 'online').reduce((a,b) => a + b.amount, 0);
+
+                text += `- Total received: ${formatCurrency(totalCash)} (cash) + ${formatCurrency(totalOnline)} (online)`;
+                
+                return text;
+            }, [transactions]);
+
+            // --- Handlers ---
+
+            const handleDenomChange = (denom, value) => {
+                if (value && (!/^\d+$/.test(value) || parseInt(value) < 0)) return;
+                setDenominations(prev => ({ ...prev, [denom]: value }));
+            };
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (!studentName.trim()) {
+                alert("Please enter a student name");
+                return;
+                }
+                const amount = paymentMode === 'cash' ? currentCashTotal : Number(onlineAmount);
+                if (amount <= 0) {
+                alert("Amount must be greater than 0");
+                return;
+                }
+
+                const newTransaction = {
+                id: Date.now(),
+                timestamp: new Date().toISOString(),
+                studentName,
+                batch,
+                mode: paymentMode,
+                amount,
+                remarks, // Save remarks
+                details: paymentMode === 'cash' 
+                    ? { denominations: { ...denominations } }
+                    : { txnId, txnDate, receiverUpi }
+                };
+
+                setTransactions([newTransaction, ...transactions]);
+                
+                // Reset Form
+                setStudentName('');
+                setDenominations(initialDenominations);
+                setOnlineAmount('');
+                setRemarks(''); // Reset remarks
+                setTxnId('');
+                setTxnDate(new Date().toISOString().slice(0, 16));
+            };
+
+            const handleDelete = (id) => {
+                if (confirm('Are you sure you want to delete this record?')) {
+                setTransactions(transactions.filter(t => t.id !== id));
+                }
+            };
+
+            const handleCopyReport = () => {
+                navigator.clipboard.writeText(reportText);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            };
+
+            // --- Render ---
+
+            return (
+                <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20">
+                
+                {/* Header */}
+                <header className="bg-indigo-700 text-white shadow-lg sticky top-0 z-10">
+                    <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="bg-white/20 p-2 rounded-lg">
+                        <Wallet className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                        <h1 className="text-xl font-bold leading-tight">Student Fee Collector</h1>
+                        <p className="text-indigo-200 text-xs">Batch Deposit Tracker</p>
+                        </div>
+                    </div>
+                    <div className="text-right hidden sm:block">
+                        <div className="text-indigo-200 text-xs uppercase tracking-wider font-semibold">Total Collection</div>
+                        <div className="text-2xl font-bold">{formatCurrency(stats.total)}</div>
+                    </div>
+                    </div>
+                </header>
+
+                <main className="max-w-5xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    
+                    {/* LEFT COLUMN: Entry Form */}
+                    <div className="lg:col-span-7 space-y-6">
+                    
+                    <Card className="p-0">
+                        <div className="bg-slate-100 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                        <h2 className="font-semibold flex items-center gap-2">
+                            <PlusCircle className="w-5 h-5 text-indigo-600" />
+                            New Deposit Entry
+                        </h2>
+                        </div>
+
+                        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+                        
+                        {/* Student & Batch Row */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <InputGroup label="Batch">
+                            <select 
+                                value={batch} 
+                                onChange={(e) => setBatch(e.target.value)}
+                                className="w-full p-2.5 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                            >
+                                <option value="B2023">Batch 2023</option>
+                                <option value="B2024">Batch 2024</option>
+                                <option value="B2025">Batch 2025</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            </InputGroup>
+
+                            <InputGroup label="Student Name">
+                            <input
+                                type="text"
+                                placeholder="e.g. Rahul Kumar"
+                                value={studentName}
+                                onChange={(e) => setStudentName(e.target.value)}
+                                className="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                            />
+                            </InputGroup>
+                        </div>
+
+                        {/* Payment Mode Toggle */}
+                        <div className="flex p-1 bg-slate-100 rounded-lg">
+                            <button
+                            type="button"
+                            onClick={() => setPaymentMode('cash')}
+                            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-md text-sm font-medium transition-all ${
+                                paymentMode === 'cash' 
+                                ? 'bg-white text-indigo-700 shadow-sm ring-1 ring-black/5' 
+                                : 'text-slate-500 hover:text-slate-700'
+                            }`}
+                            >
+                            <Banknote className="w-4 h-4" /> Cash Deposit
+                            </button>
+                            <button
+                            type="button"
+                            onClick={() => setPaymentMode('online')}
+                            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-md text-sm font-medium transition-all ${
+                                paymentMode === 'online' 
+                                ? 'bg-white text-blue-700 shadow-sm ring-1 ring-black/5' 
+                                : 'text-slate-500 hover:text-slate-700'
+                            }`}
+                            >
+                            <Smartphone className="w-4 h-4" /> Online / UPI
+                            </button>
+                        </div>
+
+                        {/* Conditional Fields */}
+                        {paymentMode === 'cash' ? (
+                            <div className="animate-fadeIn">
+                            <div className="flex items-center justify-between mb-3">
+                                <label className="text-sm font-semibold text-slate-700">Denomination Breakdown</label>
+                                <span className="text-xs text-slate-500">Count of notes</span>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                {[500, 200, 100, 50, 20, 10, 5, 1].map((denom) => (
+                                <div key={denom} className="flex items-center bg-white rounded-lg border border-slate-200 overflow-hidden">
+                                    <div className="bg-slate-100 px-3 py-2 text-sm font-bold text-slate-600 min-w-[3.5rem] text-center border-r border-slate-200">
+                                    ₹{denom}
+                                    </div>
+                                    <input
+                                    type="number"
+                                    min="0"
+                                    placeholder="0"
+                                    value={denominations[denom]}
+                                    onChange={(e) => handleDenomChange(denom, e.target.value)}
+                                    className="w-full p-2 text-center outline-none text-slate-800 font-medium"
+                                    />
+                                </div>
+                                ))}
+                            </div>
+
+                            <div className="mt-4 flex items-center justify-between bg-indigo-50 p-4 rounded-lg border border-indigo-100">
+                                <span className="text-indigo-900 font-medium">Total Cash Entry</span>
+                                <span className="text-2xl font-bold text-indigo-700">{formatCurrency(currentCashTotal)}</span>
+                            </div>
+                            </div>
+                        ) : (
+                            <div className="space-y-4 animate-fadeIn bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                            <InputGroup label="Amount Received">
+                                <div className="relative">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">₹</span>
+                                <input
+                                    type="number"
+                                    placeholder="0.00"
+                                    value={onlineAmount}
+                                    onChange={(e) => setOnlineAmount(e.target.value)}
+                                    className="w-full pl-7 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                />
+                                </div>
+                            </InputGroup>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <InputGroup label="Transaction ID / UTR">
+                                <input
+                                    type="text"
+                                    placeholder="e.g. 3245XXXXXXX"
+                                    value={txnId}
+                                    onChange={(e) => setTxnId(e.target.value)}
+                                    className="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                />
+                                </InputGroup>
+                                
+                                <InputGroup label="Date & Time">
+                                <input
+                                    type="datetime-local"
+                                    value={txnDate}
+                                    onChange={(e) => setTxnDate(e.target.value)}
+                                    className="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                />
+                                </InputGroup>
+                            </div>
+
+                            <InputGroup label="Receiver UPI ID (Optional)">
+                                <input
+                                type="text"
+                                placeholder="e.g. school@upi"
+                                value={receiverUpi}
+                                onChange={(e) => setReceiverUpi(e.target.value)}
+                                className="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                />
+                            </InputGroup>
+                            </div>
+                        )}
+
+                        {/* Remarks Field (Added) */}
+                        <InputGroup label="Remarks / Pending Info (Optional)">
+                            <input
+                            type="text"
+                            placeholder="e.g. pending ₹5,000 to be paid by 22.11.2025"
+                            value={remarks}
+                            onChange={(e) => setRemarks(e.target.value)}
+                            className="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                            />
+                        </InputGroup>
+
+                        <button
+                            type="submit"
+                            className={`w-full py-3 rounded-lg font-bold text-white shadow-md transition-transform active:scale-95 flex items-center justify-center gap-2 ${
+                            paymentMode === 'cash' 
+                                ? 'bg-indigo-600 hover:bg-indigo-700' 
+                                : 'bg-blue-600 hover:bg-blue-700'
+                            }`}
+                        >
+                            <Save className="w-5 h-5" />
+                            Save Record
+                        </button>
+
+                        </form>
+                    </Card>
+
+                    {/* Recent Transactions List */}
+                    <div className="space-y-4">
+                        <h3 className="font-bold text-lg text-slate-700 flex items-center gap-2">
+                        <History className="w-5 h-5" /> Recent Transactions
+                        </h3>
+                        
+                        {transactions.length === 0 ? (
+                        <div className="text-center py-12 bg-white rounded-xl border border-dashed border-slate-300 text-slate-400">
+                            <p>No transactions recorded yet.</p>
+                        </div>
+                        ) : (
+                        transactions.map((t) => (
+                            <Card key={t.id} className="hover:shadow-md transition-shadow">
+                            <div className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                {/* Left Side */}
+                                <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <span className="font-bold text-slate-800 text-lg">{t.studentName}</span>
+                                    <Badge type="batch">{t.batch}</Badge>
+                                    <Badge type={t.mode}>{t.mode === 'cash' ? 'Cash' : 'Online'}</Badge>
+                                </div>
+                                
+                                <div className="text-sm text-slate-500 space-y-1">
+                                    <div>{new Date(t.timestamp).toLocaleString()}</div>
+                                    {t.remarks && (
+                                    <div className="text-orange-600 bg-orange-50 px-2 py-0.5 rounded inline-block font-medium text-xs border border-orange-100">
+                                        {t.remarks}
+                                    </div>
+                                    )}
+                                    {t.mode === 'online' && (
+                                    <div className="font-mono text-xs bg-slate-100 inline-block px-1 rounded">
+                                        UTR: {t.details.txnId || 'N/A'}
+                                    </div>
+                                    )}
+                                    {t.mode === 'cash' && (
+                                    <div className="text-xs text-slate-600">
+                                        {Object.entries(t.details.denominations || {})
+                                        .filter(([_, count]) => Number(count) > 0)
+                                        .map(([denom, count]) => `${count}x${denom}`)
+                                        .join(', ')}
+                                    </div>
+                                    )}
+                                </div>
+                                </div>
+
+                                {/* Right Side */}
+                                <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 pt-3 sm:pt-0">
+                                <div className="text-right">
+                                    <div className={`font-bold text-xl ${t.mode === 'cash' ? 'text-green-600' : 'text-blue-600'}`}>
+                                    {formatCurrency(t.amount)}
+                                    </div>
+                                </div>
+                                <button 
+                                    onClick={() => handleDelete(t.id)}
+                                    className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+                                    title="Delete Entry"
+                                >
+                                    <Trash2 className="w-5 h-5" />
+                                </button>
+                                </div>
+                            </div>
+                            </Card>
+                        ))
+                        )}
+                    </div>
+
+                    </div>
+
+                    {/* RIGHT COLUMN: Stats & Summaries */}
+                    <div className="lg:col-span-5 space-y-6">
+                    
+                    {/* Daily Report Generator (New Feature) */}
+                    <Card className="border-l-4 border-l-indigo-500">
+                        <div className="p-4 border-b border-slate-100 flex justify-between items-center">
+                            <h3 className="font-bold text-slate-700 flex items-center gap-2">
+                                <FileText className="w-5 h-5 text-indigo-600" /> 
+                                Daily Report
+                            </h3>
+                            <button 
+                                onClick={handleCopyReport}
+                                className={`flex items-center gap-1 px-3 py-1.5 rounded text-xs font-bold transition-colors ${
+                                    copied ? 'bg-green-600 text-white' : 'bg-slate-800 text-white hover:bg-slate-700'
+                                }`}
+                            >
+                                {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                                {copied ? 'Copied!' : 'Copy Text'}
+                            </button>
+                        </div>
+                        <div className="p-4 bg-slate-50">
+                            <textarea 
+                                readOnly
+                                value={reportText}
+                                className="w-full h-48 text-xs font-mono p-3 border border-slate-200 rounded-lg bg-white text-slate-700 outline-none resize-none"
+                            />
+                            <p className="text-[10px] text-slate-400 mt-2">
+                                * Only shows transactions from today. Groups same student automatically.
+                            </p>
+                        </div>
+                    </Card>
+
+                    {/* Overview Card */}
+                    <Card className="bg-slate-800 text-white border-slate-700">
+                        <div className="p-6">
+                        <h3 className="text-slate-300 text-sm font-medium uppercase tracking-wide mb-4 flex items-center gap-2">
+                            <TrendingUp className="w-4 h-4" /> Collection Summary
+                        </h3>
+                        
+                        <div className="space-y-6">
+                            <div>
+                            <div className="text-3xl font-bold">{formatCurrency(stats.total)}</div>
+                            <div className="text-slate-400 text-sm">Total Collected</div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-700">
+                            <div>
+                                <div className="flex items-center gap-2 text-green-400 mb-1">
+                                <Banknote className="w-4 h-4" /> Cash
+                                </div>
+                                <div className="text-xl font-semibold">{formatCurrency(stats.cash)}</div>
+                            </div>
+                            <div>
+                                <div className="flex items-center gap-2 text-blue-400 mb-1">
+                                <CreditCard className="w-4 h-4" /> Online
+                                </div>
+                                <div className="text-xl font-semibold">{formatCurrency(stats.online)}</div>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                    </Card>
+
+                    {/* Note Counter Summary (Sticky-ish) */}
+                    <Card className="border-t-4 border-t-green-500">
+                        <div className="p-4 border-b border-slate-100">
+                        <h3 className="font-bold text-slate-700">Total Notes Collected</h3>
+                        <p className="text-xs text-slate-500">Physical cash inventory</p>
+                        </div>
+                        <div className="divide-y divide-slate-100">
+                        {[500, 200, 100, 50, 20, 10, 5, 1].map(denom => {
+                            const count = stats.notes[denom] || 0;
+                            if (count === 0) return null;
+                            return (
+                            <div key={denom} className="flex justify-between items-center px-4 py-2.5 hover:bg-slate-50">
+                                <div className="flex items-center gap-3">
+                                <span className="bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded">₹{denom}</span>
+                                <span className="text-sm text-slate-600">x {count}</span>
+                                </div>
+                                <span className="font-medium text-slate-800">₹{denom * count}</span>
+                            </div>
+                            );
+                        })}
+                        {Object.keys(stats.notes).length === 0 && (
+                            <div className="p-6 text-center text-slate-400 text-sm">
+                            No cash collected yet.
+                            </div>
+                        )}
+                        </div>
+                        {Object.keys(stats.notes).length > 0 && (
+                        <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-between font-bold text-green-700">
+                            <span>Total Cash</span>
+                            <span>{formatCurrency(stats.cash)}</span>
+                        </div>
+                        )}
+                    </Card>
+                    
+                    <div className="text-center text-xs text-slate-400 mt-4">
+                        <p>Data is saved automatically to your browser.</p>
+                    </div>
+
+                    </div>
+                </main>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<CashCollectionApp />);
+    </script>
+</body>
+</html>
