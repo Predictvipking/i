@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DG Calculator & Fuel Rates</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f4f8; /* Light background */
+        }
+        .fuel-input {
+            transition: all 0.3s ease;
+        }
+        .fuel-input:focus {
+            border-color: #f97316; /* Orange focus color */
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.4);
+        }
+        .result-box {
+            background-color: #fff7ed; /* Very light orange background */
+            border-left: 4px solid #f97316; /* Stronger accent color */
+            transition: transform 0.2s ease;
+        }
+        .result-box:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .lookup-table th {
+            background-color: #fed7aa;
+        }
+        .lookup-table td, .lookup-table th {
+            padding: 0.2rem 0.15rem;
+            font-size: 0.75rem; /* text-xs */
+        }
+        #lookupTableContainer table th:nth-child(3),
+        #lookupTableContainer table td:nth-child(3) {
+            padding-left: 0.5rem;
+        }
+        .tab-button {
+            transition: all 0.2s;
+        }
+        .tab-button.active {
+            border-bottom: 3px solid #f97316;
+            color: #f97316;
+            font-weight: 700;
+        }
+        .tab-content {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="p-3 sm:p-4 min-h-screen flex items-start justify-center">
+
+    <div class="w-full max-w-sm bg-white p-4 rounded-lg shadow-xl border border-gray-100 mt-4 sm:mt-8">
+        <header class="text-center mb-4">
+            <div class="flex items-center justify-center space-x-1 text-orange-600 mb-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6v12M10 6v12M6 6v12M2 6v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2zM12 2v2M12 20v2"/></svg>
+                <h1 class="text-xl font-bold text-gray-800">DG Fuel Utility</h1>
+            </div>
+            <p class="text-gray-500 text-xs">DG Fuel Gauge & Price Calculator</p>
+        </header>
+
+        <div class="flex border-b border-gray-200 mb-4">
+            <button id="tabMeterReading" class="tab-button flex-1 p-2 text-sm text-gray-500 hover:text-orange-500 active">
+                Meter Reading
+            </button>
+            <button id="tabFuelCalculator" class="tab-button flex-1 p-2 text-sm text-gray-500 hover:text-orange-500">
+                Fuel Calculator
+            </button>
+        </div>
+
+        <div id="contentMeterReading" class="tab-content">
+            <p class="text-gray-600 text-xs mb-3">DG-er scale reading diye fuel-er porimaan (quantity) nirnoy korun.</p>
+
+            <div class="space-y-3 mb-4">
+                <div>
+                    <label for="dgModelSelect" class="block text-xs font-medium text-gray-700 mb-0.5">DG Model Selection</label>
+                    <select id="dgModelSelect"
+                           class="fuel-input w-full p-2 border border-gray-300 rounded-md text-sm appearance-none bg-white focus:ring-orange-500 focus:border-orange-500">
+                        <option value="0">--- Select Indian DG Model ---</option>
+                        <option value="-1">Custom Tank Capacity</option>
+                        <option value="40">Kirloskar 7.5 kVA (40 L)</option>
+                        <option value="50">Kirloskar 15 kVA (50 L)</option>
+                        <option value="75">Cummins 30 kVA (75 L)</option>
+                        <option value="80">Mahindra 30 kVA (80 L)</option>
+                        <option value="100">Cummins 50 kVA (100 L)</option>
+                        <option value="150">Kirloskar 62.5 kVA (150 L)</option>
+                        <option value="160">Kirloskar 82.5 kVA (160 L)</option>
+                        <option value="180">Kirloskar 100 kVA (180 L)</option>
+                        <option value="200">Cummins 125 kVA (200 L)</option>
+                        <option value="250">Ashok Leyland 125 kVA (250 L)</option>
+                        <option value="350">Ashok Leyland 250 kVA (350 L)</option>
+                    </select>
+                </div>
+
+                <div id="customCapacityGroup" class="hidden">
+                    <label for="tankCapacity" class="block text-xs font-medium text-gray-700 mb-0.5">Total Tank Capacity (Liters)</label>
+                    <input type="number" id="tankCapacity" placeholder="e.g., 100" min="0" value=""
+                           class="fuel-input w-full p-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label for="totalHeight" class="block text-xs font-medium text-gray-700 mb-0.5">Total Scale Height (cm)</label>
+                        <input type="number" id="totalHeight" value="7.0" step="0.1" min="0.1"
+                               class="fuel-input w-full p-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
+                    </div>
+
+                    <div>
+                        <label for="currentReading" class="block text-xs font-medium text-gray-700 mb-0.5">Current Scale Reading (cm)</label>
+                        <input type="number" id="currentReading" value="5.0" step="0.1" min="0"
+                               class="fuel-input w-full p-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
+                    </div>
+                </div>
+                </div>
+
+            <h2 class="text-base font-semibold text-gray-700 mb-3 border-b pb-1">Calculation Results</h2>
+            <div class="grid grid-cols-2 gap-2 mb-4">
+                <div id="resultPercentageBox" class="result-box p-3 rounded-lg flex flex-col items-center justify-center shadow-sm">
+                    <div class="flex items-center space-x-1 mb-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-orange-600"><path d="M12 2v6"/><path d="M12 16v6"/><path d="M17 3.34l-2.6 4.5"/><path d="M9.6 7.85l-2.6-4.5"/><path d="M20.66 8.5l-5 2.9"/><path d="M3.34 15.5l5-2.9"/></svg>
+                        <span class="text-xs font-semibold text-orange-800">Fuel in Tank (%)</span>
+                    </div>
+                    <span id="fuelPercentage" class="text-xl font-extrabold text-orange-600">--%</span>
+                </div>
+
+                <div id="resultLitreBox" class="result-box p-3 rounded-lg flex flex-col items-center justify-center shadow-sm opacity-50">
+                    <div class="flex items-center space-x-1 mb-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-orange-600"><path d="M12 2.69l5.66 5.66c1.25 1.25 2.05 2.8 2.34 4.54.29 1.74-.01 3.51-.83 5.09-1.2 2.38-3.4 4.25-6.08 4.25s-4.88-1.87-6.08-4.25c-.82-1.58-1.12-3.35-.83-5.09.29-1.74 1.09-3.29 2.34-4.54L12 2.69z"/></svg>
+                        <span class="text-xs font-semibold text-orange-800">Fuel Quantity (Liters)</span>
+                    </div>
+                    <span id="fuelQuantity" class="text-xl font-extrabold text-orange-600">-- L</span>
+                </div>
+            </div>
+
+            <h2 class="text-base font-semibold text-gray-700 mb-2 border-b pb-0.5">Detailed Scale Reference</h2>
+            <div id="lookupTableContainer" class="bg-gray-50 p-2 rounded-lg shadow-inner">
+                </div>
+        </div>
+        
+        <div id="contentFuelCalculator" class="tab-content hidden">
+            <p class="text-gray-600 text-xs mb-3">State onusare Petrol, Diesel, O CNG-er daam nirnoy korun. (Mock Data)</p>
+
+            <div class="space-y-3 mb-4">
+                <div>
+                    <label for="stateSelect" class="block text-xs font-medium text-gray-700 mb-0.5">State/UT of India</label>
+                    <select id="stateSelect"
+                           class="fuel-input w-full p-2 border border-gray-300 rounded-md text-sm appearance-none bg-white focus:ring-orange-500 focus:border-orange-500">
+                        <option value="0">--- Select State/UT ---</option>
+                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                        <option value="Assam">Assam</option>
+                        <option value="Bihar">Bihar</option>
+                        <option value="Chhattisgarh">Chhattisgarh</option>
+                        <option value="Goa">Goa</option>
+                        <option value="Gujarat">Gujarat</option>
+                        <option value="Haryana">Haryana</option>
+                        <option value="Himachal Pradesh">Himachal Pradesh</option>
+                        <option value="Jharkhand">Jharkhand</option>
+                        <option value="Karnataka">Karnataka</option>
+                        <option value="Kerala">Kerala</option>
+                        <option value="Madhya Pradesh">Madhya Pradesh</option>
+                        <option value="Maharashtra">Maharashtra</option>
+                        <option value="Manipur">Manipur</option>
+                        <option value="Meghalaya">Meghalaya</option>
+                        <option value="Mizoram">Mizoram</option>
+                        <option value="Nagaland">Nagaland</option>
+                        <option value="Odisha">Odisha</option>
+                        <option value="Punjab">Punjab</option>
+                        <option value="Rajasthan">Rajasthan</option>
+                        <option value="Sikkim">Sikkim</option>
+                        <option value="Tamil Nadu">Tamil Nadu</option>
+                        <option value="Telangana">Telangana</option>
+                        <option value="Tripura">Tripura</option>
+                        <option value="Uttar Pradesh">Uttar Pradesh</option>
+                        <option value="Uttarakhand">Uttarakhand</option>
+                        <option value="West Bengal">West Bengal</option>
+                        <option value="Andaman and Nicobar Islands">A & N Islands (UT)</option>
+                        <option value="Chandigarh">Chandigarh (UT)</option>
+                        <option value="Dadra and Nagar Haveli and Daman and Diu">DNH and DD (UT)</option>
+                        <option value="Delhi">Delhi (NCT)</option>
+                        <option value="Jammu and Kashmir">J & K (UT)</option>
+                        <option value="Ladakh">Ladakh (UT)</option>
+                        <option value="Lakshadweep">Lakshadweep (UT)</option>
+                        <option value="Puducherry">Puducherry (UT)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="fuelTypeSelect" class="block text-xs font-medium text-gray-700 mb-0.5">Fuel Type</label>
+                    <select id="fuelTypeSelect"
+                           class="fuel-input w-full p-2 border border-gray-300 rounded-md text-sm appearance-none bg-white focus:ring-orange-500 focus:border-orange-500">
+                        <option value="0">--- Select Fuel Type ---</option>
+                        <option value="Petrol">Petrol</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="CNG">CNG</option>
+                    </select>
+                </div>
+                
+                <div class="result-box p-3 rounded-lg flex justify-between items-center shadow-sm">
+                    <span class="text-sm font-semibold text-orange-800">Current Rate (₹/L or ₹/kg)</span>
+                    <span id="currentRate" class="text-xl font-extrabold text-orange-600">--</span>
+                </div>
+
+                <button id="toggleMode" class="w-full p-2 text-xs font-medium text-center text-white bg-green-500 rounded-md hover:bg-green-600 transition-colors shadow-md">
+                    Mode: Calculate Cost from Quantity
+                </button>
+                
+                <div>
+                    <label id="inputLabel" for="calcInput" class="block text-xs font-medium text-gray-700 mb-0.5">Enter Quantity (L/kg)</label>
+                    <input type="number" id="calcInput" value="" step="0.01" min="0.01" placeholder="e.g., 5.5"
+                           class="fuel-input w-full p-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
+                </div>
+            </div>
+
+            <h2 class="text-base font-semibold text-gray-700 mb-3 border-b pb-1">Calculation Output</h2>
+            <div class="space-y-2 mb-4">
+                <div id="calcResultBox" class="result-box p-3 rounded-lg flex justify-between items-center shadow-sm opacity-50">
+                    <div class="flex items-center space-x-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-orange-600"><path d="M6 3v18M18 6v12M3 6h4M3 18h4M17 3h4M17 21h4"/></svg>
+                        <span id="calcResultLabel" class="text-sm font-semibold text-orange-800">Total Cost (₹)</span>
+                    </div>
+                    <span id="calcResult" class="text-2xl font-extrabold text-orange-600">--</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Fuel Price Mock Data (Kalponik Dam - Mock Current Fuel Prices) ---
+        // (₹/L for Petrol/Diesel, ₹/kg for CNG). Prices updated as per user request (Mock).
+        const FUEL_PRICES = {
+            "Andhra Pradesh": { "Petrol": 110.46, "Diesel": 98.41, "CNG": 82.35 },
+            "Arunachal Pradesh": { "Petrol": 93.10, "Diesel": 81.95, "CNG": 72.50 },
+            "Assam": { "Petrol": 97.45, "Diesel": 86.85, "CNG": 78.49 },
+            "Bihar": { "Petrol": 106.85, "Diesel": 94.00, "CNG": 87.10 },
+            "Chhattisgarh": { "Petrol": 103.54, "Diesel": 96.50, "CNG": 85.00 },
+            "Goa": { "Petrol": 97.28, "Diesel": 89.92, "CNG": 81.25 },
+            "Gujarat": { "Petrol": 95.12, "Diesel": 90.72, "CNG": 74.88 },
+            "Haryana": { "Petrol": 97.66, "Diesel": 90.49, "CNG": 78.61 },
+            "Himachal Pradesh": { "Petrol": 94.60, "Diesel": 86.60, "CNG": 75.99 },
+            "Jharkhand": { "Petrol": 99.84, "Diesel": 94.65, "CNG": 82.50 },
+            "Karnataka": { "Petrol": 101.44, "Diesel": 87.31, "CNG": 86.40 },
+            "Kerala": { "Petrol": 107.50, "Diesel": 96.45, "CNG": 88.00 },
+            "Madhya Pradesh": { "Petrol": 108.65, "Diesel": 94.38, "CNG": 89.20 },
+            "Maharashtra": { "Petrol": 106.70, "Diesel": 93.30, "CNG": 87.00 },
+            "Manipur": { "Petrol": 100.95, "Diesel": 87.89, "CNG": 80.00 },
+            "Meghalaya": { "Petrol": 96.88, "Diesel": 87.10, "CNG": 79.50 },
+            "Mizoram": { "Petrol": 96.05, "Diesel": 84.85, "CNG": 74.90 },
+            "Nagaland": { "Petrol": 97.55, "Diesel": 88.10, "CNG": 78.80 },
+            "Odisha": { "Petrol": 101.97, "Diesel": 93.74, "CNG": 84.50 },
+            "Punjab": { "Petrol": 97.97, "Diesel": 87.78, "CNG": 80.99 },
+            "Rajasthan": { "Petrol": 108.48, "Diesel": 93.72, "CNG": 86.60 },
+            "Sikkim": { "Petrol": 101.05, "Diesel": 88.02, "CNG": 81.50 },
+            "Tamil Nadu": { "Petrol": 102.63, "Diesel": 94.24, "CNG": 89.50 },
+            "Telangana": { "Petrol": 110.10, "Diesel": 98.20, "CNG": 84.00 },
+            "Tripura": { "Petrol": 98.34, "Diesel": 87.50, "CNG": 77.00 },
+            "Uttar Pradesh": { "Petrol": 96.80, "Diesel": 89.00, "CNG": 80.00 },
+            "Uttarakhand": { "Petrol": 93.90, "Diesel": 88.80, "CNG": 81.30 },
+            "West Bengal": { "Petrol": 104.57, "Diesel": 91.24, "CNG": 89.00 },
+            // Union Territories
+            "Andaman and Nicobar Islands": { "Petrol": 82.50, "Diesel": 78.50, "CNG": 90.00 },
+            "Chandigarh": { "Petrol": 94.30, "Diesel": 82.45, "CNG": 78.90 },
+            "Dadra and Nagar Haveli and Daman and Diu": { "Petrol": 92.80, "Diesel": 88.35, "CNG": 74.00 },
+            "Delhi": { "Petrol": 96.72, "Diesel": 89.62, "CNG": 78.61 },
+            "Jammu and Kashmir": { "Petrol": 99.10, "Diesel": 85.65, "CNG": 83.50 },
+            "Ladakh": { "Petrol": 104.20, "Diesel": 92.50, "CNG": 85.00 },
+            "Lakshadweep": { "Petrol": 100.80, "Diesel": 90.50, "CNG": 0 }, // CNG mocked as 0/N/A
+            "Puducherry": { "Petrol": 95.80, "Diesel": 87.20, "CNG": 80.50 }
+        };
+
+        // --- DG Capacity Data (Representative Indian Models) ---
+        const dgCapacities = {
+            "Select DG Model": 0,
+            "-1": 0,
+            "40": 40, "50": 50, "75": 75, "80": 80, "100": 100,
+            "150": 150, "160": 160, "180": 180, "200": 200,
+            "250": 250, "350": 350
+        };
+
+        // --- DOM Elements (DG) ---
+        const dgModelSelect = document.getElementById('dgModelSelect');
+        const customCapacityGroup = document.getElementById('customCapacityGroup');
+        const totalHeightInput = document.getElementById('totalHeight');
+        const currentReadingInput = document.getElementById('currentReading');
+        const tankCapacityInput = document.getElementById('tankCapacity');
+        const fuelPercentageSpan = document.getElementById('fuelPercentage');
+        const fuelQuantitySpan = document.getElementById('fuelQuantity');
+        const resultLitreBox = document.getElementById('resultLitreBox');
+        const lookupTableContainer = document.getElementById('lookupTableContainer');
+        
+        // --- DOM Elements (Fuel Calculator) ---
+        const stateSelect = document.getElementById('stateSelect');
+        const fuelTypeSelect = document.getElementById('fuelTypeSelect');
+        const currentRateSpan = document.getElementById('currentRate');
+        const toggleModeButton = document.getElementById('toggleMode');
+        const calcInput = document.getElementById('calcInput');
+        const inputLabel = document.getElementById('inputLabel');
+        const calcResultLabel = document.getElementById('calcResultLabel');
+        const calcResultSpan = document.getElementById('calcResult');
+        const calcResultBox = document.getElementById('calcResultBox');
+
+        // --- DOM Elements (Tabs) ---
+        const tabMeterReading = document.getElementById('tabMeterReading');
+        const tabFuelCalculator = document.getElementById('tabFuelCalculator');
+        const contentMeterReading = document.getElementById('contentMeterReading');
+        const contentFuelCalculator = document.getElementById('contentFuelCalculator');
+        
+        // --- State Management ---
+        let isCostToQuantityMode = false; // false = Cost from Quantity (default); true = Quantity from Cost
+
+        // ----------------------------------------------------------------------
+        // --- TAB LOGIC ---
+        // ----------------------------------------------------------------------
+
+        function switchTab(tabName) {
+            // Deactivate all
+            tabMeterReading.classList.remove('active');
+            tabFuelCalculator.classList.remove('active');
+            contentMeterReading.classList.add('hidden');
+            contentFuelCalculator.classList.add('hidden');
+            
+            // Activate selected
+            if (tabName === 'meterReading') {
+                tabMeterReading.classList.add('active');
+                contentMeterReading.classList.remove('hidden');
+                calculateFuel(); // Recalculate DG on tab switch
+            } else if (tabName === 'fuelCalculator') {
+                tabFuelCalculator.classList.add('active');
+                contentFuelCalculator.classList.remove('hidden');
+                calculateFuelCost(); // Recalculate Fuel Cost on tab switch
+            }
+        }
+
+        // ----------------------------------------------------------------------
+        // --- FUEL CALCULATOR LOGIC (New) ---
+        // ----------------------------------------------------------------------
+
+        function updateRateAndLabel() {
+            const selectedState = stateSelect.value;
+            const selectedFuel = fuelTypeSelect.value;
+            
+            // Reset
+            currentRateSpan.textContent = '--';
+            
+            if (selectedState !== '0' && selectedFuel !== '0') {
+                const rate = FUEL_PRICES[selectedState]?.[selectedFuel];
+                if (rate !== undefined && rate > 0) {
+                    // Update current rate display
+                    const unit = selectedFuel === 'CNG' ? '₹/kg' : '₹/L';
+                    currentRateSpan.textContent = `₹${rate.toFixed(2)} (${unit})`;
+                } else if (rate === 0) {
+                     currentRateSpan.textContent = `N/A`; // Not Available for this fuel type/state
+                }
+            }
+
+            // Update input/result labels based on mode
+            const unit = selectedFuel === 'CNG' ? ' (kg)' : ' (L)';
+            const inputType = isCostToQuantityMode ? 'Cost (₹)' : `Quantity${unit}`;
+            const resultType = isCostToQuantityMode ? `Quantity${unit}` : 'Total Cost (₹)';
+            
+            inputLabel.textContent = `Enter ${inputType}`;
+            calcInput.placeholder = isCostToQuantityMode ? 'e.g., 500' : 'e.g., 5.5';
+            calcResultLabel.textContent = resultType;
+
+            calculateFuelCost();
+        }
+
+        function toggleCalculationMode() {
+            isCostToQuantityMode = !isCostToQuantityMode;
+            
+            const buttonText = isCostToQuantityMode 
+                ? 'Mode: Calculate Quantity from Cost' 
+                : 'Mode: Calculate Cost from Quantity';
+            toggleModeButton.textContent = buttonText;
+            
+            updateRateAndLabel(); // Recalculate labels and cost
+        }
+
+        function calculateFuelCost() {
+            const selectedState = stateSelect.value;
+            const selectedFuel = fuelTypeSelect.value;
+            const inputValue = parseFloat(calcInput.value);
+            
+            calcResultSpan.textContent = '--';
+            calcResultBox.classList.add('opacity-50');
+
+            if (selectedState === '0' || selectedFuel === '0' || isNaN(inputValue) || inputValue <= 0) {
+                return;
+            }
+
+            const rate = FUEL_PRICES[selectedState]?.[selectedFuel];
+            if (rate === undefined || rate <= 0) {
+                calcResultSpan.textContent = 'N/A';
+                return;
+            }
+
+            let result = 0;
+            
+            if (isCostToQuantityMode) {
+                // Mode: Calculate Quantity from Cost (Input is Cost)
+                result = inputValue / rate;
+                calcResultSpan.textContent = `${result.toFixed(3)} ${selectedFuel === 'CNG' ? 'kg' : 'L'}`;
+                
+            } else {
+                // Mode: Calculate Cost from Quantity (Input is Quantity)
+                result = inputValue * rate;
+                calcResultSpan.textContent = `₹${result.toFixed(2)}`;
+            }
+            
+            calcResultBox.classList.remove('opacity-50');
+        }
+
+        // ----------------------------------------------------------------------
+        // --- DG FUEL GAUGE LOGIC (Existing) ---
+        // ----------------------------------------------------------------------
+
+        function calculateFuel() {
+            const totalHeight = parseFloat(totalHeightInput.value);
+            const currentReading = parseFloat(currentReadingInput.value);
+            
+            let tankCapacity = 0;
+            const selectedCapacityKey = dgModelSelect.value;
+            
+            if (selectedCapacityKey === '-1') {
+                tankCapacity = parseFloat(tankCapacityInput.value);
+            } else if (selectedCapacityKey !== '0') {
+                tankCapacity = dgCapacities[selectedCapacityKey];
+            }
+
+            if (isNaN(totalHeight) || totalHeight <= 0 || isNaN(currentReading) || currentReading < 0) {
+                fuelPercentageSpan.textContent = '--%';
+                fuelQuantitySpan.textContent = '-- L';
+                resultLitreBox.classList.add('opacity-50');
+                lookupTableContainer.innerHTML = `<p class="text-gray-500 text-center text-xs py-2">Please enter a valid scale height.</p>`;
+                return;
+            }
+
+            let percentage = (currentReading / totalHeight) * 100;
+            percentage = Math.max(0, Math.min(100, percentage));
+            const roundedPercentage = percentage.toFixed(2);
+
+            fuelPercentageSpan.textContent = `${roundedPercentage}%`;
+            resultLitreBox.classList.add('opacity-50');
+
+            if (!isNaN(tankCapacity) && tankCapacity > 0) {
+                const fuelQuantity = (percentage / 100) * tankCapacity;
+                const roundedQuantity = fuelQuantity.toFixed(2);
+
+                fuelQuantitySpan.textContent = `${roundedQuantity} L`;
+                resultLitreBox.classList.remove('opacity-50');
+            } else {
+                fuelQuantitySpan.textContent = '-- L';
+                resultLitreBox.classList.add('opacity-50');
+            }
+
+            generateLookupTable(totalHeight);
+        }
+
+        function handleDGSelection() {
+            const selectedValue = dgModelSelect.value;
+            
+            if (selectedValue === '-1') {
+                customCapacityGroup.classList.remove('hidden');
+                tankCapacityInput.value = '';
+            } else {
+                customCapacityGroup.classList.add('hidden');
+                
+                const capacity = dgCapacities[selectedValue];
+                if (capacity && capacity > 0) {
+                    tankCapacityInput.value = capacity;
+                } else {
+                    tankCapacityInput.value = '';
+                }
+            }
+            calculateFuel();
+        }
+
+        function generateLookupTable(totalHeight) {
+            let tableHTML = `<table class="min-w-full divide-y divide-gray-300 lookup-table">
+                                 <thead class="sticky top-0 shadow-sm">
+                                     <tr class="text-xs">
+                                         <th class="text-left font-semibold text-gray-700 uppercase tracking-wider">P(%)</th>
+                                         <th class="text-right font-semibold text-gray-700 uppercase tracking-wider">S(cm)</th>
+                                         <th class="text-left font-semibold text-gray-700 uppercase tracking-wider">P(%)</th>
+                                         <th class="text-right font-semibold text-gray-700 uppercase tracking-wider">S(cm)</th>
+                                     </tr>
+                                 </thead>
+                                 <tbody class="bg-white divide-y divide-gray-100 text-xs">`;
+                                 
+            for (let i = 1; i <= 5; i++) {
+                const percentL = i * 10;
+                const heightL = (percentL / 100) * totalHeight;
+
+                const percentR = (i * 10) + 50;
+                const heightR = (percentR / 100) * totalHeight;
+                
+                const rowClass = percentR === 100 ? 'bg-green-50 font-medium' : '';
+
+                tableHTML += `<tr class="${rowClass}">
+                                 <td class="whitespace-nowrap">${percentL}%</td>
+                                 <td class="text-right whitespace-nowrap font-bold">${heightL.toFixed(2)}</td>
+                                 <td class="whitespace-nowrap pl-2">${percentR}%</td>
+                                 <td class="text-right whitespace-nowrap font-bold">${heightR.toFixed(2)}</td>
+                               </tr>`;
+            }
+
+            tableHTML += `</tbody></table>`;
+            lookupTableContainer.innerHTML = tableHTML;
+        }
+
+        // --- Event Listeners and Initialization ---
+        
+        // Tab Listeners
+        tabMeterReading.addEventListener('click', () => switchTab('meterReading'));
+        tabFuelCalculator.addEventListener('click', () => switchTab('fuelCalculator'));
+
+        // DG Listeners
+        dgModelSelect.addEventListener('change', handleDGSelection);
+        tankCapacityInput.addEventListener('input', calculateFuel);
+        totalHeightInput.addEventListener('input', calculateFuel);
+        currentReadingInput.addEventListener('input', calculateFuel);
+        
+        // Fuel Calculator Listeners
+        stateSelect.addEventListener('change', updateRateAndLabel);
+        fuelTypeSelect.addEventListener('change', updateRateAndLabel);
+        toggleModeButton.addEventListener('click', toggleCalculationMode);
+        calcInput.addEventListener('input', calculateFuelCost);
+
+        // Initial setup
+        document.addEventListener('DOMContentLoaded', () => {
+             // Set DG default and initialize DG tab
+             dgModelSelect.value = "160"; 
+             handleDGSelection(); 
+             // Activate the first tab by default
+             switchTab('meterReading');
+        });
+    </script>
+</body>
+</html>
