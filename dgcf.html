@@ -3,40 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DG Calculator & Fuel Rates</title>
+    <title>DG & Vehicle Management Utility</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #f0f4f8; /* Light background */
+            background-color: #f0f4f8;
         }
         .fuel-input {
             transition: all 0.3s ease;
         }
         .fuel-input:focus {
-            border-color: #f97316; /* Orange focus color */
+            border-color: #f97316;
             box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.4);
         }
+        /* Fuel Calculator Result Box: Removed color dependency on quantity/percentage results */
         .result-box {
-            background-color: #fff7ed; /* Very light orange background */
-            border-left: 4px solid #f97316; /* Stronger accent color */
+            background-color: #fff7ed;
+            border-left: 4px solid #f97316;
             transition: transform 0.2s ease;
-        }
-        .result-box:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-        .lookup-table th {
-            background-color: #fed7aa;
-        }
-        .lookup-table td, .lookup-table th {
-            padding: 0.2rem 0.15rem;
-            font-size: 0.75rem; /* text-xs */
-        }
-        #lookupTableContainer table th:nth-child(3),
-        #lookupTableContainer table td:nth-child(3) {
-            padding-left: 0.5rem;
         }
         .tab-button {
             transition: all 0.2s;
@@ -53,6 +39,68 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        .accordion-icon {
+            transition: transform 0.3s ease;
+        }
+        .accordion-icon.rotated {
+            transform: rotate(180deg);
+        }
+        /* Vehicle Management Specific Styles for Compactness */
+        .register-input {
+            padding: 0.5rem; 
+            font-size: 0.75rem; 
+            height: 2.25rem; 
+        }
+        .register-label {
+            font-size: 0.65rem; 
+            margin-bottom: 0;
+            font-weight: 500;
+            color: #4b5563;
+        }
+        
+        /* --- UPDATED Detailed Scale Reference (Meter Reading) Styles --- */
+        .lookup-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .lookup-table td {
+            padding: 0.4rem 0.5rem; 
+            font-size: 0.8rem;
+        }
+        .lookup-table th {
+             padding: 0.4rem 0.5rem;
+             text-align: center; /* Default header center alignment */
+             background-color: #fcd34d; 
+             font-weight: 700;
+        }
+        /* P(%) Header: Explicitly align left as requested, matching the content */
+        .lookup-table th:nth-child(1),
+        .lookup-table th:nth-child(3) {
+            text-align: left;
+        }
+
+        .lookup-table td:nth-child(2),
+        .lookup-table td:nth-child(4) {
+            /* S(CM) columns (2nd and 4th column) for Right alignment */
+            text-align: right; 
+            font-weight: bold; 
+            color: #374151; 
+        }
+        .lookup-table td:nth-child(1),
+        .lookup-table td:nth-child(3) {
+            /* P(%) columns (1st and 3rd column) for Left alignment */
+            text-align: left; 
+            color: #4b5563;
+        }
+        .lookup-table thead th {
+            border-bottom: 2px solid #e5e7eb; 
+        }
+        /* Remove green background from 50% row as per new requirement */
+        .lookup-table tr.mid-point {
+            background-color: inherit !important; 
+            font-weight: normal !important;
+        }
+
     </style>
 </head>
 <body class="p-3 sm:p-4 min-h-screen flex items-start justify-center">
@@ -61,169 +109,174 @@
         <header class="text-center mb-4">
             <div class="flex items-center justify-center space-x-1 text-orange-600 mb-1">
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6v12M10 6v12M6 6v12M2 6v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2zM12 2v2M12 20v2"/></svg>
-                <h1 class="text-xl font-bold text-gray-800">DG Fuel Utility</h1>
+                <h1 class="text-xl font-bold text-gray-800">Utility Dashboard</h1>
             </div>
-            <p class="text-gray-500 text-xs">DG Fuel Gauge & Price Calculator</p>
+            <p class="text-gray-500 text-xs">DG & Fleet Management</p>
         </header>
 
         <div class="flex border-b border-gray-200 mb-4">
-            <button id="tabMeterReading" class="tab-button flex-1 p-2 text-sm text-gray-500 hover:text-orange-500 active">
-                Meter Reading
-            </button>
-            <button id="tabFuelCalculator" class="tab-button flex-1 p-2 text-sm text-gray-500 hover:text-orange-500">
-                Fuel Calculator
-            </button>
+            <button id="tabMeterReading" class="tab-button flex-1 p-2 text-sm text-gray-500 hover:text-orange-500">Meter Reading</button>
+            <button id="tabFuelCalculator" class="tab-button flex-1 p-2 text-sm text-gray-500 hover:text-orange-500">Fuel Price</button>
+            <button id="tabVehicleManagement" class="tab-button flex-1 p-2 text-sm text-gray-500 hover:text-orange-500">Vehicle Management</button>
         </div>
 
-        <div id="contentMeterReading" class="tab-content">
-            <p class="text-gray-600 text-xs mb-3">DG-er scale reading diye fuel-er porimaan (quantity) nirnoy korun.</p>
-
+        <div id="contentMeterReading" class="tab-content hidden">
+            <p class="text-gray-600 text-xs mb-3">DG-er scale reading diye fuel-er porimaan (quantity) nirnoy korun।</p>
             <div class="space-y-3 mb-4">
                 <div>
                     <label for="dgModelSelect" class="block text-xs font-medium text-gray-700 mb-0.5">DG Model Selection</label>
-                    <select id="dgModelSelect"
-                           class="fuel-input w-full p-2 border border-gray-300 rounded-md text-sm appearance-none bg-white focus:ring-orange-500 focus:border-orange-500">
+                    <select id="dgModelSelect" class="fuel-input w-full p-2 border border-gray-300 rounded-md text-sm appearance-none bg-white focus:ring-orange-500 focus:border-orange-500">
                         <option value="0">--- Select Indian DG Model ---</option>
                         <option value="-1">Custom Tank Capacity</option>
-                        <option value="40">Kirloskar 7.5 kVA (40 L)</option>
-                        <option value="50">Kirloskar 15 kVA (50 L)</option>
-                        <option value="75">Cummins 30 kVA (75 L)</option>
-                        <option value="80">Mahindra 30 kVA (80 L)</option>
-                        <option value="100">Cummins 50 kVA (100 L)</option>
-                        <option value="150">Kirloskar 62.5 kVA (150 L)</option>
-                        <option value="160">Kirloskar 82.5 kVA (160 L)</option>
-                        <option value="180">Kirloskar 100 kVA (180 L)</option>
-                        <option value="200">Cummins 125 kVA (200 L)</option>
-                        <option value="250">Ashok Leyland 125 kVA (250 L)</option>
-                        <option value="350">Ashok Leyland 250 kVA (350 L)</option>
+                        <option value="40" data-name="Kirloskar 7.5 kVA">Kirloskar 7.5 kVA (40 L)</option>
+                        <option value="50" data-name="Kirloskar 15 kVA">Kirloskar 15 kVA (50 L)</option>
+                        <option value="75" data-name="Kirloskar 30 kVA">Kirloskar 30 kVA (75 L)</option>
+                        <option value="80" data-name="Cummins 35 kVA">Cummins 35 kVA (80 L)</option>
+                        <option value="100" data-name="Ashok Leyland 40 kVA">Ashok Leyland 40 kVA (100 L)</option>
+                        <option value="150" data-name="Mahindra 60 kVA">Mahindra 60 kVA (150 L)</option>
+                        <option value="160" data-name="Kirloskar 82.5 kVA">Kirloskar 82.5 kVA (160 L)</option>
+                        <option value="180" data-name="Ashok Leyland 100 kVA">Ashok Leyland 100 kVA (180 L)</option>
+                        <option value="200" data-name="Cummins 125 kVA">Cummins 125 kVA (200 L)</option>
+                        <option value="250" data-name="Kirloskar 160 kVA">Kirloskar 160 kVA (250 L)</option>
+                        <option value="350" data-name="Ashok Leyland 250 kVA">Ashok Leyland 250 kVA (350 L)</option>
                     </select>
                 </div>
-
                 <div id="customCapacityGroup" class="hidden">
                     <label for="tankCapacity" class="block text-xs font-medium text-gray-700 mb-0.5">Total Tank Capacity (Liters)</label>
-                    <input type="number" id="tankCapacity" placeholder="e.g., 100" min="0" value=""
-                           class="fuel-input w-full p-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
+                    <input type="number" id="tankCapacity" placeholder="e.g., 100" min="0" value="" class="fuel-input w-full p-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
                 </div>
-
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label for="totalHeight" class="block text-xs font-medium text-gray-700 mb-0.5">Total Scale Height (cm)</label>
-                        <input type="number" id="totalHeight" value="7.0" step="0.1" min="0.1"
-                               class="fuel-input w-full p-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
+                        <input type="number" id="totalHeight" value="7.0" step="0.1" min="0.1" class="fuel-input w-full p-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
                     </div>
-
                     <div>
                         <label for="currentReading" class="block text-xs font-medium text-gray-700 mb-0.5">Current Scale Reading (cm)</label>
-                        <input type="number" id="currentReading" value="5.0" step="0.1" min="0"
-                               class="fuel-input w-full p-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
+                        <input type="number" id="currentReading" value="5.0" step="0.1" min="0" class="fuel-input w-full p-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
                     </div>
-                </div>
-                </div>
-
-            <h2 class="text-base font-semibold text-gray-700 mb-3 border-b pb-1">Calculation Results</h2>
-            <div class="grid grid-cols-2 gap-2 mb-4">
-                <div id="resultPercentageBox" class="result-box p-3 rounded-lg flex flex-col items-center justify-center shadow-sm">
-                    <div class="flex items-center space-x-1 mb-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-orange-600"><path d="M12 2v6"/><path d="M12 16v6"/><path d="M17 3.34l-2.6 4.5"/><path d="M9.6 7.85l-2.6-4.5"/><path d="M20.66 8.5l-5 2.9"/><path d="M3.34 15.5l5-2.9"/></svg>
-                        <span class="text-xs font-semibold text-orange-800">Fuel in Tank (%)</span>
-                    </div>
-                    <span id="fuelPercentage" class="text-xl font-extrabold text-orange-600">--%</span>
-                </div>
-
-                <div id="resultLitreBox" class="result-box p-3 rounded-lg flex flex-col items-center justify-center shadow-sm opacity-50">
-                    <div class="flex items-center space-x-1 mb-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-orange-600"><path d="M12 2.69l5.66 5.66c1.25 1.25 2.05 2.8 2.34 4.54.29 1.74-.01 3.51-.83 5.09-1.2 2.38-3.4 4.25-6.08 4.25s-4.88-1.87-6.08-4.25c-.82-1.58-1.12-3.35-.83-5.09.29-1.74 1.09-3.29 2.34-4.54L12 2.69z"/></svg>
-                        <span class="text-xs font-semibold text-orange-800">Fuel Quantity (Liters)</span>
-                    </div>
-                    <span id="fuelQuantity" class="text-xl font-extrabold text-orange-600">-- L</span>
                 </div>
             </div>
-
-            <h2 class="text-base font-semibold text-gray-700 mb-2 border-b pb-0.5">Detailed Scale Reference</h2>
-            <div id="lookupTableContainer" class="bg-gray-50 p-2 rounded-lg shadow-inner">
+            <h2 class="text-base font-semibold text-gray-700 mb-3 border-b pb-1">Calculation Results</h2>
+            <div class="grid grid-cols-3 gap-2 mb-4">
+                <div id="resultPercentageBox" class="result-box p-3 rounded-lg flex flex-col items-center justify-center shadow-sm">
+                    <span class="text-xs font-semibold text-orange-800">Fuel in Tank (%)</span>
+                    <span id="fuelPercentage" class="text-xl font-extrabold text-orange-600">--%</span>
                 </div>
+                <div id="resultLitreBox" class="result-box p-3 rounded-lg flex flex-col items-center justify-center shadow-sm opacity-50">
+                    <span class="text-xs font-semibold text-orange-800">Fuel Quantity (Liters)</span>
+                    <span id="fuelQuantity" class="text-xl font-extrabold text-orange-600">-- L</span>
+                </div>
+                <button id="saveMeterReadingBtn" class="bg-green-500 text-white p-3 rounded-lg flex flex-col items-center justify-center shadow-md hover:bg-green-600 transition-colors disabled:opacity-50" onclick="saveMeterReadingToLocal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
+                    <span class="text-xs font-semibold mt-1">Save Log</span>
+                </button>
+            </div>
+            
+            <div class="border border-gray-200 rounded-lg shadow-sm mb-4">
+                <button id="toggleScaleReference" class="w-full p-2 bg-gray-100 flex justify-between items-center text-xs font-semibold text-gray-700 rounded-t-lg hover:bg-gray-200 transition-colors">
+                    <span>Detailed Scale Reference (10% steps)</span>
+                    <svg id="iconScaleReference" class="accordion-icon w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                </button>
+                <div id="lookupTableContainer" class="bg-gray-50 p-2 rounded-b-lg hidden">
+                    </div>
+            </div>
+
+            <div class="p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
+                <div class="flex justify-between items-center mb-2">
+                    <h4 class="text-sm font-bold text-gray-700">📜 Meter Reading History</h4>
+                    <button class="text-gray-500 hover:text-red-600 transition-colors" onclick="clearStorage('meter')">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    </button>
+                </div>
+                
+                <div class="flex space-x-2 mb-3">
+                    <select id="meterFilter" class="fuel-input w-2/3 p-2 border border-gray-300 rounded-md text-xs appearance-none bg-white" onchange="fetchMeterReadingLocal()">
+                        <option value="1">Last 1 Month</option>
+                        <option value="3">Last 3 Months</option>
+                        <option value="6">Last 6 Months</option>
+                        <option value="12">Last 12 Months</option>
+                        <option value="0">All Time (Max 200)</option>
+                    </select>
+                    <button class="w-1/3 text-center text-xs text-green-600 p-2 border border-green-200 rounded-md hover:bg-green-50" onclick="fetchMeterReadingLocal()">Refresh</button>
+                </div>
+
+                <div id="meterReadingHistory" class="overflow-x-auto text-xs max-h-40">
+                    <p class="text-gray-500 text-center py-2">Loading...</p>
+                </div>
+                <p class="text-right text-xs text-gray-500 mt-2">Storage Limit: 200 Records</p>
+            </div>
         </div>
         
         <div id="contentFuelCalculator" class="tab-content hidden">
-            <p class="text-gray-600 text-xs mb-3">State onusare Petrol, Diesel, O CNG-er daam nirnoy korun. (Mock Data)</p>
-
+            <p class="text-gray-600 text-xs mb-3">State onusare Petrol, Diesel, O CNG-er daam nirnoy korun।</p>
             <div class="space-y-3 mb-4">
                 <div>
                     <label for="stateSelect" class="block text-xs font-medium text-gray-700 mb-0.5">State/UT of India</label>
-                    <select id="stateSelect"
-                           class="fuel-input w-full p-2 border border-gray-300 rounded-md text-sm appearance-none bg-white focus:ring-orange-500 focus:border-orange-500">
+                    <select id="stateSelect" class="fuel-input w-full p-2 border border-gray-300 rounded-md text-sm appearance-none bg-white focus:ring-orange-500 focus:border-orange-500">
                         <option value="0">--- Select State/UT ---</option>
-                        <option value="Andhra Pradesh">Andhra Pradesh</option>
-                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                        <option value="Assam">Assam</option>
-                        <option value="Bihar">Bihar</option>
-                        <option value="Chhattisgarh">Chhattisgarh</option>
-                        <option value="Goa">Goa</option>
-                        <option value="Gujarat">Gujarat</option>
-                        <option value="Haryana">Haryana</option>
-                        <option value="Himachal Pradesh">Himachal Pradesh</option>
-                        <option value="Jharkhand">Jharkhand</option>
-                        <option value="Karnataka">Karnataka</option>
-                        <option value="Kerala">Kerala</option>
-                        <option value="Madhya Pradesh">Madhya Pradesh</option>
-                        <option value="Maharashtra">Maharashtra</option>
-                        <option value="Manipur">Manipur</option>
-                        <option value="Meghalaya">Meghalaya</option>
-                        <option value="Mizoram">Mizoram</option>
-                        <option value="Nagaland">Nagaland</option>
-                        <option value="Odisha">Odisha</option>
-                        <option value="Punjab">Punjab</option>
-                        <option value="Rajasthan">Rajasthan</option>
-                        <option value="Sikkim">Sikkim</option>
-                        <option value="Tamil Nadu">Tamil Nadu</option>
-                        <option value="Telangana">Telangana</option>
-                        <option value="Tripura">Tripura</option>
-                        <option value="Uttar Pradesh">Uttar Pradesh</option>
-                        <option value="Uttarakhand">Uttarakhand</option>
-                        <option value="West Bengal">West Bengal</option>
-                        <option value="Andaman and Nicobar Islands">A & N Islands (UT)</option>
-                        <option value="Chandigarh">Chandigarh (UT)</option>
-                        <option value="Dadra and Nagar Haveli and Daman and Diu">DNH and DD (UT)</option>
-                        <option value="Delhi">Delhi (NCT)</option>
-                        <option value="Jammu and Kashmir">J & K (UT)</option>
-                        <option value="Ladakh">Ladakh (UT)</option>
-                        <option value="Lakshadweep">Lakshadweep (UT)</option>
-                        <option value="Puducherry">Puducherry (UT)</option>
+                        <option value="Andhra Pradesh (State)">Andhra Pradesh (State)</option>
+                        <option value="Arunachal Pradesh (State)">Arunachal Pradesh (State)</option>
+                        <option value="Assam (State)">Assam (State)</option>
+                        <option value="Bihar (State)">Bihar (State)</option>
+                        <option value="Chhattisgarh (State)">Chhattisgarh (State)</option>
+                        <option value="Goa (State)">Goa (State)</option>
+                        <option value="Gujarat (State)">Gujarat (State)</option>
+                        <option value="Haryana (State)">Haryana (State)</option>
+                        <option value="Himachal Pradesh (State)">Himachal Pradesh (State)</option>
+                        <option value="Jharkhand (State)">Jharkhand (State)</option>
+                        <option value="Karnataka (State)">Karnataka (State)</option>
+                        <option value="Kerala (State)">Kerala (State)</option>
+                        <option value="Madhya Pradesh (State)">Madhya Pradesh (State)</option>
+                        <option value="Maharashtra (State)">Maharashtra (State)</option>
+                        <option value="Manipur (State)">Manipur (State)</option>
+                        <option value="Meghalaya (State)">Meghalaya (State)</option>
+                        <option value="Mizoram (State)">Mizoram (State)</option>
+                        <option value="Nagaland (State)">Nagaland (State)</option>
+                        <option value="Odisha (State)">Odisha (State)</option>
+                        <option value="Punjab (State)">Punjab (State)</option>
+                        <option value="Rajasthan (State)">Rajasthan (State)</option>
+                        <option value="Sikkim (State)">Sikkim (State)</option>
+                        <option value="Tamil Nadu (State)">Tamil Nadu (State)</option>
+                        <option value="Telangana (State)">Telangana (State)</option>
+                        <option value="Tripura (State)">Tripura (State)</option>
+                        <option value="Uttar Pradesh (State)">Uttar Pradesh (State)</option>
+                        <option value="Uttarakhand (State)">Uttarakhand (State)</option>
+                        <option value="West Bengal (State)">West Bengal (State)</option>
+                        <option value="Andaman and Nicobar Islands (UT)">Andaman and Nicobar Islands (UT)</option>
+                        <option value="Chandigarh (UT)">Chandigarh (UT)</option>
+                        <option value="Dadra and Nagar Haveli and Daman and Diu (UT)">Dadra and Nagar Haveli and Daman and Diu (UT)</option>
+                        <option value="Delhi (National Capital Territory - UT)">Delhi (National Capital Territory - UT)</option>
+                        <option value="Jammu and Kashmir (UT)">Jammu and Kashmir (UT)</option>
+                        <option value="Ladakh (UT)">Ladakh (UT)</option>
+                        <option value="Lakshadweep (UT)">Lakshadweep (UT)</option>
+                        <option value="Puducherry (UT)">Puducherry (UT)</option>
                     </select>
                 </div>
-
                 <div>
                     <label for="fuelTypeSelect" class="block text-xs font-medium text-gray-700 mb-0.5">Fuel Type</label>
-                    <select id="fuelTypeSelect"
-                           class="fuel-input w-full p-2 border border-gray-300 rounded-md text-sm appearance-none bg-white focus:ring-orange-500 focus:border-orange-500">
+                    <select id="fuelTypeSelect" class="fuel-input w-full p-2 border border-gray-300 rounded-md text-sm appearance-none bg-white focus:ring-orange-500 focus:border-orange-500">
                         <option value="0">--- Select Fuel Type ---</option>
                         <option value="Petrol">Petrol</option>
                         <option value="Diesel">Diesel</option>
-                        <option value="CNG">CNG</option>
+                        <option value="CNG">CNG (Mock Data)</option>
                     </select>
                 </div>
-                
                 <div class="result-box p-3 rounded-lg flex justify-between items-center shadow-sm">
                     <span class="text-sm font-semibold text-orange-800">Current Rate (₹/L or ₹/kg)</span>
                     <span id="currentRate" class="text-xl font-extrabold text-orange-600">--</span>
                 </div>
-
                 <button id="toggleMode" class="w-full p-2 text-xs font-medium text-center text-white bg-green-500 rounded-md hover:bg-green-600 transition-colors shadow-md">
                     Mode: Calculate Cost from Quantity
                 </button>
-                
                 <div>
                     <label id="inputLabel" for="calcInput" class="block text-xs font-medium text-gray-700 mb-0.5">Enter Quantity (L/kg)</label>
-                    <input type="number" id="calcInput" value="" step="0.01" min="0.01" placeholder="e.g., 5.5"
-                           class="fuel-input w-full p-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
+                    <input type="number" id="calcInput" value="" step="0.01" min="0.01" placeholder="e.g., 5.5" class="fuel-input w-full p-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500 text-sm">
                 </div>
             </div>
-
             <h2 class="text-base font-semibold text-gray-700 mb-3 border-b pb-1">Calculation Output</h2>
             <div class="space-y-2 mb-4">
                 <div id="calcResultBox" class="result-box p-3 rounded-lg flex justify-between items-center shadow-sm opacity-50">
                     <div class="flex items-center space-x-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-orange-600"><path d="M6 3v18M18 6v12M3 6h4M3 18h4M17 3h4M17 21h4"/></svg>
                         <span id="calcResultLabel" class="text-sm font-semibold text-orange-800">Total Cost (₹)</span>
                     </div>
                     <span id="calcResult" class="text-2xl font-extrabold text-orange-600">--</span>
@@ -231,61 +284,265 @@
             </div>
         </div>
 
+        <div id="contentVehicleManagement" class="tab-content hidden">
+            <p class="text-gray-600 text-xs mb-3">Vehicle, Route & Refueling data manage করুন।</p>
+
+            <div id="registerContainer" class="mb-4 border border-gray-200 rounded-lg shadow-sm">
+                <button id="toggleRegister" class="w-full p-3 bg-gray-100 flex justify-between items-center text-sm font-semibold text-gray-700 rounded-t-lg hover:bg-gray-200 transition-colors">
+                    <span>🚗 Vehicle Register</span>
+                    <svg id="iconRegister" class="accordion-icon w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                </button>
+                
+                <div id="sectionRegister" class="p-3 space-y-3 bg-white hidden">
+                    <form id="vehicleRegisterForm" onsubmit="return false;">
+                        <div class="grid grid-cols-2 gap-2 mb-2">
+                            <div><label for="regVehicleName" class="block register-label">Vehicle Name</label><input type="text" id="regVehicleName" name="regVehicleName" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500" placeholder="e.g., Truck A"></div>
+                            <div><label for="regLicencePlate" class="block register-label">Licence Plate</label><input type="text" id="regLicencePlate" name="regLicencePlate" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500" placeholder="e.g., WB 01 AB 1234"></div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 mb-2">
+                            <div class="col-span-2"><label for="regManufactureModel" class="block register-label">Manufacture & Model</label><input type="text" id="regManufactureModel" name="regManufactureModel" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500" placeholder="e.g., Tata Motors"></div>
+                            <div><label for="regYear" class="block register-label">Year</label><input type="number" id="regYear" name="regYear" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500" placeholder="e.g., 2020"></div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 mb-2">
+                            <div><label for="regFuelType" class="block register-label">Fuel Type</label><select id="regFuelType" name="regFuelType" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"><option value="Diesel">Diesel</option><option value="Petrol">Petrol</option><option value="CNG">CNG</option></select></div>
+                            <div><label for="regCapacity" class="block register-label">Capacity (Liters)</label><input type="number" id="regCapacity" name="regCapacity" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500" placeholder="e.g., 60.5" step="0.1"></div>
+                            <div><label for="regTankDetails" class="block register-label">Tank Details</label><input type="text" id="regTankDetails" name="regTankDetails" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500" placeholder="e.g., Single / Double"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                            <div><label for="regChassis" class="block register-label">Chassis No.</label><input type="text" id="regChassis" name="regChassis" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500" placeholder="Chassis No."></div>
+                            <div><label for="regVIN" class="block register-label">VIN No.</label><input type="text" id="regVIN" name="regVIN" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500" placeholder="VIN No."></div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="submit" class="p-2 text-xs font-medium text-white bg-green-500 rounded-md hover:bg-green-600 transition-colors shadow-md flex items-center justify-center space-x-1" onclick="saveData('register', 'local')">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
+                                <span>Save to Local</span>
+                            </button>
+                            <button type="submit" class="p-2 text-xs font-medium text-white bg-orange-500 rounded-md hover:bg-orange-600 transition-colors shadow-md flex items-center justify-center space-x-1" onclick="saveData('register', 'sheet')">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
+                                <span>Save to Sheet</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div id="registerHistorySheetPanel" class="p-3 bg-gray-50 border-t border-gray-200 hidden">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-sm font-bold text-gray-700">📋 Vehicle Register History (Sheet)</h4>
+                    </div>
+                    <button class="w-full text-center text-xs text-orange-600 p-2 border border-orange-200 rounded-md hover:bg-orange-50 mb-2" onclick="fetchHistory('register', 'sheet')">Refresh Sheet Log</button>
+                    <div id="registerHistorySheet" class="overflow-x-auto text-xs max-h-40"><p class="text-gray-500 text-center py-2">Loading...</p></div>
+                </div>
+
+                <div id="registerHistoryLocalPanel" class="p-3 bg-white border-t border-gray-200 rounded-b-lg hidden">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-sm font-bold text-gray-700">📜 Vehicle Register History (Local)</h4>
+                        <button class="text-gray-500 hover:text-red-600 transition-colors" onclick="clearStorage('register')">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                    </div>
+                    <div class="flex space-x-2 mb-3">
+                        <select id="registerLocalFilter" class="fuel-input w-full p-2 border border-gray-300 rounded-md text-xs appearance-none bg-white" onchange="fetchHistory('register', 'local')">
+                            <option value="1">Last 1 Month</option><option value="3">Last 3 Months</option><option value="6">Last 6 Months</option><option value="12">Last 12 Months</option><option value="0">All Time (Max 200)</option>
+                        </select>
+                        <button class="w-1/3 text-center text-xs text-green-600 p-2 border border-green-200 rounded-md hover:bg-green-50" onclick="fetchHistory('register', 'local')">Refresh</button>
+                    </div>
+                    <div id="registerHistoryLocal" class="overflow-x-auto text-xs max-h-40"><p class="text-gray-500 text-center py-2">Loading...</p></div>
+                    <p class="text-right text-xs text-gray-500 mt-2">Storage Limit: 200 Records</p>
+                </div>
+            </div>
+            
+            <div id="routeContainer" class="mb-4 border border-gray-200 rounded-lg shadow-sm">
+                <button id="toggleRoute" class="w-full p-3 bg-gray-100 flex justify-between items-center text-sm font-semibold text-gray-700 rounded-t-lg hover:bg-gray-200 transition-colors">
+                    <span>🛣️ Route Log</span>
+                    <svg id="iconRoute" class="accordion-icon w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                </button>
+                <div id="sectionRoute" class="p-3 space-y-3 bg-white hidden">
+                    <form id="routeLogForm" onsubmit="return false;">
+                        <div class="grid grid-cols-2 gap-2 mb-2">
+                            <div><label for="routeLicencePlate" class="block register-label">Vehicle Licence Plate</label><select id="routeLicencePlate" name="Vehicle Licence Plate" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"><option value="">-- Select Plate --</option></select></div>
+                            <div><label for="routeOrigin" class="block register-label">Origin Place Name</label><input type="text" id="routeOrigin" name="Origin Place Name" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500" placeholder="e.g., Kolkata"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mb-2">
+                            <div><label for="routeStartDate" class="block register-label">Start Date & Time</label><input type="datetime-local" id="routeStartDate" name="Start Date & Time" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"></div>
+                            <div><label for="routeInitialOdometer" class="block register-label">Initial Odometer (km)</label><input type="number" id="routeInitialOdometer" name="Initial Odometer (km)" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500" placeholder="e.g., 50000"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                            <div><label for="routeDestination" class="block register-label">Destination Place Name</label><input type="text" id="routeDestination" name="Destination Place Name" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500" placeholder="e.g., Patna"></div>
+                            <div><label for="routeEndDate" class="block register-label">End Date & Time</label><input type="datetime-local" id="routeEndDate" name="End Date & Time" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mb-2">
+                            <div><label for="routeFinalOdometer" class="block register-label">Final Odometer (km)</label><input type="number" id="routeFinalOdometer" name="Final Odometer (km)" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500" placeholder="e.g., 50800"></div>
+                            <div class="bg-gray-50 p-2 rounded-md"><span class="register-label">Total KM Travelled:</span><span id="routeTotalKm" class="text-sm font-bold text-orange-600 block">-- km</span></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                             <div><label for="routeDriverName" class="block register-label">Driver Name</label><input type="text" id="routeDriverName" name="Driver Name" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500" placeholder="e.g., Ashok Kumar"></div>
+                            <div><label for="routeReason" class="block register-label">Reason / Purpose</label><input type="text" id="routeReason" name="Reason / Purpose" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500" placeholder="e.g., Client delivery"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="submit" class="p-2 text-xs font-medium text-white bg-green-500 rounded-md hover:bg-green-600 transition-colors shadow-md flex items-center justify-center space-x-1" onclick="saveData('route', 'local')">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
+                                <span>Save to Local</span>
+                            </button>
+                            <button type="submit" class="p-2 text-xs font-medium text-white bg-orange-500 rounded-md hover:bg-orange-600 transition-colors shadow-md flex items-center justify-center space-x-1" onclick="saveData('route', 'sheet')">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
+                                <span>Save to Sheet</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div id="routeHistorySheetPanel" class="p-3 bg-gray-50 border-t border-gray-200 hidden">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-sm font-bold text-gray-700">📋 Route Log History (Sheet)</h4>
+                    </div>
+                     <button class="w-full text-center text-xs text-orange-600 p-2 border border-orange-200 rounded-md hover:bg-orange-50 mb-2" onclick="fetchHistory('route', 'sheet')">Refresh Sheet Log</button>
+                    <div id="routeHistorySheet" class="overflow-x-auto text-xs max-h-40"><p class="text-gray-500 text-center py-2">Loading...</p></div>
+                </div>
+
+                <div id="routeHistoryLocalPanel" class="p-3 bg-white border-t border-gray-200 rounded-b-lg hidden">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-sm font-bold text-gray-700">📜 Route Log History (Local)</h4>
+                        <button class="text-gray-500 hover:text-red-600 transition-colors" onclick="clearStorage('route')">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                    </div>
+                    <div class="flex space-x-2 mb-3">
+                        <select id="routeLocalFilter" class="fuel-input w-full p-2 border border-gray-300 rounded-md text-xs appearance-none bg-white" onchange="fetchHistory('route', 'local')">
+                            <option value="1">Last 1 Month</option><option value="3">Last 3 Months</option><option value="6">Last 6 Months</option><option value="12">Last 12 Months</option><option value="0">All Time (Max 200)</option>
+                        </select>
+                        <button class="w-1/3 text-center text-xs text-green-600 p-2 border border-green-200 rounded-md hover:bg-green-50" onclick="fetchHistory('route', 'local')">Refresh</button>
+                    </div>
+                    <div id="routeHistoryLocal" class="overflow-x-auto text-xs max-h-40"><p class="text-gray-500 text-center py-2">Loading...</p></div>
+                    <p class="text-right text-xs text-gray-500 mt-2">Storage Limit: 200 Records</p>
+                </div>
+            </div>
+            
+            <div id="refuelingContainer" class="mb-4 border border-gray-200 rounded-lg shadow-sm">
+                <button id="toggleRefueling" class="w-full p-3 bg-gray-100 flex justify-between items-center text-sm font-semibold text-gray-700 rounded-t-lg hover:bg-gray-200 transition-colors">
+                    <span>⛽ Refueling Record</span>
+                    <svg id="iconRefueling" class="accordion-icon w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                </button>
+                <div id="sectionRefueling" class="p-3 space-y-3 bg-white hidden">
+                    <form id="refuelingForm" onsubmit="return false;">
+                        <div class="grid grid-cols-2 gap-2 mb-2">
+                            <div><label for="refuelLicencePlate" class="block register-label">Vehicle Licence Plate</label><select id="refuelLicencePlate" name="Vehicle Licence Plate" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"><option value="">-- Select Plate --</option></select></div>
+                            <div><label for="refuelDateTime" class="block register-label">Date & Time</label><input type="datetime-local" id="refuelDateTime" name="Date & Time" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mb-2">
+                             <div><label for="refuelOdometer" class="block register-label">Odometer (km)</label><input type="number" id="refuelOdometer" name="Odometer (km)" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500" placeholder="e.g., 50800"></div>
+                            <div><label for="refuelFuelType" class="block register-label">Fuel Type</label><select id="refuelFuelType" name="Fuel Type" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"><option value="Diesel">Diesel</option><option value="Petrol">Petrol</option><option value="CNG">CNG</option></select></div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 mb-3">
+                             <div><label for="refuelPricePerL" class="block register-label">Price/L (₹)</label><input type="number" id="refuelPricePerL" name="Price/L (₹)" step="0.01" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500" placeholder="e.g., 91.24"></div>
+                            <div><label for="refuelLiters" class="block register-label">Quantity (L/kg)</label><input type="number" id="refuelLiters" name="Quantity (L/kg)" step="0.01" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500" placeholder="e.g., 40.5"></div>
+                            <div class="bg-gray-50 p-2 rounded-md"><span class="register-label">Total Cost (₹):</span><span id="refuelTotalCost" class="text-sm font-bold text-orange-600 block">--</span></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                            <div><label for="refuelGasStation" class="block register-label">Gas Station</label><input type="text" id="refuelGasStation" name="Gas Station" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500" placeholder="e.g., Indian Oil"></div>
+                            <div><label for="refuelDriverName" class="block register-label">Driver Name</label><input type="text" id="refuelDriverName" name="Driver Name" class="fuel-input register-input w-full border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500" placeholder="e.g., Sanjay"></div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="submit" class="p-2 text-xs font-medium text-white bg-green-500 rounded-md hover:bg-green-600 transition-colors shadow-md flex items-center justify-center space-x-1" onclick="saveData('refueling', 'local')">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
+                                <span>Save to Local</span>
+                            </button>
+                            <button type="submit" class="p-2 text-xs font-medium text-white bg-orange-500 rounded-md hover:bg-orange-600 transition-colors shadow-md flex items-center justify-center space-x-1" onclick="saveData('refueling', 'sheet')">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
+                                <span>Save to Sheet</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div id="refuelingHistorySheetPanel" class="p-3 bg-gray-50 border-t border-gray-200 hidden">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-sm font-bold text-gray-700">📋 Refueling Record History (Sheet)</h4>
+                    </div>
+                    <button class="w-full text-center text-xs text-orange-600 p-2 border border-orange-200 rounded-md hover:bg-orange-50 mb-2" onclick="fetchHistory('refuel', 'sheet')">Refresh Sheet Log</button>
+                    <div id="refuelingHistorySheet" class="overflow-x-auto text-xs max-h-40"><p class="text-gray-500 text-center py-2">Loading...</p></div>
+                </div>
+
+                <div id="refuelingHistoryLocalPanel" class="p-3 bg-white border-t border-gray-200 rounded-b-lg hidden">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-sm font-bold text-gray-700">📜 Refueling Record History (Local)</h4>
+                        <button class="text-gray-500 hover:text-red-600 transition-colors" onclick="clearStorage('refuel')">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                    </div>
+                    <div class="flex space-x-2 mb-3">
+                        <select id="refuelLocalFilter" class="fuel-input w-full p-2 border border-gray-300 rounded-md text-xs appearance-none bg-white" onchange="fetchHistory('refuel', 'local')">
+                            <option value="1">Last 1 Month</option><option value="3">Last 3 Months</option><option value="6">Last 6 Months</option><option value="12">Last 12 Months</option><option value="0">All Time (Max 200)</option>
+                        </select>
+                        <button class="w-1/3 text-center text-xs text-green-600 p-2 border border-green-200 rounded-md hover:bg-green-50" onclick="fetchHistory('refuel', 'local')">Refresh</button>
+                    </div>
+                    <div id="refuelingHistoryLocal" class="overflow-x-auto text-xs max-h-40"><p class="text-gray-500 text-center py-2">Loading...</p></div>
+                    <p class="text-right text-xs text-gray-500 mt-2">Storage Limit: 200 Records</p>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        // --- Fuel Price Mock Data (Kalponik Dam - Mock Current Fuel Prices) ---
-        // (₹/L for Petrol/Diesel, ₹/kg for CNG). Prices updated as per user request (Mock).
+        // --- GOOGLE APPS SCRIPT DEPLOY URL (Vehicle Management) ---
+        // এই URL টি অবশ্যই আপনার Apps Script Web App এর URL দিয়ে প্রতিস্থাপন করুন।
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyCilX-UANRYyDv7ivvd9awJrKuPjt3W0txce3hZ7AXcGE5gXMsNMLDdnyj2GaMhb3n/exec'; 
+        
+        // --- LOCAL STORAGE KEYS ---
+        const LOCAL_STORAGE_KEY_METER = 'dgMeterReadingLog';
+        const LOCAL_STORAGE_KEY_REGISTER = 'vehicleRegisterLog';
+        const LOCAL_STORAGE_KEY_ROUTE = 'vehicleRouteLog';
+        const LOCAL_STORAGE_KEY_REFUEL = 'vehicleRefuelLog';
+        
+        // --- FUEL PRICE MOCK DATA (UPDATED WITH USER'S RATES) ---
         const FUEL_PRICES = {
-            "Andhra Pradesh": { "Petrol": 110.46, "Diesel": 98.41, "CNG": 82.35 },
-            "Arunachal Pradesh": { "Petrol": 93.10, "Diesel": 81.95, "CNG": 72.50 },
-            "Assam": { "Petrol": 97.45, "Diesel": 86.85, "CNG": 78.49 },
-            "Bihar": { "Petrol": 106.85, "Diesel": 94.00, "CNG": 87.10 },
-            "Chhattisgarh": { "Petrol": 103.54, "Diesel": 96.50, "CNG": 85.00 },
-            "Goa": { "Petrol": 97.28, "Diesel": 89.92, "CNG": 81.25 },
-            "Gujarat": { "Petrol": 95.12, "Diesel": 90.72, "CNG": 74.88 },
-            "Haryana": { "Petrol": 97.66, "Diesel": 90.49, "CNG": 78.61 },
-            "Himachal Pradesh": { "Petrol": 94.60, "Diesel": 86.60, "CNG": 75.99 },
-            "Jharkhand": { "Petrol": 99.84, "Diesel": 94.65, "CNG": 82.50 },
-            "Karnataka": { "Petrol": 101.44, "Diesel": 87.31, "CNG": 86.40 },
-            "Kerala": { "Petrol": 107.50, "Diesel": 96.45, "CNG": 88.00 },
-            "Madhya Pradesh": { "Petrol": 108.65, "Diesel": 94.38, "CNG": 89.20 },
-            "Maharashtra": { "Petrol": 106.70, "Diesel": 93.30, "CNG": 87.00 },
-            "Manipur": { "Petrol": 100.95, "Diesel": 87.89, "CNG": 80.00 },
-            "Meghalaya": { "Petrol": 96.88, "Diesel": 87.10, "CNG": 79.50 },
-            "Mizoram": { "Petrol": 96.05, "Diesel": 84.85, "CNG": 74.90 },
-            "Nagaland": { "Petrol": 97.55, "Diesel": 88.10, "CNG": 78.80 },
-            "Odisha": { "Petrol": 101.97, "Diesel": 93.74, "CNG": 84.50 },
-            "Punjab": { "Petrol": 97.97, "Diesel": 87.78, "CNG": 80.99 },
-            "Rajasthan": { "Petrol": 108.48, "Diesel": 93.72, "CNG": 86.60 },
-            "Sikkim": { "Petrol": 101.05, "Diesel": 88.02, "CNG": 81.50 },
-            "Tamil Nadu": { "Petrol": 102.63, "Diesel": 94.24, "CNG": 89.50 },
-            "Telangana": { "Petrol": 110.10, "Diesel": 98.20, "CNG": 84.00 },
-            "Tripura": { "Petrol": 98.34, "Diesel": 87.50, "CNG": 77.00 },
-            "Uttar Pradesh": { "Petrol": 96.80, "Diesel": 89.00, "CNG": 80.00 },
-            "Uttarakhand": { "Petrol": 93.90, "Diesel": 88.80, "CNG": 81.30 },
-            "West Bengal": { "Petrol": 104.57, "Diesel": 91.24, "CNG": 89.00 },
-            // Union Territories
-            "Andaman and Nicobar Islands": { "Petrol": 82.50, "Diesel": 78.50, "CNG": 90.00 },
-            "Chandigarh": { "Petrol": 94.30, "Diesel": 82.45, "CNG": 78.90 },
-            "Dadra and Nagar Haveli and Daman and Diu": { "Petrol": 92.80, "Diesel": 88.35, "CNG": 74.00 },
-            "Delhi": { "Petrol": 96.72, "Diesel": 89.62, "CNG": 78.61 },
-            "Jammu and Kashmir": { "Petrol": 99.10, "Diesel": 85.65, "CNG": 83.50 },
-            "Ladakh": { "Petrol": 104.20, "Diesel": 92.50, "CNG": 85.00 },
-            "Lakshadweep": { "Petrol": 100.80, "Diesel": 90.50, "CNG": 0 }, // CNG mocked as 0/N/A
-            "Puducherry": { "Petrol": 95.80, "Diesel": 87.20, "CNG": 80.50 }
+            "Andhra Pradesh (State)": { "Petrol": 109.57, "Diesel": 97.39, "CNG": 88.17 },
+            "Arunachal Pradesh (State)": { "Petrol": 92.34, "Diesel": 81.86, "CNG": 0 },
+            "Assam (State)": { "Petrol": 98.93, "Diesel": 90.15, "CNG": 87.13 },
+            "Bihar (State)": { "Petrol": 106.28, "Diesel": 92.47, "CNG": 91.58 },
+            "Chhattisgarh (State)": { "Petrol": 101.62, "Diesel": 94.55, "CNG": 81.04 },
+            "Goa (State)": { "Petrol": 96.61, "Diesel": 88.37, "CNG": 92.00 },
+            "Gujarat (State)": { "Petrol": 95.00, "Diesel": 90.68, "CNG": 82.19 },
+            "Haryana (State)": { "Petrol": 95.79, "Diesel": 88.23, "CNG": 86.37 },
+            "Himachal Pradesh (State)": { "Petrol": 94.58, "Diesel": 86.62, "CNG": 91.98 },
+            "Jharkhand (State)": { "Petrol": 98.55, "Diesel": 93.29, "CNG": 89.27 },
+            "Karnataka (State)": { "Petrol": 103.38, "Diesel": 91.41, "CNG": 84.80 },
+            "Kerala (State)": { "Petrol": 106.35, "Diesel": 95.30, "CNG": 89.38 },
+            "Madhya Pradesh (State)": { "Petrol": 107.40, "Diesel": 92.75, "CNG": 88.60 },
+            "Maharashtra (State)": { "Petrol": 104.72, "Diesel": 91.25, "CNG": 87.91 },
+            "Manipur (State)": { "Petrol": 99.83, "Diesel": 85.85, "CNG": 0 },
+            "Meghalaya (State)": { "Petrol": 95.89, "Diesel": 87.31, "CNG": 0 },
+            "Mizoram (State)": { "Petrol": 99.49, "Diesel": 88.44, "CNG": 0 },
+            "Nagaland (State)": { "Petrol": 97.67, "Diesel": 89.01, "CNG": 0 },
+            "Odisha (State)": { "Petrol": 102.07, "Diesel": 93.63, "CNG": 89.19 },
+            "Punjab (State)": { "Petrol": 97.97, "Diesel": 87.78, "CNG": 87.29 },
+            "Rajasthan (State)": { "Petrol": 105.44, "Diesel": 90.89, "CNG": 89.11 },
+            "Sikkim (State)": { "Petrol": 103.30, "Diesel": 90.45, "CNG": 0 },
+            "Tamil Nadu (State)": { "Petrol": 101.81, "Diesel": 93.40, "CNG": 85.73 },
+            "Telangana (State)": { "Petrol": 108.03, "Diesel": 96.24, "CNG": 95.64 },
+            "Tripura (State)": { "Petrol": 97.25, "Diesel": 86.31, "CNG": 0 },
+            "Uttar Pradesh (State)": { "Petrol": 95.12, "Diesel": 88.25, "CNG": 90.73 },
+            "Uttarakhand (State)": { "Petrol": 93.81, "Diesel": 88.70, "CNG": 98.75 },
+            "West Bengal (State)": { "Petrol": 105.84, "Diesel": 92.41, "CNG": 0 }, 
+            "Andaman and Nicobar Islands (UT)": { "Petrol": 82.46, "Diesel": 78.05, "CNG": 0 },
+            "Chandigarh (UT)": { "Petrol": 94.30, "Diesel": 82.45, "CNG": 92.00 },
+            "Dadra and Nagar Haveli and Daman and Diu (UT)": { "Petrol": 92.74, "Diesel": 88.23, "CNG": 77.77 },
+            "Delhi (National Capital Territory - UT)": { "Petrol": 94.77, "Diesel": 87.67, "CNG": 77.09 },
+            "Jammu and Kashmir (UT)": { "Petrol": 98.87, "Diesel": 85.46, "CNG": 94.40 },
+            "Ladakh (UT)": { "Petrol": 104.09, "Diesel": 91.68, "CNG": 0 },
+            "Lakshadweep (UT)": { "Petrol": 100.75, "Diesel": 0, "CNG": 0 }, 
+            "Puducherry (UT)": { "Petrol": 95.78, "Diesel": 85.86, "CNG": 78.00 }
         };
-
-        // --- DG Capacity Data (Representative Indian Models) ---
-        const dgCapacities = {
-            "Select DG Model": 0,
-            "-1": 0,
-            "40": 40, "50": 50, "75": 75, "80": 80, "100": 100,
-            "150": 150, "160": 160, "180": 180, "200": 200,
-            "250": 250, "350": 350
+        
+        // All DG Models Capacities (Unchanged)
+        const dgCapacities = { 
+            "0": 0, "-1": 0, "40": 40, "50": 50, "75": 75, "80": 80, "100": 100, "150": 150, 
+            "160": 160, "180": 180, "200": 200, "250": 250, "350": 350 
         };
-
-        // --- DOM Elements (DG) ---
+        
+        // --- DOM Elements (Most Unchanged) ---
         const dgModelSelect = document.getElementById('dgModelSelect');
         const customCapacityGroup = document.getElementById('customCapacityGroup');
         const totalHeightInput = document.getElementById('totalHeight');
@@ -295,8 +552,11 @@
         const fuelQuantitySpan = document.getElementById('fuelQuantity');
         const resultLitreBox = document.getElementById('resultLitreBox');
         const lookupTableContainer = document.getElementById('lookupTableContainer');
+        const saveMeterReadingBtn = document.getElementById('saveMeterReadingBtn');
+        const meterReadingHistoryDiv = document.getElementById('meterReadingHistory');
+        const toggleScaleReference = document.getElementById('toggleScaleReference');
+        const iconScaleReference = document.getElementById('iconScaleReference');
         
-        // --- DOM Elements (Fuel Calculator) ---
         const stateSelect = document.getElementById('stateSelect');
         const fuelTypeSelect = document.getElementById('fuelTypeSelect');
         const currentRateSpan = document.getElementById('currentRate');
@@ -306,159 +566,121 @@
         const calcResultLabel = document.getElementById('calcResultLabel');
         const calcResultSpan = document.getElementById('calcResult');
         const calcResultBox = document.getElementById('calcResultBox');
+        const routeInitialOdometer = document.getElementById('routeInitialOdometer');
+        const routeFinalOdometer = document.getElementById('routeFinalOdometer');
+        const routeTotalKm = document.getElementById('routeTotalKm');
+        const refuelPricePerL = document.getElementById('refuelPricePerL');
+        const refuelLiters = document.getElementById('refuelLiters');
+        const refuelTotalCost = document.getElementById('refuelTotalCost');
+        const routeLicencePlateSelect = document.getElementById('routeLicencePlate');
+        const refuelLicencePlateSelect = document.getElementById('refuelLicencePlate');
 
-        // --- DOM Elements (Tabs) ---
-        const tabMeterReading = document.getElementById('tabMeterReading');
-        const tabFuelCalculator = document.getElementById('tabFuelCalculator');
-        const contentMeterReading = document.getElementById('contentMeterReading');
-        const contentFuelCalculator = document.getElementById('contentFuelCalculator');
-        
-        // --- State Management ---
-        let isCostToQuantityMode = false; // false = Cost from Quantity (default); true = Quantity from Cost
+        // Vehicle Management History Divs
+        const registerHistorySheetDiv = document.getElementById('registerHistorySheet');
+        const registerHistoryLocalDiv = document.getElementById('registerHistoryLocal');
+        const routeHistorySheetDiv = document.getElementById('routeHistorySheet');
+        const routeHistoryLocalDiv = document.getElementById('routeHistoryLocal');
+        const refuelingHistorySheetDiv = document.getElementById('refuelingHistorySheet');
+        const refuelingHistoryLocalDiv = document.getElementById('refuelingHistoryLocal');
+
+
+        let isCostToQuantityMode = false;
+        let currentDGModelName = '';
+        let currentTankCapacity = 0;
+        let currentFuelQuantity = 0;
+        let currentFuelPercentage = 0;
+
 
         // ----------------------------------------------------------------------
-        // --- TAB LOGIC ---
+        // --- Utility Functions ---
         // ----------------------------------------------------------------------
 
-        function switchTab(tabName) {
-            // Deactivate all
-            tabMeterReading.classList.remove('active');
-            tabFuelCalculator.classList.remove('active');
-            contentMeterReading.classList.add('hidden');
-            contentFuelCalculator.classList.add('hidden');
+        function showStatus(message, isSuccess = true) {
+            const statusBox = document.createElement('div');
+            statusBox.className = `fixed bottom-4 left-1/2 transform -translate-x-1/2 p-3 rounded-lg shadow-xl text-white font-medium text-sm transition-all duration-300 z-50 ${isSuccess ? 'bg-green-600' : 'bg-red-600'}`;
+            statusBox.textContent = message;
+            document.body.appendChild(statusBox);
             
-            // Activate selected
-            if (tabName === 'meterReading') {
-                tabMeterReading.classList.add('active');
-                contentMeterReading.classList.remove('hidden');
-                calculateFuel(); // Recalculate DG on tab switch
-            } else if (tabName === 'fuelCalculator') {
-                tabFuelCalculator.classList.add('active');
-                contentFuelCalculator.classList.remove('hidden');
-                calculateFuelCost(); // Recalculate Fuel Cost on tab switch
-            }
+            setTimeout(() => {
+                statusBox.remove();
+            }, 3000);
         }
 
-        // ----------------------------------------------------------------------
-        // --- FUEL CALCULATOR LOGIC (New) ---
-        // ----------------------------------------------------------------------
-
-        function updateRateAndLabel() {
-            const selectedState = stateSelect.value;
-            const selectedFuel = fuelTypeSelect.value;
-            
-            // Reset
-            currentRateSpan.textContent = '--';
-            
-            if (selectedState !== '0' && selectedFuel !== '0') {
-                const rate = FUEL_PRICES[selectedState]?.[selectedFuel];
-                if (rate !== undefined && rate > 0) {
-                    // Update current rate display
-                    const unit = selectedFuel === 'CNG' ? '₹/kg' : '₹/L';
-                    currentRateSpan.textContent = `₹${rate.toFixed(2)} (${unit})`;
-                } else if (rate === 0) {
-                     currentRateSpan.textContent = `N/A`; // Not Available for this fuel type/state
-                }
-            }
-
-            // Update input/result labels based on mode
-            const unit = selectedFuel === 'CNG' ? ' (kg)' : ' (L)';
-            const inputType = isCostToQuantityMode ? 'Cost (₹)' : `Quantity${unit}`;
-            const resultType = isCostToQuantityMode ? `Quantity${unit}` : 'Total Cost (₹)';
-            
-            inputLabel.textContent = `Enter ${inputType}`;
-            calcInput.placeholder = isCostToQuantityMode ? 'e.g., 500' : 'e.g., 5.5';
-            calcResultLabel.textContent = resultType;
-
-            calculateFuelCost();
-        }
-
-        function toggleCalculationMode() {
-            isCostToQuantityMode = !isCostToQuantityMode;
-            
-            const buttonText = isCostToQuantityMode 
-                ? 'Mode: Calculate Quantity from Cost' 
-                : 'Mode: Calculate Cost from Quantity';
-            toggleModeButton.textContent = buttonText;
-            
-            updateRateAndLabel(); // Recalculate labels and cost
-        }
-
-        function calculateFuelCost() {
-            const selectedState = stateSelect.value;
-            const selectedFuel = fuelTypeSelect.value;
-            const inputValue = parseFloat(calcInput.value);
-            
-            calcResultSpan.textContent = '--';
-            calcResultBox.classList.add('opacity-50');
-
-            if (selectedState === '0' || selectedFuel === '0' || isNaN(inputValue) || inputValue <= 0) {
-                return;
-            }
-
-            const rate = FUEL_PRICES[selectedState]?.[selectedFuel];
-            if (rate === undefined || rate <= 0) {
-                calcResultSpan.textContent = 'N/A';
-                return;
-            }
-
-            let result = 0;
-            
-            if (isCostToQuantityMode) {
-                // Mode: Calculate Quantity from Cost (Input is Cost)
-                result = inputValue / rate;
-                calcResultSpan.textContent = `${result.toFixed(3)} ${selectedFuel === 'CNG' ? 'kg' : 'L'}`;
+        // --- Accordion Logic ---
+        function setupAccordion(buttonId, contentId, iconId, sheetHistoryPanelId, localHistoryPanelId) {
+            document.getElementById(buttonId).addEventListener('click', function() {
+                const content = document.getElementById(contentId);
+                const sheetHistoryPanel = document.getElementById(sheetHistoryPanelId);
+                const localHistoryPanel = document.getElementById(localHistoryPanelId);
+                const icon = document.getElementById(iconId);
                 
-            } else {
-                // Mode: Calculate Cost from Quantity (Input is Quantity)
-                result = inputValue * rate;
-                calcResultSpan.textContent = `₹${result.toFixed(2)}`;
-            }
-            
-            calcResultBox.classList.remove('opacity-50');
+                const isHidden = content.classList.contains('hidden');
+                
+                content.classList.toggle('hidden');
+
+                // Toggle visibility of both history panels
+                if (isHidden) {
+                    sheetHistoryPanel.classList.remove('hidden');
+                    localHistoryPanel.classList.remove('hidden');
+                    // Initial fetch for history when panel opens
+                    fetchHistory(buttonId.replace('toggle','').toLowerCase(), 'local');
+                    fetchHistory(buttonId.replace('toggle','').toLowerCase(), 'sheet');
+                } else {
+                    sheetHistoryPanel.classList.add('hidden');
+                    localHistoryPanel.classList.add('hidden');
+                }
+                icon.classList.toggle('rotated');
+            });
         }
+        
+        // The sectionKey for fetchHistory is based on the buttonId:
+        // 'toggleRegister' -> 'register'
+        // 'toggleRoute'    -> 'route'
+        // 'toggleRefueling'-> 'refuel' (needs manual adjustment in fetchHistory)
+        setupAccordion('toggleRegister', 'sectionRegister', 'iconRegister', 'registerHistorySheetPanel', 'registerHistoryLocalPanel');
+        setupAccordion('toggleRoute', 'sectionRoute', 'iconRoute', 'routeHistorySheetPanel', 'routeHistoryLocalPanel');
+        setupAccordion('toggleRefueling', 'sectionRefueling', 'iconRefueling', 'refuelingHistorySheetPanel', 'refuelingHistoryLocalPanel');
+
 
         // ----------------------------------------------------------------------
-        // --- DG FUEL GAUGE LOGIC (Existing) ---
+        // --- DG Meter Reading Functions (Local Storage Only) ---
         // ----------------------------------------------------------------------
 
         function calculateFuel() {
             const totalHeight = parseFloat(totalHeightInput.value);
-            const currentReading = parseFloat(currentReadingInput.value);
-            
-            let tankCapacity = 0;
-            const selectedCapacityKey = dgModelSelect.value;
-            
-            if (selectedCapacityKey === '-1') {
-                tankCapacity = parseFloat(tankCapacityInput.value);
-            } else if (selectedCapacityKey !== '0') {
-                tankCapacity = dgCapacities[selectedCapacityKey];
-            }
+            let currentReading = parseFloat(currentReadingInput.value);
+            const selectedOption = dgModelSelect.options[dgModelSelect.selectedIndex];
+            let tankCapacity = dgCapacities[dgModelSelect.value] || parseFloat(tankCapacityInput.value) || 0;
+
+            currentTankCapacity = tankCapacity; 
+            currentDGModelName = selectedOption.getAttribute('data-name') || 'Custom'; 
 
             if (isNaN(totalHeight) || totalHeight <= 0 || isNaN(currentReading) || currentReading < 0) {
                 fuelPercentageSpan.textContent = '--%';
                 fuelQuantitySpan.textContent = '-- L';
                 resultLitreBox.classList.add('opacity-50');
                 lookupTableContainer.innerHTML = `<p class="text-gray-500 text-center text-xs py-2">Please enter a valid scale height.</p>`;
+                saveMeterReadingBtn.disabled = true;
                 return;
             }
-
+            
             let percentage = (currentReading / totalHeight) * 100;
             percentage = Math.max(0, Math.min(100, percentage));
-            const roundedPercentage = percentage.toFixed(2);
+            fuelPercentageSpan.textContent = `${percentage.toFixed(2)}%`;
+            currentFuelPercentage = percentage.toFixed(2); 
 
-            fuelPercentageSpan.textContent = `${roundedPercentage}%`;
-            resultLitreBox.classList.add('opacity-50');
-
-            if (!isNaN(tankCapacity) && tankCapacity > 0) {
+            if (tankCapacity > 0) {
                 const fuelQuantity = (percentage / 100) * tankCapacity;
-                const roundedQuantity = fuelQuantity.toFixed(2);
-
-                fuelQuantitySpan.textContent = `${roundedQuantity} L`;
+                fuelQuantitySpan.textContent = `${fuelQuantity.toFixed(2)} L`;
+                currentFuelQuantity = fuelQuantity.toFixed(2); 
                 resultLitreBox.classList.remove('opacity-50');
+                const isValidInput = totalHeightInput.value && currentReadingInput.value && (dgModelSelect.value !== '0' || tankCapacityInput.value);
+                saveMeterReadingBtn.disabled = !isValidInput;
             } else {
                 fuelQuantitySpan.textContent = '-- L';
+                currentFuelQuantity = 0;
                 resultLitreBox.classList.add('opacity-50');
+                saveMeterReadingBtn.disabled = true;
             }
 
             generateLookupTable(totalHeight);
@@ -466,82 +688,668 @@
 
         function handleDGSelection() {
             const selectedValue = dgModelSelect.value;
+            const selectedOption = dgModelSelect.options[dgModelSelect.selectedIndex];
             
             if (selectedValue === '-1') {
                 customCapacityGroup.classList.remove('hidden');
                 tankCapacityInput.value = '';
+                currentDGModelName = 'Custom';
             } else {
                 customCapacityGroup.classList.add('hidden');
-                
-                const capacity = dgCapacities[selectedValue];
-                if (capacity && capacity > 0) {
-                    tankCapacityInput.value = capacity;
-                } else {
-                    tankCapacityInput.value = '';
-                }
+                tankCapacityInput.value = dgCapacities[selectedValue] || '';
+                currentDGModelName = selectedOption.getAttribute('data-name') || 'Select DG';
             }
             calculateFuel();
         }
 
+        // --- UPDATED generateLookupTable function ---
         function generateLookupTable(totalHeight) {
-            let tableHTML = `<table class="min-w-full divide-y divide-gray-300 lookup-table">
+            let tableHTML = `<div class="overflow-x-auto"><table class="min-w-full divide-y divide-gray-300 lookup-table text-xs">
                                  <thead class="sticky top-0 shadow-sm">
-                                     <tr class="text-xs">
-                                         <th class="text-left font-semibold text-gray-700 uppercase tracking-wider">P(%)</th>
-                                         <th class="text-right font-semibold text-gray-700 uppercase tracking-wider">S(cm)</th>
-                                         <th class="text-left font-semibold text-gray-700 uppercase tracking-wider">P(%)</th>
-                                         <th class="text-right font-semibold text-gray-700 uppercase tracking-wider">S(cm)</th>
-                                     </tr>
+                                    <tr>
+                                        <th class="text-left">P(%)</th><th class="text-center">S(CM)</th>
+                                        <th class="text-left">P(%)</th><th class="text-center">S(CM)</th>
+                                    </tr>
                                  </thead>
-                                 <tbody class="bg-white divide-y divide-gray-100 text-xs">`;
-                                 
+                                 <tbody class="bg-white divide-y divide-gray-100">`;
+            
             for (let i = 1; i <= 5; i++) {
-                const percentL = i * 10;
-                const heightL = (percentL / 100) * totalHeight;
-
-                const percentR = (i * 10) + 50;
-                const heightR = (percentR / 100) * totalHeight;
-                
-                const rowClass = percentR === 100 ? 'bg-green-50 font-medium' : '';
+                const percent1 = i * 10;
+                const height1 = (percent1 / 100) * totalHeight;
+                const percent2 = (i + 5) * 10;
+                const height2 = (percent2 / 100) * totalHeight;
+                // Removed the green highlight class
+                const rowClass = percent1 === 50 ? 'mid-point' : ''; 
 
                 tableHTML += `<tr class="${rowClass}">
-                                 <td class="whitespace-nowrap">${percentL}%</td>
-                                 <td class="text-right whitespace-nowrap font-bold">${heightL.toFixed(2)}</td>
-                                 <td class="whitespace-nowrap pl-2">${percentR}%</td>
-                                 <td class="text-right whitespace-nowrap font-bold">${heightR.toFixed(2)}</td>
-                               </tr>`;
+                                <td class="px-2 py-1 whitespace-nowrap">${percent1}%</td>
+                                <td class="px-2 py-1">${height1.toFixed(2)}</td>
+                                <td class="px-2 py-1 whitespace-nowrap">${percent2}%</td>
+                                <td class="px-2 py-1">${height2.toFixed(2)}</td>
+                              </tr>`;
             }
-
-            tableHTML += `</tbody></table>`;
+            tableHTML += `</tbody></table></div>`;
             lookupTableContainer.innerHTML = tableHTML;
         }
 
-        // --- Event Listeners and Initialization ---
-        
-        // Tab Listeners
-        tabMeterReading.addEventListener('click', () => switchTab('meterReading'));
-        tabFuelCalculator.addEventListener('click', () => switchTab('fuelCalculator'));
+        function toggleReference() {
+            const isHidden = lookupTableContainer.classList.contains('hidden');
+            if (isHidden) {
+                lookupTableContainer.classList.remove('hidden');
+                iconScaleReference.classList.add('rotated');
+            } else {
+                lookupTableContainer.classList.add('hidden');
+                iconScaleReference.classList.remove('rotated');
+            }
+        }
 
-        // DG Listeners
+        function saveMeterReadingToLocal() {
+            if (currentTankCapacity <= 0 || parseFloat(currentFuelQuantity) <= 0) {
+                showStatus('Please complete the calculation with a valid tank capacity and quantity.', false);
+                return;
+            }
+            
+            const newEntry = {
+                'Date': new Date().toISOString(),
+                'DG Model': currentDGModelName,
+                'Capacity (L)': currentTankCapacity,
+                'Total Height (cm)': parseFloat(totalHeightInput.value),
+                'Current Reading (cm)': parseFloat(currentReadingInput.value),
+                'Quantity (L)': parseFloat(currentFuelQuantity),
+                'Percentage (%)': parseFloat(currentFuelPercentage)
+            };
+
+            try {
+                const existingData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_METER)) || [];
+                existingData.unshift(newEntry); 
+                
+                // Storage limit of 200 records
+                const dataToSave = existingData.slice(0, 200); 
+                localStorage.setItem(LOCAL_STORAGE_KEY_METER, JSON.stringify(dataToSave));
+                
+                showStatus(`✅ Meter Reading Log saved to Local Storage!`, true);
+                
+                // Reset inputs after successful save
+                dgModelSelect.value = '0';
+                tankCapacityInput.value = '';
+                totalHeightInput.value = '7.0'; 
+                currentReadingInput.value = '5.0';
+                handleDGSelection(); 
+
+                fetchMeterReadingLocal(); 
+
+            } catch (error) {
+                showStatus(`❌ Local Storage Save Error: ${error.message}`, false);
+                console.error('Local Storage Error:', error);
+            }
+        }
+
+        // New Function: filterDataByMonths (Used by all fetchLocalHistory functions)
+        function filterDataByMonths(data, months) {
+            if (months === 0) return data; // Show all (max 200)
+
+            const cutoffDate = new Date();
+            cutoffDate.setMonth(cutoffDate.getMonth() - months);
+            
+            return data.filter(item => {
+                const itemDate = new Date(item.Date);
+                return itemDate >= cutoffDate;
+            });
+        }
+
+
+        function fetchMeterReadingLocal() {
+            const targetDiv = meterReadingHistoryDiv;
+            const months = parseInt(document.getElementById('meterFilter').value); // Get filter value
+            targetDiv.innerHTML = '<p class="text-gray-500 text-center py-2">Loading...</p>';
+
+            try {
+                const data = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_METER)) || [];
+                
+                if (data.length === 0) {
+                    targetDiv.innerHTML = '<p class="text-gray-500 text-center py-2">No records found in Local Storage.</p>';
+                    return;
+                }
+                
+                // Sort by date (newest first)
+                data.sort((a, b) => new Date(b['Date']) - new Date(a['Date']));
+                
+                const filteredData = filterDataByMonths(data, months);
+                
+                // Max 200 records storage enforced
+                const displayData = filteredData.slice(0, 200); 
+                
+                renderHistoryTable(displayData, targetDiv, 'meter_reading', 'local'); 
+
+            } catch (error) {
+                targetDiv.innerHTML = `<p class="text-red-500 text-center py-2">Error loading local history: ${error.message}</p>`;
+                console.error('Local Load Error:', error);
+            }
+        }
+
+
+        // ----------------------------------------------------------------------
+        // --- Fuel Price Calculator Logic (Unchanged) ---
+        // ----------------------------------------------------------------------
+        function updateRateAndLabel() {
+            const state = stateSelect.value;
+            const fuelType = fuelTypeSelect.value;
+            let rate = '--';
+            
+            if (state !== '0' && fuelType !== '0' && FUEL_PRICES[state] && (FUEL_PRICES[state][fuelType] > 0)) {
+                rate = FUEL_PRICES[state][fuelType].toFixed(2);
+                currentRateSpan.textContent = `₹ ${rate}`;
+            } else if (FUEL_PRICES[state] && FUEL_PRICES[state][fuelType] === 0) {
+                 currentRateSpan.textContent = 'N/A';
+            } else {
+                currentRateSpan.textContent = '--';
+            }
+            
+            calculateFuelCost();
+        }
+
+        function toggleCalculationMode() {
+            isCostToQuantityMode = !isCostToQuantityMode;
+            if (isCostToQuantityMode) {
+                toggleModeButton.textContent = 'Mode: Calculate Quantity from Cost';
+                inputLabel.textContent = 'Enter Total Cost (₹)';
+                calcInput.placeholder = 'e.g., 500';
+            } else {
+                toggleModeButton.textContent = 'Mode: Calculate Cost from Quantity';
+                inputLabel.textContent = 'Enter Quantity (L/kg)';
+                calcInput.placeholder = 'e.g., 5.5';
+            }
+            calculateFuelCost();
+        }
+
+        function calculateFuelCost() {
+            const state = stateSelect.value;
+            const fuelType = fuelTypeSelect.value;
+            const rate = (state !== '0' && fuelType !== '0' && FUEL_PRICES[state] && FUEL_PRICES[state][fuelType]) ? 
+                            FUEL_PRICES[state][fuelType] : null;
+            const inputVal = parseFloat(calcInput.value);
+
+            calcResultBox.classList.add('opacity-50');
+            calcResultSpan.textContent = '--';
+
+            if (!rate || isNaN(inputVal) || inputVal <= 0 || rate === 0) {
+                return;
+            }
+
+            let result = 0;
+            if (isCostToQuantityMode) {
+                result = inputVal / rate;
+                calcResultLabel.textContent = 'Fuel Quantity (L/kg)';
+                calcResultSpan.textContent = `${result.toFixed(2)}`;
+            } else {
+                result = inputVal * rate;
+                calcResultLabel.textContent = 'Total Cost (₹)';
+                calcResultSpan.textContent = `₹ ${result.toFixed(2)}`;
+            }
+            calcResultBox.classList.remove('opacity-50');
+        }
+
+
+        // ----------------------------------------------------------------------
+        // --- Vehicle Management Functions (Dual Storage) ---
+        // ----------------------------------------------------------------------
+        
+        function updateRouteDistance() {
+            const initial = parseFloat(routeInitialOdometer.value) || 0;
+            const final = parseFloat(routeFinalOdometer.value) || 0;
+            const distance = final > initial ? (final - initial).toFixed(0) : '--';
+            routeTotalKm.textContent = `${distance} km`;
+        }
+
+        function updateRefuelCost() {
+            const price = parseFloat(refuelPricePerL.value) || 0;
+            const liters = parseFloat(refuelLiters.value) || 0;
+            const cost = (price * liters).toFixed(2);
+            refuelTotalCost.textContent = `₹ ${cost}`;
+        }
+        
+        function getPayload(section) {
+            let payload = {};
+            const initialOdo = parseFloat(document.getElementById('routeInitialOdometer').value);
+            const finalOdo = parseFloat(document.getElementById('routeFinalOdometer').value);
+            const price = parseFloat(document.getElementById('refuelPricePerL').value);
+            const liters = parseFloat(document.getElementById('refuelLiters').value);
+            
+            if (section === 'register') {
+                payload = {
+                    'Vehicle Name': document.getElementById('regVehicleName').value,
+                    'Licence Plate': document.getElementById('regLicencePlate').value.toUpperCase(),
+                    'Manufacture & Model': document.getElementById('regManufactureModel').value,
+                    'Year': document.getElementById('regYear').value,
+                    'Fuel Type': document.getElementById('regFuelType').value,
+                    'Capacity (Liters)': document.getElementById('regCapacity').value,
+                    'Tank Details': document.getElementById('regTankDetails').value,
+                    'Chassis No.': document.getElementById('regChassis').value,
+                    'VIN No.': document.getElementById('regVIN').value,
+                };
+            } else if (section === 'route') {
+                payload = {
+                    'Vehicle Licence Plate': document.getElementById('routeLicencePlate').value,
+                    'Origin Place Name': document.getElementById('routeOrigin').value,
+                    'Start Date & Time': document.getElementById('routeStartDate').value,
+                    'Initial Odometer (km)': document.getElementById('routeInitialOdometer').value,
+                    'Destination Place Name': document.getElementById('routeDestination').value,
+                    'End Date & Time': document.getElementById('routeEndDate').value,
+                    'Final Odometer (km)': document.getElementById('routeFinalOdometer').value,
+                    'Total KM Travelled': (finalOdo > initialOdo ? (finalOdo - initialOdo).toFixed(0) : ''),
+                    'Driver Name': document.getElementById('routeDriverName').value,
+                    'Reason / Purpose': document.getElementById('routeReason').value,
+                };
+            } else if (section === 'refueling') {
+                payload = {
+                    'Vehicle Licence Plate': document.getElementById('refuelLicencePlate').value,
+                    'Date & Time': document.getElementById('refuelDateTime').value,
+                    'Odometer (km)': document.getElementById('refuelOdometer').value,
+                    'Fuel Type': document.getElementById('refuelFuelType').value,
+                    'Price/L (₹)': document.getElementById('refuelPricePerL').value,
+                    'Quantity (L/kg)': document.getElementById('refuelLiters').value,
+                    'Total Cost (₹)': (price * liters).toFixed(2),
+                    'Gas Station': document.getElementById('refuelGasStation').value,
+                    'Driver Name': document.getElementById('refuelDriverName').value,
+                };
+            }
+            return payload;
+        }
+
+        function validatePayload(section, payload) {
+            if (section === 'register' && !payload['Licence Plate']) {
+                showStatus('Please enter a Licence Plate.', false);
+                return false;
+            }
+            if (section !== 'register' && !payload['Vehicle Licence Plate']) {
+                showStatus('Please select a Vehicle Licence Plate.', false);
+                return false;
+            }
+            if (section === 'route' && (!payload['Initial Odometer (km)'] || !payload['Final Odometer (km)'])) {
+                 showStatus('Please enter both Initial and Final Odometer readings.', false);
+                 return false;
+            }
+            if (section === 'refueling' && (!payload['Price/L (₹)'] || !payload['Quantity (L/kg)'])) {
+                 showStatus('Please enter both Price/L and Quantity.', false);
+                 return false;
+            }
+            return true;
+        }
+
+        function resetForm(section) {
+            let formId;
+            if (section === 'register') formId = 'vehicleRegisterForm';
+            else if (section === 'route') formId = 'routeLogForm';
+            else if (section === 'refueling') formId = 'refuelingForm';
+            
+            if (formId) {
+                document.getElementById(formId).reset();
+            }
+            if(section === 'route') routeTotalKm.textContent = '-- km';
+            if(section === 'refueling') refuelTotalCost.textContent = '--';
+        }
+
+        function saveData(section, method) {
+            const payload = getPayload(section);
+
+            if (!validatePayload(section, payload)) {
+                return;
+            }
+
+            if (method === 'local') {
+                saveDataToLocal(section, payload);
+            } else { // method === 'sheet'
+                saveDataToSheet(section, payload);
+            }
+        }
+
+        // --- Local Storage Save Function for Vehicle Management ---
+        function saveDataToLocal(section, payload) {
+            let storageKey;
+
+            if (section === 'register') storageKey = LOCAL_STORAGE_KEY_REGISTER;
+            else if (section === 'route') storageKey = LOCAL_STORAGE_KEY_ROUTE;
+            else if (section === 'refueling') storageKey = LOCAL_STORAGE_KEY_REFUEL;
+            else return;
+
+            try {
+                const timestampedPayload = { ...payload, 'Date': new Date().toISOString() };
+                
+                const existingData = JSON.parse(localStorage.getItem(storageKey)) || [];
+                existingData.unshift(timestampedPayload); 
+                
+                // Storage limit of 200 records
+                const dataToSave = existingData.slice(0, 200); 
+                localStorage.setItem(storageKey, JSON.stringify(dataToSave));
+                
+                showStatus(`✅ ${section} saved to Local Storage!`, true);
+                
+                resetForm(section);
+                fetchHistory(section, 'local'); 
+                if (section === 'register') populateDropdowns(); 
+
+            } catch (error) {
+                showStatus(`❌ Local Storage Save Error: ${error.message}`, false);
+                console.error('Local Storage Error:', error);
+            }
+        }
+
+        // --- Sheet Save Function (Apps Script) ---
+        function saveDataToSheet(section, payload) {
+            payload.action = section; 
+            
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(result => {
+                if (result.status === 'success') {
+                    showStatus(`✅ Data saved successfully to Sheet!`, true);
+                    resetForm(section);
+                    fetchHistory(section, 'sheet'); 
+                    if (section === 'register') populateDropdowns();
+                } else {
+                    showStatus(`❌ Save failed: ${result.message}`, false);
+                    console.error('Apps Script Error:', result.message);
+                }
+            })
+            .catch(error => {
+                showStatus(`❌ Connection Error to Google Sheet: ${error.message}`, false);
+                console.error('Fetch Error:', error);
+            });
+        }
+        
+        // --- Clear Storage Function (New) ---
+        function clearStorage(section) {
+            if (!confirm(`Are you sure you want to permanently delete ALL ${section} records from Local Storage?`)) {
+                return;
+            }
+            
+            let storageKey;
+            if (section === 'meter') storageKey = LOCAL_STORAGE_KEY_METER;
+            else if (section === 'register') storageKey = LOCAL_STORAGE_KEY_REGISTER;
+            else if (section === 'route') storageKey = LOCAL_STORAGE_KEY_ROUTE;
+            else if (section === 'refuel') storageKey = LOCAL_STORAGE_KEY_REFUEL;
+            else return;
+
+            localStorage.removeItem(storageKey);
+            showStatus(`🗑️ ${section} history cleared from Local Storage!`, true);
+            
+            // Refresh the relevant display
+            if (section === 'meter') {
+                document.getElementById('meterReadingHistory').innerHTML = '<p class="text-gray-500 text-center py-2">No records found in Local Storage.</p>';
+            } else {
+                // Ensure a refresh function exists for the panels
+                const sectionMap = {
+                    'register': 'registerHistoryLocal', 
+                    'route': 'routeHistoryLocal', 
+                    'refuel': 'refuelingHistoryLocal'
+                };
+                if(document.getElementById(sectionMap[section])) {
+                    document.getElementById(sectionMap[section]).innerHTML = '<p class="text-gray-500 text-center py-2">No records found in Local Storage.</p>';
+                }
+                
+            }
+        }
+
+        // --- Fetch History Function (Main Router) ---
+        function fetchHistory(sectionKey, method) {
+            if (sectionKey === 'refueling') sectionKey = 'refuel'; // Standardize key
+            
+            if (method === 'local') {
+                fetchLocalHistory(sectionKey);
+            } else { // method === 'sheet'
+                fetchSheetHistory(sectionKey);
+            }
+        }
+
+        // --- Fetch Local History (Local Storage) - UPDATED ---
+        function fetchLocalHistory(sectionKey) {
+            let targetDiv, storageKey, filterId;
+            
+            if (sectionKey === 'register') {
+                targetDiv = registerHistoryLocalDiv;
+                storageKey = LOCAL_STORAGE_KEY_REGISTER;
+                filterId = 'registerLocalFilter';
+            } else if (sectionKey === 'route') {
+                targetDiv = routeHistoryLocalDiv;
+                storageKey = LOCAL_STORAGE_KEY_ROUTE;
+                filterId = 'routeLocalFilter';
+            } else if (sectionKey === 'refuel') {
+                targetDiv = refuelingHistoryLocalDiv;
+                storageKey = LOCAL_STORAGE_KEY_REFUEL;
+                filterId = 'refuelLocalFilter';
+            } else {
+                return;
+            }
+            
+            const months = document.getElementById(filterId) ? parseInt(document.getElementById(filterId).value) : 0;
+            targetDiv.innerHTML = '<p class="text-gray-500 text-center py-2">Loading...</p>';
+
+            try {
+                const data = JSON.parse(localStorage.getItem(storageKey)) || [];
+                
+                if (data.length === 0) {
+                    targetDiv.innerHTML = '<p class="text-gray-500 text-center py-2">No records found locally.</p>';
+                    return;
+                }
+
+                // Sort and Filter Logic
+                data.sort((a, b) => new Date(b['Date']) - new Date(a['Date']));
+                const filteredData = filterDataByMonths(data, months);
+                const displayData = filteredData.slice(0, 200); // Enforce 200 limit
+
+                renderHistoryTable(displayData, targetDiv, sectionKey, 'local'); 
+
+            } catch (error) {
+                targetDiv.innerHTML = `<p class="text-red-500 text-center py-2">Error loading local history: ${error.message}</p>`;
+                console.error('Local Load Error:', error);
+            }
+        }
+
+        // --- Fetch Sheet History (Apps Script) ---
+        function fetchSheetHistory(sectionKey) {
+            let targetDiv;
+            
+            if (sectionKey === 'register') {
+                targetDiv = registerHistorySheetDiv;
+            } else if (sectionKey === 'route') {
+                targetDiv = routeHistorySheetDiv;
+            } else if (sectionKey === 'refuel') {
+                targetDiv = refuelingHistorySheetDiv;
+            } else {
+                return;
+            }
+            
+            targetDiv.innerHTML = '<p class="text-gray-500 text-center py-2">Loading...</p>';
+
+            fetch(`${WEB_APP_URL}?action=fetchData&sheet=${sectionKey}`)
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP Status: ${response.status}`);
+                    return response.text(); 
+                })
+                .then(text => {
+                    try {
+                        const result = JSON.parse(text); 
+                        if (result.status === 'success' && Array.isArray(result.data)) {
+                            // Sheet data is always displayed, no time-based filter for sheet data fetch
+                            renderHistoryTable(result.data.slice(0, 200), targetDiv, sectionKey, 'sheet');
+                        } else {
+                            targetDiv.innerHTML = `<p class="text-red-500 text-center py-2">Error: ${result.message || 'Unknown JSON error'}</p>`;
+                        }
+                    } catch (e) {
+                        targetDiv.innerHTML = `<p class="text-red-500 text-center py-2">Parsing Error. Check Apps Script code and output.</p>`;
+                        console.error('JSON Parsing Error:', e, 'Raw Text:', text);
+                    }
+                })
+                .catch(error => {
+                    targetDiv.innerHTML = `<p class="text-red-500 text-center py-2">Connection Error: ${error.message}. Check Apps Script Deployment.</p>`;
+                    console.error('Fetch History Error:', error);
+                });
+        }
+        
+        // --- Render History Table (Universal Renderer) ---
+        function renderHistoryTable(data, targetDiv, sectionKey, method) {
+            if (data.length === 0) {
+                targetDiv.innerHTML = `<p class="text-gray-500 text-center py-2">No records found in ${method === 'local' ? 'Local' : 'Sheet'} storage.</p>`;
+                return;
+            }
+
+            // Data should be pre-sorted and filtered before calling this function
+            
+            let displayHeaders = [];
+            if (sectionKey === 'register') {
+                displayHeaders = ['Date', 'Vehicle Name', 'Licence Plate', 'Capacity (Liters)'];
+            } else if (sectionKey === 'route') {
+                displayHeaders = ['Date', 'Plate', 'KM', 'Driver', 'Origin/Dest'];
+            } else if (sectionKey === 'refuel') {
+                displayHeaders = ['Date', 'Plate', 'Liters', 'Cost (₹)', 'Odo (km)'];
+            } else if (sectionKey === 'meter_reading') { 
+                displayHeaders = ['Date', 'DG Model', 'Reading (cm)', 'Quantity (L)'];
+            }
+
+            let tableHTML = `<div class="overflow-x-auto"><table class="min-w-full divide-y divide-gray-200 text-xs">
+                                <thead>
+                                    <tr class="bg-gray-100">
+                                        ${displayHeaders.map(h => `<th class="p-1 text-left font-bold text-gray-700">${h}</th>`).join('')}
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-100">`;
+
+            const maxRecords = sectionKey === 'meter_reading' ? 10 : 5; // Show max 10/5 records in the panel view
+            for (let i = 0; i < Math.min(data.length, maxRecords); i++) {
+                const rowData = data[i];
+                tableHTML += `<tr>`;
+
+                displayHeaders.forEach((displayHeader) => {
+                    let cellContent = '--';
+                    
+                    if (displayHeader === 'Date') {
+                        try {
+                            const date = new Date(rowData['Date']);
+                            cellContent = date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+                            if (sectionKey !== 'register') {
+                                cellContent += ' ' + date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+                            }
+                        } catch (e) {
+                            cellContent = rowData['Date'] ? rowData['Date'].toString().substring(0, 16).replace('T', ' ') : '--';
+                        }
+                    } else if (displayHeader === 'Plate' || displayHeader === 'Licence Plate') {
+                        cellContent = rowData['Vehicle Licence Plate'] || rowData['Licence Plate'] || '--';
+                    } else if (displayHeader === 'KM') {
+                        cellContent = rowData['Total KM Travelled'] ? `${parseFloat(rowData['Total KM Travelled']).toFixed(0)} km` : '--';
+                    } else if (displayHeader === 'Driver') {
+                        cellContent = rowData['Driver Name'] || '--';
+                    } else if (displayHeader === 'Liters' || displayHeader === 'Quantity (L)') {
+                        const val = rowData['Quantity (L/kg)'] || rowData['Quantity (L)'];
+                        cellContent = val ? `${parseFloat(val).toFixed(2)} L` : '--';
+                    } else if (displayHeader === 'Cost (₹)') {
+                        cellContent = rowData['Total Cost (₹)'] ? `₹${parseFloat(rowData['Total Cost (₹)']).toFixed(0)}` : '--';
+                    } else if (displayHeader === 'Odo (km)') {
+                        const val = rowData['Odometer (km)'] || rowData['Final Odometer (km)'];
+                        cellContent = val ? `${parseFloat(val).toFixed(0)}` : '--';
+                    } else if (displayHeader === 'Origin/Dest') {
+                        cellContent = rowData['Origin Place Name'] && rowData['Destination Place Name'] ? `${rowData['Origin Place Name'].substring(0, 3)}...${rowData['Destination Place Name'].substring(0, 3)}` : '--';
+                    } else if (displayHeader === 'Vehicle Name') {
+                        cellContent = rowData['Vehicle Name'] || '--';
+                    } else if (displayHeader === 'Capacity (Liters)') {
+                        cellContent = rowData['Capacity (Liters)'] ? `${parseFloat(rowData['Capacity (Liters)']).toFixed(1)} L` : '--';
+                    } else if (displayHeader === 'DG Model') {
+                        cellContent = rowData['DG Model'] || '--';
+                    } else if (displayHeader === 'Reading (cm)') {
+                        cellContent = rowData['Current Reading (cm)'] ? `${parseFloat(rowData['Current Reading (cm)']).toFixed(1)} cm` : '--';
+                    }
+
+                    tableHTML += `<td class="p-1 whitespace-nowrap">${cellContent}</td>`;
+                });
+                tableHTML += `</tr>`;
+            }
+
+            tableHTML += `</tbody></table></div>`;
+            targetDiv.innerHTML = tableHTML;
+        }
+
+        function populateDropdowns() {
+            fetch(`${WEB_APP_URL}?action=fetchData&sheet=register`)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status === 'success' && Array.isArray(result.data)) {
+                        const licencePlates = result.data.map(item => item['Licence Plate']).filter(Boolean);
+                        
+                        routeLicencePlateSelect.innerHTML = '<option value="">-- Select Plate --</option>';
+                        refuelLicencePlateSelect.innerHTML = '<option value="">-- Select Plate --</option>';
+                        
+                        const uniquePlates = [...new Set(licencePlates)];
+                        uniquePlates.forEach(plate => {
+                            const option = `<option value="${plate}">${plate}</option>`;
+                            routeLicencePlateSelect.innerHTML += option;
+                            refuelLicencePlateSelect.innerHTML += option;
+                        });
+                    }
+                })
+                .catch(error => console.error('Error populating dropdowns:', error));
+        }
+
+
+        // --- Event Listeners (Unchanged) ---
         dgModelSelect.addEventListener('change', handleDGSelection);
         tankCapacityInput.addEventListener('input', calculateFuel);
         totalHeightInput.addEventListener('input', calculateFuel);
         currentReadingInput.addEventListener('input', calculateFuel);
-        
-        // Fuel Calculator Listeners
+        toggleScaleReference.addEventListener('click', toggleReference);
+
         stateSelect.addEventListener('change', updateRateAndLabel);
         fuelTypeSelect.addEventListener('change', updateRateAndLabel);
-        toggleModeButton.addEventListener('click', toggleCalculationMode);
         calcInput.addEventListener('input', calculateFuelCost);
+        toggleModeButton.addEventListener('click', toggleCalculationMode);
+        
+        routeInitialOdometer.addEventListener('input', updateRouteDistance);
+        routeFinalOdometer.addEventListener('input', updateRouteDistance);
+        refuelPricePerL.addEventListener('input', updateRefuelCost);
+        refuelLiters.addEventListener('input', updateRefuelCost);
+        
+        document.getElementById('tabMeterReading').addEventListener('click', () => switchTab('MeterReading'));
+        document.getElementById('tabFuelCalculator').addEventListener('click', () => switchTab('FuelCalculator'));
+        document.getElementById('tabVehicleManagement').addEventListener('click', () => switchTab('VehicleManagement'));
 
-        // Initial setup
-        document.addEventListener('DOMContentLoaded', () => {
-             // Set DG default and initialize DG tab
-             dgModelSelect.value = "160"; 
-             handleDGSelection(); 
-             // Activate the first tab by default
-             switchTab('meterReading');
-        });
+        // --- Tab Switching Logic (Updated) ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+
+            document.getElementById(`tab${tabId}`).classList.add('active');
+            document.getElementById(`content${tabId}`).classList.remove('hidden');
+
+            if (tabId === 'VehicleManagement') {
+                populateDropdowns(); 
+                // Initial fetch for Vehicle Management
+                // NOTE: History panels will fetch data when their respective accordions are opened.
+            } else if (tabId === 'MeterReading') {
+                calculateFuel();
+                fetchMeterReadingLocal(); 
+            } else if (tabId === 'FuelCalculator') {
+                updateRateAndLabel();
+            }
+        }
+
+
+        // ----------------------------------------------------------------------
+        // --- Initialization ---
+        // ----------------------------------------------------------------------
+        window.onload = function() {
+            handleDGSelection();
+            switchTab('MeterReading');
+            updateRateAndLabel();
+        };
     </script>
 </body>
 </html>
