@@ -2,500 +2,267 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Neural Core v29.1 | Pro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
-   
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>NEURAL AI - SMART V7.0 (AUTO)</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
     <style>
-        :root { --gold: #d4af37; }
-        * { font-family: 'Ubuntu', sans-serif; }
-        .mono { font-family: 'JetBrains Mono', monospace; }
-       
+        :root {
+            --bg-color: #080a16;
+            --card-bg: #101226;
+            --border-glow: rgba(74, 144, 226, 0.2);
+            --auth-gradient: linear-gradient(135deg, #4a90e2, #bd10e0);
+            --primary: #4a90e2;
+            --secondary: #bd10e0;
+            --success: #00ff88;
+            --fail: #ff4757;
+            --text: #ffffff;
+            --text-dim: #8a99c0;
+            --yellow-glow: #ffd700;
+            --blue-glow: #00d2ff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
         body {
-            background: #010a0a;
-            color: #f8fafc;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            overflow: hidden;
+            height: 100dvh; width: 100vw; overflow: hidden;
+            font-family: 'Ubuntu', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
+            display: flex; flex-direction: column;
         }
-       
-        .glass-card {
-            background: rgba(255, 255, 255, 0.07);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 1.5rem;
+
+        .container { flex: 1; display: flex; flex-direction: column; padding: 10px; max-width: 450px; margin: 0 auto; width: 100%; gap: 8px; height: 100%; }
+
+        header { display: flex; justify-content: space-between; align-items: center; padding: 5px; }
+        header h1 { font-family: 'Orbitron', sans-serif; font-size: 1rem; letter-spacing: 2px; color: var(--primary); }
+        
+        .time-selector { display: flex; gap: 5px; margin-bottom: 5px; }
+        .time-btn { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glow); color: var(--text-dim); padding: 8px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-size: 0.6rem; cursor: pointer; transition: 0.3s; }
+        .time-btn.active { background: var(--auth-gradient); color: #fff; border-color: transparent; box-shadow: 0 0 10px rgba(74, 144, 226, 0.3); }
+
+        .pred-card { background: var(--card-bg); border: 1px solid var(--border-glow); border-radius: 15px; padding: 12px; }
+        
+        #predictionBox {
+            width: 100%; padding: 15px; border-radius: 12px; text-align: center;
+            margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); transition: 0.4s;
         }
-       
-        .hero-text {
-            font-size: 1.62rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-       
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        .glow-red { box-shadow: 0 0 20px rgba(255, 71, 87, 0.4); border-color: var(--fail) !important; }
+        .glow-green { box-shadow: 0 0 20px rgba(0, 255, 136, 0.4); border-color: var(--success) !important; }
+
+        .res-text { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: bold; letter-spacing: 1px; }
+        .num-display { font-size: 0.8rem; color: var(--text-dim); margin-top: 5px; font-family: 'Orbitron', sans-serif; letter-spacing: 3px; }
+        
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
+        .info-item { background: rgba(255,255,255,0.03); padding: 6px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); text-align: center; }
+        .info-label { font-size: 0.5rem; color: var(--text-dim); font-family: 'Orbitron', sans-serif; display: block; margin-bottom: 2px; }
+        .info-val { font-size: 0.6rem; font-weight: bold; font-family: 'Orbitron', sans-serif; text-transform: uppercase; }
+
+        .input-row { display: flex; gap: 8px; }
+        input { flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glow); border-radius: 8px; color: #fff; padding: 12px; text-align: center; outline: none; font-family: 'Orbitron', sans-serif; }
+        .btn-predict { background: var(--auth-gradient); border: none; border-radius: 8px; color: #fff; font-family: 'Orbitron', sans-serif; padding: 0 15px; font-weight: bold; cursor: pointer; }
+
+        .log-section { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--card-bg); border: 1px solid var(--border-glow); border-radius: 15px; }
+        .log-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .log-header span { font-family: 'Orbitron', sans-serif; font-size: 0.6rem; color: var(--text-dim); }
+        .btn-reset { color: var(--fail); cursor: pointer; }
+
+        .table-container { flex: 1; overflow-y: auto; scrollbar-width: none; }
+        table { width: 100%; border-collapse: collapse; }
+        th { font-size: 0.55rem; color: var(--text-dim); padding: 10px 5px; border-bottom: 1px solid rgba(255,255,255,0.05); position: sticky; top: 0; background: var(--card-bg); font-family: 'Ubuntu', sans-serif; }
+        td { padding: 10px 5px; text-align: center; font-size: 0.7rem; border-bottom: 1px solid rgba(255,255,255,0.02); font-family: 'Ubuntu', sans-serif; }
+
+        .clr-red { color: var(--fail); }
+        .clr-green { color: var(--success); }
+        .sz-big { color: var(--yellow-glow); }
+        .sz-small { color: var(--blue-glow); }
     </style>
 </head>
 <body>
-    <!-- Login -->
-    <div id="loginScreen" class="flex items-center justify-center min-h-screen p-2 bg-[#010a0a]">
-        <div class="glass-card w-full max-w-[320px] p-2 rounded-3xl">
-            <div class="flex justify-center mb-3">
-                <div class="w-10 h-10 bg-[#d4af37] rounded-2xl flex items-center justify-center">
-                    <i class="fa-solid fa-fingerprint text-3xl text-black"></i>
-                </div>
-            </div>
-            <h2 class="text-xl font-bold text-center mb-1">Neural Access</h2>
-            <p class="text-center text-gray-400 text-xs mb-4">v29.1 Pro Edition</p>
-           
-            <div class="bg-grey/60 rounded-1xl p-2 mb-2 text-xs">
-                <div class="flex items-center gap-1 mb-2">
-                    <i class="fa-solid fa-user-secret text-[#d4af37]"></i>
-                    <span class="text-gray-400">Dev:</span>
-                    <span class="text-cyan-400">Vip Predict King</span>
-                    <span class="text-gray-400">WA:</span>
-                    <span class="text-emerald-400">+91 6290530153</span>
-                </div>
-            </div>
 
-            <input type="text" id="uid" placeholder="User ID" class="w-full bg-white/5 border border-white/20 rounded-2xl px-3 py-3 mb-3 text-sm focus:border-[#d4af37] outline-none">
-            <input type="password" id="upass" placeholder="Password" class="w-full bg-white/5 border border-white/20 rounded-2xl px-3 py-2 mb-3 text-sm focus:border-[#d4af37] outline-none">
-           
-            <button onclick="handleLogin()" class="w-full bg-[#d4af37] text-black font-bold py-3.5 rounded-2xl text-sm uppercase flex items-center justify-center gap-1 active:scale-70">
-                <i class="fa-solid fa-right-to-bracket"></i> SIGN IN
-            </button>
-        </div>
-    </div>
+    <div class="container">
+        <header>
+            <h1>NEURAL AI V7.0 <span id="accuracyLabel" style="font-size: 0.5rem; color: var(--success);"></span></h1>
+            <div style="color: var(--text-dim); font-size: 0.6rem; font-family: 'Orbitron';" id="clock">00:00:00</div>
+        </header>
 
-    <!-- Dashboard -->
-    <div id="dashboard" class="hidden flex flex-col h-screen max-w-[380px] mx-auto bg-[#010a0a]">
-        <!-- Header -->
-        <div class="glass-card p-2 flex items-center justify-between text-sm mx-1 mt-1 rounded-2xl">
-            <div class="flex items-center gap-1">
-                <i class="fa-solid fa-microchip text-lg text-[#d4af37]"></i>
-                <span class="font-bold">Neural v29.1</span>
-            </div>
-            
-            <div class="flex items-center gap-4">
-                <!-- Admin Console Button -->
-                <button id="adminConsoleBtn" onclick="showAdminConsole()" class="hidden w-6 h-6 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center hover:bg-emerald-500/20">
-                    <i class="fa-solid fa-shield-halved"></i>
-                </button>
-                
-                <div id="userNameDisplay" class="text-cyan-400 text-xs font-medium"></div>
-                
-                <button onclick="location.reload()" class="w-7 h-7 bg-rose-500/10 text-rose-400 rounded-xl flex items-center justify-center text-xs">
-                    <i class="fa-solid fa-power-off"></i>
-                </button>
-            </div>
+        <div class="time-selector">
+            <button class="time-btn active" onclick="setTimeMode(30, this)">30S</button>
+            <button class="time-btn" onclick="setTimeMode(60, this)">1M</button>
+            <button class="time-btn" onclick="setTimeMode(180, this)">3M</button>
+            <button class="time-btn" onclick="setTimeMode(300, this)">5M</button>
         </div>
 
-        <!-- Wingo Prediction Card (Compact) -->
-        <div class="glass-card mx-1 mt-1 p-2 rounded-3xl space-y-3">
-            <div class="flex justify-between">
-                <div class="flex-1">
-                    <span class="text-xs text-slate-300">PERIOD ID</span>
-                    <input type="number" id="periodInput" oninput="runAI()" 
-                           class="w-full bg-transparent text-3xl font-bold mono outline-none mt-1" placeholder="-----">
-                </div>
-                <div class="text-right">
-                    <span class="text-xs text-slate-400">LEVEL</span>
-                    <div id="lvDisplay" class="text-1xl font-bold text-[#d4af37] mono">1</div>
+        <section class="pred-card">
+            <div id="predictionBox">
+                <div id="idleText" style="font-size: 0.6rem; color: var(--text-dim); letter-spacing: 2px;">NEURAL SENSORS READY...</div>
+                <div id="resDisplay" style="display:none;">
+                    <div class="res-text">
+                        <span id="resClr">--</span> • <span id="resSz">--</span>
+                    </div>
+                    <div class="num-display">PREDICTED NUMS: <span id="commonNums" style="color: #fff;">- - -</span></div>
                 </div>
             </div>
 
-            <!-- Result Area -->
-            <div class="bg-black/80 rounded-3xl p-3 relative">
-                <div id="loader" class="hidden absolute inset-0 flex items-center justify-center bg-black/90 rounded-3xl z-10">
-                    <i class="fa-solid fa-dna fa-spin text-3xl text-[#d4af37]"></i>
-                </div>
-                <div class="flex justify-between text-center">
-                    <div class="flex-1">
-                        <p class="text-xs text-slate-400">SIZE</p>
-                        <h2 id="resSize" class="hero-text text-yellow-400">---</h2>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-xs text-slate-400">COLOR</p>
-                        <h2 id="resColor" class="hero-text text-purple-400">---</h2>
-                    </div>
-                </div>
-                <div class="mt-3 grid grid-cols-2 gap-4">
-                    <div>
-                        <div class="flex justify-between text-xs mb-1">
-                            <span class="text-yellow-400">Big</span>
-                            <span id="bigPct" class="font-bold">0%</span>
-                        </div>
-                        <div class="h-1 bg-white/10 rounded-full overflow-hidden">
-                            <div id="bigBar" class="h-full bg-yellow-400 transition-all duration-700" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-xs mb-1">
-                            <span class="text-blue-400">Small</span>
-                            <span id="smallPct" class="font-bold">0%</span>
-                        </div>
-                        <div class="h-1 bg-white/10 rounded-full overflow-hidden">
-                            <div id="smallBar" class="h-full bg-blue-400 transition-all duration-700" style="width: 0%"></div>
-                        </div>
-                    </div>
-                </div>
+            <div class="info-grid">
+                <div class="info-item"><span class="info-label">Smart Filter</span><span class="info-val" id="algoVal">---</span></div>
+                <div class="info-item"><span class="info-label">Trend Analysis</span><span class="info-val" id="patternVal">---</span></div>
+                <div class="info-item"><span class="info-label">Risk Level</span><span class="info-val" id="triggerVal">---</span></div>
+                <div class="info-item"><span class="info-label">Neural Probability</span><span class="info-val" id="mathVal">---</span></div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="record('Win')" class="bg-emerald-600 py-3 rounded-3xl font-bold text-xs flex items-center justify-center gap-2 active:scale-95">
-                    <i class="fa-solid fa-check"></i> SUCCESS
-                </button>
-                <button onclick="record('Loss')" class="bg-rose-600 py-3 rounded-3xl font-bold text-xs flex items-center justify-center gap-2 active:scale-95">
-                    <i class="fa-solid fa-rotate"></i> REFINE
-                </button>
+            <div class="input-row">
+                <input type="number" id="pInp" placeholder="Enter Last Period" inputmode="numeric">
+                <button class="btn-predict" onclick="predict()">ANALYZE</button>
             </div>
-        </div>
+        </section>
 
-        <!-- Stats -->
-        <div class="glass-card mx-2 mt-2 p-2 rounded-3xl">
-            <div class="grid grid-cols-4 gap-1 text-center">
-                <div class="bg-black/50 p-1 rounded-4xl">
-                    <i class="fa-solid fa-check text-emerald-400 text-base"></i>
-                    <p class="text-[10px] text-slate-400">Win</p>
-                    <p id="winCount" class="text-lg font-bold text-emerald-400">0</p>
-                </div>
-                <div class="bg-black/50 p-1 rounded-4xl">
-                    <i class="fa-solid fa-rotate text-rose-400 text-base"></i>
-                    <p class="text-[10px] text-slate-400">Loss</p>
-                    <p id="lossCount" class="text-lg font-bold text-rose-400">0</p>
-                </div>
-                <div class="bg-black/50 p-1 rounded-4xl">
-                    <i class="fa-solid fa-chart-line text-yellow-400 text-base"></i>
-                    <p class="text-[10px] text-slate-400">Avg</p>
-                    <p id="winRate" class="text-lg font-bold text-yellow-400">0%</p>
-                </div>
-                <div class="bg-black/50 p-1 rounded-4xl">
-                    <i class="fa-solid fa-list text-[#d4af37] text-base"></i>
-                    <p class="text-[10px] text-slate-400">Revised</p>
-                    <p id="totalPlays" class="text-lg font-bold text-[#d4af37]">0</p>
-                </div>
+        <section class="log-section">
+            <div class="log-header">
+                <span>HISTORY ANALYTICS</span>
+                <i class="fa-solid fa-trash-can btn-reset" onclick="clearHistory()"></i>
             </div>
-        </div>
-
-        <!-- History -->
-        <div class="flex-1 glass-card mx-1 mt-2 mb-2 rounded-3xl flex flex-col overflow-hidden">
-            <div class="px-2 py-1 border-b border-white/10 flex justify-between bg-black/40 rounded-t-3xl">
-                <span class="font-medium flex items-center gap-2">
-                    <i class="fa-solid fa-list-ul"></i> History (<span id="totalCount">0</span>)
-                </span>
-                <button onclick="clearHistory()" class="text-rose-400 text-xs flex items-center gap-1">
-                    <i class="fa-solid fa-trash"></i> Clear
-                </button>
-            </div>
-           
-            <div class="flex-1 overflow-auto no-scrollbar">
-                <table class="w-full text-xs">
-                    <thead class="sticky top-0 bg-[#010a0a]">
-                        <tr class="text-slate-400">
-                            <th class="py-2 px-3 text-left">Period</th>
-                            <th class="py-2 px-3 text-left">Predict</th>
-                            <th class="py-2 px-3 text-center">Actual</th>
-                            <th class="py-2 px-3 text-right">Res</th>
-                        </tr>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr><th>Period</th><th>Size</th><th>Color</th><th>Result</th><th>Status</th></tr>
                     </thead>
-                    <tbody id="logItems" class="divide-y divide-white/10"></tbody>
+                    <tbody id="logBody"></tbody>
                 </table>
             </div>
-           
-            <div class="p-3 flex justify-center gap-2 text-[#d4af37] text-sm border-t border-white/10">
-                <button onclick="prevPage()"><i class="fa-solid fa-chevron-left"></i></button>
-                <span id="pageDisplay" class="mono">1 / 1</span>
-                <button onclick="nextPage()"><i class="fa-solid fa-chevron-right"></i></button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Real Admin Console Modal -->
-    <div id="adminConsole" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-3">
-        <div class="glass-card w-full max-w-[360px] rounded-3xl max-h-[92vh] flex flex-col">
-            <div class="p-4 border-b border-white/10 flex justify-between items-center">
-                <h2 class="font-bold text-lg flex items-center gap-2">
-                    <i class="fa-solid fa-shield-halved text-emerald-400"></i>
-                    Master Admin Console
-                </h2>
-                <button onclick="hideAdminConsole()" class="text-rose-400 text-2xl leading-none">×</button>
-            </div>
-            
-            <div class="flex border-b border-white/10">
-                <button onclick="switchTab(0)" id="tab0" class="flex-1 py-3 text-center border-b-2 border-emerald-400 text-emerald-400 font-medium">Users</button>
-                <button onclick="switchTab(1)" id="tab1" class="flex-1 py-3 text-center text-slate-400">Coin Management</button>
-            </div>
-
-            <!-- Users Tab -->
-            <div id="tabContent0" class="flex-1 overflow-auto p-4">
-                <div class="mb-4">
-                    <button onclick="createNewUser()" class="w-full bg-emerald-600 py-3 rounded-3xl text-sm font-bold flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-plus"></i> Create New User
-                    </button>
-                </div>
-                <div id="userList" class="space-y-3"></div>
-            </div>
-
-            <!-- Coin Management Tab -->
-            <div id="tabContent1" class="flex-1 overflow-auto p-4 hidden">
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-xs text-slate-400 block mb-1">User ID</label>
-                        <input id="coinUserId" placeholder="Enter User ID" class="w-full bg-white/5 border border-white/20 rounded-2xl px-4 py-3 text-sm">
-                    </div>
-                    <div>
-                        <label class="text-xs text-slate-400 block mb-1">Coins Amount</label>
-                        <input id="coinAmount" type="number" placeholder="Amount" class="w-full bg-white/5 border border-white/20 rounded-2xl px-4 py-3 text-sm">
-                    </div>
-                    <button onclick="addCoinsToUser()" class="w-full bg-emerald-600 py-3.5 rounded-3xl font-bold">Add Coins</button>
-                </div>
-            </div>
-
-            <div class="p-4 border-t border-white/10">
-                <button onclick="hideAdminConsole()" class="w-full py-3 rounded-3xl border border-white/20 text-sm">Close Console</button>
-            </div>
-        </div>
+        </section>
     </div>
 
     <script>
-        const usersDB = {
-            "admin": { pass: "Admin@1991", name: "Master Admin", role: "master", coins: 99999999 },
-            "user1": { pass: "123456", name: "Rahul Kumar", role: "user", coins: 100 },
-            "user2": { pass: "123456", name: "Amit Sharma", role: "user", coins: 100 }
-        };
+        let history = JSON.parse(localStorage.getItem('nai_v7_logs') || '[]');
+        
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString();
+        }, 1000);
 
-        let logs = [];
-        let currentPage = 1;
-        const rowsPerPage = 8;
-        let currentLv = 1;
-        let activePrediction = null;
-        let currentUser = null;
-
-        function loadState() { /* same as before */ 
-            const saved = localStorage.getItem('neural_logs');
-            if (saved) logs = JSON.parse(saved);
-            const lv = localStorage.getItem('neural_level');
-            if (lv) currentLv = parseInt(lv) || 1;
+        function setTimeMode(s, btn) {
+            document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
         }
 
-        function saveState() {
-            localStorage.setItem('neural_logs', JSON.stringify(logs));
-            localStorage.setItem('neural_level', currentLv);
-        }
+        function getStableNumbers(color, size, seed) {
+            const redNums = [0, 2, 4, 6, 8];
+            const greenNums = [1, 3, 5, 7, 9];
+            let base = color === 'Red' ? redNums : greenNums;
 
-        function getColorClass(val) { /* same */ 
-            if (val === 'Big') return 'text-yellow-400';
-            if (val === 'Small') return 'text-blue-400';
-            if (val === 'Green') return 'text-emerald-400';
-            if (val === 'Red') return 'text-rose-400';
-            if (val === 'Violet') return 'text-purple-400';
-            return 'text-white';
-        }
-
-        function handleLogin() {
-            const uid = document.getElementById('uid').value.trim().toLowerCase();
-            const pass = document.getElementById('upass').value;
-
-            if (usersDB[uid] && usersDB[uid].pass === pass) {
-                currentUser = { id: uid, ...usersDB[uid] };
-                
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('dashboard').classList.remove('hidden');
-                document.getElementById('userNameDisplay').textContent = currentUser.name;
-
-                if (currentUser.role === "master") {
-                    document.getElementById('adminConsoleBtn').classList.remove('hidden');
-                }
-
-                renderTable();
-                updateStats();
+            if (size === 'Small') {
+                base = base.filter(n => n <= 4);
             } else {
-                alert("Invalid User ID or Password!");
+                base = base.filter(n => n >= 5);
             }
-        }
-
-        // ================== ADMIN CONSOLE ==================
-        function showAdminConsole() {
-            if (!currentUser || currentUser.role !== "master") {
-                alert("Access Denied! Only Master Admin allowed.");
-                return;
-            }
-            document.getElementById('adminConsole').classList.remove('hidden');
-            switchTab(0); // default to Users tab
-        }
-
-        function hideAdminConsole() {
-            document.getElementById('adminConsole').classList.add('hidden');
-        }
-
-        function switchTab(tab) {
-            document.getElementById('tabContent0').classList.add('hidden');
-            document.getElementById('tabContent1').classList.add('hidden');
-            document.getElementById('tab' + tab).classList.add('border-b-2', 'border-emerald-400', 'text-emerald-400');
-            document.getElementById('tab' + (1-tab)).classList.remove('border-b-2', 'border-emerald-400', 'text-emerald-400');
-            document.getElementById('tabContent' + tab).classList.remove('hidden');
             
-            if (tab === 0) renderUserList();
+            return base.sort(() => (seed % 7) - 3.5).slice(0, 3).join(' ');
         }
 
-        function renderUserList() {
-            let html = '';
-            Object.keys(usersDB).forEach(uid => {
-                const u = usersDB[uid];
-                html += `
-                    <div class="bg-black/40 p-4 rounded-3xl">
-                        <div class="flex justify-between">
-                            <div>
-                                <div class="font-medium">${u.name}</div>
-                                <div class="text-xs text-slate-400">${uid} • ${u.coins} coins</div>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-xs ${u.role === 'master' ? 'text-emerald-400' : 'text-slate-400'}">${u.role}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            document.getElementById('userList').innerHTML = html;
-        }
+        function predict() {
+            const p = document.getElementById('pInp').value;
+            if(!p) return;
 
-        function createNewUser() {
-            const name = prompt("Enter Full Name:");
-            const uid = prompt("Enter User ID (lowercase):");
-            if (name && uid) {
-                usersDB[uid] = {
-                    pass: "123456",
-                    name: name,
-                    role: "user",
-                    coins: 200
-                };
-                alert(`User ${uid} created successfully!\nDefault Password: 123456`);
-                renderUserList();
-            }
-        }
-
-        function addCoinsToUser() {
-            const uid = document.getElementById('coinUserId').value.trim().toLowerCase();
-            const amount = parseInt(document.getElementById('coinAmount').value);
+            const seed = parseInt(p.toString().slice(-3));
+            let weight = (seed * 3 + 7) % 10;
             
-            if (usersDB[uid] && amount > 0) {
-                usersDB[uid].coins += amount;
-                alert(`Successfully added ${amount} coins to ${uid}`);
-                document.getElementById('coinUserId').value = '';
-                document.getElementById('coinAmount').value = '';
-            } else {
-                alert("Invalid User ID or Amount");
-            }
+            const color = weight >= 5 ? 'Green' : 'Red';
+            const size = weight % 2 === 0 ? 'Small' : 'Big';
+
+            const res = {
+                period: (BigInt(p) + 1n).toString(),
+                color: color,
+                size: size,
+                algo: "V7-Stable",
+                pattern: weight > 4 ? "Linear" : "Wave",
+                trigger: weight > 7 ? "High Risk" : "Low Risk",
+                math: (90 + (seed % 9)) + "%",
+                nums: getStableNumbers(color, size, seed),
+                status: 'Pending'
+            };
+
+            history.unshift(res);
+            if(history.length > 20) history.pop();
+            localStorage.setItem('nai_v7_logs', JSON.stringify(history));
+
+            updateUI(res);
+            render();
+            document.getElementById('pInp').value = '';
         }
 
-        // ================== WINGO PREDICTION ==================
-        function runAI() {
-            const period = document.getElementById('periodInput').value.trim();
-            if (!period) return;
+        function updateUI(d) {
+            document.getElementById('idleText').style.display = 'none';
+            document.getElementById('resDisplay').style.display = 'block';
+            const box = document.getElementById('predictionBox');
+            box.className = `glow-${d.color.toLowerCase()}`;
+            
+            document.getElementById('resClr').innerText = d.color.toUpperCase();
+            document.getElementById('resClr').className = `clr-${d.color.toLowerCase()}`;
+            document.getElementById('resSz').innerText = d.size.toUpperCase();
+            document.getElementById('resSz').className = d.size === 'Big' ? 'sz-big' : 'sz-small';
+            document.getElementById('commonNums').innerText = d.nums;
 
-            document.getElementById('loader').classList.remove('hidden');
+            document.getElementById('algoVal').innerText = d.algo;
+            document.getElementById('patternVal').innerText = d.pattern;
+            document.getElementById('triggerVal').innerText = d.trigger;
+            document.getElementById('mathVal').innerText = d.math;
+            
+            updateAccuracy();
+        }
 
+        function updateAccuracy() {
+            let wins = history.filter(h => h.status === 'Win').length;
+            let total = history.filter(h => h.status !== 'Pending').length;
+            document.getElementById('accuracyLabel').innerText = `ACCURACY: ${total > 0 ? ((wins/total)*100).toFixed(0) : 0}%`;
+        }
+
+        function setStatus(idx, st) {
+            // ১. স্ট্যাটাস আপডেট করা
+            history[idx].status = st;
+            localStorage.setItem('nai_v7_logs', JSON.stringify(history));
+            render();
+            updateAccuracy();
+            
+            // ২. অটো প্রেডিক্ট লজিক
             setTimeout(() => {
-                const sizes = ["Big", "Small"];
-                const colors = ["Green", "Red", "Violet"];
-                const size = sizes[Math.floor(Math.random() * 2)];
-                const color = colors[Math.floor(Math.random() * 3)];
-                const bigProb = size === "Big" ? Math.floor(Math.random() * 25) + 68 : Math.floor(Math.random() * 30) + 35;
-
-                document.getElementById('loader').classList.add('hidden');
-
-                document.getElementById('resSize').textContent = size;
-                document.getElementById('resSize').className = `hero-text ${getColorClass(size)}`;
-                document.getElementById('resColor').textContent = color;
-                document.getElementById('resColor').className = `hero-text ${getColorClass(color)}`;
-
-                document.getElementById('bigPct').textContent = bigProb + '%';
-                document.getElementById('bigBar').style.width = bigProb + '%';
-                document.getElementById('smallPct').textContent = (100 - bigProb) + '%';
-                document.getElementById('smallBar').style.width = (100 - bigProb) + '%';
-
-                activePrediction = { p: period, s: size, c: color };
-            }, 450);
+                const currentPeriod = history[idx].period;
+                document.getElementById('pInp').value = currentPeriod;
+                predict();
+            }, 400);
         }
 
-        function record(status) {
-            if (!activePrediction) return alert("Enter Period ID first!");
-
-            const isWin = status === "Win";
-            const actS = isWin ? activePrediction.s : (activePrediction.s === "Big" ? "Small" : "Big");
-            let actC = activePrediction.c;
-            if (!isWin) {
-                if (activePrediction.c === "Green") actC = "Red";
-                else if (activePrediction.c === "Red") actC = "Green";
-                else actC = Math.random() > 0.5 ? "Red" : "Green";
+        function clearHistory() {
+            if(confirm("Reset Neural Data?")) {
+                history = [];
+                localStorage.removeItem('nai_v7_logs');
+                location.reload();
             }
-
-            logs.unshift({ p: activePrediction.p, s: activePrediction.s, c: activePrediction.c, actS: actS, actC: actC, res: status });
-
-            currentLv = isWin ? 1 : Math.min(currentLv + 1, 8);
-            saveState();
-            renderTable();
-            updateStats();
-
-            const nextPeriod = parseInt(activePrediction.p) + 1;
-            document.getElementById('periodInput').value = nextPeriod;
-            activePrediction = null;
-            runAI();
         }
 
-        function updateStats() { /* same as before */ 
-            const total = logs.length;
-            const wins = logs.filter(l => l.res === 'Win').length;
-            document.getElementById('winCount').textContent = wins;
-            document.getElementById('lossCount').textContent = total - wins;
-            document.getElementById('winRate').textContent = total ? Math.round((wins / total) * 100) + '%' : '0%';
-            document.getElementById('totalPlays').textContent = total;
-            document.getElementById('totalCount').textContent = total;
-        }
-
-        function renderTable() { /* same as before */ 
-            // ... (copy from previous version)
-            const start = (currentPage - 1) * rowsPerPage;
-            const pageLogs = logs.slice(start, start + rowsPerPage);
-            let html = '';
-            pageLogs.forEach(log => {
-                html += `
-                    <tr class="border-b border-white/10">
-                        <td class="px-3 py-2.5 mono">${log.p}</td>
-                        <td class="px-3 py-2.5">
-                            <span class="${getColorClass(log.s)}">${log.s}</span>
-                            <span class="${getColorClass(log.c)} text-[10px] ml-1">(${log.c})</span>
-                        </td>
-                        <td class="px-3 py-2.5 text-center">
-                            <span class="${getColorClass(log.actS)}">${log.actS}</span>
-                            <span class="${getColorClass(log.actC)} text-[10px] ml-1">(${log.actC})</span>
-                        </td>
-                        <td class="px-3 py-2.5 text-right font-bold ${log.res === 'Win' ? 'text-emerald-400' : 'text-rose-400'}">
-                            ${log.res}
-                        </td>
-                    </tr>
+        function render() {
+            const b = document.getElementById('logBody');
+            b.innerHTML = '';
+            history.forEach((item, index) => {
+                const r = b.insertRow();
+                let statusHtml = item.status === 'Pending' ? 
+                    `<button style="color:var(--success);background:none;border:1px solid var(--success);padding:2px 5px;border-radius:4px;font-family:Orbitron;cursor:pointer;" onclick="setStatus(${index}, 'Win')">W</button> 
+                     <button style="color:var(--fail);background:none;border:1px solid var(--fail);padding:2px 5px;border-radius:4px;font-family:Orbitron;cursor:pointer;" onclick="setStatus(${index}, 'Loss')">L</button>` : 
+                    `<span style="color:var(--${item.status === 'Win' ? 'success' : 'fail'});font-family:Orbitron;">${item.status.toUpperCase()}</span>`;
+                
+                r.innerHTML = `
+                    <td style="font-family:Orbitron;font-size:0.6rem">${item.period.slice(-3)}</td>
+                    <td class="${item.size === 'Big' ? 'sz-big' : 'sz-small'}" style="font-family:Orbitron;">${item.size}</td>
+                    <td class="clr-${item.color.toLowerCase()}" style="font-family:Orbitron;">${item.color}</td>
+                    <td style="font-family:Orbitron;">${item.status === 'Pending' ? '--' : item.size}</td>
+                    <td>${statusHtml}</td>
                 `;
             });
-            document.getElementById('logItems').innerHTML = html || `<tr><td colspan="4" class="text-center py-8 text-slate-500 text-xs">No records yet</td></tr>`;
-            document.getElementById('pageDisplay').textContent = `${currentPage} / ${Math.ceil(logs.length / rowsPerPage) || 1}`;
-            document.getElementById('lvDisplay').textContent = currentLv;
         }
-
-        function nextPage() { if (currentPage * rowsPerPage < logs.length) { currentPage++; renderTable(); } }
-        function prevPage() { if (currentPage > 1) { currentPage--; renderTable(); } }
-        function clearHistory() {
-            if (confirm("Clear all history?")) {
-                logs = []; currentLv = 1; currentPage = 1; localStorage.clear();
-                document.getElementById('periodInput').value = '';
-                document.getElementById('resSize').textContent = '---';
-                document.getElementById('resColor').textContent = '---';
-                renderTable(); updateStats();
-            }
-        }
-
-        loadState();
+        render();
     </script>
 </body>
 </html>
