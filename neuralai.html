@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>NEURAL AI V7.0 - PRO DASHBOARD</title>
+    <title>AI NEURAL V7.0 - ULTIMATE</title>
     
+    <meta name="theme-color" content="#080a16">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="data:application/manifest+json,{"name":"Neural AI V7","short_name":"NeuralAI","start_url":".","display":"standalone","background_color":"#080a16","theme_color":"#4a90e2"}">
+
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
@@ -18,152 +22,155 @@
             --secondary: #bd10e0;
             --success: #00ff88;
             --fail: #ff4757;
+            --warning: #ffd700;
             --text: #ffffff;
             --text-dim: #8a99c0;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Ubuntu', sans-serif; }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text);
-            height: 100dvh; width: 100vw;
-            display: flex; justify-content: center; align-items: center;
-            overflow: hidden;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Ubuntu', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-color); color: var(--text); height: 100dvh; width: 100vw; display: flex; justify-content: center; align-items: center; overflow: hidden; }
 
         /* --- Login Screen --- */
-        #loginScreen {
-            width: 90%; max-width: 400px; padding: 30px;
-            background: var(--card-bg); border-radius: 20px;
-            border: 1px solid var(--border-glow); text-align: center;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-        }
-
-        .login-logo { font-family: 'Orbitron'; font-size: 1.5rem; color: var(--primary); margin-bottom: 25px; }
-        .login-input {
-            width: 100%; padding: 12px; margin: 10px 0;
-            background: rgba(0,0,0,0.3); border: 1px solid var(--border-glow);
-            border-radius: 10px; color: #fff; text-align: center; outline: none;
-        }
-        .btn-login {
-            width: 100%; padding: 12px; margin-top: 15px;
-            background: var(--auth-gradient); border: none; border-radius: 10px;
-            color: #fff; font-family: 'Orbitron'; cursor: pointer; font-weight: bold;
-        }
-
-        /* --- Dashboard Screen --- */
-        #dashboard { display: none; width: 100%; height: 100%; flex-direction: column; padding: 10px; max-width: 450px; overflow-y: auto; scrollbar-width: none; }
+        #loginScreen { width: 92%; max-width: 420px; padding: 25px; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border-glow); text-align: center; max-height: 95vh; overflow-y: auto; scrollbar-width: none; }
+        .login-logo { font-family: 'Orbitron'; font-size: 1.3rem; color: var(--primary); margin-bottom: 20px; }
         
-        header { display: flex; justify-content: space-between; align-items: center; padding: 10px 5px; }
+        .info-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 15px; border-radius: 12px; margin-bottom: 15px; font-size: 0.75rem; text-align: left; }
+        .info-box h4 { font-family: 'Orbitron'; font-size: 0.65rem; color: var(--success); margin-bottom: 8px; border-bottom: 1px solid rgba(0,255,136,0.2); padding-bottom: 4px; }
+        .info-box ul { list-style: none; color: var(--text-dim); }
+        .info-box li { margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+
+        .login-input { width: 100%; padding: 12px; margin: 8px 0; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glow); border-radius: 10px; color: #fff; text-align: center; outline: none; font-family: 'Orbitron'; font-size: 0.8rem; }
+        .btn-access { width: 100%; padding: 14px; margin-top: 10px; background: var(--auth-gradient); border: none; border-radius: 10px; color: #fff; font-family: 'Orbitron'; cursor: pointer; font-weight: bold; }
+
+        /* --- Dashboard --- */
+        #dashboard { display: none; width: 100%; height: 100%; flex-direction: column; padding: 12px; max-width: 450px; overflow: hidden; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         header h1 { font-family: 'Orbitron'; font-size: 0.9rem; color: var(--primary); }
-        .user-badge { font-size: 0.7rem; color: var(--success); font-family: 'Orbitron'; }
 
-        /* Guide Box */
-        .guide-box {
-            background: rgba(74, 144, 226, 0.05); border-left: 4px solid var(--primary);
-            padding: 12px; margin: 10px 0; border-radius: 8px; font-size: 0.75rem;
-        }
-        .guide-box h4 { font-family: 'Orbitron'; font-size: 0.7rem; color: var(--text-dim); margin-bottom: 5px; }
+        .time-tabs { display: flex; gap: 5px; margin-bottom: 15px; }
+        .time-btn { flex: 1; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-dim); border-radius: 10px; font-size: 0.7rem; font-family: 'Orbitron'; cursor: pointer; }
+        .time-btn.active { background: var(--auth-gradient); color: #fff; box-shadow: 0 0 15px rgba(189, 16, 224, 0.3); border-color: transparent; }
 
-        /* Main Predict Components */
-        .time-selector { display: flex; gap: 5px; margin-bottom: 10px; }
-        .time-btn { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glow); color: var(--text-dim); padding: 8px; border-radius: 8px; font-family: 'Orbitron'; font-size: 0.6rem; cursor: pointer; }
-        .time-btn.active { background: var(--auth-gradient); color: #fff; border-color: transparent; }
-
-        .pred-card { background: var(--card-bg); border: 1px solid var(--border-glow); border-radius: 15px; padding: 15px; }
-        #predictionBox { padding: 15px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px; }
-        .glow-red { box-shadow: 0 0 20px rgba(255, 71, 87, 0.3); border-color: var(--fail) !important; }
-        .glow-green { box-shadow: 0 0 20px rgba(0, 255, 136, 0.3); border-color: var(--success) !important; }
-
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
-        .info-item { background: rgba(255,255,255,0.02); padding: 8px; border-radius: 8px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
-        .info-label { font-size: 0.5rem; color: var(--text-dim); font-family: 'Orbitron'; }
-        .info-val { font-size: 0.6rem; font-weight: bold; font-family: 'Orbitron'; }
-
-        .input-row { display: flex; gap: 8px; }
-        input[type="number"] { flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glow); border-radius: 8px; color: #fff; padding: 12px; text-align: center; outline: none; font-family: 'Orbitron'; }
+        .pred-card { background: var(--card-bg); border: 1px solid var(--border-glow); border-radius: 18px; padding: 15px; margin-bottom: 15px; }
+        #predictionBox { border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 15px; background: rgba(0,0,0,0.2); }
         
-        .log-section { margin-top: 10px; background: var(--card-bg); border-radius: 15px; border: 1px solid var(--border-glow); flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 200px;}
-        .table-container { overflow-y: auto; flex: 1; }
-        table { width: 100%; border-collapse: collapse; }
-        th { font-size: 0.55rem; color: var(--text-dim); padding: 10px 5px; border-bottom: 1px solid rgba(255,255,255,0.05); position: sticky; top: 0; background: var(--card-bg); }
-        td { padding: 10px 5px; text-align: center; font-size: 0.7rem; border-bottom: 1px solid rgba(255,255,255,0.02); }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .info-item { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .info-header { display: flex; align-items: center; gap: 6px; font-size: 0.55rem; color: var(--text-dim); font-family: 'Orbitron'; }
+        .info-val { font-size: 0.75rem; font-weight: bold; font-family: 'Orbitron'; color: #fff; }
 
-        .btn-logout { background: none; border: 1px solid var(--fail); color: var(--fail); padding: 5px 10px; border-radius: 5px; font-size: 0.6rem; cursor: pointer; font-family: 'Orbitron'; }
-        .pwa-btn { display: none; background: #fff; color: #000; border: none; padding: 5px 10px; border-radius: 5px; font-size: 0.6rem; font-weight: bold; cursor: pointer; margin-right: 5px; }
+        .recovery-box { background: rgba(255, 71, 87, 0.1); border: 1px solid var(--fail); padding: 10px; border-radius: 10px; font-size: 0.7rem; margin-bottom: 10px; display: none; color: #ff9f9f; text-align: center; font-family: 'Orbitron'; }
 
-        .sz-big { color: var(--success); font-weight: bold; }
-        .sz-small { color: var(--primary); font-weight: bold; }
-        .clr-red { color: var(--fail); }
-        .clr-green { color: var(--success); }
+        .input-box { display: flex; gap: 8px; }
+        .input-box input { flex: 1; padding: 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-glow); border-radius: 10px; color: #fff; outline: none; font-family: 'Orbitron'; text-align: center; }
+        .btn-analyze { padding: 0 25px; background: var(--auth-gradient); border: none; border-radius: 10px; color: #fff; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; }
+
+        /* History with Reset */
+        .history { background: var(--card-bg); border: 1px solid var(--border-glow); border-radius: 18px; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .hist-header { padding: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .hist-title { font-family: 'Orbitron'; font-size: 0.6rem; color: var(--text-dim); letter-spacing: 1px; }
+        .btn-reset { color: var(--fail); background: none; border: none; font-size: 0.9rem; cursor: pointer; padding: 5px; opacity: 0.7; transition: 0.3s; }
+        .btn-reset:hover { opacity: 1; transform: scale(1.1); }
+
+        .table-container { flex: 1; overflow-y: auto; scrollbar-width: none; }
+        table { width: 100%; border-collapse: collapse; text-align: center; }
+        th { font-size: 0.55rem; color: var(--text-dim); padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); font-family: 'Orbitron'; }
+        td { padding: 12px; font-size: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.02); font-family: 'Orbitron'; }
+
+        .mark-btn { width: 28px; height: 28px; border-radius: 6px; border: 1px solid transparent; cursor: pointer; font-family: 'Orbitron'; font-size: 0.6rem; background: none; margin: 0 2px; }
+        .mark-w { border-color: var(--success); color: var(--success); }
+        .mark-l { border-color: var(--fail); color: var(--fail); }
+        
+        .glow-red { border-color: var(--fail) !important; box-shadow: 0 0 15px rgba(255, 71, 87, 0.3); }
+        .glow-green { border-color: var(--success) !important; box-shadow: 0 0 15px rgba(0, 255, 136, 0.3); }
     </style>
 </head>
 <body>
 
     <div id="loginScreen">
-        <div class="login-logo"><i class="fa-solid fa-brain"></i> NEURAL AI LOGIN</div>
-        <input type="text" id="userInp" class="login-input" placeholder="User Name">
-        <input type="password" id="keyInp" class="login-input" placeholder="Access Key">
-        <button class="btn-login" onclick="handleLogin()">ACCESS DASHBOARD</button>
-        <p id="errorMsg" style="color: var(--fail); font-size: 0.7rem; margin-top: 10px; display: none;">Invalid Username or Access Key!</p>
+        <div class="login-logo"><i class="fa-solid fa-brain"></i> AI NEURAL V7.0</div>
+        
+        <div class="info-box">
+            <h4><i class="fa-solid fa-clock"></i> BEST PLAYING TIME</h4>
+            <ul>
+                <li><i class="fa-solid fa-sun" style="color:var(--warning);"></i> Morning: 09:30 AM - 11:30 AM</li>
+                <li><i class="fa-solid fa-moon" style="color:var(--primary);"></i> Night: 08:30 PM - 10:45 PM</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h4><i class="fa-solid fa-shield-halved"></i> TRADING RULES</h4>
+            <ul>
+                <li><i class="fa-solid fa-check" style="color:var(--success);"></i> Min Confidence: 92% to take trade.</li>
+                <li><i class="fa-solid fa-check" style="color:var(--success);"></i> Recommended: Stop trading after 2 profit rows.</li>
+                <li><i class="fa-solid fa-check" style="color:var(--success);"></i> Auto-Martingale strategy for losses.</li>
+            </ul>
+        </div>
+
+        <input type="text" id="userInp" class="login-input" placeholder="USERNAME">
+        <input type="password" id="keyInp" class="login-input" placeholder="ACCESS KEY">
+        <button class="btn-access" onclick="handleLogin()">INITIALIZE SYSTEM</button>
     </div>
 
     <div id="dashboard">
         <header>
-            <div style="display: flex; align-items: center;">
-                <button id="installBtn" class="pwa-btn"><i class="fa-solid fa-download"></i> INSTALL</button>
-                <h1>AI NEURAL V7.0</h1>
-            </div>
-            <div style="text-align: right;">
-                <div class="user-badge" id="welcomeUser">USER: ADMIN</div>
-                <button class="btn-logout" onclick="handleLogout()">LOGOUT</button>
+            <h1>NEURAL ENGINE</h1>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span id="userTag" style="font-size:0.55rem; color:var(--success); font-family:'Orbitron';"></span>
+                <button onclick="location.reload()" style="background:none; border:1px solid var(--fail); color:var(--fail); padding:3px 8px; border-radius:5px; font-size:0.5rem; cursor:pointer; font-family:'Orbitron';">LOGOUT</button>
             </div>
         </header>
 
-        <div class="guide-box">
-            <h4><i class="fa-solid fa-circle-info"></i> HOW IT WORKS</h4>
-            <ul style="margin-left: 15px; color: var(--text-dim);">
-                <li><strong>Neural Filter:</strong> Analyzes the last 3 digits of period seed.</li>
-                <li><strong>Safe Play:</strong> Recommended only when Neural Prob > 92%.</li>
-                <li><strong>Strategy:</strong> Auto-triggers Next Period analysis on Result Mark.</li>
-            </ul>
+        <div class="time-tabs">
+            <button class="time-btn active" onclick="setTime(this, '30S')">30S</button>
+            <button class="time-btn" onclick="setTime(this, '1M')">1M</button>
+            <button class="time-btn" onclick="setTime(this, '3M')">3M</button>
         </div>
 
-        <div class="time-selector">
-            <button class="time-btn active">30S</button>
-            <button class="time-btn">1M</button>
-            <button class="time-btn">3M</button>
-        </div>
+        <div id="recoveryMsg" class="recovery-box"></div>
 
         <section class="pred-card">
             <div id="predictionBox">
-                <div id="idleText" style="font-size: 0.6rem; color: var(--text-dim); letter-spacing: 2px;">NEURAL SENSORS READY...</div>
+                <div id="idleText" style="font-size: 0.6rem; color: var(--text-dim); font-family:'Orbitron';">AI STANDBY...</div>
                 <div id="resDisplay" style="display:none;">
-                    <div style="font-family: 'Orbitron'; font-size: 1.2rem; font-weight: bold; letter-spacing: 1px;">
-                        <span id="resClr">--</span> • <span id="resSz">--</span>
+                    <div style="font-family:'Orbitron'; font-size:1.5rem; font-weight:bold;">
+                        <span id="dispClr">RED</span> • <span id="dispSz">SMALL</span>
                     </div>
-                    <div style="font-size: 0.8rem; color: var(--text-dim); margin-top: 5px; font-family: 'Orbitron';">PREDICTED NUMS: <span id="commonNums" style="color: #fff;">- - -</span></div>
+                    <div style="color:var(--text-dim); font-size:0.8rem; margin-top:5px; font-family:'Orbitron';">PREDICTED NUMS: <span id="dispNums" style="color:#fff;"></span></div>
                 </div>
             </div>
 
             <div class="info-grid">
-                <div class="info-item"><span class="info-label">Filter</span><span class="info-val" id="algoVal">---</span></div>
-                <div class="info-item"><span class="info-label">Pattern</span><span class="info-val" id="patternVal">---</span></div>
-                <div class="info-item"><span class="info-label">Risk</span><span class="info-val" id="triggerVal">---</span></div>
-                <div class="info-item"><span class="info-label">Probability</span><span class="info-val" id="mathVal">---</span></div>
+                <div class="info-item" style="border-color: rgba(0, 210, 255, 0.2);">
+                    <div class="info-header"><i class="fa-solid fa-microchip" style="color: #00d2ff;"></i> Neural Filter</div>
+                    <span class="info-val" style="color: #00d2ff;">STABLE-V7</span>
+                </div>
+                <div class="info-item" style="border-color: rgba(189, 16, 224, 0.2);">
+                    <div class="info-header"><i class="fa-solid fa-chart-line" style="color: var(--secondary);"></i> AI Pattern</div>
+                    <span class="info-val" id="vPattern" style="color: var(--secondary);">---</span>
+                </div>
+                <div class="info-item" id="riskItem" style="border-color: rgba(255, 215, 0, 0.2);">
+                    <div class="info-header"><i class="fa-solid fa-triangle-exclamation" id="riskIcon" style="color: var(--warning);"></i> Risk Level</div>
+                    <span class="info-val" id="vRisk" style="color: var(--warning);">---</span>
+                </div>
+                <div class="info-item" style="border-color: rgba(0, 255, 136, 0.2);">
+                    <div class="info-header"><i class="fa-solid fa-brain" style="color: var(--success);"></i> AI Confidence</div>
+                    <span class="info-val" id="vProb" style="color: var(--success);">---</span>
+                </div>
             </div>
 
-            <div class="input-row">
+            <div class="input-box">
                 <input type="number" id="pInp" placeholder="Enter Last Period" inputmode="numeric">
-                <button class="btn-predict" style="padding: 0 20px; background: var(--auth-gradient); border:none; border-radius:8px; color:#fff; font-family:'Orbitron'; font-weight:bold; cursor:pointer;" onclick="predict()">ANALYZE</button>
+                <button class="btn-analyze" onclick="predict()">ANALYZE</button>
             </div>
         </section>
 
-        <section class="log-section">
-            <div class="log-header" style="padding:10px 15px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-family:'Orbitron'; font-size:0.6rem; color:var(--text-dim);">ANALYTICS HISTORY</span>
-                <i class="fa-solid fa-trash-can" style="color:var(--fail); cursor:pointer;" onclick="clearHistory()"></i>
+        <section class="history">
+            <div class="hist-header">
+                <span class="hist-title">LIVE ANALYTICS LOG</span>
+                <button class="btn-reset" onclick="resetHistory()" title="Clear History">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
             </div>
             <div class="table-container">
                 <table>
@@ -177,132 +184,90 @@
     </div>
 
     <script>
-        // --- AUTH SYSTEM ---
-        const users = {
-            "admin": { key: "Admin@1991$", name: "ADMIN" },
-            "user1": { key: "1111", name: "User" },
-            "guest": { key: "0000", name: "GUEST USER" }
+        const users = { 
+            "admin": "Admin@1991$", "susovan": "2302",
+            "user1": "pass11", "user2": "pass22", "user3": "pass33"
         };
+
+        let history = [];
+        let lossCount = 0;
 
         function handleLogin() {
             const u = document.getElementById('userInp').value.toLowerCase();
             const k = document.getElementById('keyInp').value;
-            const err = document.getElementById('errorMsg');
-
-            if(users[u] && users[u].key === k) {
-                sessionStorage.setItem('isLoggedIn', 'true');
-                sessionStorage.setItem('userName', users[u].name);
-                showDashboard();
-            } else {
-                err.style.display = 'block';
+            if(users[u] === k) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'flex';
+                document.getElementById('userTag').innerText = u.toUpperCase();
             }
         }
 
-        function showDashboard() {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'flex';
-            document.getElementById('welcomeUser').innerText = "USER: " + sessionStorage.getItem('userName');
-            render();
-        }
-
-        function handleLogout() {
-            sessionStorage.clear();
-            location.reload();
-        }
-
-        // --- PWA INSTALLATION (Desktop/Mobile) ---
-        let deferredPrompt;
-        const installBtn = document.getElementById('installBtn');
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            installBtn.style.display = 'block';
-        });
-
-        installBtn.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') installBtn.style.display = 'none';
-                deferredPrompt = null;
-            }
-        });
-
-        // --- CORE PREDICTION LOGIC ---
-        let history = JSON.parse(localStorage.getItem('nai_v7_logs') || '[]');
-
-        function getStableNumbers(color, size, seed) {
-            const redNums = [0, 2, 4, 6, 8];
-            const greenNums = [1, 3, 5, 7, 9];
-            let base = color === 'Red' ? redNums : greenNums;
-            base = (size === 'Small') ? base.filter(n => n <= 4) : base.filter(n => n >= 5);
-            return base.sort(() => (seed % 7) - 3.5).slice(0, 3).join(' ');
+        function setTime(btn, time) {
+            document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('idleText').innerText = `SCANNING ${time} DATA...`;
         }
 
         function predict() {
-            const p = document.getElementById('pInp').value;
-            if(!p) return;
-
-            const seed = parseInt(p.toString().slice(-3));
-            let weight = (seed * 3 + 7) % 10;
+            const val = document.getElementById('pInp').value;
+            if(!val) return;
+            const seed = parseInt(val.slice(-3));
+            const color = (seed * 7 + 1) % 10 >= 5 ? 'Green' : 'Red';
+            const size = (seed + 1) % 2 === 0 ? 'Small' : 'Big';
+            const confidence = (92 + (seed % 7));
             
-            const color = weight >= 5 ? 'Green' : 'Red';
-            const size = weight % 2 === 0 ? 'Small' : 'Big';
-
-            const res = {
-                period: (BigInt(p) + 1n).toString(),
-                color: color, size: size,
-                algo: "V7-NEURAL", pattern: weight > 4 ? "Trend" : "Wave",
-                trigger: weight > 7 ? "High" : "Low",
-                math: (91 + (seed % 8)) + "%",
-                nums: getStableNumbers(color, size, seed),
-                status: 'Pending'
+            const data = {
+                period: (BigInt(val) + 1n).toString(),
+                color: color, size: size, status: 'pending'
             };
 
-            history.unshift(res);
+            history.unshift(data);
             if(history.length > 15) history.pop();
-            localStorage.setItem('nai_v7_logs', JSON.stringify(history));
-
-            updateUI(res);
+            updateUI(data, confidence);
             render();
             document.getElementById('pInp').value = '';
         }
 
-        function updateUI(d) {
+        function updateUI(d, p) {
             document.getElementById('idleText').style.display = 'none';
             document.getElementById('resDisplay').style.display = 'block';
-            const box = document.getElementById('predictionBox');
-            box.className = `glow-${d.color.toLowerCase()}`;
+            document.getElementById('predictionBox').className = `glow-${d.color.toLowerCase()}`;
+            document.getElementById('dispClr').innerText = d.color.toUpperCase();
+            document.getElementById('dispClr').style.color = d.color === 'Red' ? 'var(--fail)' : 'var(--success)';
+            document.getElementById('dispSz').innerText = d.size.toUpperCase();
+            document.getElementById('vProb').innerText = p + "%";
             
-            document.getElementById('resClr').innerText = d.color.toUpperCase();
-            document.getElementById('resClr').className = `clr-${d.color.toLowerCase()}`;
-            document.getElementById('resSz').innerText = d.size.toUpperCase();
-            document.getElementById('resSz').className = d.size === 'Big' ? 'sz-big' : 'sz-small';
-            document.getElementById('commonNums').innerText = d.nums;
+            const patterns = ["Zig-Zag", "Mirror", "Long-Trend", "Breakout"];
+            document.getElementById('vPattern').innerText = patterns[parseInt(d.period) % 4];
+            
+            const riskVal = document.getElementById('vRisk');
+            if (p >= 96) { riskVal.innerText = "VERY LOW"; riskVal.style.color = "var(--success)"; }
+            else { riskVal.innerText = "LOW"; riskVal.style.color = "var(--warning)"; }
 
-            document.getElementById('algoVal').innerText = d.algo;
-            document.getElementById('patternVal').innerText = d.pattern;
-            document.getElementById('triggerVal').innerText = d.trigger;
-            document.getElementById('mathVal').innerText = d.math;
+            const nums = d.color === 'Red' ? [0,2,4,6,8] : [1,3,5,7,9];
+            document.getElementById('dispNums').innerText = nums.sort(() => .5 - Math.random()).slice(0,3).join(' ');
         }
 
-        function setStatus(idx, st) {
-            history[idx].status = st;
-            localStorage.setItem('nai_v7_logs', JSON.stringify(history));
+        function setStatus(index, status) {
+            history[index].status = status;
+            if(status === 'loss') { lossCount++; } else { lossCount = 0; document.getElementById('recoveryMsg').style.display = 'none'; }
+            if(lossCount >= 2) {
+                const rBox = document.getElementById('recoveryMsg');
+                rBox.style.display = 'block';
+                rBox.innerText = `⚠️ AI ALERT: ${lossCount} LOSSES! USE X${Math.pow(3, lossCount)} RECOVERY.`;
+            }
             render();
-            
-            setTimeout(() => {
-                const currentPeriod = history[idx].period;
-                document.getElementById('pInp').value = currentPeriod;
-                predict();
-            }, 500);
+            setTimeout(() => { document.getElementById('pInp').value = history[index].period; predict(); }, 600);
         }
 
-        function clearHistory() {
-            if(confirm("Clear Data?")) {
+        function resetHistory() {
+            if(confirm("Are you sure you want to clear all history?")) {
                 history = [];
-                localStorage.removeItem('nai_v7_logs');
+                lossCount = 0;
+                document.getElementById('recoveryMsg').style.display = 'none';
+                document.getElementById('resDisplay').style.display = 'none';
+                document.getElementById('idleText').style.display = 'block';
+                document.getElementById('predictionBox').className = '';
                 render();
             }
         }
@@ -312,23 +277,20 @@
             b.innerHTML = '';
             history.forEach((item, index) => {
                 const r = b.insertRow();
-                let statusHtml = item.status === 'Pending' ? 
-                    `<button style="color:var(--success);background:none;border:1px solid var(--success);padding:2px 5px;border-radius:4px;font-family:Orbitron;cursor:pointer;" onclick="setStatus(${index}, 'Win')">W</button> 
-                     <button style="color:var(--fail);background:none;border:1px solid var(--fail);padding:2px 5px;border-radius:4px;font-family:Orbitron;cursor:pointer;" onclick="setStatus(${index}, 'Loss')">L</button>` : 
-                    `<span style="color:var(--${item.status === 'Win' ? 'success' : 'fail'});font-family:Orbitron;">${item.status.toUpperCase()}</span>`;
-                
+                let statusHtml = item.status === 'pending' ? 
+                    `<button class="mark-btn mark-w" onclick="setStatus(${index}, 'win')">W</button>
+                     <button class="mark-btn mark-l" onclick="setStatus(${index}, 'loss')">L</button>` : 
+                    `<span style="color:var(--${item.status === 'win' ? 'success' : 'fail'})">${item.status.toUpperCase()}</span>`;
+
                 r.innerHTML = `
-                    <td style="font-family:Orbitron;font-size:0.6rem">${item.period.slice(-3)}</td>
-                    <td class="${item.size === 'Big' ? 'sz-big' : 'sz-small'}" style="font-family:Orbitron;">${item.size}</td>
-                    <td class="clr-${item.color.toLowerCase()}" style="font-family:Orbitron;">${item.color}</td>
-                    <td style="font-family:Orbitron;">${item.status === 'Pending' ? '--' : item.size}</td>
+                    <td>${item.period.slice(-3)}</td>
+                    <td style="color:${item.size === 'Big' ? '#ffd700' : 'var(--primary)'}">${item.size}</td>
+                    <td style="color:${item.color === 'Red' ? 'var(--fail)' : 'var(--success)'}">${item.color}</td>
+                    <td>${item.status === 'pending' ? '--' : item.size}</td>
                     <td>${statusHtml}</td>
                 `;
             });
         }
-
-        // Check Session on Load
-        if(sessionStorage.getItem('isLoggedIn') === 'true') showDashboard();
     </script>
 </body>
 </html>
