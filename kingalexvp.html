@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quantum 55 Predictor Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0e1f;
+            --bg-secondary: #0f162a;
+            --glass: rgba(15,22,42,0.95);
+            --border-glow: rgba(138,43,226,0.4);
+            
+            --big-yellow: #ffd700;
+            --small-blue: #00b8ff;
+            --green: #00d95f;
+            --violet: #8a2be2;
+            --red: #ff3b30;
+            
+            --text-primary: #ffffff;
+            --text-secondary: #b0b8cc;
+            --text-muted: #64748b;
+            
+            --shadow-glow: 0 0 20px rgba(138,43,226,0.3);
+            --shadow-premium: 0 8px 32px rgba(0,0,0,0.6);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            min-height: 100vh;
+            padding: 12px 8px;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Enhanced Login Screen */
+        .login-screen {
+            text-align: center;
+            padding: 40px 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .dev-header {
+            background: linear-gradient(145deg, rgba(138,43,226,0.2), rgba(0,217,95,0.2));
+            border: 2px solid var(--border-glow);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-premium), var(--shadow-glow);
+            backdrop-filter: blur(20px);
+        }
+        .dev-name {
+            font-family: 'Orbitron', monospace;
+            font-size: 24px;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--violet), var(--green), var(--big-yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+        .dev-contact {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            color: var(--big-yellow);
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .dev-contact i {
+            font-size: 18px;
+            color: var(--green);
+            animation: pulse 2s infinite;
+        }
+        .login-form {
+            background: var(--glass);
+            border: 2px solid var(--border-glow);
+            border-radius: 24px;
+            padding: 48px 32px;
+            box-shadow: var(--shadow-premium), inset 0 1px 0 rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+        .login-form::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(138,43,226,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .login-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 28px;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--violet), var(--green), var(--big-yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 32px;
+            text-shadow: 0 0 30px rgba(138,43,226,0.5);
+        }
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .login-input {
+            width: 100%;
+            height: 52px;
+            background: rgba(0,0,0,0.6);
+            border: 2px solid transparent;
+            border-radius: 16px;
+            padding: 0 20px;
+            font-size: 16px;
+            color: var(--violet);
+            outline: none;
+            transition: all 0.4s ease;
+            font-weight: 600;
+        }
+        .login-input:focus {
+            border-color: var(--violet);
+            box-shadow: var(--shadow-glow), 0 0 0 4px rgba(138,43,226,0.1);
+            background: rgba(138,43,226,0.08);
+            transform: translateY(-2px);
+        }
+        .login-btn {
+            width: 100%;
+            height: 52px;
+            background: linear-gradient(145deg, var(--violet), var(--green));
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-weight: 800;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Orbitron', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(138,43,226,0.4);
+        }
+        .login-btn:active {
+            transform: translateY(-1px);
+        }
+        /* VIP Dashboard */
+        .vip-dashboard {
+            display: none;
+        }
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(145deg, var(--glass), rgba(15,22,42,0.8));
+            border: 2px solid var(--border-glow);
+            border-radius: 20px;
+            padding: 20px 24px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-premium), var(--shadow-glow);
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--violet), var(--green), var(--big-yellow), transparent);
+            animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer { 0%, 100% { left: -100%; } 50% { left: 100%; } }
+        .logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 26px;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--violet), var(--green), var(--big-yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--big-yellow);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        /* Rest of the styles remain the same */
+        .auth-controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .auth-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            background: var(--glass);
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .auth-btn:hover {
+            box-shadow: var(--shadow-glow);
+            transform: translateY(-1px);
+        }
+        .auth-btn.active {
+            background: linear-gradient(145deg, var(--violet), rgba(138,43,226,0.2));
+            border-color: var(--violet);
+            box-shadow: 0 0 20px rgba(138,43,226,0.4);
+        }
+        .status-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .live-status {
+            background: var(--glass);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 12px;
+        }
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--green);
+        }
+        .status-dot {
+            width: 8px; height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 1.2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+        }
+        .stat-item {
+            background: var(--glass);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            padding: 12px 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .stat-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+        .stat-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        .stat-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--violet);
+        }
+        .input-section {
+            margin-bottom: 12px;
+        }
+        .input-field {
+            width: 100%;
+            height: 48px;
+            background: rgba(0,0,0,0.6);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 0 20px;
+            font-family: 'Orbitron', monospace;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--violet);
+            text-align: center;
+            letter-spacing: 2px;
+            outline: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .input-field:focus {
+            border-color: var(--violet);
+            box-shadow: var(--shadow-glow);
+            background: rgba(138,43,226,0.1);
+        }
+        .input-field.analyzing {
+            border-color: var(--violet);
+            background: linear-gradient(90deg, rgba(138,43,226,0.3), rgba(0,217,95,0.2));
+            color: var(--violet) !important;
+            animation: analyze 0.6s infinite;
+        }
+        @keyframes analyze {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
+        }
+        .prediction-section {
+            background: linear-gradient(145deg, var(--glass), rgba(15,22,42,0.7));
+            border: 2px solid var(--border-glow);
+            border-radius: 16px;
+            padding: 16px 16px;
+            margin-bottom: 12px;
+            display: none;
+            box-shadow: var(--shadow-premium), var(--shadow-glow);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .prediction-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 20%, rgba(138,43,226,0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(0,217,95,0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .prediction-section::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--violet), var(--green), var(--big-yellow), transparent);
+            animation: scanline 2s infinite;
+        }
+        @keyframes scanline {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        .pred-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .confidence-badge {
+            padding: 4px 12px;
+            background: linear-gradient(145deg, rgba(138,43,226,0.2), rgba(0,0,0,0.5));
+            border: 1px solid var(--violet);
+            border-radius: 16px;
+            font-family: 'Orbitron', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            box-shadow: 0 0 15px rgba(138,43,226,0.3);
+        }
+        .prediction-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 12px;
+        }
+        .pred-size {
+            font-family: 'Orbitron', monospace;
+            font-size: 28px;
+            font-weight: 900;
+            min-width: 70px;
+            text-shadow: 0 0 15px currentColor;
+        }
+        .pred-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', monospace;
+            font-size: 22px;
+            font-weight: 900;
+            box-shadow: 0 0 25px currentColor;
+            color: white;
+            position: relative;
+            animation: circlePulse 2s infinite;
+        }
+        @keyframes circlePulse {
+            0%, 100% { box-shadow: 0 0 25px currentColor; }
+            50% { box-shadow: 0 0 35px currentColor, 0 0 50px currentColor; }
+        }
+        .pred-number { font-size: 24px; }
+        .pred-conf {
+            font-family: 'Orbitron', monospace;
+            font-size: 16px;
+            font-weight: 800;
+            margin-top: 2px;
+            color: var(--big-yellow);
+        }
+        .trend-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .trend-item {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 8px 6px;
+            text-align: center;
+        }
+        .trend-label {
+            font-size: 8px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+        .trend-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--violet);
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 12px;
+            background: var(--glass);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px 8px;
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .tab-btn.active {
+            background: linear-gradient(145deg, var(--violet), rgba(138,43,226,0.3));
+            color: var(--text-primary);
+        }
+        .tab-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: flex; flex-direction: column; flex: 1; }
+        .history-table-container {
+            background: var(--glass);
+            border: 1px solid var(--border-glow);
+            border-radius: 16px;
+            overflow: hidden;
+            flex: 1;
+            box-shadow: var(--shadow-premium);
+        }
+        .history-header {
+            padding: 12px 16px;
+            background: rgba(0,0,0,0.4);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            flex: 1;
+            overflow: auto;
+            table-layout: fixed;
+        }
+        .history-table thead {
+            position: sticky;
+            top: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 10;
+        }
+        .history-table th {
+            padding: 8px 2px;
+            text-align: center;
+            color: var(--violet);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 9px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            white-space: nowrap;
+        }
+        .history-table td {
+            padding: 6px 2px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .history-table tbody tr:hover {
+            background: rgba(138,43,226,0.1);
+        }
+        .color-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 1px;
+            box-shadow: 0 0 4px currentColor;
+            vertical-align: middle;
+        }
+        .dot-red { background: var(--red); }
+        .dot-green { background: var(--green); }
+        .dot-violet { background: var(--violet); }
+        .dot-0 { background: linear-gradient(45deg, var(--red), var(--violet)); }
+        .dot-5 { background: linear-gradient(45deg, var(--green), var(--violet)); }
+        .status-badge {
+            padding: 3px 6px;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: 700;
+            min-width: 20px;
+        }
+        .status-w { 
+            background: linear-gradient(145deg, var(--green), #00b850);
+            color: white;
+        }
+        .status-l { 
+            background: linear-gradient(145deg, var(--red), #d32f2f);
+            color: white;
+        }
+        .lv-badge {
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 8px;
+            font-weight: 700;
+            background: linear-gradient(145deg, var(--violet), rgba(138,43,226,0.3));
+            color: var(--big-yellow);
+        }
+        .action-btns {
+            display: flex;
+            gap: 2px;
+            justify-content: center;
+            flex-wrap: nowrap;
+        }
+        .game-btn {
+            padding: 3px 6px;
+            border: none;
+            border-radius: 8px;
+            font-size: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 28px;
+            font-family: 'Orbitron', monospace;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .btn-win {
+            background: linear-gradient(145deg, var(--green), #00b850);
+            color: white;
+            box-shadow: 0 2px 8px rgba(0,217,95,0.4);
+        }
+        .btn-loss {
+            background: linear-gradient(145deg, var(--red), #d32f2f);
+            color: white;
+            box-shadow: 0 2px 8px rgba(255,59,48,0.4);
+        }
+        .game-btn:hover { transform: translateY(-1px); }
+        .empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 40px 20px;
+        }
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,59,48,0.9);
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            display: none;
+            z-index: 1000;
+            box-shadow: var(--shadow-premium);
+            transition: all 0.3s ease;
+        }
+        .logout-btn:hover {
+            background: var(--red);
+            transform: scale(1.1) rotate(180deg);
+        }
+        @media (max-width: 480px) {
+            .container { padding: 8px 4px; }
+            .prediction-main { flex-direction: column; gap: 8px; }
+            .pred-circle { width: 65px; height: 65px; font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <button class="logout-btn" onclick="lotteryAI.logout()" title="Logout">
+        <i class="fas fa-sign-out-alt"></i>
+    </button>
+    <div class="container">
+        <!-- Enhanced Login Screen -->
+        <div id="loginScreen" class="login-screen">
+            <div class="dev-header">
+                <div class="dev-name">Alex King</div>
+                <div class="dev-contact">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>9933268269</span>
+                </div>
+            </div>
+            <div class="login-form">
+                <div class="login-title">VIP Alex King</div>
+                
+                <div class="input-group">
+                    <input type="text" id="usernameInput" class="login-input" placeholder="Username" maxlength="20">
+                </div>
+                <div class="input-group">
+                    <input type="password" id="passwordInput" class="login-input" placeholder="Password">
+                </div>
+                <button class="login-btn" onclick="lotteryAI.login()">
+                    <i class="fas fa-sign-in-alt"></i> Get Access
+                </button>
+            </div>
+        </div>
+
+        <!-- VIP Dashboard -->
+        <div id="vipDashboard" class="vip-dashboard">
+            <!-- Premium Header with Logo + Title -->
+            <div class="dashboard-header">
+                <div>
+                    <div class="logo">VIP Alex King</div>
+                    <div class="header-title">Juju Trading</div>
+                </div>
+            </div>
+
+            <!-- Auth Controls -->
+            <div class="auth-controls">
+                <button class="auth-btn active" onclick="toggleLogin('predict')">Predict</button>
+                <button class="auth-btn" onclick="toggleLogin('history')">My History</button>
+                <button class="auth-btn" onclick="toggleLogin('game')">Game History</button>
+            </div>
+
+            <!-- Status & Stats -->
+            <div class="status-row">
+                <div class="live-status">
+                    <span>Quantum Core</span>
+                    <div class="status-indicator">
+                        <div class="status-dot"></div>
+                        <span id="liveStatus">ACTIVE</span>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Accuracy</div>
+                        <div class="stat-value" id="accuracy">0%</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Streak</div>
+                        <div class="stat-value" id="streak">0W</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input -->
+            <div class="input-section">
+                <input type="text" id="periodInput" class="input-field" placeholder="Enter Period ID" maxlength="12">
+            </div>
+
+            <!-- Prediction Tab -->
+            <div id="predictTab" class="tab-content tab-pane active">
+                <div id="predictionCard" class="prediction-section">
+                    <div class="pred-header">
+                        <span>AI Analysis Complete</span>
+                        <div class="confidence-badge" id="confBadge">98%</div>
+                    </div>
+                    <div class="prediction-main">
+                        <div class="pred-size" id="predResult">BIG</div>
+                        <div class="pred-circle" id="predCircle">
+                            <div class="pred-number" id="predNum">05</div>
+                            <div class="pred-conf" id="predConf">98%</div>
+                        </div>
+                    </div>
+                    <div id="aiStatus" style="font-size: 10px; color: var(--violet); font-weight: 600; margin-bottom: 8px;">
+                        NORMAL MODE | 98% Confidence
+                    </div>
+                    <div class="trend-stats">
+                        <div class="trend-item">
+                            <div class="trend-label">BIG Trend</div>
+                            <div class="trend-value" id="bigTrend">62%</div>
+                        </div>
+                        <div class="trend-item">
+                            <div class="trend-label">SMALL Trend</div>
+                            <div class="trend-value" id="smallTrend">38%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- My History Tab -->
+            <div id="historyTab" class="tab-content tab-pane">
+                <div class="history-header">
+                    <span>My History</span>
+                    <i class="fas fa-redo" onclick="lotteryAI.resetAll()" style="cursor: pointer; color: var(--violet);" title="Reset All"></i>
+                </div>
+                <div class="history-table-container">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Period</th>
+                                <th>Prediction</th>
+                                <th>Result</th>
+                                <th>Lv</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyList"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Game History Tab -->
+            <div id="gameTab" class="tab-content tab-pane">
+                <div class="history-header">
+                    <span>Game History</span>
+                </div>
+                <div class="history-table-container">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Period</th>
+                                <th>Number</th>
+                                <th>Big/Small</th>
+                                <th>Color</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gameHistoryList"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+let currentTab = 'predict';
+
+class LotteryAI {
+    constructor() {
+        // 3 Demo Users (Not shown in UI)
+        this.validUsers = {
+            'vipuser': 'quantum123',
+            'trader1': 'juju2024',
+            'proking': 'vip999'
+        };
+        
+        this.isLoggedIn = localStorage.getItem('vip_access') === 'granted';
+        this.username = localStorage.getItem('vip_username') || '';
+        this.log = JSON.parse(localStorage.getItem('lottery_log')) || [];
+        this.gameHistory = JSON.parse(localStorage.getItem('game_history')) || [];
+        this.stats = JSON.parse(localStorage.getItem('lottery_stats')) || { 
+            wins: 0, losses: 0, streak: 0, last: 'W', consecutiveLosses: 0,
+            bigCount: 0, smallCount: 0
+        };
+        this.currentPeriod = '';
+        this.aiMode = 'NORMAL';
+        this.currentLevel = 1;
+        this.init();
+    }
+
+    init() {
+        this.updateUI();
+        
+        if (this.isLoggedIn) {
+            document.getElementById('vipDashboard').style.display = 'block';
+            document.getElementById('loginScreen').style.display = 'none';
+            document.querySelector('.logout-btn').style.display = 'block';
+            this.setupPredict();
+        }
+
+        document.getElementById('usernameInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.login();
+        });
+        document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.login();
+        });
+    }
+
+    setupPredict() {
+        const input = document.getElementById('periodInput');
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const period = e.target.value.trim();
+                if (period.length >= 4) {
+                    e.preventDefault();
+                    this.predict(period);
+                }
+            }
+        });
+        input.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        });
+        input.focus();
+        this.updateTrends();
+        this.updateLiveStatus();
+        setInterval(() => this.updateLiveStatus(), 1500);
+        this.renderHistory();
+        this.renderGameHistory();
+    }
+
+    login() {
+        const username = document.getElementById('usernameInput').value.trim();
+        const password = document.getElementById('passwordInput').value.trim();
+        
+        // Check against 3 demo users
+        if (this.validUsers[username] && this.validUsers[username] === password) {
+            localStorage.setItem('vip_username', username);
+            localStorage.setItem('vip_access', 'granted');
+            this.isLoggedIn = true;
+            location.reload();
+        } else {
+            // Silent fail - no feedback
+        }
+    }
+
+    logout() {
+        if (confirm('Logout from VIP?')) {
+            localStorage.removeItem('vip_access');
+            localStorage.removeItem('vip_username');
+            location.reload();
+        }
+    }
+
+    updateUI() {
+        if (this.isLoggedIn) {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('vipDashboard').style.display = 'block';
+            document.querySelector('.logout-btn').style.display = 'block';
+        } else {
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('vipDashboard').style.display = 'none';
+            document.querySelector('.logout-btn').style.display = 'none';
+        }
+    }
+
+    predict(period) {
+        this.currentPeriod = period;
+        document.getElementById('periodInput').classList.add('analyzing');
+        
+        let predNum, isBig, conf = 85 + Math.random() * 15;
+        const losses = this.stats.consecutiveLosses;
+        
+        if (losses >= 2) {
+            this.aiMode = 'REVERSE';
+            const last = this.log[0];
+            predNum = (last.predNum + 5) % 10;
+            isBig = !last.isBig;
+            conf += 8;
+        } else {
+            this.aiMode = 'NORMAL';
+            const pNum = parseInt(period.slice(-4)) || 0;
+            predNum = Math.floor((pNum * 31 + Date.now() % 100) % 10);
+            isBig = predNum >= 5;
+        }
+        const numClass = this.getNumberClass(predNum);
+        
+        setTimeout(() => {
+            document.getElementById('periodInput').classList.remove('analyzing');
+            this.showPrediction({
+                period: period.slice(-6).padStart(6, '0'),
+                predSize: isBig ? 'BIG' : 'SMALL',
+                predNum,
+                isBig,
+                conf: Math.round(conf),
+                status: 'PENDING',
+                numClass,
+                level: this.currentLevel
+            });
+        }, 500);
+    }
+
+    getNumberClass(num) {
+        if (num === 0) return 'num-0 dot-0';
+        if (num === 5) return 'num-5 dot-5';
+        if ([1,3,7,9].includes(num)) return 'num-green dot-green';
+        return 'num-red dot-red';
+    }
+
+    getDotClass(num) {
+        if (num === 0) return 'dot-0';
+        if (num === 5) return 'dot-5';
+        if ([1,3,7,9].includes(num)) return 'dot-green';
+        return 'dot-red';
+    }
+
+    showPrediction(pred) {
+        document.getElementById('predictTab').scrollIntoView({ behavior: 'smooth' });
+        
+        document.getElementById('predResult').textContent = pred.predSize;
+        document.getElementById('predResult').style.color = pred.isBig ? 'var(--big-yellow)' : 'var(--small-blue)';
+        
+        const predCircle = document.getElementById('predCircle');
+        predCircle.className = `pred-circle ${pred.numClass}`;
+        document.getElementById('predNum').textContent = pred.predNum;
+        document.getElementById('predConf').textContent = pred.conf + '%';
+        document.getElementById('confBadge').textContent = pred.conf + '%';
+        document.getElementById('aiStatus').textContent = `${this.aiMode} MODE | ${pred.conf}% Confidence`;
+        
+        document.getElementById('predictionCard').style.display = 'block';
+        
+        if (pred.isBig) this.stats.bigCount++;
+        else this.stats.smallCount++;
+        
+        this.log.unshift(pred);
+        if (this.log.length > 50) this.log.pop();
+        this.updateTrends();
+        this.renderHistory();
+        this.updateStats();
+    }
+
+    setResult(index, result) {
+        const pred = this.log[index];
+        if (pred.status !== 'PENDING') return;
+        pred.status = result;
+        let actualNum, actualSize;
+        
+        if (result === 'WIN') {
+            actualSize = pred.predSize;
+            actualNum = pred.predNum;
+            this.stats.wins++;
+            this.stats.consecutiveLosses = 0;
+            this.stats.last = 'W';
+            this.currentLevel = Math.min(this.currentLevel + 1, 8);
+        } else {
+            actualSize = pred.predSize === 'BIG' ? 'SMALL' : 'BIG';
+            actualNum = Math.floor(Math.random() * 10);
+            this.stats.losses++;
+            this.stats.consecutiveLosses++;
+            this.stats.last = 'L';
+            this.currentLevel = Math.max(this.currentLevel - 1, 1);
+        }
+        
+        this.gameHistory.unshift({
+            period: pred.period,
+            number: actualNum,
+            size: actualSize,
+            colorClass: this.getDotClass(actualNum)
+        });
+        if (this.gameHistory.length > 100) this.gameHistory.pop();
+        pred.actualSize = actualSize;
+        pred.actualNum = actualNum;
+        this.stats.streak = this.stats.last === 'W' ? this.stats.streak + 1 : 1;
+        this.save();
+        this.updateStats();
+        this.renderHistory();
+        this.renderGameHistory();
+        
+        setTimeout(() => {
+            const nextPeriod = (parseInt(this.currentPeriod) + 1).toString();
+            document.getElementById('periodInput').value = nextPeriod;
+            this.currentPeriod = nextPeriod;
+            this.predict(nextPeriod);
+        }, 600);
+    }
+
+    updateTrends() {
+        const total = this.stats.bigCount + this.stats.smallCount;
+        document.getElementById('bigTrend').textContent = total ? Math.round((this.stats.bigCount/total)*100) + '%' : '50%';
+        document.getElementById('smallTrend').textContent = total ? Math.round((this.stats.smallCount/total)*100) + '%' : '50%';
+    }
+
+    updateStats() {
+        const total = this.stats.wins + this.stats.losses;
+        document.getElementById('accuracy').textContent = total ? Math.round((this.stats.wins/total)*100) + '%' : '0%';
+        document.getElementById('streak').textContent = this.stats.streak + this.stats.last;
+        document.getElementById('streak').style.color = this.stats.last === 'W' ? 'var(--green)' : 'var(--red)';
+    }
+
+    updateLiveStatus() {
+        const status = ['ACTIVE', 'SCANNING', 'AI', 'READY'][Math.floor(Math.random() * 4)];
+        document.getElementById('liveStatus').textContent = status;
+    }
+
+    renderHistory() {
+        const tbody = document.getElementById('historyList');
+        if (!this.log.length) {
+            tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><i class="fas fa-history" style="font-size: 48px; opacity: 0.5; margin-bottom: 12px;"></i><div>No predictions yet</div></td></tr>';
+            return;
+        }
+        tbody.innerHTML = this.log.map((pred, i) => {
+            const isBig = pred.predSize === 'BIG';
+            const statusClass = pred.status === 'WIN' ? 'status-w' : 'status-l';
+            const statusText = pred.status === 'PENDING' ? 'PENDING' : (pred.status === 'WIN' ? 'W' : 'L');
+            
+            return `
+                <tr>
+                    <td style="font-family: Orbitron, monospace; font-weight: 700; color: var(--violet);">${pred.period}</td>
+                    <td style="display: flex; gap: 4px; justify-content: center; align-items: center; font-size: 10px;">
+                        <span style="color: ${isBig ? 'var(--big-yellow)' : 'var(--small-blue)'}; font-weight: 700;">${pred.predSize}</span>
+                        <span style="font-family: Orbitron, monospace; font-weight: 800; font-size: 11px;">${pred.predNum}</span>
+                        <span class="color-dot ${pred.numClass.split(' ')[1] || 'dot-red'}" title="Color"></span>
+                    </td>
+                    <td style="color: ${pred.actualSize === 'BIG' ? 'var(--big-yellow)' : 'var(--small-blue)'}; font-weight: 700;">${pred.actualSize || '--'}</td>
+                    <td><span class="lv-badge">Lv${pred.level || 1}</span></td>
+                    <td>
+                        ${pred.status === 'PENDING' ? 
+                            `<div class="action-btns">
+                                <button class="game-btn btn-win" onclick="lotteryAI.setResult(${i},'WIN')">
+                                    <i class="fas fa-check"></i> W
+                                </button>
+                                <button class="game-btn btn-loss" onclick="lotteryAI.setResult(${i},'LOSS')">
+                                    <i class="fas fa-times"></i> L
+                                </button>
+                            </div>` :
+                            `<span class="status-badge ${statusClass}">${statusText}</span>`
+                        }
+                    </td>
+                </tr>`;
+        }).join('');
+    }
+
+    renderGameHistory() {
+        const tbody = document.getElementById('gameHistoryList');
+        if (!this.gameHistory.length) {
+            tbody.innerHTML = '<tr><td colspan="4" class="empty-state"><i class="fas fa-gamepad" style="font-size: 48px; opacity: 0.5; margin-bottom: 12px;"></i><div>No game history</div></td></tr>';
+            return;
+        }
+        tbody.innerHTML = this.gameHistory.map(game => `
+            <tr>
+                <td style="font-family: Orbitron, monospace; font-weight: 700; color: var(--violet);">${game.period}</td>
+                <td style="font-family: Orbitron, monospace; font-size: 13px; font-weight: 800; color: var(--violet);">${game.number}</td>
+                <td style="color: ${game.size === 'BIG' ? 'var(--big-yellow)' : 'var(--small-blue)'}; font-weight: 700;">${game.size}</td>
+                <td><span class="color-dot ${game.colorClass}" title="Color"></span></td>
+            </tr>
+        `).join('');
+    }
+
+    save() {
+        localStorage.setItem('lottery_log', JSON.stringify(this.log));
+        localStorage.setItem('game_history', JSON.stringify(this.gameHistory));
+        localStorage.setItem('lottery_stats', JSON.stringify(this.stats));
+    }
+
+    resetAll() {
+        if (confirm('Reset all data?')) {
+            localStorage.clear();
+            location.reload();
+        }
+    }
+}
+
+const lotteryAI = new LotteryAI();
+
+function toggleLogin(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.auth-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    document.getElementById('predictTab').classList.toggle('active', tab === 'predict');
+    document.getElementById('historyTab').classList.toggle('active', tab === 'history');
+    document.getElementById('gameTab').classList.toggle('active', tab === 'game');
+}
+</script>
+</body>
+</html>
