@@ -7,215 +7,631 @@
     <title>Nexus AI Integrated V10</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
-    
+
     <style>
         :root {
             --bg: #050505;
             --card-bg: #0d0d0d;
+            --card-bg-hover: #1a1a1a;
             --primary: #00f0ff;
             --secondary: #7000ff;
             --success: #00ff9d;
             --danger: #ff0055;
             --warning: #ffea00;
             --border: rgba(255, 255, 255, 0.1);
+            --glow: rgba(0, 240, 255, 0.3);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background-color: var(--bg);
+            background: linear-gradient(135deg, #050505 0%, #0a0a1a 50%, #050505 100%);
+            background-attachment: fixed;
             color: #fff;
             font-family: 'Space Grotesk', sans-serif;
             height: 100vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            position: relative;
         }
 
-        /* --- HEADER --- */
+        /* Animated background particles */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #00f0ff15, transparent),
+                radial-gradient(2px 2px at 40px 70px, #7000ff20, transparent),
+                radial-gradient(1px 1px at 90px 40px, #00ff9d15, transparent),
+                radial-gradient(1px 1px at 130px 80px, #ff005520, transparent);
+            background-repeat: repeat;
+            background-size: 200px 100px;
+            animation: float 20s infinite linear;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(100px, 100px) rotate(360deg); }
+        }
+
         .header {
-            padding: 15px 20px;
+            padding: 20px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border);
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(20px);
+            position: relative;
+            z-index: 10;
         }
-        
-        .brand { font-family: 'Syncopate'; font-size: 14px; letter-spacing: 2px; color: var(--primary); }
-        .timer-box { font-family: 'Syncopate'; color: var(--danger); font-size: 16px; border: 1px solid var(--danger); padding: 4px 10px; border-radius: 4px; }
 
-        .content { flex: 1; overflow-y: auto; padding: 15px; }
+        .brand { 
+            font-family: 'Syncopate'; 
+            font-size: 18px; 
+            letter-spacing: 3px; 
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px var(--glow);
+        }
 
-        /* --- MAIN PREDICTION CARD --- */
+        .timer-box { 
+            font-family: 'Syncopate'; 
+            color: var(--danger); 
+            font-size: 20px; 
+            border: 2px solid var(--danger); 
+            padding: 8px 16px; 
+            border-radius: 12px;
+            background: rgba(255,0,85,0.1);
+            box-shadow: 0 0 20px rgba(255,0,85,0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255,0,85,0.3); }
+            50% { box-shadow: 0 0 30px rgba(255,0,85,0.6); }
+        }
+
+        .content { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 25px; 
+            position: relative;
+            z-index: 10;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .content::-webkit-scrollbar { display: none; }
+
+        /* Enhanced Prediction Card */
         .pred-card {
-            background: var(--card-bg);
+            background: linear-gradient(145deg, var(--card-bg), rgba(13,13,13,0.8));
             border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 25px 15px;
+            border-radius: 25px;
+            padding: 35px 25px;
             text-align: center;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 25px;
+            box-shadow: 
+                0 20px 40px rgba(0,0,0,0.6),
+                0 0 50px var(--glow);
+            backdrop-filter: blur(15px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .p-label { font-size: 10px; color: #666; letter-spacing: 2px; margin-bottom: 5px; }
-        .p-num { font-size: 18px; font-weight: 700; font-family: 'Syncopate'; margin-bottom: 20px; color: #fff; }
+        .pred-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(transparent, var(--glow), transparent);
+            animation: rotate 4s linear infinite;
+            opacity: 0.1;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        .pred-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                0 25px 50px rgba(0,0,0,0.8),
+                0 0 80px var(--glow);
+        }
+
+        .p-label { 
+            font-size: 12px; 
+            color: #888; 
+            letter-spacing: 3px; 
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .p-num { 
+            font-size: 22px; 
+            font-weight: 700; 
+            font-family: 'Syncopate'; 
+            margin-bottom: 25px; 
+            color: var(--primary);
+            text-shadow: 0 0 20px var(--glow);
+        }
 
         .display-row {
-            display: flex; justify-content: center; align-items: center; gap: 15px;
-            background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; margin-bottom: 15px;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 20px;
+            background: rgba(255,255,255,0.05); 
+            padding: 20px; 
+            border-radius: 16px; 
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
         }
-        .main-size { font-size: 32px; font-weight: 700; text-transform: uppercase; }
-        .main-num { font-size: 32px; font-family: 'Syncopate'; }
-        .main-dot { width: 18px; height: 18px; border-radius: 50%; box-shadow: 0 0 10px currentColor; }
+        .main-size { 
+            font-size: 40px; 
+            font-weight: 700; 
+            text-transform: uppercase;
+            text-shadow: 0 0 20px currentColor;
+        }
+        .main-num { 
+            font-size: 40px; 
+            font-family: 'Syncopate'; 
+            text-shadow: 0 0 20px currentColor;
+        }
+        .main-dot { 
+            width: 24px; 
+            height: 24px; 
+            border-radius: 50%; 
+            box-shadow: 0 0 20px currentColor;
+            animation: glow 1.5s ease-in-out infinite alternate;
+        }
 
-        /* --- HISTORY TABLE (NEW DESIGN) --- */
-        .history-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+        @keyframes glow {
+            from { box-shadow: 0 0 20px currentColor; }
+            to { box-shadow: 0 0 40px currentColor; }
+        }
+
+        /* Enhanced Stats Bar */
+        .stats-bar {
+            background: linear-gradient(145deg, var(--card-bg), rgba(13,13,13,0.8));
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            backdrop-filter: blur(15px);
+        }
+        .stat-item {
+            transition: transform 0.2s ease;
+        }
+        .stat-item:hover {
+            transform: scale(1.05);
+        }
+        .stat-item h3 {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            font-family: 'Syncopate';
+            text-shadow: 0 0 15px currentColor;
+        }
+
+        /* Enhanced History Card */
+        .history-card { 
+            background: linear-gradient(145deg, var(--card-bg), rgba(13,13,13,0.8)); 
+            border: 1px solid var(--border); 
+            border-radius: 20px; 
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            backdrop-filter: blur(15px);
+        }
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 25px;
+            background: rgba(10,10,10,0.9);
+            border-bottom: 1px solid var(--border);
+        }
         .h-head { 
-            display: grid; grid-template-columns: 2fr 2fr 2fr 1fr; 
-            padding: 12px 10px; background: #000; font-size: 9px; color: #555; font-weight: 700;
+            display: grid; 
+            grid-template-columns: 2fr 2fr 2fr 1fr; 
+            padding: 15px 20px; 
+            background: rgba(0,0,0,0.8); 
+            font-size: 11px; 
+            color: #666; 
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        .h-list { height: 320px; overflow-y: auto; }
+        .h-list { 
+            max-height: 400px; 
+            overflow-y: auto; 
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+        }
+        .h-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .h-list::-webkit-scrollbar-track { background: transparent; }
+        .h-list::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
         .h-row { 
-            display: grid; grid-template-columns: 2fr 2fr 2fr 1fr; 
-            padding: 12px 10px; border-bottom: 1px solid #1a1a1a; align-items: center; font-size: 11px;
+            display: grid; 
+            grid-template-columns: 2fr 2fr 2fr 1fr; 
+            padding: 15px 20px; 
+            border-bottom: 1px solid rgba(26,26,26,0.5); 
+            align-items: center; 
+            font-size: 12px;
+            transition: background 0.2s ease;
+        }
+        .h-row:hover {
+            background: rgba(255,255,255,0.02);
         }
 
-        /* Status Colors */
-        .win { color: var(--success); font-weight: 700; }
-        .loss { color: var(--danger); font-weight: 700; }
-        .dot-small { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px; }
-        .res-val { font-size: 10px; color: #888; }
+        .win { color: var(--success) !important; font-weight: 700; text-shadow: 0 0 10px currentColor; }
+        .loss { color: var(--danger) !important; font-weight: 700; text-shadow: 0 0 10px currentColor; }
+        .dot-small { 
+            width: 10px; 
+            height: 10px; 
+            border-radius: 50%; 
+            display: inline-block; 
+            margin-right: 8px;
+            box-shadow: 0 0 10px currentColor;
+        }
+        .res-val { font-size: 11px; color: #888; }
+
+        .clear-btn {
+            background: rgba(255,0,85,0.2);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .clear-btn:hover {
+            background: rgba(255,0,85,0.4);
+            box-shadow: 0 0 20px rgba(255,0,85,0.5);
+            transform: translateY(-2px);
+        }
+
+        .ai-status {
+            font-size: 11px;
+            color: var(--primary);
+            margin-top: 10px;
+            font-weight: 500;
+            text-shadow: 0 0 10px var(--glow);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-bar { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+            .main-size, .main-num { font-size: 28px !important; }
+            .display-row { gap: 15px; padding: 15px; }
+        }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div class="brand">NEXUS<span style="color:var(--secondary)">AI</span> V10</div>
+        <div class="brand">
+            <i class="fas fa-brain" style="margin-right: 10px;"></i>
+            NEXUS<span style="color:var(--secondary)">AI</span> V10
+        </div>
         <div class="timer-box" id="timer">00:00</div>
     </div>
 
     <div class="content">
+        <!-- Enhanced Prediction Card -->
         <div class="pred-card">
             <div class="p-label">NEXT PERIOD</div>
             <div class="p-num" id="period-display">WAITING...</div>
 
             <div class="display-row">
                 <div class="main-size" id="pred-size">--</div>
-                <div style="width:1px; height:30px; background:var(--border)"></div>
+                <div style="width:2px; height:40px; background:var(--border); border-radius: 2px;"></div>
                 <div class="main-num" id="pred-num">--</div>
                 <div class="main-dot" id="pred-dot" style="background:#333"></div>
             </div>
-            
-            <div style="font-size: 10px; color: var(--primary);">AI NEURAL ALGORITHM ACTIVE</div>
+
+            <div style="font-size: 12px; color: var(--primary); font-weight: 500;">
+                <i class="fas fa-bolt" style="margin-right: 8px;"></i>
+                AI NEURAL ALGORITHM ACTIVE
+            </div>
+            <div class="ai-status" id="ai-mode">Mode: Initializing...</div>
         </div>
 
+        <!-- Enhanced Stats Bar -->
+        <div class="stats-bar" id="stats-bar">
+            <div class="stat-item">
+                <h3><i class="fas fa-trophy"></i> WIN</h3>
+                <div class="stat-value win-val" id="total-win">0</div>
+            </div>
+            <div class="stat-item">
+                <h3><i class="fas fa-times"></i> LOSS</h3>
+                <div class="stat-value loss-val" id="total-loss">0</div>
+            </div>
+            <div class="stat-item">
+                <h3><i class="fas fa-chart-line"></i> ACCURACY</h3>
+                <div class="stat-value acc-val" id="accuracy">0%</div>
+            </div>
+            <div class="stat-item">
+                <h3><i class="fas fa-fire"></i> STREAK</h3>
+                <div class="stat-value streak-val" id="loss-streak">0</div>
+            </div>
+        </div>
+
+        <!-- Enhanced History Card -->
         <div class="history-card">
+            <div class="history-header">
+                <div>
+                    <i class="fas fa-history" style="margin-right: 10px; color: var(--primary);"></i>
+                    <strong>HISTORY LOG</strong> 
+                    <span id="history-count" style="color:#888;font-size:12px;">(0)</span>
+                </div>
+                <button class="clear-btn" id="clear-history">
+                    <i class="fas fa-trash"></i> CLEAR
+                </button>
+            </div>
             <div class="h-head">
                 <div>PERIOD</div>
                 <div>PREDICTION</div>
                 <div>RESULT</div>
-                <div style="text-align:right">STATUS</div>
+                <div>STATUS</div>
             </div>
-            <div class="h-list" id="history-list">
-                <!-- Data will appear here -->
-            </div>
+            <div class="h-list" id="history-list"></div>
         </div>
     </div>
 
     <script>
         const API_URL = "https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json";
-        let state = { lastIssue: null, lastPred: null, lossStreak: 0 };
+        
+        let state = { 
+            lastIssue: null, 
+            lastPred: null, 
+            lossStreak: 0,
+            history: []
+        };
+
+        const MAX_HISTORY = 200;
+        let fetchInterval;
 
         function getInfo(n) {
             n = parseInt(n);
             const size = n > 4 ? "Big" : "Small";
-            let color = "#ff0055"; // Red
-            if([1,3,7,9].includes(n)) color = "#00ff9d"; // Green
-            if([0,5].includes(n)) color = "#bf00ff"; // Violet
+            let color = "#ff0055";
+            if([1,3,7,9].includes(n)) color = "#00ff9d";
+            if([0,5].includes(n)) color = "#bf00ff";
             return { size, color, n };
+        }
+
+        function saveHistory() {
+            localStorage.setItem('nexusHistory', JSON.stringify(state.history));
+        }
+
+        function loadHistory() {
+            try {
+                const saved = localStorage.getItem('nexusHistory');
+                if (saved) {
+                    state.history = JSON.parse(saved).slice(-MAX_HISTORY);
+                    // Recalculate loss streak from history
+                    state.lossStreak = 0;
+                    for (let i = state.history.length - 1; i >= 0; i--) {
+                        if (!state.history[i].win) {
+                            state.lossStreak++;
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error('History load error:', e);
+            }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('history-list');
+            list.innerHTML = '';
+            
+            state.history.slice(0, MAX_HISTORY).forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'h-row';
+                const predColorClass = item.pred.size === 'Big' ? 'var(--warning)' : 'var(--primary)';
+                const resColorClass = item.result.size === 'Big' ? 'var(--warning)' : 'var(--primary)';
+                
+                row.innerHTML = `
+                    <div style="color:#888; font-size:11px;">${item.period}</div>
+                    <div>
+                        <span class="dot-small" style="background:${item.pred.color}"></span>
+                        <span style="color:${predColorClass}">${item.pred.size}</span>
+                        <span class="res-val">(${item.pred.n})</span>
+                    </div>
+                    <div>
+                        <span class="dot-small" style="background:${item.result.color}"></span>
+                        <span style="color:${resColorClass}">${item.result.size}</span>
+                        <span class="res-val">(${item.result.n})</span>
+                    </div>
+                    <div style="text-align:right;" class="${item.win ? 'win' : 'loss'}">
+                        ${item.win ? '<i class="fas fa-check"></i> WIN' : '<i class="fas fa-times"></i> LOSS'}
+                    </div>
+                `;
+                list.appendChild(row);
+            });
+
+            document.getElementById('history-count').textContent = `(${Math.min(state.history.length, MAX_HISTORY)})`;
+            updateStats();
+        }
+
+        function updateStats() {
+            const wins = state.history.filter(h => h.win).length;
+            const losses = state.history.length - wins;
+            const accuracy = state.history.length ? Math.round((wins / state.history.length) * 100) : 0;
+
+            document.getElementById('total-win').textContent = wins;
+            document.getElementById('total-loss').textContent = losses;
+            document.getElementById('accuracy').textContent = accuracy + "%";
+            document.getElementById('loss-streak').textContent = state.lossStreak;
+        }
+
+        function addToHistory(period, pred, result, win) {
+            state.history.unshift({ period, pred: {...pred}, result: {...result}, win });
+            if (state.history.length > MAX_HISTORY) state.history.pop();
+            saveHistory();
+            renderHistory();
+        }
+
+        // Enhanced AI Prediction Algorithm
+        function getAdvancedPrediction(recentResults) {
+            if (recentResults.length < 5) {
+                const fallbackNums = [2,3,7,8];
+                const num = fallbackNums[Math.floor(Math.random() * fallbackNums.length)];
+                return getInfo(num);
+            }
+
+            const last10 = recentResults.slice(0, 10);
+            const bigCount = last10.filter(r => r.size === "Big").length;
+            const smallCount = 10 - bigCount;
+            
+            // Streak detection
+            const recentBigStreak = last10.slice(0, 4).every(r => r.size === "Big");
+            const recentSmallStreak = last10.slice(0, 4).every(r => r.size === "Small");
+            
+            let prediction;
+            let mode = "Neural Pattern";
+            
+            if (state.lossStreak >= 3) {
+                mode = "Recovery Matrix";
+                prediction = getInfo(bigCount > smallCount ? 2 : 8);
+            } else if (recentBigStreak) {
+                mode = "Contrarian Shift";
+                prediction = getInfo([1,2,3][Math.floor(Math.random()*3)]);
+            } else if (recentSmallStreak) {
+                mode = "Momentum Break";
+                prediction = getInfo([7,8,9][Math.floor(Math.random()*3)]);
+            } else {
+                const candidates = bigCount >= 6 ? [6,7,8,9] : [0,1,2,3,4];
+                prediction = getInfo(candidates[Math.floor(Math.random() * candidates.length)]);
+            }
+            
+            document.getElementById('ai-mode').textContent = `Mode: ${mode}`;
+            return prediction;
         }
 
         async function fetchGameData() {
             try {
                 const res = await fetch(API_URL);
+                if (!res.ok) throw new Error('API unavailable');
+                
                 const data = await res.json();
                 const latest = data.data.list[0];
                 const currentIssue = String(latest.issueNumber);
 
-                // 1. Check Previous Result & Update History
                 if (state.lastIssue && state.lastIssue !== currentIssue) {
                     const actual = getInfo(latest.number);
-                    const win = state.lastPred.size === actual.size;
-                    
-                    if (!win) state.lossStreak++; else state.lossStreak = 0;
-                    
-                    updateHistoryTable(state.lastIssue, state.lastPred, actual, win);
+                    const win = state.lastPred && state.lastPred.size === actual.size;
+
+                    if (!win) {
+                        state.lossStreak++;
+                    } else {
+                        state.lossStreak = 0;
+                    }
+
+                    addToHistory(state.lastIssue, state.lastPred, actual, win);
                 }
 
-                // 2. Predict for New Period
                 if (state.lastIssue !== currentIssue) {
                     state.lastIssue = currentIssue;
                     const nextPeriod = (BigInt(currentIssue) + 1n).toString();
                     document.getElementById('period-display').textContent = nextPeriod;
 
-                    // AI logic: If loss streak >= 2, reverse prediction
-                    let trend = latest.number > 4 ? "Big" : "Small";
-                    if(state.lossStreak >= 2) trend = (trend === "Big") ? "Small" : "Big";
+                    const recentResults = state.history.slice(0, 15).map(h => ({
+                        size: h.result.size,
+                        n: h.result.n
+                    })).reverse();
 
-                    const pNum = trend === "Big" ? [7,8][Math.floor(Math.random()*2)] : [2,3][Math.floor(Math.random()*2)];
-                    const pColor = getInfo(pNum).color;
-                    
-                    state.lastPred = { size: trend, num: pNum, color: pColor };
+                    const prediction = getAdvancedPrediction(recentResults);
+                    state.lastPred = prediction;
 
-                    // Update UI
+                    // Smooth prediction reveal
                     setTimeout(() => {
                         const sEl = document.getElementById('pred-size');
-                        sEl.textContent = trend;
-                        sEl.style.color = trend === "Big" ? "var(--warning)" : "var(--primary)";
-                        document.getElementById('pred-num').textContent = pNum;
-                        document.getElementById('pred-dot').style.background = pColor;
-                        document.getElementById('pred-dot').style.color = pColor;
-                    }, 1000);
+                        sEl.textContent = prediction.size;
+                        sEl.style.color = prediction.size === "Big" ? "var(--warning)" : "var(--primary)";
+                        
+                        document.getElementById('pred-num').textContent = prediction.n;
+                        const dot = document.getElementById('pred-dot');
+                        dot.style.background = prediction.color;
+                    }, 800);
                 }
-            } catch (e) { console.error("Sync Error"); }
-        }
-
-        function updateHistoryTable(period, pred, result, win) {
-            const list = document.getElementById('history-list');
-            const row = document.createElement('div');
-            row.className = 'h-row';
-            
-            row.innerHTML = `
-                <div style="color:#666; font-size:10px;">${period}</div>
-                <div>
-                    <span class="dot-small" style="background:${pred.color}"></span>
-                    <span style="color:${pred.size === 'Big' ? 'var(--warning)' : 'var(--primary)'}">${pred.size}</span>
-                    <span class="res-val">(${pred.num})</span>
-                </div>
-                <div>
-                    <span class="dot-small" style="background:${result.color}"></span>
-                    <span>${result.size}</span>
-                    <span class="res-val">(${result.n})</span>
-                </div>
-                <div style="text-align:right;" class="${win ? 'win' : 'loss'}">${win ? 'WIN' : 'LOSS'}</div>
-            `;
-            list.prepend(row);
+            } catch (e) {
+                console.error("Sync Error:", e);
+                document.getElementById('ai-mode').textContent = "Mode: Network Sync...";
+            }
         }
 
         function runTimer() {
-            setInterval(() => {
+            if (fetchInterval) clearInterval(fetchInterval);
+            
+            fetchInterval = setInterval(() => {
                 const sec = new Date().getSeconds();
                 const rem = 60 - sec;
-                document.getElementById('timer').textContent = "00:" + (rem < 10 ? "0" + rem : rem);
-                if (rem === 59) fetchGameData();
+                const timerEl = document.getElementById('timer');
+                timerEl.textContent = "00:" + (rem < 10 ? "0" + rem : rem);
+                
+                if (rem === 59 || rem === 0) {
+                    fetchGameData();
+                }
             }, 1000);
         }
 
-        // Initialize App
+        // Event Listeners
+        document.getElementById('clear-history').addEventListener('click', () => {
+            if (confirm("Clear all history and reset stats?")) {
+                state.history = [];
+                state.lossStreak = 0;
+                localStorage.removeItem('nexusHistory');
+                renderHistory();
+            }
+        });
+
+        // Initialize
+        loadHistory();
+        renderHistory();
         fetchGameData();
         runTimer();
 
+        // Handle visibility change
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                fetchGameData();
+            }
+        });
     </script>
 </body>
 </html>
