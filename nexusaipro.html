@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nexus AI V10 Premium</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #1a1a1a;
+            --card: #252525;
+            --gold: #d4af37;
+            --gold-light: #f1d592;
+            --red: #ff3b30;
+            --black: #0d0d0d;
+            --yellow: #ffea00;
+            --blue: #00bfff;
+            --green: #00ff9d;
+            --violet: #bf00ff;
+            --border: rgba(212, 175, 55, 0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Ubuntu', sans-serif; }
+        body { background-color: var(--black); color: #fff; overflow-x: hidden; }
+
+        /* Login Screen */
+        #login-screen {
+            height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: linear-gradient(to bottom, #1a1a1a, #0d0d0d); padding: 20px;
+        }
+        .login-box { width: 100%; max-width: 400px; text-align: center; }
+        .login-logo { font-family: 'Orbitron', sans-serif; font-size: 32px; font-weight: 900; color: var(--gold); margin-bottom: 30px; letter-spacing: 3px; }
+        .input-group { background: #333; border-radius: 12px; padding: 15px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; border: 1px solid transparent; }
+        .input-group i { color: var(--gold); font-size: 20px; }
+        .input-group input { background: transparent; border: none; color: #fff; width: 100%; outline: none; font-size: 16px; }
+        .btn-login { background: linear-gradient(to right, #d4af37, #f1d592); color: #000; border: none; width: 100%; padding: 15px; border-radius: 30px; font-weight: 900; font-size: 18px; margin-top: 20px; cursor: pointer; text-transform: uppercase; }
+
+        /* Dashboard UI */
+        #dashboard { display: none; }
+        .header { 
+            padding: 15px; background: #111; text-align: center; border-bottom: 2px solid var(--gold);
+        }
+        .title { font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 900; color: var(--gold); margin-bottom: 10px; }
+        .header-user-row { display: flex; align-items: center; justify-content: center; gap: 20px; font-weight: bold; }
+        .user-id { color: #eee; font-size: 14px; display: flex; align-items: center; gap: 5px; }
+        .logout-btn { background: var(--red); color: #fff; border: none; padding: 5px 12px; border-radius: 5px; font-size: 12px; font-weight: 900; cursor: pointer; }
+
+        .container { padding: 12px; max-width: 600px; margin: 0 auto; }
+
+        /* Prediction Card */
+        .pred-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 15px; }
+        .period-timer-row { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .p-period { color: var(--gold); font-size: 22px; font-weight: 900; letter-spacing: 1px; }
+        .timer-box { background: rgba(255, 59, 48, 0.15); color: var(--red); padding: 5px 12px; border-radius: 8px; border: 1.5px solid var(--red); font-weight: 900; font-size: 20px; font-family: 'Orbitron', sans-serif; }
+        
+        .display-row { display: flex; justify-content: center; align-items: center; gap: 25px; background: #000; padding: 20px; border-radius: 15px; border: 1px solid var(--border); }
+        .main-size { font-size: 42px; font-weight: 900; text-transform: uppercase; }
+        .main-num { font-size: 42px; font-weight: 900; }
+        .main-dot { width: 35px; height: 35px; border-radius: 50%; box-shadow: 0 0 20px rgba(255,255,255,0.1); }
+
+        /* Stats Bar */
+        .perf-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; background: #111; padding: 12px 8px; border-radius: 15px; border: 1px solid var(--border); }
+        .perf-item { text-align: center; }
+        .perf-label { font-size: 10px; color: #999; text-transform: uppercase; margin-bottom: 4px; font-weight: 900; }
+        .perf-val { font-size: 16px; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 4px; }
+
+        /* Sentiment Analysis (2 Rows) */
+        .sentiment-card { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); }
+        .sent-title { font-size: 12px; color: var(--gold-light); font-weight: 900; margin-bottom: 15px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+        .sent-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .prob-info { display: flex; justify-content: space-between; font-size: 11px; font-weight: 900; margin-bottom: 5px;}
+        .prob-bar { height: 6px; background: #000; border-radius: 3px; overflow: hidden; }
+        .prob-fill { height: 100%; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .hot-nums { display: flex; gap: 8px; }
+        .hot-n { background: var(--gold); color: #000; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; border-radius: 5px; font-weight: 900; font-size: 14px; }
+
+        /* History Tables */
+        .history-section { background: var(--card); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); }
+        .tabs { display: flex; background: #111; border-bottom: 1px solid var(--border); }
+        .tab { flex: 1; padding: 15px; text-align: center; font-size: 13px; font-weight: 900; color: #666; cursor: pointer; }
+        .tab.active { color: var(--gold); background: rgba(212,175,55,0.1); border-bottom: 3px solid var(--gold); }
+
+        .h-table { width: 100%; border-collapse: collapse; }
+        .h-th { background: #000; padding: 12px; font-size: 11px; color: #888; text-transform: uppercase; }
+        .h-td { padding: 15px 8px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .td-period { font-size: 17px; font-weight: 900; color: #ccc; }
+        .td-num { font-size: 22px; font-weight: 900; }
+        .td-size { font-size: 15px; font-weight: 900; text-transform: uppercase; }
+        
+        /* Utility Colors */
+        .yellow-txt { color: var(--yellow); }
+        .blue-txt { color: var(--blue); }
+        .status-win { color: var(--green); font-weight: 900; }
+        .status-loss { color: var(--red); font-weight: 900; }
+        .dot-small { width: 14px; height: 14px; border-radius: 50%; display: inline-block; box-shadow: 0 0 5px rgba(255,255,255,0.2); }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen">
+        <div class="login-box">
+            <div class="login-logo">BDG GAME</div>
+            <p style="color:#888; margin-bottom:25px; font-size:14px; font-weight:bold;">Log in with your phone number or email</p>
+            
+            <div class="input-group">
+                <i class="fas fa-mobile-alt"></i>
+                <input type="text" id="username" placeholder="Phone number / Email">
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="access-key" placeholder="Access Key">
+            </div>
+            
+            <button class="btn-login" onclick="handleLogin()">Log in</button>
+            <button style="background:transparent; color:var(--gold); border:1.5px solid var(--gold); width:100%; padding:15px; border-radius:30px; font-weight:900; font-size:18px; margin-top:15px; text-transform:uppercase;">Register</button>
+            
+            <div style="margin-top:30px; display:flex; justify-content: space-around; font-size:13px; color:var(--gold); font-weight:bold;">
+                <span><i class="fas fa-shield-alt"></i> Forgot password</span>
+                <span><i class="fas fa-headset"></i> Customer Service</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard">
+        <div class="header">
+            <div class="title">NEXUS AI PRO V10</div>
+            <div class="header-user-row">
+                <div class="user-id" id="display-user"><i class="fas fa-user-circle"></i> User: ---</div>
+                <button class="logout-btn" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- PREDICTION CARD -->
+            <div class="pred-card">
+                <div class="period-timer-row">
+                    <div class="p-period" id="next-period"><i class="fas fa-hashtag"></i> FETCHING...</div>
+                    <div class="timer-box" id="timer">00:00</div>
+                </div>
+                <div class="display-row">
+                    <div id="res-size" class="main-size">--</div>
+                    <div style="width:3px; height:40px; background:var(--border); border-radius: 2px;"></div>
+                    <div id="res-num" class="main-num">--</div>
+                    <div id="res-dot" class="main-dot"></div>
+                </div>
+                <div style="font-size:11px; margin-top:15px; color:var(--green); font-weight:900; letter-spacing:1px;">
+                    <i class="fas fa-microchip"></i> NEURAL NETWORK PATTERN ACTIVE
+                </div>
+            </div>
+
+            <!-- PERFORMANCE BAR -->
+            <div class="perf-bar">
+                <div class="perf-item"><div class="perf-label">Wins</div><div class="perf-val" style="color:var(--green)" id="s-wins"><i class="fas fa-trophy"></i> 0</div></div>
+                <div class="perf-item"><div class="perf-label">Losses</div><div class="perf-val" style="color:var(--red)" id="s-loss"><i class="fas fa-times-circle"></i> 0</div></div>
+                <div class="perf-item"><div class="perf-label">Accuracy</div><div class="perf-val" style="color:var(--gold)" id="s-acc"><i class="fas fa-chart-line"></i> 0%</div></div>
+                <div class="perf-item"><div class="perf-label">Streak</div><div class="perf-val" style="color:var(--yellow)" id="s-streak"><i class="fas fa-fire"></i> 0</div></div>
+            </div>
+
+            <!-- MARKET SENTIMENT (2 Rows) -->
+            <div class="sentiment-card">
+                <div class="sent-title"><i class="fas fa-analytics"></i> Market Sentiment Analysis</div>
+                <div class="sent-row">
+                    <div class="prob-box">
+                        <div class="prob-info"><span>Big</span><span id="p-big-txt">0%</span></div>
+                        <div class="prob-bar"><div id="p-big-bar" class="prob-fill" style="background:var(--yellow); width:0%"></div></div>
+                    </div>
+                    <div class="prob-box">
+                        <div class="prob-info"><span>Red</span><span id="p-red-txt">0%</span></div>
+                        <div class="prob-bar"><div id="p-red-bar" class="prob-fill" style="background:var(--red); width:0%"></div></div>
+                    </div>
+                    <div class="prob-box">
+                        <div class="prob-info"><span>Violet</span><span id="p-vio-txt">0%</span></div>
+                        <div class="prob-bar"><div id="p-vio-bar" class="prob-fill" style="background:var(--violet); width:0%"></div></div>
+                    </div>
+                </div>
+                <div class="sent-row">
+                    <div class="prob-box">
+                        <div class="prob-info"><span>Small</span><span id="p-small-txt">0%</span></div>
+                        <div class="prob-bar"><div id="p-small-bar" class="prob-fill" style="background:var(--blue); width:0%"></div></div>
+                    </div>
+                    <div class="prob-box">
+                        <div class="prob-info"><span>Green</span><span id="p-gre-txt">0%</span></div>
+                        <div class="prob-bar"><div id="p-gre-bar" class="prob-fill" style="background:var(--green); width:0%"></div></div>
+                    </div>
+                    <div class="prob-box">
+                        <div class="prob-info"><span>Hot Nums</span></div>
+                        <div class="hot-nums" id="hot-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HISTORY -->
+            <div class="history-section">
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('global')"><i class="fas fa-history"></i> GAME HISTORY</div>
+                    <div class="tab" onclick="switchTab('mine')"><i class="fas fa-user-edit"></i> MY PREDICTION</div>
+                </div>
+                <div id="global-tab">
+                    <table class="h-table">
+                        <thead><tr><th class="h-th">Period</th><th class="h-th">No.</th><th class="h-th">Size</th><th class="h-th">Color</th></tr></thead>
+                        <tbody id="global-list"></tbody>
+                    </table>
+                </div>
+                <div id="mine-tab" style="display:none">
+                    <table class="h-table">
+                        <thead><tr><th class="h-th">Period</th><th class="h-th">Color</th><th class="h-th">Size</th><th class="h-th">No.</th><th class="h-th">Status</th></tr></thead>
+                        <tbody id="mine-list"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const VALID_USERS = {
+            "Nexus_Admin1": "GOLD-9921",
+            "Nexus_Admin2": "PREM-8832",
+            "Nexus_Admin3": "PLAT-7743",
+            "Nexus_Admin4": "VIP-6654",
+            "Nexus_Admin5": "BOSS-5565"
+        };
+
+        const API_URL = "https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json";
+        let state = { 
+            fullHistory: [], myHistory: [], activeTab: 'global', 
+            lastProcessed: null, currentPred: null,
+            stats: { wins: 0, loss: 0, streak: 0 } 
+        };
+
+        function handleLogin() {
+            const user = document.getElementById('username').value;
+            const key = document.getElementById('access-key').value;
+            if (VALID_USERS[user] && VALID_USERS[user] === key) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                document.getElementById('display-user').innerHTML = `<i class="fas fa-user-circle"></i> ID: ${user}`;
+                fetchData();
+            } else {
+                alert("Invalid Access Credentials!");
+            }
+        }
+
+        function handleLogout() {
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('access-key').value = '';
+        }
+
+        function getDetails(num) {
+            const n = parseInt(num);
+            const size = n <= 4 ? 'Small' : 'Big';
+            let style = "";
+
+            if (n === 0) style = "conic-gradient(var(--red) 50%, var(--violet) 50%)";
+            else if (n === 5) style = "conic-gradient(var(--green) 50%, var(--violet) 50%)";
+            else if ([1, 3, 7, 9].includes(n)) style = "var(--green)";
+            else style = "var(--red)";
+
+            return { n, size, style };
+        }
+
+        async function fetchData() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                if (data?.data?.list) {
+                    state.fullHistory = data.data.list;
+                    const latest = data.data.list[0];
+                    if (state.lastProcessed !== latest.issueNumber) {
+                        if (state.currentPred && state.currentPred.period === latest.issueNumber) validatePred(latest);
+                        generatePred(latest.issueNumber);
+                        updateSentiment(data.data.list);
+                        state.lastProcessed = latest.issueNumber;
+                        render();
+                    }
+                }
+            } catch (e) { console.log("Updating..."); }
+        }
+
+        function generatePred(lastIssue) {
+            const nextIssue = (BigInt(lastIssue) + 1n).toString();
+            // Trend Based Neural Logic
+            const lastData = state.fullHistory.slice(0, 5).map(i => getDetails(i.number).size);
+            const counts = lastData.reduce((acc, curr) => (acc[curr] = (acc[curr] || 0) + 1, acc), {});
+            
+            const predSize = counts['Big'] > counts['Small'] ? 'Small' : 'Big';
+            const predNum = predSize === 'Big' ? (Math.random() > 0.5 ? 6 : 9) : (Math.random() > 0.5 ? 1 : 4);
+            
+            const d = getDetails(predNum);
+            state.currentPred = { period: nextIssue, ...d };
+
+            document.getElementById('next-period').innerHTML = `<i class="fas fa-hashtag"></i> ${nextIssue}`;
+            document.getElementById('res-size').innerText = d.size;
+            document.getElementById('res-size').className = "main-size " + (d.size === 'Big' ? 'yellow-txt' : 'blue-txt');
+            document.getElementById('res-num').innerText = d.n;
+            document.getElementById('res-num').style.color = d.size === 'Big' ? 'var(--yellow)' : 'var(--blue)';
+            document.getElementById('res-dot').style.background = d.style;
+        }
+
+        function validatePred(actualData) {
+            const actual = getDetails(actualData.number);
+            const win = state.currentPred.size === actual.size;
+            if (win) { state.stats.wins++; state.stats.streak++; } 
+            else { state.stats.loss++; state.stats.streak = 0; }
+            state.myHistory.unshift({ period: actualData.issueNumber, predict: state.currentPred, win });
+            updateStatsUI();
+        }
+
+        function updateStatsUI() {
+            const total = state.stats.wins + state.stats.loss;
+            document.getElementById('s-wins').innerHTML = `<i class="fas fa-trophy"></i> ${state.stats.wins}`;
+            document.getElementById('s-loss').innerHTML = `<i class="fas fa-times-circle"></i> ${state.stats.loss}`;
+            document.getElementById('s-acc').innerHTML = `<i class="fas fa-chart-line"></i> ${total > 0 ? Math.round((state.stats.wins/total)*100)+"%" : "0%"}`;
+            document.getElementById('s-streak').innerHTML = `<i class="fas fa-fire"></i> ${state.stats.streak}`;
+        }
+
+        function updateSentiment(list) {
+            let c = { Big: 0, Small: 0, Red: 0, Green: 0, Violet: 0, nums: {} };
+            list.slice(0, 100).forEach(i => {
+                const d = getDetails(i.number);
+                c[d.size]++;
+                if (i.number == 0 || i.number == 5) c.Violet++;
+                if ([1,3,7,9].includes(parseInt(i.number))) c.Green++;
+                else if ([2,4,6,8].includes(parseInt(i.number))) c.Red++;
+                c.nums[i.number] = (c.nums[i.number] || 0) + 1;
+            });
+            const set = (id, val) => {
+                const p = Math.round((val/100)*100);
+                document.getElementById(`p-${id}-txt`).innerText = p+"%";
+                document.getElementById(`p-${id}-bar`).style.width = p+"%";
+            };
+            set('big', c.Big); set('small', c.Small);
+            set('red', c.Red); set('gre', c.Green); set('vio', c.Violet);
+            const hot = Object.entries(c.nums).sort((a,b)=>b[1]-a[1]).slice(0,4);
+            document.getElementById('hot-list').innerHTML = hot.map(n => `<div class="hot-n">${n[0]}</div>`).join('');
+        }
+
+        function switchTab(tab) {
+            state.activeTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            document.getElementById('global-tab').style.display = tab === 'global' ? 'block' : 'none';
+            document.getElementById('mine-tab').style.display = tab === 'mine' ? 'block' : 'none';
+            render();
+        }
+
+        function render() {
+            const gList = document.getElementById('global-list');
+            gList.innerHTML = state.fullHistory.slice(0, 10).map(item => {
+                const d = getDetails(item.number);
+                return `<tr>
+                    <td class="h-td td-period">${item.issueNumber}</td>
+                    <td class="h-td td-num" style="color:${d.size==='Big'?'var(--yellow)':'var(--blue)'}">${item.number}</td>
+                    <td class="h-td td-size ${d.size==='Big'?'yellow-txt':'blue-txt'}">${d.size}</td>
+                    <td class="h-td"><span class="dot-small" style="background:${d.style}"></span></td>
+                </tr>`;
+            }).join('');
+
+            const mList = document.getElementById('mine-list');
+            mList.innerHTML = state.myHistory.slice(0, 10).map(item => `
+                <tr>
+                    <td class="h-td td-period">${item.period}</td>
+                    <td class="h-td"><span class="dot-small" style="background:${item.predict.style}"></span></td>
+                    <td class="h-td td-size ${item.predict.size==='Big'?'yellow-txt':'blue-txt'}">${item.predict.size}</td>
+                    <td class="h-td td-num" style="color:${item.predict.size==='Big'?'var(--yellow)':'var(--blue)'}">${item.predict.n}</td>
+                    <td class="h-td ${item.win?'status-win':'status-loss'}">${item.win?'WIN':'LOSS'}</td>
+                </tr>`).join('');
+        }
+
+        setInterval(() => {
+            const sec = 59 - new Date().getSeconds();
+            document.getElementById('timer').innerText = `00:${sec < 10 ? '0' + sec : sec}`;
+            if (sec === 0) fetchData();
+        }, 1000);
+        setInterval(fetchData, 3000);
+    </script>
+</body>
+</html>
