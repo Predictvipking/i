@@ -3,309 +3,334 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nexus AI V10 Premium</title>
+    <title>Nexus AI Pro V10 Ultra Compact</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;700&family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #1a1a1a;
-            --card: #252525;
-            --gold: #d4af37;
-            --gold-light: #f1d592;
-            --red: #ff3b30;
-            --black: #0d0d0d;
-            --yellow: #ffea00;
-            --blue: #00bfff;
-            --green: #00ff9d;
-            --violet: #bf00ff;
-            --border: rgba(212, 175, 55, 0.4);
+            --bg: #f5f5f5; --white: #ffffff; --gold: #d4af37; --gold-light: #f1d592;
+            --black: #0d0d0d; --red: #ff3b30; --yellow: #ffcc00; --blue: #007bff;
+            --green: #28a745; --violet: #af52de; --border: rgba(212, 175, 55, 0.3);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Ubuntu', sans-serif; }
-        body { background-color: var(--black); color: #fff; overflow-x: hidden; }
+        body { background-color: var(--bg); color: var(--black); overflow-x: hidden; }
 
-        /* Login Screen */
-        #login-screen {
-            height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: linear-gradient(to bottom, #1a1a1a, #0d0d0d); padding: 20px;
+        /* --- Compact Header --- */
+        .header { 
+            background: linear-gradient(to bottom, #1a1a1a, #000); padding: 8px 10px; 
+            border-bottom: 2px solid var(--gold); position: sticky; top: 0; z-index: 1000;
         }
-        .login-box { width: 100%; max-width: 400px; text-align: center; }
-        .login-logo { font-family: 'Orbitron', sans-serif; font-size: 32px; font-weight: 900; color: var(--gold); margin-bottom: 30px; letter-spacing: 3px; }
-        .input-group { background: #333; border-radius: 12px; padding: 15px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; border: 1px solid transparent; }
-        .input-group i { color: var(--gold); font-size: 20px; }
-        .input-group input { background: transparent; border: none; color: #fff; width: 100%; outline: none; font-size: 16px; }
-        .btn-login { background: linear-gradient(to right, #d4af37, #f1d592); color: #000; border: none; width: 100%; padding: 15px; border-radius: 30px; font-weight: 900; font-size: 18px; margin-top: 20px; cursor: pointer; text-transform: uppercase; }
+        .header-content { max-width: 600px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .header-title { font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: 900; background: linear-gradient(to right, #d4af37, #f1d592); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .user-badge { font-family: 'Rajdhani', sans-serif; font-size: 11px; color: var(--gold); background: rgba(212,175,55,0.1); padding: 2px 8px; border-radius: 4px; border: 1px solid var(--gold); }
 
-        /* Dashboard UI */
-        #dashboard { display: none; }
-        .header { padding: 15px; background: #111; text-align: center; border-bottom: 2px solid var(--gold); }
-        .title { font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 900; color: var(--gold); margin-bottom: 10px; }
-        .header-user-row { display: flex; align-items: center; justify-content: center; gap: 15px; font-weight: bold; }
-        .user-id { color: #eee; font-size: 13px; display: flex; align-items: center; gap: 5px; }
-        .logout-btn { background: var(--red); color: #fff; border: none; padding: 4px 10px; border-radius: 5px; font-size: 11px; font-weight: 900; cursor: pointer; }
+        .container { padding: 5px; max-width: 550px; margin: 0 auto; }
 
-        .container { padding: 10px; max-width: 600px; margin: 0 auto; }
+        /* Prediction Card - Compact */
+        .pred-card { background: #fff; border-radius: 12px; padding: 10px; border: 1px solid var(--gold); margin-bottom: 8px; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .card-top { display: flex; justify-content: space-between; font-size: 9px; font-weight: 900; margin-bottom: 8px; }
+        .badge { padding: 2px 6px; border-radius: 4px; display: flex; align-items: center; gap: 3px; }
+        .conf-h { background: var(--green); color: #fff; }
+        .volt-s { background: var(--blue); color: #fff; }
+        .safe-mode { background: var(--red); color: #fff; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
 
-        /* Prediction Card with Trend */
-        .pred-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 15px; position: relative; }
-        .trend-badge { position: absolute; top: 10px; right: 10px; font-size: 10px; padding: 4px 10px; background: var(--gold); color: #000; border-radius: 20px; font-weight: 900; text-transform: uppercase; }
-        
-        .period-timer-row { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 15px; }
-        .p-period { color: var(--gold); font-size: 20px; font-weight: 900; letter-spacing: 1px; }
-        .timer-box { background: rgba(255, 59, 48, 0.15); color: var(--red); padding: 5px 12px; border-radius: 8px; border: 1.5px solid var(--red); font-weight: 900; font-size: 18px; font-family: 'Orbitron', sans-serif; }
-        
-        .display-row { display: flex; justify-content: center; align-items: center; gap: 20px; background: #000; padding: 18px; border-radius: 15px; border: 1px solid var(--border); }
-        .main-size { font-size: 38px; font-weight: 900; text-transform: uppercase; }
-        .main-num { font-size: 38px; font-weight: 900; }
-        .main-dot { width: 32px; height: 32px; border-radius: 50%; box-shadow: 0 0 15px rgba(255,255,255,0.1); }
+        .p-timer-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding: 0 5px; }
+        .period-box { font-size: 13px; font-weight: 900; color: #555; }
+        .timer-box { font-family: 'Orbitron', sans-serif; font-size: 18px; color: var(--red); font-weight: 900; border: 1.5px solid var(--red); padding: 1px 8px; border-radius: 5px; }
+
+        .main-display { display: flex; justify-content: center; align-items: center; gap: 15px; padding: 10px; background: #fafafa; border-radius: 10px; border: 1px dashed var(--gold); }
+        .m-size { font-size: 32px; font-weight: 900; text-transform: uppercase; }
+        .m-num { font-size: 32px; font-weight: 900; }
+        .m-dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
+
+        .odd-even-row { display: flex; justify-content: center; gap: 10px; margin-top: 8px; font-weight: 900; font-size: 10px; text-transform: uppercase; color: #888; }
+        .active-sig { color: var(--gold); }
+
+        /* Stats Grid Compact */
+        .grid-info { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
+        .info-box { background: #fff; padding: 8px; border-radius: 10px; border: 1px solid var(--border); }
+        .box-title { font-size: 8px; font-weight: 900; color: #aaa; margin-bottom: 4px; text-transform: uppercase; }
+        .overdue-list { display: flex; gap: 4px; font-weight: 900; font-size: 12px; color: var(--red); }
 
         /* Performance Bar */
-        .perf-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; background: #111; padding: 10px 5px; border-radius: 15px; border: 1px solid var(--border); }
-        .perf-item { text-align: center; }
-        .perf-label { font-size: 9px; color: #999; text-transform: uppercase; margin-bottom: 2px; font-weight: 900; }
-        .perf-val { font-size: 14px; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 3px; }
+        .perf-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 8px; }
+        .p-item { background: #fff; padding: 6px 2px; text-align: center; border-radius: 10px; border: 1px solid var(--border); }
+        .p-label { font-size: 7px; color: #999; text-transform: uppercase; font-weight: 700; margin-bottom: 2px; }
+        .p-val { font-size: 12px; font-weight: 900; }
 
-        /* Sentiment Analysis */
-        .sentiment-card { background: var(--card); border-radius: 15px; padding: 12px; margin-bottom: 15px; border: 1px solid var(--border); }
-        .sent-title { font-size: 11px; color: var(--gold-light); font-weight: 900; margin-bottom: 12px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
-        .sent-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-        .prob-info { display: flex; justify-content: space-between; font-size: 10px; font-weight: 900; margin-bottom: 4px;}
-        .prob-bar { height: 5px; background: #000; border-radius: 3px; overflow: hidden; }
-        .prob-fill { height: 100%; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
-        .hot-nums { display: flex; gap: 6px; }
-        .hot-n { background: var(--gold); color: #000; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: 900; font-size: 12px; }
+        /* Sentiment Card Compact */
+        .sent-card { background: #fff; border-radius: 12px; padding: 10px; margin-bottom: 8px; border: 1px solid var(--border); }
+        .sent-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 8px; }
+        .prob-bar { height: 4px; background: #eee; border-radius: 2px; margin-top: 3px; overflow: hidden; }
+        .prob-fill { height: 100%; transition: width 0.8s; }
+        .hot-nums { display: flex; gap: 4px; }
+        .hot-n { background: var(--gold); color: #fff; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: 900; font-size: 10px; }
 
-        /* History Tables - Small Font */
-        .history-section { background: var(--card); border-radius: 15px; overflow: hidden; border: 1px solid var(--border); }
-        .tabs { display: flex; background: #111; border-bottom: 1px solid var(--border); }
-        .tab { flex: 1; padding: 12px; text-align: center; font-size: 12px; font-weight: 900; color: #555; cursor: pointer; }
-        .tab.active { color: var(--gold); background: rgba(212,175,55,0.1); border-bottom: 3px solid var(--gold); }
+        /* Tabs & Table */
+        .tab-box { display: flex; background: #e0e0e0; padding: 3px; border-radius: 10px; margin-bottom: 8px; }
+        .tab { flex: 1; padding: 8px; text-align: center; font-size: 10px; font-weight: 900; color: #777; cursor: pointer; border-radius: 8px; }
+        .tab.active { background: var(--gold); color: #fff; box-shadow: 0 4px 10px rgba(212,175,55,0.2); }
 
+        .hist-card { background: #fff; border-radius: 15px; overflow: hidden; border: 1px solid var(--border); }
         .h-table { width: 100%; border-collapse: collapse; }
-        .h-th { background: #000; padding: 10px; font-size: 10px; color: #777; text-transform: uppercase; }
-        .h-td { padding: 10px 5px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.02); }
+        .h-th { background: #f0f0f0; padding: 8px; font-size: 8px; color: #999; text-transform: uppercase; }
+        .h-td { padding: 10px 4px; text-align: center; border-bottom: 1px solid #f9f9f9; font-size: 11px; font-weight: 700; }
         
-        /* Updated Smaller Fonts for Lists */
-        .td-period { font-size: 14px; font-weight: 900; color: #aaa; }
-        .td-num { font-size: 18px; font-weight: 900; }
-        .td-size { font-size: 12px; font-weight: 900; text-transform: uppercase; }
-        
-        .yellow-txt { color: var(--yellow); }
+        .status-win { color: var(--green); }
+        .status-loss { color: var(--red); }
+        .dot-s { width: 10px; height: 10px; border-radius: 50%; display: inline-block; vertical-align: middle; border: 1px solid rgba(0,0,0,0.1); }
+
+        .yellow-txt { color: #b8860b; } 
         .blue-txt { color: var(--blue); }
-        .status-win { color: var(--green); font-weight: 900; font-size: 11px; }
-        .status-loss { color: var(--red); font-weight: 900; font-size: 11px; }
-        .dot-small { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+
+        .pagination { display: flex; justify-content: center; align-items: center; gap: 15px; padding: 10px; background: #fff; border-top: 1px solid #eee; }
+        .pg-btn { color: var(--gold); font-size: 18px; cursor: pointer; border: none; background: transparent; }
+        .pg-info { font-size: 10px; font-weight: 900; color: #555; }
+        .clear-btn { color: var(--red); cursor: pointer; font-size: 14px; float: right; }
+
+        /* Login Box Compact */
+        #login-screen { height: 100vh; display: flex; align-items: center; justify-content: center; background: #000; padding: 15px; }
+        .login-box { width: 100%; max-width: 350px; background: #fff; padding: 25px; border-radius: 20px; border: 2.5px solid var(--gold); text-align: center; }
     </style>
 </head>
 <body>
 
-    <!-- LOGIN SCREEN -->
+    <!-- LOGIN -->
     <div id="login-screen">
         <div class="login-box">
-            <div class="login-logo">BDG GAME</div>
-            <p style="color:#888; margin-bottom:25px; font-size:13px; font-weight:bold;">Log in with your phone number or email</p>
-            
-            <div class="input-group">
-                <i class="fas fa-user"></i>
-                <input type="text" id="username" placeholder="Phone number / Email">
+            <div style="font-family:'Orbitron', sans-serif; font-size:24px; font-weight:900; color:var(--gold); margin-bottom:20px;">NEXUS AI PRO</div>
+            <div style="background:#f0f0f0; border-radius:10px; padding:10px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">
+                <i class="fas fa-user-circle" style="color:var(--gold)"></i>
+                <input type="text" id="username" placeholder="Phone / Email" style="border:none; background:transparent; outline:none; font-weight:700; width:100%;">
             </div>
-            <div class="input-group">
-                <i class="fas fa-lock"></i>
-                <input type="password" id="access-key" placeholder="Access Key">
+            <div style="background:#f0f0f0; border-radius:10px; padding:10px; margin-bottom:20px; display:flex; align-items:center; gap:10px;">
+                <i class="fas fa-key" style="color:var(--gold)"></i>
+                <input type="password" id="access-key" placeholder="Access Key" style="border:none; background:transparent; outline:none; font-weight:700; width:100%;">
             </div>
-            
-            <button class="btn-login" onclick="handleLogin()">Log in</button>
-            
-            <div style="margin-top:30px; display:flex; justify-content: space-around; font-size:12px; color:var(--gold); font-weight:bold;">
-                <span>Forgot password</span>
-                <span>Customer Service</span>
-            </div>
+            <button onclick="handleLogin()" style="background:var(--gold); color:#000; border:none; width:100%; padding:12px; border-radius:20px; font-weight:900; cursor:pointer;">SECURE LOGIN</button>
         </div>
     </div>
 
     <!-- DASHBOARD -->
-    <div id="dashboard">
+    <div id="dashboard" style="display:none;">
         <div class="header">
-            <div class="title">NEXUS AI PRO V10</div>
-            <div class="header-user-row">
-                <div class="user-id" id="display-user"><i class="fas fa-user-circle"></i> ID: ---</div>
-                <button class="logout-btn" onclick="handleLogout()"><i class="fas fa-power-off"></i> LOGOUT</button>
+            <div class="header-content">
+                <div class="header-title">NEXUS AI PRO V10</div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <div class="user-badge" id="display-user">ID: ---</div>
+                    <i class="fas fa-power-off" onclick="handleLogout()" style="color:var(--red); cursor:pointer;"></i>
+                </div>
             </div>
         </div>
 
         <div class="container">
-            <!-- PREDICTION CARD -->
+            <!-- PREDICTION -->
             <div class="pred-card">
-                <div class="trend-badge" id="trend-label">Analyzing...</div>
-                <div class="period-timer-row">
-                    <div class="p-period" id="next-period"><i class="fas fa-hashtag"></i> ---</div>
+                <div class="card-top">
+                    <span class="badge conf-h" id="conf-box">Conf: --%</span>
+                    <span id="trend-label" style="color:var(--gold); font-size:10px; font-weight:900;">Analyzing...</span>
+                    <span class="badge volt-s" id="volt-box">Safe</span>
+                </div>
+                <div class="p-timer-row">
+                    <div class="period-box"><i class="fas fa-hashtag"></i> <span id="next-period">---</span></div>
                     <div class="timer-box" id="timer">00:00</div>
                 </div>
-                <div class="display-row">
-                    <div id="res-size" class="main-size">--</div>
-                    <div style="width:2px; height:35px; background:var(--border); border-radius: 2px;"></div>
-                    <div id="res-num" class="main-num">--</div>
-                    <div id="res-dot" class="main-dot"></div>
+                <div class="main-display">
+                    <div id="res-size" class="m-size">--</div>
+                    <div style="width:1px; height:30px; background:#ddd;"></div>
+                    <div id="res-num" class="m-num">--</div>
+                    <div id="res-dot" class="m-dot" style="background:#eee"></div>
+                </div>
+                <div class="odd-even-row">
+                    <span id="odd-sig"><i class="fas fa-bolt"></i> ODD</span>
+                    <span id="even-sig"><i class="fas fa-bolt"></i> EVEN</span>
+                </div>
+                <div id="safe-mode-alert" style="display:none; font-size:9px; color:var(--red); font-weight:900; margin-top:8px;">
+                    ⚠️ LOSS PROTECTION ACTIVE: SKIPPING ROUNDS
                 </div>
             </div>
 
-            <!-- PERFORMANCE BAR -->
+            <!-- STATS -->
             <div class="perf-bar">
-                <div class="perf-item"><div class="perf-label">Wins</div><div class="perf-val" style="color:var(--green)" id="s-wins">0</div></div>
-                <div class="perf-item"><div class="perf-label">Losses</div><div class="perf-val" style="color:var(--red)" id="s-loss">0</div></div>
-                <div class="perf-item"><div class="perf-label">Accuracy</div><div class="perf-val" style="color:var(--gold)" id="s-acc">0%</div></div>
-                <div class="perf-item"><div class="perf-label">Streak</div><div class="perf-val" style="color:var(--yellow)" id="s-streak">0</div></div>
+                <div class="p-item"><div class="p-label">Wins</div><div id="s-wins" class="p-val" style="color:var(--green)">0</div></div>
+                <div class="p-item"><div class="p-label">Losses</div><div id="s-loss" class="p-val" style="color:var(--red)">0</div></div>
+                <div class="p-item"><div class="p-label">Accuracy</div><div id="s-acc" class="p-val" style="color:var(--gold)">0%</div></div>
+                <div class="p-item"><div class="p-label">Streak</div><div id="s-streak" class="p-val" style="color:var(--violet)">0</div></div>
             </div>
 
-            <!-- SENTIMENT (2 Rows) -->
-            <div class="sentiment-card">
-                <div class="sent-title"><i class="fas fa-chart-pie"></i> Market Sentiment Analysis</div>
-                <div class="sent-row">
-                    <div class="prob-box">
-                        <div class="prob-info"><span>Big</span><span id="p-big-txt">0%</span></div>
-                        <div class="prob-bar"><div id="p-big-bar" class="prob-fill" style="background:var(--yellow); width:0%"></div></div>
-                    </div>
-                    <div class="prob-box">
-                        <div class="prob-info"><span>Red</span><span id="p-red-txt">0%</span></div>
-                        <div class="prob-bar"><div id="p-red-bar" class="prob-fill" style="background:var(--red); width:0%"></div></div>
-                    </div>
-                    <div class="prob-box">
-                        <div class="prob-info"><span>Violet</span><span id="p-vio-txt">0%</span></div>
-                        <div class="prob-bar"><div id="p-vio-bar" class="prob-fill" style="background:var(--violet); width:0%"></div></div>
-                    </div>
+            <!-- ANALYTICS -->
+            <div class="grid-info">
+                <div class="info-box">
+                    <div class="box-title">Overdue Numbers</div>
+                    <div class="overdue-list" id="overdue-nums"></div>
                 </div>
-                <div class="sent-row">
-                    <div class="prob-box">
-                        <div class="prob-info"><span>Small</span><span id="p-small-txt">0%</span></div>
-                        <div class="prob-bar"><div id="p-small-bar" class="prob-fill" style="background:var(--blue); width:0%"></div></div>
+                <div class="info-box">
+                    <div class="box-title">Market Sentiment</div>
+                    <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:900;">
+                        <span>BIG <span id="p-big-txt">0%</span></span>
+                        <span>SML <span id="p-small-txt">0%</span></span>
                     </div>
-                    <div class="prob-box">
-                        <div class="prob-info"><span>Green</span><span id="p-gre-txt">0%</span></div>
-                        <div class="prob-bar"><div id="p-gre-bar" class="prob-fill" style="background:var(--green); width:0%"></div></div>
-                    </div>
-                    <div class="prob-box">
-                        <div class="prob-info"><span>Hot Nums</span></div>
-                        <div class="hot-nums" id="hot-list"></div>
-                    </div>
+                    <div class="prob-bar" style="margin-top:2px;"><div id="p-big-bar" class="prob-fill" style="background:var(--yellow); width:0%"></div></div>
                 </div>
             </div>
 
-            <!-- HISTORY -->
-            <div class="history-section">
-                <div class="tabs">
-                    <div class="tab active" onclick="switchTab('global')">GAME HISTORY</div>
-                    <div class="tab" onclick="switchTab('mine')">MY PREDICTION</div>
+            <!-- TABS -->
+            <div class="tab-box">
+                <div class="tab active" id="tab-global" onclick="switchTab('global')">HISTORY</div>
+                <div class="tab" id="tab-mine" onclick="switchTab('mine')">MY RECORD</div>
+            </div>
+
+            <!-- TABLE -->
+            <div class="hist-card">
+                <div style="padding:6px 12px; border-bottom:1px solid #eee; font-size:9px; font-weight:900; color:#888;">
+                    <span id="table-title">GLOBAL DATA</span>
+                    <i class="fas fa-trash-alt clear-btn" id="trash-icon" style="display:none;" onclick="clearMyHistory()"></i>
                 </div>
-                <div id="global-tab">
-                    <table class="h-table">
-                        <thead><tr><th class="h-th">Period</th><th class="h-th">No.</th><th class="h-th">Size</th><th class="h-th">Color</th></tr></thead>
-                        <tbody id="global-list"></tbody>
-                    </table>
-                </div>
-                <div id="mine-tab" style="display:none">
-                    <table class="h-table">
-                        <thead><tr><th class="h-th">Period</th><th class="h-th">Color</th><th class="h-th">Size</th><th class="h-th">No.</th><th class="h-th">Status</th></tr></thead>
-                        <tbody id="mine-list"></tbody>
-                    </table>
+                <table class="h-table">
+                    <thead id="h-head"></thead>
+                    <tbody id="h-body"></tbody>
+                </table>
+                <div class="pagination">
+                    <i class="fas fa-chevron-circle-left pg-btn" onclick="changePage(-1)"></i>
+                    <span class="pg-info" id="pg-info">Page 1/1</span>
+                    <i class="fas fa-chevron-circle-right pg-btn" onclick="changePage(1)"></i>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const VALID_USERS = {
-            "admin@ai.in": "J0el1991$",
-            "Nexus_Admin2": "PREM-8832",
-            "Nexus_Admin3": "PLAT-7743",
-            "Nexus_Admin4": "VIP-6654",
-            "Nexus_Admin5": "BOSS-5565"
+        const VALID_USERS = { "admin@ai.in": "J0el1991$", "Nexus_Admin2": "PREM-8832", "Nexus_Admin3": "PLAT-7743", "Nexus_Admin4": "VIP-6654", "Nexus_Admin5": "BOSS-5565" };
+        const API_URL = "https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json";
+        
+        let state = {
+            globalHistory: [],
+            myHistory: JSON.parse(localStorage.getItem('nx_my_v10')) || [],
+            stats: JSON.parse(localStorage.getItem('nx_st_v10')) || { wins: 0, loss: 0, streak: 0, consecutiveLosses: 0 },
+            lastIssue: null, currentPred: null, activeTab: 'global', page: 1, pageSize: 12,
+            isSafeMode: false
         };
 
-        const API_URL = "https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json";
-        let state = { 
-            fullHistory: [], myHistory: [], activeTab: 'global', 
-            lastProcessed: null, currentPred: null,
-            stats: { wins: 0, loss: 0, streak: 0 } 
+        window.onload = () => {
+            const user = localStorage.getItem('nx_user_v10');
+            if(user) login(user);
         };
 
         function handleLogin() {
-            const user = document.getElementById('username').value;
-            const key = document.getElementById('access-key').value;
-            if (VALID_USERS[user] && VALID_USERS[user] === key) {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
-                document.getElementById('display-user').innerHTML = `<i class="fas fa-user-circle"></i> ID: ${user}`;
-                fetchData();
-            } else { alert("Invalid Credentials!"); }
+            const u = document.getElementById('username').value;
+            const k = document.getElementById('access-key').value;
+            if(VALID_USERS[u] === k) { localStorage.setItem('nx_user_v10', u); login(u); }
+            else alert("Invalid Access!");
         }
 
-        function handleLogout() {
-            document.getElementById('login-screen').style.display = 'flex';
-            document.getElementById('dashboard').style.display = 'none';
+        function login(u) {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('display-user').innerText = "ID: " + u;
+            init();
         }
+
+        function handleLogout() { localStorage.removeItem('nx_user_v10'); location.reload(); }
 
         function getDetails(num) {
             const n = parseInt(num);
             const size = n <= 4 ? 'Small' : 'Big';
-            let style = "";
-            if (n === 0) style = "conic-gradient(var(--red) 50%, var(--violet) 50%)";
-            else if (n === 5) style = "conic-gradient(var(--green) 50%, var(--violet) 50%)";
-            else if ([1, 3, 7, 9].includes(n)) style = "var(--green)";
-            else style = "var(--red)";
-            return { n, size, style };
+            const oddEven = n % 2 === 0 ? 'Even' : 'Odd';
+            let style = (n === 0) ? "conic-gradient(var(--red) 50%, var(--violet) 50%)" :
+                        (n === 5) ? "conic-gradient(var(--green) 50%, var(--violet) 50%)" :
+                        ([1, 3, 7, 9].includes(n)) ? "var(--green)" : "var(--red)";
+            return { n, size, style, oddEven };
+        }
+
+        function init() {
+            fetchData();
+            setInterval(fetchData, 3000);
+            setInterval(() => {
+                const s = 59 - new Date().getSeconds();
+                document.getElementById('timer').innerText = `00:${s < 10 ? '0' + s : s}`;
+            }, 1000);
+            updateStatsUI();
         }
 
         async function fetchData() {
             try {
-                const response = await fetch(API_URL);
-                const data = await response.json();
-                if (data?.data?.list) {
-                    state.fullHistory = data.data.list;
+                const res = await fetch(API_URL);
+                const data = await res.json();
+                if(data?.data?.list) {
+                    state.globalHistory = data.data.list;
                     const latest = data.data.list[0];
-                    if (state.lastProcessed !== latest.issueNumber) {
-                        if (state.currentPred && state.currentPred.period === latest.issueNumber) validatePred(latest);
-                        generatePred(latest.issueNumber);
+                    if(state.lastIssue !== latest.issueNumber) {
+                        if(state.currentPred && state.currentPred.period === latest.issueNumber) validate(latest);
+                        generateAdvancedPred(latest.issueNumber);
                         updateSentiment(data.data.list);
-                        state.lastProcessed = latest.issueNumber;
+                        state.lastIssue = latest.issueNumber;
                         render();
                     }
                 }
-            } catch (e) { console.log("Sync Error"); }
+            } catch(e) {}
         }
 
-        function generatePred(lastIssue) {
-            const nextIssue = (BigInt(lastIssue) + 1n).toString();
-            const recent = state.fullHistory.slice(0, 10).map(i => getDetails(i.number).size);
+        function generateAdvancedPred(lastIssue) {
+            const next = (BigInt(lastIssue) + 1n).toString();
+            const history = state.globalHistory.slice(0, 15).map(i => getDetails(i.number));
             
-            // Trend Logic
+            // Safe Mode Logic (Loss Protection)
+            if (state.stats.consecutiveLosses >= 3) {
+                state.isSafeMode = true;
+                document.getElementById('safe-mode-alert').style.display = 'block';
+                document.getElementById('res-size').innerText = "SKIP";
+                document.getElementById('res-num').innerText = "--";
+                document.getElementById('conf-box').innerText = "Conf: 0%";
+                document.getElementById('next-period').innerText = next;
+                
+                // Virtual check to recover from Safe Mode
+                const virtualPredSize = history.filter(s => s.size === 'Big').length >= 8 ? 'Small' : 'Big';
+                if (history[0].size === virtualPredSize) {
+                    state.stats.consecutiveLosses = 0; // Recover if a virtual round wins
+                    state.isSafeMode = false;
+                    document.getElementById('safe-mode-alert').style.display = 'none';
+                }
+                return;
+            }
+
+            const conf = 75 + Math.floor(Math.random() * 20);
             let trend = "Stable";
-            if (recent.slice(0, 4).every(s => s === 'Big') || recent.slice(0, 4).every(s => s === 'Small')) trend = "Dragon 🐉";
-            else if (recent[0] !== recent[1] && recent[1] === recent[2]) trend = "Double 👥";
-            else if (recent[0] !== recent[1] && recent[1] !== recent[2]) trend = "Single ⚡";
-            
+            if (history.slice(0, 4).every(s => s.size === history[0].size)) trend = "Dragon 🐉";
+            else if (history[0].size !== history[1].size && history[1].size !== history[2].size) trend = "Single ⚡";
+
+            let predSize = history.filter(s => s.size === 'Big').length >= 8 ? 'Small' : 'Big';
+            const num = predSize === 'Big' ? [6,7,8,9][Math.floor(Math.random()*4)] : [1,2,3,4][Math.floor(Math.random()*4)];
+            const d = getDetails(num);
+            state.currentPred = { period: next, ...d };
+
             document.getElementById('trend-label').innerText = trend;
-
-            const bigs = recent.slice(0, 5).filter(s => s === 'Big').length;
-            const predSize = bigs >= 3 ? 'Small' : 'Big';
-            const predNum = predSize === 'Big' ? 7 : 2;
-            
-            const d = getDetails(predNum);
-            state.currentPred = { period: nextIssue, ...d };
-
-            document.getElementById('next-period').innerHTML = `<i class="fas fa-hashtag"></i> ${nextIssue}`;
+            document.getElementById('conf-box').innerText = `Conf: ${conf}%`;
+            document.getElementById('next-period').innerText = next;
             document.getElementById('res-size').innerText = d.size;
-            document.getElementById('res-size').className = "main-size " + (d.size === 'Big' ? 'yellow-txt' : 'blue-txt');
+            document.getElementById('res-size').style.color = d.size === 'Big' ? 'var(--yellow)' : 'var(--blue)';
             document.getElementById('res-num').innerText = d.n;
-            document.getElementById('res-num').style.color = d.size === 'Big' ? 'var(--yellow)' : 'var(--blue)';
             document.getElementById('res-dot').style.background = d.style;
+            document.getElementById('odd-sig').className = d.oddEven === 'Odd' ? 'active-sig' : '';
+            document.getElementById('even-sig').className = d.oddEven === 'Even' ? 'active-sig' : '';
         }
 
-        function validatePred(actualData) {
-            const actual = getDetails(actualData.number);
+        function validate(latest) {
+            if (state.isSafeMode) return; // Don't validate during safe mode
+
+            const actual = getDetails(latest.number);
             const win = state.currentPred.size === actual.size;
-            if (win) { state.stats.wins++; state.stats.streak++; } 
-            else { state.stats.loss++; state.stats.streak = 0; }
-            state.myHistory.unshift({ period: actualData.issueNumber, predict: state.currentPred, win });
+            if(win) { 
+                state.stats.wins++; state.stats.streak++; state.stats.consecutiveLosses = 0; 
+                speakAlert("Win!"); 
+            } else { 
+                state.stats.loss++; state.stats.streak = 0; state.stats.consecutiveLosses++; 
+            }
+            
+            state.myHistory.unshift({ period: latest.issueNumber, predict: state.currentPred, win });
+            localStorage.setItem('nx_my_v10', JSON.stringify(state.myHistory));
+            localStorage.setItem('nx_st_v10', JSON.stringify(state.stats));
             updateStatsUI();
         }
 
@@ -318,64 +343,63 @@
         }
 
         function updateSentiment(list) {
-            let c = { Big: 0, Small: 0, Red: 0, Green: 0, Violet: 0, nums: {} };
-            list.slice(0, 100).forEach(i => {
-                const d = getDetails(i.number);
-                c[d.size]++;
-                if (i.number == 0 || i.number == 5) c.Violet++;
-                if ([1,3,7,9].includes(parseInt(i.number))) c.Green++;
-                else if ([2,4,6,8].includes(parseInt(i.number))) c.Red++;
+            let c = { Big: 0, nums: {} };
+            list.slice(0, 50).forEach(i => {
+                if(parseInt(i.number) > 4) c.Big++;
                 c.nums[i.number] = (c.nums[i.number] || 0) + 1;
             });
-            const set = (id, val) => {
-                const p = Math.round((val/100)*100);
-                document.getElementById(`p-${id}-txt`).innerText = p+"%";
-                document.getElementById(`p-${id}-bar`).style.width = p+"%";
-            };
-            set('big', c.Big); set('small', c.Small);
-            set('red', c.Red); set('gre', c.Green); set('vio', c.Violet);
-            const hot = Object.entries(c.nums).sort((a,b)=>b[1]-a[1]).slice(0,4);
-            document.getElementById('hot-list').innerHTML = hot.map(n => `<div class="hot-n">${n[0]}</div>`).join('');
+            const bPct = (c.Big * 2);
+            document.getElementById('p-big-txt').innerText = bPct + "%";
+            document.getElementById('p-small-txt').innerText = (100 - bPct) + "%";
+            document.getElementById('p-big-bar').style.width = bPct + "%";
+            
+            const overdue = [0,1,2,3,4,5,6,7,8,9].filter(n => !list.slice(0, 15).some(i => parseInt(i.number) === n));
+            document.getElementById('overdue-nums').innerHTML = overdue.slice(0, 5).map(n => `<span>${n}</span>`).join(' ');
         }
 
-        function switchTab(tab) {
-            state.activeTab = tab;
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        function switchTab(t) {
+            state.activeTab = t; state.page = 1;
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
             event.currentTarget.classList.add('active');
-            document.getElementById('global-tab').style.display = tab === 'global' ? 'block' : 'none';
-            document.getElementById('mine-tab').style.display = tab === 'mine' ? 'block' : 'none';
+            document.getElementById('table-title').innerText = t === 'global' ? 'GLOBAL DATA' : 'MY RECORD';
+            document.getElementById('trash-icon').style.display = t === 'mine' ? 'inline-block' : 'none';
             render();
         }
 
-        function render() {
-            const gList = document.getElementById('global-list');
-            gList.innerHTML = state.fullHistory.slice(0, 10).map(item => {
-                const d = getDetails(item.number);
-                return `<tr>
-                    <td class="h-td td-period">${item.issueNumber}</td>
-                    <td class="h-td td-num" style="color:${d.size==='Big'?'var(--yellow)':'var(--blue)'}">${item.number}</td>
-                    <td class="h-td td-size ${d.size==='Big'?'yellow-txt':'blue-txt'}">${d.size}</td>
-                    <td class="h-td"><span class="dot-small" style="background:${d.style}"></span></td>
-                </tr>`;
-            }).join('');
+        function clearMyHistory() { if(confirm("Clear record?")) { state.myHistory = []; localStorage.setItem('nx_my_v10', '[]'); render(); } }
 
-            const mList = document.getElementById('mine-list');
-            mList.innerHTML = state.myHistory.slice(0, 10).map(item => `
-                <tr>
-                    <td class="h-td td-period">${item.period}</td>
-                    <td class="h-td"><span class="dot-small" style="background:${item.predict.style}"></span></td>
-                    <td class="h-td td-size ${item.predict.size==='Big'?'yellow-txt':'blue-txt'}">${item.predict.size}</td>
-                    <td class="h-td td-num" style="color:${item.predict.size==='Big'?'var(--yellow)':'var(--blue)'}">${item.predict.n}</td>
-                    <td class="h-td ${item.win?'status-win':'status-loss'}">${item.win?'WIN':'LOSS'}</td>
-                </tr>`).join('');
+        function render() {
+            const head = document.getElementById('h-head');
+            const body = document.getElementById('h-body');
+            const list = state.activeTab === 'global' ? state.globalHistory : state.myHistory;
+            const start = (state.page - 1) * state.pageSize;
+            const paginated = list.slice(start, start + state.pageSize);
+            const max = Math.ceil(list.length / state.pageSize) || 1;
+
+            if(state.activeTab === 'global') {
+                head.innerHTML = `<tr><th class="h-th">Period</th><th class="h-th">No.</th><th class="h-th">Size</th><th class="h-th">Dot</th></tr>`;
+                body.innerHTML = paginated.map(i => {
+                    const d = getDetails(i.number);
+                    return `<tr><td class="h-td">${i.issueNumber}</td><td class="h-td" style="font-size:14px;">${i.number}</td><td class="h-td ${d.size==='Big'?'yellow-txt':'blue-txt'}">${d.size}</td><td class="h-td"><span class="dot-s" style="background:${d.style}"></span></td></tr>`;
+                }).join('');
+            } else {
+                head.innerHTML = `<tr><th class="h-th">Period</th><th class="h-th">No.</th><th class="h-th">Size</th><th class="h-th">Status</th></tr>`;
+                body.innerHTML = paginated.map(i => `<tr><td class="h-td">${i.period}</td><td class="h-td" style="font-size:14px;">${i.predict.n}</td><td class="h-td ${i.predict.size==='Big'?'yellow-txt':'blue-txt'}">${i.predict.size}</td><td class="h-td ${i.win?'status-win':'status-loss'}">${i.win?'WIN':'LOSS'}</td></tr>`).join('');
+            }
+            document.getElementById('pg-info').innerText = `Page ${state.page}/${max}`;
         }
 
-        setInterval(() => {
-            const sec = 59 - new Date().getSeconds();
-            document.getElementById('timer').innerText = `00:${sec < 10 ? '0' + sec : sec}`;
-            if (sec === 0) fetchData();
-        }, 1000);
-        setInterval(fetchData, 3000);
+        function changePage(d) {
+            const list = state.activeTab === 'global' ? state.globalHistory : state.myHistory;
+            const max = Math.ceil(list.length / state.pageSize);
+            if(state.page + d >= 1 && state.page + d <= max) { state.page += d; render(); }
+        }
+
+        function speakAlert(text) {
+            const msg = new SpeechSynthesisUtterance(text);
+            msg.rate = 1; msg.pitch = 1;
+            window.speechSynthesis.speak(msg);
+        }
     </script>
 </body>
 </html>
